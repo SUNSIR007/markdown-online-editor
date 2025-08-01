@@ -611,12 +611,13 @@
 
             mounted() {
                 this.initTheme();
+
+                // 为移动设备设置默认配置（在初始化Vditor之前）
+                this.setupMobileDefaults();
+
                 this.initVditor();
                 this.checkGitHubConfig();
                 this.checkForEditFile();
-
-                // 为移动设备设置默认配置
-                this.setupMobileDefaults();
 
                 // 初始化时插入默认模板
                 setTimeout(() => {
@@ -638,14 +639,6 @@
                     if (this.isMobileDevice()) {
                         // 设置为Essays模式
                         this.currentType = contentTypes.ESSAY;
-
-                        // 延迟设置编辑模式为所见即所得，确保Vditor已初始化
-                        setTimeout(() => {
-                            if (this.vditor) {
-                                this.vditor.setMode('wysiwyg');
-                            }
-                        }, 1000);
-
                         console.log('检测到移动设备，已设置为Essays模式和所见即所得编辑模式');
                     }
                 },
@@ -655,9 +648,12 @@
                 },
 
                 initVditor() {
+                    // 根据设备类型设置编辑模式
+                    const editorMode = this.isMobileDevice() ? 'wysiwyg' : 'sv';
+
                     this.vditor = new Vditor('vditor', {
                         height: '100%',
-                        mode: 'sv',
+                        mode: editorMode,
                         theme: 'dark',
                         preview: {
                             theme: {
