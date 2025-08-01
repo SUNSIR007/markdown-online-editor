@@ -3,7 +3,7 @@
 <template>
   <div class="test-page">
     <h1>组件测试页面</h1>
-    
+
     <div class="test-section">
       <h2>内容类型选择器</h2>
       <ContentTypeSelector
@@ -71,10 +71,10 @@ export default {
     showPublishDialog() {
       this.$message({
         type: 'info',
-        message: '发布功能正在开发中...'
+        message: '发布功能正在开发中...',
       })
     },
-  }
+  },
 }
 </script>
 
