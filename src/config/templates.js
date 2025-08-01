@@ -20,7 +20,7 @@ export const blogTemplate = {
     title: '新博客文章',
     categories: ['技术'],
     pubDate: getCurrentDateTime(),
-    description: ''
+    description: '',
   },
   content: `---
 title: 新博客文章
@@ -40,7 +40,7 @@ description: ""
 ### 子章节
 
 更多内容...
-`
+`,
 }
 
 // 随笔模板
@@ -49,7 +49,7 @@ export const essayTemplate = {
     title: '新随笔',
     categories: ['Daily'],
     pubDate: getCurrentDate(),
-    description: ''
+    description: '',
   },
   content: `---
 title: 新随笔
@@ -59,7 +59,7 @@ description: ""
 ---
 
 在这里开始编写您的随笔内容...
-`
+`,
 }
 
 // 通用文档模板
@@ -68,14 +68,14 @@ export const generalTemplate = {
   content: `# 新文档
 
 在这里开始编写您的内容...
-`
+`,
 }
 
 // 模板映射
 export const templates = {
   [contentTypes.BLOG]: blogTemplate,
   [contentTypes.ESSAY]: essayTemplate,
-  [contentTypes.GENERAL]: generalTemplate
+  [contentTypes.GENERAL]: generalTemplate,
 }
 
 // 根据内容类型获取模板
@@ -90,11 +90,11 @@ export const generateContentWithMetadata = (contentType, metadata, content) => {
   }
 
   const frontMatter = Object.keys(metadata)
-    .filter(key => metadata[key] !== undefined && metadata[key] !== '')
-    .map(key => {
+    .filter((key) => metadata[key] !== undefined && metadata[key] !== '')
+    .map((key) => {
       const value = metadata[key]
       if (Array.isArray(value)) {
-        return `${key}: [${value.map(v => `"${v}"`).join(', ')}]`
+        return `${key}: [${value.map((v) => `"${v}"`).join(', ')}]`
       } else if (typeof value === 'string' && value.includes(' ')) {
         return `${key}: "${value}"`
       } else {
@@ -119,22 +119,22 @@ export const parseMetadataFromContent = (content) => {
 
   const frontMatterText = frontMatterMatch[1]
   const contentWithoutFrontMatter = content.replace(/^---\n[\s\S]*?\n---\n/, '')
-  
+
   const metadata = {}
   const lines = frontMatterText.split('\n')
-  
+
   for (const line of lines) {
     const match = line.match(/^(\w+):\s*(.+)$/)
     if (match) {
       const [, key, value] = match
-      
+
       // 处理数组格式 ["item1", "item2"]
       if (value.startsWith('[') && value.endsWith(']')) {
         const arrayContent = value.slice(1, -1)
         metadata[key] = arrayContent
           .split(',')
-          .map(item => item.trim().replace(/^"(.*)"$/, '$1'))
-          .filter(item => item)
+          .map((item) => item.trim().replace(/^"(.*)"$/, '$1'))
+          .filter((item) => item)
       }
       // 处理带引号的字符串
       else if (value.startsWith('"') && value.endsWith('"')) {

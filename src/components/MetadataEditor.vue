@@ -69,12 +69,7 @@
             @blur="addTag(field.key)"
             class="tag-input"
           />
-          <el-button
-            v-else
-            size="small"
-            @click="showTagInput(field.key)"
-            class="add-tag-btn"
-          >
+          <el-button v-else size="small" @click="showTagInput(field.key)" class="add-tag-btn">
             + 添加标签
           </el-button>
         </div>
@@ -97,16 +92,16 @@ export default {
   props: {
     visible: {
       type: Boolean,
-      default: false
+      default: false,
     },
     contentType: {
       type: String,
-      required: true
+      required: true,
     },
     metadata: {
       type: Object,
-      default: () => ({})
-    }
+      default: () => ({}),
+    },
   },
 
   data() {
@@ -114,14 +109,14 @@ export default {
       formData: {},
       tagInputVisible: {},
       tagInputValue: {},
-      rules: {}
+      rules: {},
     }
   },
 
   computed: {
     fields() {
       return metadataFields[this.contentType] || []
-    }
+    },
   },
 
   watch: {
@@ -136,8 +131,8 @@ export default {
       handler() {
         this.initFormData()
       },
-      deep: true
-    }
+      deep: true,
+    },
   },
 
   methods: {
@@ -146,7 +141,7 @@ export default {
       this.tagInputVisible = {}
       this.tagInputValue = {}
 
-      this.fields.forEach(field => {
+      this.fields.forEach((field) => {
         if (field.type === 'tags') {
           this.formData[field.key] = Array.isArray(this.metadata[field.key])
             ? [...this.metadata[field.key]]
@@ -161,14 +156,14 @@ export default {
 
     initRules() {
       this.rules = {}
-      this.fields.forEach(field => {
+      this.fields.forEach((field) => {
         if (field.required) {
           this.rules[field.key] = [
             {
               required: true,
               message: `请输入${field.label}`,
-              trigger: field.type === 'tags' ? 'change' : 'blur'
-            }
+              trigger: field.type === 'tags' ? 'change' : 'blur',
+            },
           ]
         }
       })
@@ -202,7 +197,7 @@ export default {
     },
 
     handleSave() {
-      this.$refs.metadataForm.validate(valid => {
+      this.$refs.metadataForm.validate((valid) => {
         if (valid) {
           this.$emit('save', { ...this.formData })
           this.$emit('update:visible', false)
@@ -212,8 +207,8 @@ export default {
 
     handleClose() {
       this.$emit('update:visible', false)
-    }
-  }
+    },
+  },
 }
 </script>
 
