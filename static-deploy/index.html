@@ -527,6 +527,63 @@
                 gap: 6px;
             }
         }
+
+        /* 移动端弹窗优化 */
+        @media (max-width: 768px) {
+            .el-dialog {
+                width: 90% !important;
+                max-width: 400px !important;
+                margin: 0 auto !important;
+                top: 15vh !important;
+                transform: none !important;
+            }
+
+            .el-dialog__header {
+                padding: 15px 20px 10px !important;
+            }
+
+            .el-dialog__body {
+                padding: 10px 20px 20px !important;
+                max-height: 60vh !important;
+                overflow-y: auto !important;
+            }
+
+            .el-dialog__footer {
+                padding: 10px 20px 15px !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .el-dialog {
+                width: 95% !important;
+                max-width: 350px !important;
+                top: 10vh !important;
+            }
+
+            .el-dialog__header {
+                padding: 12px 15px 8px !important;
+            }
+
+            .el-dialog__body {
+                padding: 8px 15px 15px !important;
+                max-height: 65vh !important;
+                font-size: 14px !important;
+            }
+
+            .el-dialog__footer {
+                padding: 8px 15px 12px !important;
+            }
+
+            /* 移动端表单元素优化 */
+            .el-input__inner {
+                font-size: 16px !important; /* 防止iOS缩放 */
+            }
+
+            .el-button {
+                padding: 8px 15px !important;
+                font-size: 14px !important;
+            }
+        }
     </style>
 </head>
 <body class="dark-mode">
