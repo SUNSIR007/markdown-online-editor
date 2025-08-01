@@ -1,0 +1,1257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>增强版 Markdown 编辑器</title>
+    <script src="https://unpkg.com/vue@2.6.14/dist/vue.js"></script>
+    <script src="https://unpkg.com/element-ui@2.15.13/lib/index.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui@2.15.13/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="https://unpkg.com/vditor@3.10.8/dist/index.css" />
+    <script src="https://unpkg.com/vditor@3.10.8/dist/index.min.js"></script>
+    <script src="github-service.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        /* 暗夜模式样式 */
+        .dark-mode {
+            background: #000000 !important;
+            color: #e0e0e0;
+        }
+
+        .dark-mode .header {
+            background: #000000 !important;
+            border-bottom-color: #333;
+        }
+
+        .dark-mode .content-type-selector {
+            background: #000000;
+        }
+
+        /* 克莱因蓝按钮样式 */
+        .dark-mode .content-type-selector .el-button--primary,
+        .dark-mode .el-button--primary {
+            background: #002FA7 !important;
+            border-color: #002FA7 !important;
+            color: white !important;
+        }
+
+        .dark-mode .content-type-selector .el-button--primary:hover,
+        .dark-mode .el-button--primary:hover {
+            background: #0033B8 !important;
+            border-color: #0033B8 !important;
+            color: white !important;
+        }
+
+        /* 强制覆盖Element UI的默认样式 */
+        .dark-mode .content-type-selector .el-button.el-button--primary {
+            background-color: #002FA7 !important;
+            border-color: #002FA7 !important;
+        }
+
+        .dark-mode .content-type-selector .el-button.el-button--primary:hover {
+            background-color: #0033B8 !important;
+            border-color: #0033B8 !important;
+        }
+
+        /* 发布按钮图标大小 */
+        .publish-button .el-icon-upload {
+            font-size: 18px !important;
+        }
+
+        /* GitHub配置按钮 */
+        .github-config-button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            background: #24292e;
+            color: white;
+            margin-left: 10px;
+        }
+
+        .github-config-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+            background: #333;
+        }
+
+        .github-config-button .el-icon-setting {
+            font-size: 18px;
+        }
+
+        /* Vditor YAML frontmatter 预览样式 */
+        .vditor-preview .language-yaml,
+        .vditor-preview pre[data-lang="yaml"],
+        .vditor-preview code.language-yaml {
+            background: #002FA7 !important;
+            color: white !important;
+            border: 1px solid #0033B8 !important;
+        }
+
+        /* Vditor 编辑器中的 YAML 代码块样式 */
+        .vditor-ir pre.vditor-ir__marker--pre code,
+        .vditor-wysiwyg pre code {
+            background: #002FA7 !important;
+            color: white !important;
+        }
+
+        /* 针对 frontmatter 的特殊样式 */
+        .vditor-preview hr + pre,
+        .vditor-preview hr + pre code {
+            background: #002FA7 !important;
+            color: white !important;
+            border: 2px solid #0033B8 !important;
+            border-radius: 6px !important;
+        }
+
+        /* 更强制的样式覆盖 - 针对所有可能的YAML显示 */
+        .vditor-preview pre,
+        .vditor-preview pre code,
+        .vditor-preview .hljs,
+        .vditor-preview .hljs-attr,
+        .vditor-preview .hljs-string,
+        .vditor-preview .hljs-literal {
+            background: #002FA7 !important;
+            color: white !important;
+        }
+
+        /* 确保YAML语法高亮也使用克莱因蓝 */
+        .vditor-preview .hljs-attr {
+            color: #FFD700 !important; /* 金色用于属性名 */
+        }
+
+        .vditor-preview .hljs-string {
+            color: #90EE90 !important; /* 浅绿色用于字符串值 */
+        }
+
+        .vditor-preview .hljs-literal {
+            color: #FFA500 !important; /* 橙色用于字面量 */
+        }
+
+        .dark-mode .editor-container {
+            background: #000000 !important;
+        }
+
+        .dark-mode #vditor {
+            background: #000000 !important;
+        }
+
+        .dark-mode .vditor {
+            background: #000000 !important;
+        }
+
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-bottom: none;
+            padding: 15px 25px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            color: white;
+        }
+        .content-type-selector {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .type-buttons {
+            display: flex;
+            gap: 12px;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        /* 美化按钮样式 - 圆形按钮 */
+        .el-button {
+            border-radius: 25px !important;
+            font-weight: 500 !important;
+            transition: all 0.3s ease !important;
+            padding: 12px 24px !important;
+        }
+
+        .el-button:hover {
+            transform: translateY(-1px) !important;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+        }
+
+        .el-button.is-circle {
+            border-radius: 50% !important;
+            width: 40px !important;
+            height: 40px !important;
+            padding: 0 !important;
+        }
+        .editor-container {
+            height: calc(100vh - 90px);
+            padding: 0;
+            background: #fafafa;
+        }
+        #vditor {
+            height: 100%;
+            border-radius: 0;
+        }
+
+        /* 编辑器字体大小 */
+        .vditor-sv .vditor-sv__main textarea,
+        .vditor-wysiwyg .vditor-wysiwyg__main {
+            font-size: 16px !important;
+            line-height: 1.6 !important;
+        }
+
+        /* 暗夜模式下的编辑器样式 */
+        .dark-mode .editor-container {
+            background: #000000 !important;
+        }
+
+        .dark-mode .header {
+            background: #000000 !important;
+        }
+
+        .dark-mode .vditor-toolbar {
+            background: #000000 !important;
+            border-bottom-color: #333 !important;
+        }
+
+        .dark-mode .vditor-content {
+            background: #000000 !important;
+        }
+
+        .dark-mode .vditor-sv {
+            background: #000000 !important;
+        }
+
+        .dark-mode .vditor-sv .vditor-sv__main {
+            background: #000000 !important;
+        }
+
+        .dark-mode .vditor-sv .vditor-sv__preview {
+            background: #000000 !important;
+        }
+
+        .dark-mode .vditor-sv .vditor-sv__preview .vditor-reset {
+            background: #000000 !important;
+            color: #e0e0e0 !important;
+        }
+
+        .dark-mode .vditor-preview {
+            background: #000000 !important;
+        }
+
+        .dark-mode .vditor-preview .vditor-reset {
+            background: #000000 !important;
+            color: #e0e0e0 !important;
+        }
+        .metadata-info {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.8);
+            margin-left: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 4px 8px;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+        }
+
+        .dark-mode .metadata-info {
+            color: rgba(224, 224, 224, 0.8);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .dark-mode .el-button {
+            background: #333 !important;
+            border-color: #555 !important;
+            color: #e0e0e0 !important;
+        }
+
+        .dark-mode .el-button:hover {
+            background: #444 !important;
+            border-color: #666 !important;
+        }
+
+        .dark-mode .el-button--primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            border-color: transparent !important;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .header {
+                padding: 12px 15px;
+            }
+
+            .content-type-selector {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+            }
+
+            .type-buttons,
+            .action-buttons {
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+
+            .editor-container {
+                height: calc(100vh - 120px);
+            }
+        }
+
+        /* 滚动条美化 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+
+        .dark-mode ::-webkit-scrollbar-track {
+            background: #2d2d2d;
+        }
+
+        .dark-mode ::-webkit-scrollbar-thumb {
+            background: #555;
+        }
+
+        .dark-mode ::-webkit-scrollbar-thumb:hover {
+            background: #777;
+        }
+
+        /* 元数据对话框美化 */
+        .metadata-dialog .el-dialog {
+            border-radius: 16px !important;
+            overflow: hidden;
+        }
+
+        .metadata-dialog .el-dialog__header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            color: white !important;
+            padding: 20px 24px !important;
+            border-bottom: none !important;
+        }
+
+        .metadata-dialog .el-dialog__title {
+            color: white !important;
+            font-size: 18px !important;
+            font-weight: 600 !important;
+        }
+
+        .metadata-dialog .el-dialog__headerbtn {
+            top: 20px !important;
+            right: 20px !important;
+        }
+
+        .metadata-dialog .el-dialog__headerbtn .el-dialog__close {
+            color: white !important;
+            font-size: 18px !important;
+        }
+
+        .metadata-form-container {
+            padding: 24px;
+            background: #fafafa;
+        }
+
+        .metadata-field {
+            margin-bottom: 20px;
+        }
+
+        .field-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .field-input .el-input__inner,
+        .field-input .el-textarea__inner {
+            border-radius: 8px !important;
+            border: 2px solid #e8e8e8 !important;
+            transition: all 0.3s ease !important;
+            font-size: 14px !important;
+        }
+
+        .field-input .el-input__inner:focus,
+        .field-input .el-textarea__inner:focus {
+            border-color: #667eea !important;
+            box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1) !important;
+        }
+
+        .metadata-dialog-footer {
+            padding: 16px 24px !important;
+            background: #f8f9fa !important;
+            border-top: 1px solid #e8e8e8 !important;
+            text-align: right;
+        }
+
+        .cancel-btn {
+            border-radius: 20px !important;
+            padding: 10px 20px !important;
+            margin-right: 12px !important;
+        }
+
+        .save-btn {
+            border-radius: 20px !important;
+            padding: 10px 20px !important;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            border: none !important;
+        }
+
+        /* 暗夜模式下的元数据对话框 */
+        .dark-mode .metadata-dialog .el-dialog {
+            background: #000000 !important;
+        }
+
+        .dark-mode .metadata-dialog .el-dialog__header {
+            background: #000000 !important;
+        }
+
+        .dark-mode .metadata-dialog .el-dialog__body {
+            background: #000000 !important;
+        }
+
+        .dark-mode .metadata-form-container {
+            background: #000000 !important;
+        }
+
+        .dark-mode .field-label {
+            color: #e0e0e0 !important;
+        }
+
+        .dark-mode .field-input .el-input__inner,
+        .dark-mode .field-input .el-textarea__inner {
+            background: #000000 !important;
+            border-color: #333 !important;
+            color: #e0e0e0 !important;
+        }
+
+        .dark-mode .metadata-dialog-footer {
+            background: #000000 !important;
+            border-top-color: #333 !important;
+        }
+
+        /* 强制隐藏不需要的工具栏按钮 */
+        .vditor-toolbar__item[data-type="content-theme"],
+        .vditor-toolbar__item[data-type="code-theme"],
+        .vditor-toolbar__item[data-type="devtools"],
+        button[data-type="content-theme"],
+        button[data-type="code-theme"],
+        button[data-type="devtools"],
+        .vditor-tooltipped[data-type="content-theme"],
+        .vditor-tooltipped[data-type="code-theme"],
+        .vditor-tooltipped[data-type="devtools"],
+        .vditor-toolbar__item[title*="桌面"],
+        .vditor-toolbar__item[title*="平板"],
+        .vditor-toolbar__item[title*="手机"],
+        .vditor-toolbar__item[title*="微信"],
+        .vditor-toolbar__item[title*="知乎"],
+        .vditor-toolbar__item .vditor-icon-desktop,
+        .vditor-toolbar__item .vditor-icon-tablet,
+        .vditor-toolbar__item .vditor-icon-mobile,
+        .vditor-toolbar__item .vditor-icon-wechat,
+        /* 预览操作按钮 */
+        .vditor-preview__action,
+        .vditor-preview__action--current,
+        .vditor-preview__actions,
+        .vditor-preview__action-wrapper,
+        button.vditor-preview__action,
+        button.vditor-preview__action--current {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            width: 0 !important;
+            height: 0 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            position: absolute !important;
+            left: -9999px !important;
+            top: -9999px !important;
+        }
+
+        /* 通过文本内容隐藏按钮 */
+        button:contains("Desktop"),
+        button:contains("Tablet"),
+        button:contains("Mobile"),
+        button:contains("WeChat"),
+        button:contains("知") {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+        }
+        @media (max-width: 768px) {
+            .content-type-selector {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .type-buttons, .action-buttons {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="header">
+            <div class="content-type-selector">
+                <div class="type-buttons">
+                    <el-button
+                        v-for="(label, type) in contentTypeLabels"
+                        :key="type"
+                        :type="currentType === type ? 'primary' : 'default'"
+                        @click="selectType(type)"
+                        size="small">
+                        <i :class="getTypeIcon(type)"></i>
+                        {{ label }}
+                    </el-button>
+                    <button class="github-config-button" @click="configureGitHub" :title="isGitHubConfigured ? 'GitHub已配置' : '配置GitHub'">
+                        <i class="el-icon-setting"></i>
+                    </button>
+                </div>
+                <div class="action-buttons">
+                    <el-button @click="publish" size="medium" type="success" icon="el-icon-upload" :disabled="!isGitHubConfigured" class="publish-button">
+                    </el-button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="editor-container">
+            <div id="vditor"></div>
+        </div>
+        
+
+
+        <github-config
+            :visible="githubConfigVisible"
+            @close="githubConfigVisible = false"
+            @save="handleGitHubConfigSave">
+        </github-config>
+    </div>
+
+    <script>
+        // 配置常量
+        const contentTypes = {
+            GENERAL: 'general',
+            BLOG: 'blog',
+            ESSAY: 'essay'
+        };
+
+        const contentTypeLabels = {
+            [contentTypes.BLOG]: 'Blogs',
+            [contentTypes.ESSAY]: 'Essays'
+        };
+
+        const metadataFields = {
+            [contentTypes.BLOG]: [
+                { key: 'title', label: '标题', type: 'text', required: true },
+                { key: 'categories', label: '分类', type: 'tags' },
+                { key: 'date', label: '发布日期', type: 'datetime' },
+                { key: 'description', label: '描述', type: 'textarea' }
+            ],
+            [contentTypes.ESSAY]: [
+                { key: 'categories', label: '分类', type: 'tags' },
+                { key: 'pubDate', label: '发布日期', type: 'datetime' },
+                { key: 'description', label: '描述', type: 'textarea' }
+            ]
+        };
+
+        // 模板生成函数
+        function generateContentWithMetadata(contentType, metadata, content) {
+            if (contentType === contentTypes.GENERAL) {
+                return content;
+            }
+
+            const frontmatter = Object.keys(metadata)
+                .filter(key => metadata[key] !== undefined && metadata[key] !== '')
+                .map(key => {
+                    let value = metadata[key];
+                    if (key === 'categories' && typeof value === 'string') {
+                        value = value.split(',').map(cat => cat.trim()).filter(cat => cat);
+                    }
+                    if (typeof value === 'string' && value.includes(':')) {
+                        value = `"${value}"`;
+                    }
+                    return `${key}: ${Array.isArray(value) ? JSON.stringify(value) : value}`;
+                })
+                .join('\n');
+
+            return frontmatter ? `---\n${frontmatter}\n---\n\n${content}` : content;
+        }
+
+        // GitHubConfig 组件
+        Vue.component('github-config', {
+            props: {
+                visible: Boolean
+            },
+            template: `
+                <el-dialog
+                    title="配置GitHub"
+                    :visible.sync="dialogVisible"
+                    width="600px"
+                    @close="handleClose">
+                    <el-form :model="formData" label-width="120px">
+                        <el-form-item label="Personal Token" required>
+                            <el-input
+                                v-model="formData.token"
+                                type="password"
+                                placeholder="请输入GitHub Personal Access Token"
+                                show-password>
+                            </el-input>
+                            <div style="font-size: 12px; color: #666; margin-top: 5px;">
+                                <strong>重要：</strong>需要完整的<code>repo</code>权限。<a href="https://github.com/settings/tokens" target="_blank">获取Token</a><br>
+                                <strong>权限要求：</strong>在创建Token时必须勾选完整的<code>repo</code>权限（包括所有子权限）<br>
+                                <strong>常见问题：</strong>如果是组织仓库，还需要组织授权该Token访问
+                            </div>
+                        </el-form-item>
+                        <el-form-item label="仓库所有者" required>
+                            <el-input
+                                v-model="formData.owner"
+                                placeholder="GitHub用户名或组织名">
+                            </el-input>
+                        </el-form-item>
+                        <el-form-item label="仓库名称" required>
+                            <el-input
+                                v-model="formData.repo"
+                                placeholder="仓库名称">
+                            </el-input>
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button @click="testConnection" :loading="testing">
+                                测试连接
+                            </el-button>
+                            <span v-if="testResult" :style="{color: testResult.success ? 'green' : 'red', marginLeft: '10px'}">
+                                {{ testResult.message }}
+                            </span>
+                        </el-form-item>
+                    </el-form>
+                    <div slot="footer">
+                        <el-button @click="handleClose">取消</el-button>
+                        <el-button type="primary" @click="handleSave" :disabled="!isFormValid">保存</el-button>
+                    </div>
+                </el-dialog>
+            `,
+            data() {
+                return {
+                    formData: {
+                        token: '',
+                        owner: '',
+                        repo: ''
+                    },
+                    testing: false,
+                    testResult: null
+                };
+            },
+            computed: {
+                dialogVisible: {
+                    get() {
+                        return this.visible;
+                    },
+                    set(value) {
+                        if (!value) {
+                            this.handleClose();
+                        }
+                    }
+                },
+                isFormValid() {
+                    return this.formData.token && this.formData.owner && this.formData.repo;
+                }
+            },
+            watch: {
+                visible(newVal) {
+                    if (newVal) {
+                        // 加载已保存的配置
+                        const saved = githubService.loadConfig();
+                        if (saved) {
+                            this.formData = { ...saved };
+                        }
+                    }
+                }
+            },
+            methods: {
+                async testConnection() {
+                    if (!this.isFormValid) {
+                        this.$message.warning('请填写完整的配置信息');
+                        return;
+                    }
+
+                    this.testing = true;
+                    this.testResult = null;
+
+                    try {
+                        // 临时设置配置进行测试
+                        const tempService = new GitHubService();
+                        tempService.setConfig(this.formData);
+
+                        const result = await tempService.testConnection();
+
+                        if (result.success) {
+                            this.testResult = {
+                                success: true,
+                                message: `连接成功！用户: ${result.user}，仓库: ${result.repo}，权限: ${result.permissions}`
+                            };
+                        } else {
+                            this.testResult = {
+                                success: false,
+                                message: result.error
+                            };
+                        }
+                    } catch (error) {
+                        this.testResult = {
+                            success: false,
+                            message: `连接失败: ${error.message}`
+                        };
+                    } finally {
+                        this.testing = false;
+                    }
+                },
+                handleClose() {
+                    this.testResult = null;
+                    this.$emit('close');
+                },
+                handleSave() {
+                    this.$emit('save', { ...this.formData });
+                    this.handleClose();
+                }
+            }
+        });
+
+
+
+        // 主应用
+        new Vue({
+            el: '#app',
+            data: {
+                currentType: contentTypes.BLOG,
+                metadata: {},
+
+                githubConfigVisible: false,
+                vditor: null,
+                contentTypeLabels,
+                isGitHubConfigured: false,
+                isDarkMode: true
+            },
+
+            mounted() {
+                this.initTheme();
+                this.initVditor();
+                this.checkGitHubConfig();
+                this.checkForEditFile();
+                // 初始化时插入默认模板
+                setTimeout(() => {
+                    this.insertMetadataTemplate(this.currentType);
+                }, 800);
+            },
+            methods: {
+                initVditor() {
+                    this.vditor = new Vditor('vditor', {
+                        height: '100%',
+                        mode: 'sv', // 设置为分屏预览模式
+                        placeholder: '开始编写你的内容...',
+                        cache: {
+                            enable: true,
+                            id: 'enhanced-markdown-editor'
+                        },
+                        preview: {
+                            theme: {
+                                current: this.isDarkMode ? 'dark' : 'light'
+                            }
+                        },
+                        theme: this.isDarkMode ? 'dark' : 'classic',
+                        counter: {
+                            enable: true,
+                            type: 'text'
+                        },
+                        toolbar: [
+                            'emoji',
+                            'headings',
+                            'bold',
+                            'italic',
+                            'strike',
+                            'link',
+                            '|',
+                            'list',
+                            'ordered-list',
+                            'check',
+                            'outdent',
+                            'indent',
+                            '|',
+                            'quote',
+                            'line',
+                            'code',
+                            'inline-code',
+                            'insert-before',
+                            'insert-after',
+                            '|',
+                            'table',
+                            '|',
+                            'undo',
+                            'redo',
+                            '|',
+                            'fullscreen',
+                            'edit-mode',
+                            'outline',
+                            'preview',
+                            '|',
+                            'export'
+                        ],
+                        after: () => {
+                            // 强制隐藏不需要的工具栏按钮
+                            setTimeout(() => {
+                                // 彻底移除预览相关的按钮
+                                const removePreviewButtons = () => {
+                                    // 查找所有可能的预览按钮选择器
+                                    const selectors = [
+                                        // 通过文本内容查找
+                                        'button:contains("Desktop")',
+                                        'button:contains("Tablet")',
+                                        'button:contains("Mobile")',
+                                        'button:contains("WeChat")',
+                                        'button:contains("知")',
+                                        // 通过类名查找
+                                        '.vditor-preview__action--current',
+                                        '.vditor-preview__action',
+                                        'button.vditor-preview__action--current',
+                                        'button.vditor-preview__action',
+                                        // 通过父容器查找
+                                        '.vditor-preview__action-wrapper button',
+                                        '.vditor-preview__actions button'
+                                    ];
+
+                                    // 直接查找包含特定文本的所有按钮
+                                    const allButtons = document.querySelectorAll('button');
+                                    allButtons.forEach(button => {
+                                        const text = button.textContent || button.innerText || '';
+                                        const title = button.getAttribute('title') || '';
+                                        const ariaLabel = button.getAttribute('aria-label') || '';
+
+                                        if (text.includes('Desktop') || text.includes('Tablet') ||
+                                            text.includes('Mobile') || text.includes('WeChat') ||
+                                            text.includes('知') || title.includes('Desktop') ||
+                                            title.includes('Tablet') || title.includes('Mobile') ||
+                                            title.includes('WeChat') || title.includes('知') ||
+                                            ariaLabel.includes('Desktop') || ariaLabel.includes('Tablet') ||
+                                            ariaLabel.includes('Mobile') || ariaLabel.includes('WeChat')) {
+                                            console.log('移除按钮:', text, title, ariaLabel);
+                                            button.style.display = 'none !important';
+                                            button.style.visibility = 'hidden !important';
+                                            button.style.opacity = '0 !important';
+                                            button.remove();
+                                        }
+                                    });
+
+                                    // 查找预览操作容器并移除
+                                    const previewContainers = document.querySelectorAll('.vditor-preview__action, .vditor-preview__actions, .vditor-preview__action-wrapper');
+                                    previewContainers.forEach(container => {
+                                        if (container) {
+                                            container.style.display = 'none !important';
+                                            container.remove();
+                                        }
+                                    });
+                                };
+
+                                // 立即执行一次
+                                removePreviewButtons();
+
+                                // 延迟再执行几次，确保动态生成的按钮也被移除
+                                setTimeout(removePreviewButtons, 200);
+                                setTimeout(removePreviewButtons, 500);
+                                setTimeout(removePreviewButtons, 1000);
+
+                                // 设置MutationObserver监控DOM变化
+                                const observer = new MutationObserver((mutations) => {
+                                    mutations.forEach((mutation) => {
+                                        if (mutation.type === 'childList') {
+                                            mutation.addedNodes.forEach((node) => {
+                                                if (node.nodeType === 1) { // Element node
+                                                    // 检查新添加的节点是否是预览按钮
+                                                    if (node.tagName === 'BUTTON') {
+                                                        const text = node.textContent || '';
+                                                        if (text.includes('Desktop') || text.includes('Tablet') ||
+                                                            text.includes('Mobile') || text.includes('WeChat') ||
+                                                            text.includes('知')) {
+                                                            node.remove();
+                                                        }
+                                                    }
+                                                    // 检查新添加节点的子元素
+                                                    const buttons = node.querySelectorAll ? node.querySelectorAll('button') : [];
+                                                    buttons.forEach(button => {
+                                                        const text = button.textContent || '';
+                                                        if (text.includes('Desktop') || text.includes('Tablet') ||
+                                                            text.includes('Mobile') || text.includes('WeChat') ||
+                                                            text.includes('知')) {
+                                                            button.remove();
+                                                        }
+                                                    });
+                                                }
+                                            });
+                                        }
+                                    });
+                                });
+
+                                // 开始监控
+                                observer.observe(document.body, {
+                                    childList: true,
+                                    subtree: true
+                                });
+                            }, 100);
+                        }
+                    });
+                },
+                selectType(type) {
+                    this.currentType = type;
+                    this.insertMetadataTemplate(type);
+                },
+
+                insertMetadataTemplate(type) {
+                    const now = new Date();
+                    let template = '';
+                    let cursorPosition = 0;
+
+                    if (type === contentTypes.BLOG) {
+                        // 博客模板
+                        const dateStr = now.toISOString().split('T')[0]; // YYYY-MM-DD格式
+                        template = `---
+title:
+categories: ["Daily"]
+pubDate: ${dateStr}
+description: ''
+---
+
+`;
+                        // 计算title字段后的位置
+                        cursorPosition = template.indexOf('title: ') + 'title: '.length;
+                    } else if (type === contentTypes.ESSAY) {
+                        // 随笔模板
+                        const year = now.getFullYear();
+                        const month = String(now.getMonth() + 1).padStart(2, '0');
+                        const day = String(now.getDate()).padStart(2, '0');
+                        const hour = String(now.getHours()).padStart(2, '0');
+                        const minute = String(now.getMinutes()).padStart(2, '0');
+                        const second = String(now.getSeconds()).padStart(2, '0');
+                        const dateTimeStr = `${year}-${month}-${day} ${hour}:${minute}:${second}`;
+
+                        template = `---
+pubDate: "${dateTimeStr}"
+description:
+categories: ["随笔"]
+---
+
+`;
+                        // 光标定位到模板末尾（元数据下方）
+                        cursorPosition = template.length;
+                    }
+
+                    // 设置编辑器内容
+                    if (this.vditor) {
+                        this.vditor.setValue(template);
+                        // 将光标定位到指定位置
+                        setTimeout(() => {
+                            this.vditor.focus();
+                            this.setCursorToPosition(cursorPosition);
+                        }, 300);
+                    }
+                },
+
+                setCursorToPosition(position) {
+                    try {
+                        // 方法1: 尝试使用Vditor的API
+                        if (this.vditor.setCursorPosition) {
+                            this.vditor.setCursorPosition(position);
+                            return;
+                        }
+                    } catch (e) {
+                        console.log('Vditor API method failed, trying direct DOM manipulation');
+                    }
+
+                    // 方法2: 直接操作DOM元素
+                    const editor = this.vditor.vditor.element.querySelector('.vditor-textarea') ||
+                                 this.vditor.vditor.element.querySelector('textarea') ||
+                                 this.vditor.vditor.element.querySelector('.vditor-ir');
+
+                    if (editor) {
+                        if (editor.setSelectionRange) {
+                            editor.setSelectionRange(position, position);
+                            editor.focus();
+                        } else if (editor.createTextRange) {
+                            // IE兼容
+                            const range = editor.createTextRange();
+                            range.move('character', position);
+                            range.select();
+                        }
+                    }
+                },
+
+                parseContentWithFrontmatter(content) {
+                    // 检查是否有frontmatter
+                    if (!content.startsWith('---')) {
+                        return { metadata: {}, content: content };
+                    }
+
+                    const lines = content.split('\n');
+                    let frontmatterEnd = -1;
+
+                    // 找到frontmatter结束位置
+                    for (let i = 1; i < lines.length; i++) {
+                        if (lines[i].trim() === '---') {
+                            frontmatterEnd = i;
+                            break;
+                        }
+                    }
+
+                    if (frontmatterEnd === -1) {
+                        return { metadata: {}, content: content };
+                    }
+
+                    // 提取frontmatter
+                    const frontmatterLines = lines.slice(1, frontmatterEnd);
+                    const bodyContent = lines.slice(frontmatterEnd + 1).join('\n');
+
+                    // 解析frontmatter
+                    const metadata = {};
+                    frontmatterLines.forEach(line => {
+                        const colonIndex = line.indexOf(':');
+                        if (colonIndex > 0) {
+                            const key = line.substring(0, colonIndex).trim();
+                            let value = line.substring(colonIndex + 1).trim();
+
+                            // 移除引号
+                            if ((value.startsWith('"') && value.endsWith('"')) ||
+                                (value.startsWith("'") && value.endsWith("'"))) {
+                                value = value.slice(1, -1);
+                            }
+
+                            // 处理数组格式
+                            if (value.startsWith('[') && value.endsWith(']')) {
+                                try {
+                                    value = JSON.parse(value);
+                                } catch (e) {
+                                    // 如果解析失败，保持原值
+                                }
+                            }
+
+                            metadata[key] = value;
+                        }
+                    });
+
+                    return { metadata, content: bodyContent };
+                },
+
+                async publish() {
+                    if (!this.isGitHubConfigured) {
+                        this.$message.warning('请先配置GitHub');
+                        return;
+                    }
+
+                    // 发布前检查权限
+                    try {
+                        const connectionTest = await githubService.testConnection();
+                        if (!connectionTest.success) {
+                            this.$message.error(`权限检查失败: ${connectionTest.error}`);
+                            return;
+                        }
+                    } catch (error) {
+                        this.$message.error(`权限检查失败: ${error.message}`);
+                        return;
+                    }
+
+                    const content = this.vditor.getValue();
+                    if (!content.trim()) {
+                        this.$message.warning('请先编写内容');
+                        return;
+                    }
+
+                    // 解析编辑器中的frontmatter和内容
+                    const { metadata, content: bodyContent } = this.parseContentWithFrontmatter(content);
+
+                    // 检查是否有必要的元数据（只有博客需要标题）
+                    if (this.currentType === contentTypes.BLOG && !metadata.title) {
+                        this.$message.warning('请先设置标题');
+                        return;
+                    }
+
+                    // 直接使用解析出的完整内容（包含frontmatter）
+                    const finalContent = content;
+
+                    try {
+                        this.$message({
+                            message: '正在发布到GitHub...',
+                            type: 'info'
+                        });
+
+                        const result = await githubService.publishContent(this.currentType, metadata, finalContent);
+
+                        if (result.success) {
+                            this.$message({
+                                message: `发布成功！文件已${result.action === 'add' ? '创建' : '更新'}`,
+                                type: 'success'
+                            });
+
+                            // 清空编辑器内容
+                            this.vditor.setValue('');
+
+                            // 重置元数据
+                            this.metadata = {
+                                title: '',
+                                categories: [],
+                                description: '',
+                                pubDate: ''
+                            };
+                        }
+                    } catch (error) {
+                        console.error('发布失败:', error);
+                        this.$message({
+                            message: `发布失败: ${error.message}`,
+                            type: 'error'
+                        });
+                    }
+                },
+                checkGitHubConfig() {
+                    this.isGitHubConfigured = githubService.isConfigured();
+                },
+                configureGitHub() {
+                    this.githubConfigVisible = true;
+                },
+                handleGitHubConfigSave(config) {
+                    githubService.setConfig(config);
+                    this.checkGitHubConfig();
+                    this.$message.success('GitHub配置已保存');
+                },
+                getTypeIcon(type) {
+                    const icons = {
+                        [contentTypes.GENERAL]: 'el-icon-document',
+                        [contentTypes.BLOG]: 'el-icon-edit-outline',
+                        [contentTypes.ESSAY]: 'el-icon-notebook-1'
+                    };
+                    return icons[type] || 'el-icon-document';
+                },
+                initTheme() {
+                    // 强制使用暗夜模式
+                    this.isDarkMode = true;
+                    this.applyTheme();
+                },
+
+                applyTheme() {
+                    if (this.isDarkMode) {
+                        document.body.classList.add('dark-mode');
+                    } else {
+                        document.body.classList.remove('dark-mode');
+                    }
+                },
+                async checkForEditFile() {
+                    const editFileData = localStorage.getItem('edit_file');
+                    if (editFileData) {
+                        localStorage.removeItem('edit_file');
+
+                        try {
+                            const { file, contentType } = JSON.parse(editFileData);
+                            await this.loadFileFromGitHub(file, contentType);
+                        } catch (error) {
+                            console.error('加载文件失败:', error);
+                            this.$message.error('加载文件失败');
+                        }
+                    }
+                },
+                async loadFileFromGitHub(file, contentType) {
+                    if (!this.isGitHubConfigured) {
+                        this.$message.warning('请先配置GitHub');
+                        return;
+                    }
+
+                    try {
+                        this.$message({
+                            message: '正在加载文件...',
+                            type: 'info'
+                        });
+
+                        const fileData = await githubService.getFile(file.path);
+                        if (fileData) {
+                            // 解析内容和元数据
+                            const { content, metadata } = this.parseContentWithMetadata(fileData.content);
+
+                            // 设置内容类型
+                            this.currentType = contentType;
+
+                            // 设置元数据
+                            this.metadata = metadata;
+
+                            // 设置编辑器内容
+                            if (this.vditor) {
+                                this.vditor.setValue(content);
+                            }
+
+                            this.$message.success('文件加载成功');
+                        }
+                    } catch (error) {
+                        console.error('加载文件失败:', error);
+                        this.$message.error(`加载文件失败: ${error.message}`);
+                    }
+                },
+                parseContentWithMetadata(content) {
+                    // 解析YAML frontmatter
+                    const frontmatterRegex = /^---\s*\n([\s\S]*?)\n---\s*\n([\s\S]*)$/;
+                    const match = content.match(frontmatterRegex);
+
+                    if (match) {
+                        const frontmatterText = match[1];
+                        const contentText = match[2];
+
+                        // 简单解析YAML（这里使用简单的键值对解析）
+                        const metadata = {};
+                        frontmatterText.split('\n').forEach(line => {
+                            const colonIndex = line.indexOf(':');
+                            if (colonIndex > 0) {
+                                const key = line.substring(0, colonIndex).trim();
+                                let value = line.substring(colonIndex + 1).trim();
+
+                                // 移除引号
+                                if ((value.startsWith('"') && value.endsWith('"')) ||
+                                    (value.startsWith("'") && value.endsWith("'"))) {
+                                    value = value.slice(1, -1);
+                                }
+
+                                // 处理数组（简单处理）
+                                if (value.startsWith('[') && value.endsWith(']')) {
+                                    try {
+                                        value = JSON.parse(value).join(', ');
+                                    } catch (e) {
+                                        // 保持原值
+                                    }
+                                }
+
+                                metadata[key] = value;
+                            }
+                        });
+
+                        return { content: contentText, metadata };
+                    } else {
+                        return { content, metadata: {} };
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

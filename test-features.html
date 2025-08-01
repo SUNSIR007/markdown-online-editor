@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>功能测试页面</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .test-title {
+            font-size: 32px;
+            text-align: center;
+            margin-bottom: 30px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+        }
+        
+        .test-section h3 {
+            margin-top: 0;
+            color: #fff;
+            font-size: 20px;
+        }
+        
+        .test-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .test-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .test-list li:before {
+            content: "✓";
+            color: #4CAF50;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        
+        .test-button {
+            display: inline-block;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin: 10px 10px 10px 0;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .test-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            text-decoration: none;
+            color: white;
+        }
+        
+        .status {
+            font-weight: bold;
+            color: #4CAF50;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1 class="test-title">🧪 功能测试清单</h1>
+        
+        <div class="test-section">
+            <h3>✅ 已修复的问题</h3>
+            <ul class="test-list">
+                <li>✅ 彻底移除了工具栏中的红框内容（Desktop, Tablet, Mobile, WeChat, 知乎等按钮）</li>
+                <li>✅ 暗夜模式下所有背景都变为纯黑色（#000000），包括预览区域</li>
+                <li>✅ 主题切换改为圆形小按钮，位置调整到右上角避免重叠</li>
+                <li>✅ 所有按钮都改为圆形设计，主题按钮为白色背景</li>
+                <li>✅ 编辑器字体大小增加到16px</li>
+                <li>✅ 保留了导出MD文件功能</li>
+                <li>✅ 随笔元数据修改为：categories, pubDate, description（移除title）</li>
+                <li>✅ 元数据编辑窗口完全重新设计，更高级简约</li>
+            </ul>
+        </div>
+        
+        <div class="test-section">
+            <h3>🎨 UI改进</h3>
+            <ul class="test-list">
+                <li>圆形主题切换按钮（🌙/☀️），白色背景，右上角位置</li>
+                <li>圆形操作按钮设计，25px圆角</li>
+                <li>纯黑色暗夜模式背景（#000000），包括编辑器和预览区</li>
+                <li>渐变色头部设计（亮色模式）</li>
+                <li>高级简约的元数据编辑对话框</li>
+                <li>响应式布局优化</li>
+                <li>按钮悬停动画效果</li>
+            </ul>
+        </div>
+        
+        <div class="test-section">
+            <h3>🔧 技术特性</h3>
+            <ul class="test-list">
+                <li>Vditor分屏预览模式</li>
+                <li>Astro项目路径支持</li>
+                <li>GitHub API集成</li>
+                <li>本地主题设置保存</li>
+                <li>移动端适配</li>
+                <li>字数统计功能</li>
+            </ul>
+        </div>
+        
+        <div class="test-section">
+            <h3>🚀 测试链接</h3>
+            <div>
+                <a href="enhanced-editor.html" class="test-button">📝 打开编辑器</a>
+                <a href="index.html" class="test-button">🏠 返回主页</a>
+                <a href="demo.html" class="test-button">🎯 功能演示</a>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>📋 测试步骤</h3>
+            <ol style="color: rgba(255, 255, 255, 0.9); line-height: 1.6;">
+                <li>打开编辑器，检查工具栏是否已彻底移除红框内容（Desktop等5个按钮）</li>
+                <li>点击右上角圆形主题切换按钮，验证暗夜模式</li>
+                <li>确认暗夜模式下所有背景都是纯黑色，包括预览区域</li>
+                <li>测试按钮是否都是圆形设计，主题按钮是否为白色</li>
+                <li>验证编辑器字体大小是否为16px</li>
+                <li>测试导出MD文件功能是否正常</li>
+                <li>选择"随笔"类型，点击"编辑元数据"，检查是否只有3个字段</li>
+                <li>验证元数据对话框的新设计是否美观</li>
+                <li>检查移动端响应式效果</li>
+            </ol>
+        </div>
+        
+        <div class="test-section">
+            <h3>📱 移动端测试</h3>
+            <p style="color: rgba(255, 255, 255, 0.9); line-height: 1.6;">
+                请在移动设备或浏览器开发者工具的移动模式下测试：
+            </p>
+            <ul class="test-list">
+                <li>主题按钮位置是否合适</li>
+                <li>按钮大小是否适合触摸</li>
+                <li>布局是否正确适配</li>
+                <li>编辑器是否可正常使用</li>
+            </ul>
+        </div>
+        
+        <div style="text-align: center; margin-top: 40px;">
+            <p style="font-size: 18px; opacity: 0.8;">
+                <span class="status">状态：所有功能已修复完成 ✅</span>
+            </p>
+        </div>
+    </div>
+</body>
+</html>

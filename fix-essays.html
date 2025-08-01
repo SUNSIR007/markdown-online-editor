@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>修复Essays文件</title>
+    <script src="https://unpkg.com/vue@2.6.14/dist/vue.js"></script>
+    <script src="https://unpkg.com/element-ui@2.15.13/lib/index.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui@2.15.13/lib/theme-chalk/index.css">
+    <script src="github-service.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .file-item {
+            margin: 10px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: #f9f9f9;
+        }
+        .file-path {
+            font-family: monospace;
+            color: #666;
+            font-size: 12px;
+        }
+        .file-content {
+            margin: 10px 0;
+            padding: 10px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="container">
+            <h1>修复Essays文件</h1>
+            <p>这个工具会扫描并修复Essays文件中的frontmatter问题</p>
+            
+            <el-button @click="loadGitHubConfig" type="primary">加载GitHub配置</el-button>
+            <el-button @click="scanFiles" :loading="scanning" :disabled="!isConfigured">扫描文件</el-button>
+            <el-button @click="fixFiles" :loading="fixing" :disabled="!hasProblems">修复文件</el-button>
+            
+            <div v-if="configStatus" style="margin: 10px 0;">
+                <el-tag :type="isConfigured ? 'success' : 'danger'">
+                    {{ configStatus }}
+                </el-tag>
+            </div>
+            
+            <div v-if="scanResults.length > 0">
+                <h3>扫描结果 ({{ scanResults.length }} 个文件)</h3>
+                <div v-for="(file, index) in scanResults" :key="index" class="file-item">
+                    <div class="file-path">{{ file.path }}</div>
+                    <div v-if="file.problem">
+                        <el-tag type="warning">问题: {{ file.problem }}</el-tag>
+                    </div>
+                    <div v-else>
+                        <el-tag type="success">正常</el-tag>
+                    </div>
+                    <div class="file-content">{{ file.frontmatter }}</div>
+                </div>
+            </div>
+            
+            <div v-if="fixResults.length > 0">
+                <h3>修复结果</h3>
+                <div v-for="(result, index) in fixResults" :key="index">
+                    <el-tag :type="result.success ? 'success' : 'danger'">
+                        {{ result.message }}
+                    </el-tag>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        new Vue({
+            el: '#app',
+            data() {
+                return {
+                    githubService: null,
+                    isConfigured: false,
+                    configStatus: '',
+                    scanning: false,
+                    fixing: false,
+                    scanResults: [],
+                    fixResults: []
+                };
+            },
+            computed: {
+                hasProblems() {
+                    return this.scanResults.some(file => file.problem);
+                }
+            },
+            methods: {
+                loadGitHubConfig() {
+                    this.githubService = new GitHubService();
+                    const config = localStorage.getItem('github-config');
+                    
+                    if (config) {
+                        const parsedConfig = JSON.parse(config);
+                        this.githubService.setConfig(parsedConfig);
+                        this.isConfigured = this.githubService.isConfigured();
+                        this.configStatus = this.isConfigured ? 
+                            `已配置: ${parsedConfig.owner}/${parsedConfig.repo}` : 
+                            '配置不完整';
+                    } else {
+                        this.configStatus = '未找到GitHub配置';
+                    }
+                },
+
+                async scanFiles() {
+                    if (!this.isConfigured) return;
+                    
+                    this.scanning = true;
+                    this.scanResults = [];
+                    
+                    try {
+                        // 获取essays目录下的所有文件
+                        const response = await this.githubService.request('/repos/' + 
+                            this.githubService.owner + '/' + 
+                            this.githubService.repo + '/contents/src/content/essays');
+                        
+                        for (const file of response) {
+                            if (file.name.endsWith('.md')) {
+                                const fileContent = await this.githubService.getFile(file.path);
+                                const analysis = this.analyzeFile(fileContent.content, file.path);
+                                this.scanResults.push(analysis);
+                            }
+                        }
+                        
+                        this.$message.success(`扫描完成，找到 ${this.scanResults.length} 个文件`);
+                    } catch (error) {
+                        this.$message.error(`扫描失败: ${error.message}`);
+                    } finally {
+                        this.scanning = false;
+                    }
+                },
+
+                analyzeFile(content, path) {
+                    const result = {
+                        path: path,
+                        frontmatter: '',
+                        problem: null,
+                        content: content
+                    };
+
+                    // 提取frontmatter
+                    if (content.startsWith('---')) {
+                        const lines = content.split('\n');
+                        let frontmatterEnd = -1;
+                        
+                        for (let i = 1; i < lines.length; i++) {
+                            if (lines[i].trim() === '---') {
+                                frontmatterEnd = i;
+                                break;
+                            }
+                        }
+                        
+                        if (frontmatterEnd > 0) {
+                            result.frontmatter = lines.slice(0, frontmatterEnd + 1).join('\n');
+                            
+                            // 检查description字段
+                            const frontmatterContent = lines.slice(1, frontmatterEnd).join('\n');
+                            if (frontmatterContent.includes('description:') && 
+                                !frontmatterContent.includes('description: "')) {
+                                // 检查是否是空的description
+                                const descLine = lines.find(line => line.trim().startsWith('description:'));
+                                if (descLine && descLine.trim() === 'description:') {
+                                    result.problem = 'description字段为空，需要修复';
+                                }
+                            }
+                        }
+                    }
+
+                    return result;
+                },
+
+                async fixFiles() {
+                    if (!this.hasProblems) return;
+                    
+                    this.fixing = true;
+                    this.fixResults = [];
+                    
+                    const problemFiles = this.scanResults.filter(file => file.problem);
+                    
+                    for (const file of problemFiles) {
+                        try {
+                            const fixedContent = this.fixFileContent(file.content);
+                            
+                            // 获取文件的SHA
+                            const fileInfo = await this.githubService.getFile(file.path);
+                            
+                            // 更新文件
+                            await this.githubService.createOrUpdateFile(
+                                file.path,
+                                fixedContent,
+                                'Fix: Add empty string to description field in frontmatter',
+                                fileInfo.sha
+                            );
+                            
+                            this.fixResults.push({
+                                success: true,
+                                message: `✅ 已修复: ${file.path}`
+                            });
+                        } catch (error) {
+                            this.fixResults.push({
+                                success: false,
+                                message: `❌ 修复失败 ${file.path}: ${error.message}`
+                            });
+                        }
+                    }
+                    
+                    this.fixing = false;
+                    this.$message.success('修复完成！');
+                },
+
+                fixFileContent(content) {
+                    // 将 description: 替换为 description: ""
+                    return content.replace(/^description:\s*$/m, 'description: ""');
+                }
+            }
+        });
+    </script>
+</body>
+</html>

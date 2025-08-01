@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Component Test</title>
+    <script src="https://unpkg.com/vue@2.6.14/dist/vue.js"></script>
+    <script src="https://unpkg.com/element-ui@2.15.13/lib/index.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui@2.15.13/lib/theme-chalk/index.css">
+</head>
+<body>
+    <div id="app">
+        <h1>组件测试</h1>
+        <content-type-selector 
+            :current-type="currentType"
+            @type-change="handleTypeChange"
+            @edit-metadata="handleEditMetadata"
+            @publish="handlePublish">
+        </content-type-selector>
+        
+        <metadata-editor
+            :visible="metadataDialogVisible"
+            :content-type="currentType"
+            :metadata="metadata"
+            @close="metadataDialogVisible = false"
+            @save="handleMetadataSave">
+        </metadata-editor>
+        
+        <div style="margin-top: 20px;">
+            <p>当前内容类型: {{ currentType }}</p>
+            <p>元数据: {{ JSON.stringify(metadata, null, 2) }}</p>
+        </div>
+    </div>
+
+    <script>
+        // 内容类型配置
+        const contentTypes = {
+            GENERAL: 'general',
+            BLOG: 'blog',
+            ESSAY: 'essay'
+        };
+
+        const contentTypeLabels = {
+            [contentTypes.GENERAL]: '通用文档',
+            [contentTypes.BLOG]: '博客文章',
+            [contentTypes.ESSAY]: '随笔'
+        };
+
+        const metadataFields = {
+            [contentTypes.BLOG]: [
+                { key: 'title', label: '标题', type: 'text', required: true },
+                { key: 'categories', label: '分类', type: 'tags' },
+                { key: 'date', label: '发布日期', type: 'datetime' },
+                { key: 'description', label: '描述', type: 'textarea' }
+            ],
+            [contentTypes.ESSAY]: [
+                { key: 'title', label: '标题', type: 'text', required: true },
+                { key: 'date', label: '发布日期', type: 'datetime' },
+                { key: 'mood', label: '心情', type: 'text' },
+                { key: 'description', label: '描述', type: 'textarea' }
+            ]
+        };
+
+        // ContentTypeSelector 组件
+        Vue.component('content-type-selector', {
+            props: {
+                currentType: {
+                    type: String,
+                    default: contentTypes.GENERAL
+                }
+            },
+            template: `
+                <div class="content-type-selector">
+                    <div class="type-buttons">
+                        <el-button 
+                            v-for="(label, type) in contentTypeLabels"
+                            :key="type"
+                            :type="currentType === type ? 'primary' : 'default'"
+                            @click="selectType(type)"
+                            size="small">
+                            {{ label }}
+                        </el-button>
+                    </div>
+                    <div class="action-buttons" v-if="currentType !== 'general'">
+                        <el-button @click="editMetadata" size="small" icon="el-icon-edit">
+                            编辑元数据
+                        </el-button>
+                        <el-button @click="publish" size="small" type="success" icon="el-icon-upload">
+                            发布
+                        </el-button>
+                    </div>
+                </div>
+            `,
+            data() {
+                return {
+                    contentTypeLabels
+                };
+            },
+            methods: {
+                selectType(type) {
+                    this.$emit('type-change', type);
+                },
+                editMetadata() {
+                    this.$emit('edit-metadata');
+                },
+                publish() {
+                    this.$emit('publish');
+                }
+            }
+        });
+
+        // MetadataEditor 组件
+        Vue.component('metadata-editor', {
+            props: {
+                visible: Boolean,
+                contentType: String,
+                metadata: Object
+            },
+            template: `
+                <el-dialog
+                    title="编辑元数据"
+                    :visible.sync="dialogVisible"
+                    width="600px"
+                    @close="handleClose">
+                    <el-form :model="formData" label-width="80px">
+                        <el-form-item 
+                            v-for="field in fields"
+                            :key="field.key"
+                            :label="field.label"
+                            :required="field.required">
+                            <el-input 
+                                v-if="field.type === 'text'"
+                                v-model="formData[field.key]"
+                                :placeholder="'请输入' + field.label">
+                            </el-input>
+                            <el-input 
+                                v-else-if="field.type === 'textarea'"
+                                v-model="formData[field.key]"
+                                type="textarea"
+                                :rows="3"
+                                :placeholder="'请输入' + field.label">
+                            </el-input>
+                            <el-date-picker
+                                v-else-if="field.type === 'datetime'"
+                                v-model="formData[field.key]"
+                                type="datetime"
+                                :placeholder="'选择' + field.label"
+                                format="yyyy-MM-dd HH:mm:ss"
+                                value-format="yyyy-MM-dd HH:mm:ss">
+                            </el-date-picker>
+                            <el-input
+                                v-else-if="field.type === 'tags'"
+                                v-model="formData[field.key]"
+                                :placeholder="'请输入' + field.label + '，用逗号分隔'">
+                            </el-input>
+                        </el-form-item>
+                    </el-form>
+                    <div slot="footer">
+                        <el-button @click="handleClose">取消</el-button>
+                        <el-button type="primary" @click="handleSave">保存</el-button>
+                    </div>
+                </el-dialog>
+            `,
+            data() {
+                return {
+                    formData: {}
+                };
+            },
+            computed: {
+                dialogVisible: {
+                    get() {
+                        return this.visible;
+                    },
+                    set(value) {
+                        if (!value) {
+                            this.handleClose();
+                        }
+                    }
+                },
+                fields() {
+                    return metadataFields[this.contentType] || [];
+                }
+            },
+            watch: {
+                visible(newVal) {
+                    if (newVal) {
+                        this.formData = { ...this.metadata };
+                    }
+                },
+                metadata: {
+                    handler(newVal) {
+                        this.formData = { ...newVal };
+                    },
+                    deep: true
+                }
+            },
+            methods: {
+                handleClose() {
+                    this.$emit('close');
+                },
+                handleSave() {
+                    this.$emit('save', { ...this.formData });
+                    this.handleClose();
+                }
+            }
+        });
+
+        // 主应用
+        new Vue({
+            el: '#app',
+            data: {
+                currentType: contentTypes.GENERAL,
+                metadata: {},
+                metadataDialogVisible: false
+            },
+            methods: {
+                handleTypeChange(type) {
+                    this.currentType = type;
+                    this.metadata = {};
+                },
+                handleEditMetadata() {
+                    this.metadataDialogVisible = true;
+                },
+                handleMetadataSave(data) {
+                    this.metadata = data;
+                },
+                handlePublish() {
+                    this.$message.success('发布功能正在开发中...');
+                }
+            }
+        });
+    </script>
+
+    <style>
+        .content-type-selector {
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        .type-buttons {
+            margin-bottom: 10px;
+        }
+        .type-buttons .el-button {
+            margin-right: 10px;
+        }
+        .action-buttons .el-button {
+            margin-right: 10px;
+        }
+    </style>
+</body>
+</html>

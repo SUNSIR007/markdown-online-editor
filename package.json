@@ -65,7 +65,10 @@
   },
   "babel": {
     "presets": [
-      "@vue/app"
+      ["@vue/app", {
+        "useBuiltIns": "entry",
+        "polyfills": []
+      }]
     ]
   },
   "eslintConfig": {
