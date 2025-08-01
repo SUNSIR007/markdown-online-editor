@@ -336,18 +336,21 @@
             display: none !important;
         }
 
-        /* GitHub配置弹窗圆角样式 */
+        /* GitHub配置弹窗样式 */
         .el-dialog {
             border-radius: 20px !important;
             overflow: hidden;
+            background-color: #f5f5f5 !important;
         }
 
         .el-dialog__header {
             border-radius: 20px 20px 0 0 !important;
+            background-color: #f5f5f5 !important;
         }
 
         .el-dialog__body {
             border-radius: 0 0 20px 20px !important;
+            background-color: #f5f5f5 !important;
         }
 
         .metadata-info {
@@ -366,19 +369,22 @@
         }
 
         /* 保存按钮克莱因蓝样式 */
-        .save-button {
+        .save-button,
+        .el-dialog .save-button {
             background-color: #002FA7 !important;
             border-color: #002FA7 !important;
             color: white !important;
         }
 
-        .save-button:hover {
+        .save-button:hover,
+        .el-dialog .save-button:hover {
             background-color: #0033B8 !important;
             border-color: #0033B8 !important;
             color: white !important;
         }
 
-        .save-button:focus {
+        .save-button:focus,
+        .el-dialog .save-button:focus {
             background-color: #002FA7 !important;
             border-color: #002FA7 !important;
             color: white !important;
@@ -701,7 +707,7 @@
                     if (this.isMobileDevice()) {
                         // 设置为Essays模式
                         this.currentType = contentTypes.ESSAY;
-                        console.log('检测到移动设备，已设置为Essays模式和所见即所得编辑模式');
+                        console.log('检测到移动设备，已设置为Essays模式和即时渲染编辑模式');
                     }
                 },
 
@@ -710,8 +716,8 @@
                 },
 
                 initVditor() {
-                    // 根据设备类型设置编辑模式
-                    const editorMode = this.isMobileDevice() ? 'wysiwyg' : 'sv';
+                    // 根据设备类型设置编辑模式：手机使用即时渲染(ir)，桌面使用分屏(sv)
+                    const editorMode = this.isMobileDevice() ? 'ir' : 'sv';
 
                     this.vditor = new Vditor('vditor', {
                         height: '100%',
