@@ -258,6 +258,22 @@
             color: #e0e0e0 !important;
         }
 
+        /* 隐藏预览工具栏的Desktop/Tablet/Mobile等选项 */
+        .vditor-preview__action,
+        .vditor-preview__action--current,
+        .vditor-preview__action[data-type="desktop"],
+        .vditor-preview__action[data-type="tablet"],
+        .vditor-preview__action[data-type="mobile"],
+        .vditor-preview__action[data-type="mp-wechat"],
+        .vditor-preview__action[data-type="zhihu"] {
+            display: none !important;
+        }
+
+        /* 隐藏整个预览工具栏 */
+        .vditor-preview__toolbar {
+            display: none !important;
+        }
+
         /* GitHub配置弹窗圆角样式 */
         .el-dialog {
             border-radius: 20px !important;
