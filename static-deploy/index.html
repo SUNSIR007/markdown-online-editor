@@ -28,7 +28,7 @@
 
         .dark-mode .header {
             background: #000000 !important;
-            border-bottom-color: #333;
+            border-bottom-color: #888;
         }
 
         .dark-mode .content-type-selector {
@@ -225,11 +225,41 @@
 
         .dark-mode .vditor-toolbar {
             background: #000000 !important;
-            border-bottom-color: #333 !important;
+            border-bottom-color: #888 !important;
         }
 
         .dark-mode .vditor-content {
             background: #000000 !important;
+        }
+
+        /* 确保所见即所得模式和即时渲染模式下编辑器背景为纯黑色 */
+        .dark-mode .vditor-wysiwyg {
+            background: #000000 !important;
+        }
+
+        .dark-mode .vditor-wysiwyg .vditor-wysiwyg__main {
+            background: #000000 !important;
+            color: #e0e0e0 !important;
+        }
+
+        .dark-mode .vditor-ir {
+            background: #000000 !important;
+        }
+
+        .dark-mode .vditor-ir .vditor-ir__main {
+            background: #000000 !important;
+            color: #e0e0e0 !important;
+        }
+
+        .dark-mode .vditor-ir .vditor-ir__main textarea {
+            background: #000000 !important;
+            color: #e0e0e0 !important;
+        }
+
+        /* 确保预览区域也是纯黑色背景 */
+        .dark-mode .vditor-preview {
+            background: #000000 !important;
+            color: #e0e0e0 !important;
         }
 
         .dark-mode .vditor-sv {
