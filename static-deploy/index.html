@@ -614,6 +614,10 @@
                 this.initVditor();
                 this.checkGitHubConfig();
                 this.checkForEditFile();
+
+                // 为移动设备设置默认配置
+                this.setupMobileDefaults();
+
                 // 初始化时插入默认模板
                 setTimeout(() => {
                     this.insertMetadataTemplate(this.currentType);
@@ -621,6 +625,31 @@
             },
 
             methods: {
+                // 检测是否为移动设备
+                isMobileDevice() {
+                    const userAgent = navigator.userAgent.toLowerCase();
+                    const mobileKeywords = ['mobile', 'android', 'iphone', 'ipad', 'ipod', 'blackberry', 'windows phone'];
+                    return mobileKeywords.some(keyword => userAgent.includes(keyword)) ||
+                           window.innerWidth <= 768;
+                },
+
+                // 为移动设备设置默认配置
+                setupMobileDefaults() {
+                    if (this.isMobileDevice()) {
+                        // 设置为Essays模式
+                        this.currentType = contentTypes.ESSAY;
+
+                        // 延迟设置编辑模式为所见即所得，确保Vditor已初始化
+                        setTimeout(() => {
+                            if (this.vditor) {
+                                this.vditor.setMode('wysiwyg');
+                            }
+                        }, 1000);
+
+                        console.log('检测到移动设备，已设置为Essays模式和所见即所得编辑模式');
+                    }
+                },
+
                 initTheme() {
                     document.body.classList.add('dark-mode');
                 },
