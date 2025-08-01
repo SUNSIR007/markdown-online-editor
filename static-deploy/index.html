@@ -303,6 +303,25 @@
             background: rgba(255, 255, 255, 0.1);
         }
 
+        /* 保存按钮克莱因蓝样式 */
+        .save-button {
+            background-color: #002FA7 !important;
+            border-color: #002FA7 !important;
+            color: white !important;
+        }
+
+        .save-button:hover {
+            background-color: #0033B8 !important;
+            border-color: #0033B8 !important;
+            color: white !important;
+        }
+
+        .save-button:focus {
+            background-color: #002FA7 !important;
+            border-color: #002FA7 !important;
+            color: white !important;
+        }
+
         .dark-mode .el-button {
             background: #333 !important;
             border-color: #555 !important;
@@ -527,15 +546,20 @@
                     width="500px"
                     @close="close">
                     <el-form :model="config" label-width="100px">
-                        <el-form-item label="Personal Access Token">
+                        <el-form-item label="Token">
                             <el-input
                                 v-model="config.token"
                                 type="password"
-                                placeholder="请输入GitHub Personal Access Token"
+                                placeholder="请输入GitHub Token"
                                 show-password>
                             </el-input>
-                            <div style="font-size: 12px; color: #999; margin-top: 5px;">
-                                需要repo权限，用于读写仓库文件
+                            <div style="font-size: 12px; color: #666; margin-top: 8px; line-height: 1.4;">
+                                <strong>获取Token步骤：</strong><br>
+                                1. 登录GitHub → 右上角头像 → Settings<br>
+                                2. 左侧菜单 → Developer settings → Personal access tokens → Tokens (classic)<br>
+                                3. Generate new token → Generate new token (classic)<br>
+                                4. 勾选 <strong>repo</strong> 权限 → Generate token<br>
+                                5. 复制生成的token并粘贴到此处
                             </div>
                         </el-form-item>
 
@@ -559,7 +583,7 @@
                     <div slot="footer" class="dialog-footer">
                         <el-button @click="testConnection">测试连接</el-button>
                         <el-button @click="close">取消</el-button>
-                        <el-button type="primary" @click="save">保存</el-button>
+                        <el-button type="primary" @click="save" class="save-button">保存</el-button>
                     </div>
                 </el-dialog>
             `
