@@ -1,0 +1,408 @@
+[17:03:01.252] Running build in Washington, D.C., USA (East) – iad1
+[17:03:01.254] Build machine configuration: 2 cores, 8 GB
+[17:03:01.291] Cloning github.com/SUNSIR007/markdown-online-editor (Branch: master, Commit: ee6d1ff)
+[17:03:02.742] Cloning completed: 1.450s
+[17:03:02.891] Skipping build cache since Package Manager changed from "npm" to "yarn"
+[17:03:05.252] Running "vercel build"
+[17:03:05.878] Vercel CLI 44.6.4
+[17:03:06.489] Installing dependencies...
+[17:03:06.989] yarn install v1.22.19
+[17:03:07.081] [1/4] Resolving packages...
+[17:03:08.841] warning @vue/cli-plugin-babel > webpack > watchpack > watchpack-chokidar2 > chokidar > fsevents@1.2.13: Upgrade to fsevents v2 to mitigate potential security issues
+[17:03:08.967] warning @vue/cli-plugin-unit-jest > jest > jest-cli > jest-haste-map > sane > fsevents@1.2.13: Upgrade to fsevents v2 to mitigate potential security issues
+[17:03:09.050] warning babel-jest > @jest/transform > jest-haste-map > fsevents@1.2.13: Upgrade to fsevents v2 to mitigate potential security issues
+[17:03:09.156] [2/4] Fetching packages...
+[17:04:01.280] warning url-loader@1.1.2: Invalid bin field for "url-loader".
+[17:04:27.023] [3/4] Linking dependencies...
+[17:04:27.025] warning " > canvg@2.0.0" has unmet peer dependency "canvas@^2.1.0".
+[17:04:27.026] warning " > canvg@2.0.0" has unmet peer dependency "jsdom@^13.0.0".
+[17:04:27.026] warning " > canvg@2.0.0" has unmet peer dependency "xmldom@^0.1.27".
+[17:04:27.028] warning "babel-jest > babel-preset-jest > @babel/plugin-syntax-object-rest-spread@7.8.3" has unmet peer dependency "@babel/core@^7.0.0-0".
+[17:04:27.034] warning " > babel-core@7.0.0-bridge.0" has unmet peer dependency "@babel/core@^7.0.0-0".
+[17:04:27.035] warning " > babel-jest@24.9.0" has unmet peer dependency "@babel/core@^7.0.0".
+[17:04:27.035] warning "babel-jest > babel-preset-jest@24.9.0" has unmet peer dependency "@babel/core@^7.0.0".
+[17:04:27.035] warning " > css-loader@3.6.0" has unmet peer dependency "webpack@^4.0.0 || ^5.0.0".
+[17:04:27.035] warning " > eslint-config-prettier@6.15.0" has unmet peer dependency "eslint@>=3.14.1".
+[17:04:27.035] warning " > eslint-plugin-prettier@3.4.1" has unmet peer dependency "eslint@>=5.0.0".
+[17:04:27.035] warning " > eslint-plugin-prettier@3.4.1" has unmet peer dependency "prettier@>=1.13.0".
+[17:04:27.035] warning " > eslint-plugin-vue@5.2.3" has unmet peer dependency "eslint@^5.0.0".
+[17:04:27.035] warning "eslint-plugin-vue > vue-eslint-parser@5.0.0" has unmet peer dependency "eslint@^5.0.0".
+[17:04:27.036] warning " > less-loader@5.0.0" has unmet peer dependency "webpack@^2.0.0 || ^3.0.0 || ^4.0.0".
+[17:04:27.036] warning " > size-plugin@2.0.2" has unmet peer dependency "webpack@*".
+[17:04:27.036] warning " > svgo-loader@2.2.1" has unmet peer dependency "svgo@^1.0.0".
+[17:04:35.803] [4/4] Building fresh packages...
+[17:04:42.295] success Saved lockfile.
+[17:04:42.300] Done in 95.31s.
+[17:04:42.331] Running "yarn run build"
+[17:04:42.501] yarn run v1.22.19
+[17:04:42.529] $ vue-cli-service build
+[17:04:42.928] 
+[17:04:42.928] -  Building for production...
+[17:04:48.594]  ERROR  Failed to compile with 12 errors9:04:48 AM
+[17:04:48.595] 
+[17:04:48.595]  error  
+[17:04:48.595] 
+[17:04:48.595] js/app.2f0624c8.js from Terser
+[17:04:48.596] Error: error:0308010C:digital envelope routines::unsupported
+[17:04:48.596]     at new Hash (node:internal/crypto/hash:79:19)
+[17:04:48.596]     at Object.createHash (node:crypto:139:10)
+[17:04:48.596]     at /vercel/path0/node_modules/terser-webpack-plugin/dist/index.js:217:37
+[17:04:48.596]     at Array.forEach (<anonymous>)
+[17:04:48.597]     at TerserPlugin.optimizeFn (/vercel/path0/node_modules/terser-webpack-plugin/dist/index.js:160:259)
+[17:04:48.597]     at AsyncSeriesHook.eval [as callAsync] (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:7:1)
+[17:04:48.597]     at AsyncSeriesHook.lazyCompileHook (/vercel/path0/node_modules/tapable/lib/Hook.js:154:20)
+[17:04:48.597]     at /vercel/path0/node_modules/webpack/lib/Compilation.js:1409:36
+[17:04:48.597]     at AsyncSeriesHook.eval [as callAsync] (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:6:1)
+[17:04:48.597]     at AsyncSeriesHook.lazyCompileHook (/vercel/path0/node_modules/tapable/lib/Hook.js:154:20)
+[17:04:48.597]     at /vercel/path0/node_modules/webpack/lib/Compilation.js:1405:32
+[17:04:48.598]     at AsyncSeriesHook.eval [as callAsync] (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:6:1)
+[17:04:48.598]     at AsyncSeriesHook.lazyCompileHook (/vercel/path0/node_modules/tapable/lib/Hook.js:154:20)
+[17:04:48.598]     at Compilation.seal (/vercel/path0/node_modules/webpack/lib/Compilation.js:1342:27)
+[17:04:48.598]     at /vercel/path0/node_modules/webpack/lib/Compiler.js:675:18
+[17:04:48.598]     at /vercel/path0/node_modules/webpack/lib/Compilation.js:1261:4
+[17:04:48.599]     at AsyncSeriesHook.eval [as callAsync] (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:24:1)
+[17:04:48.599]     at AsyncSeriesHook.lazyCompileHook (/vercel/path0/node_modules/tapable/lib/Hook.js:154:20)
+[17:04:48.599]     at Compilation.finish (/vercel/path0/node_modules/webpack/lib/Compilation.js:1253:28)
+[17:04:48.599]     at /vercel/path0/node_modules/webpack/lib/Compiler.js:672:17
+[17:04:48.599]     at _done (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:9:1)
+[17:04:48.600]     at eval (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:32:22)
+[17:04:48.600]     at /vercel/path0/node_modules/webpack/lib/Compilation.js:1185:12
+[17:04:48.601]     at /vercel/path0/node_modules/webpack/lib/Compilation.js:1097:9
+[17:04:48.601]     at process.processTicksAndRejections (node:internal/process/task_queues:85:11)
+[17:04:48.601] 
+[17:04:48.601]  error  
+[17:04:48.601] 
+[17:04:48.602] js/chunk-0f299096.9fee6b59.js from Terser
+[17:04:48.602] Error: error:0308010C:digital envelope routines::unsupported
+[17:04:48.602]     at new Hash (node:internal/crypto/hash:79:19)
+[17:04:48.602]     at Object.createHash (node:crypto:139:10)
+[17:04:48.602]     at /vercel/path0/node_modules/terser-webpack-plugin/dist/index.js:217:37
+[17:04:48.602]     at Array.forEach (<anonymous>)
+[17:04:48.602]     at TerserPlugin.optimizeFn (/vercel/path0/node_modules/terser-webpack-plugin/dist/index.js:160:259)
+[17:04:48.602]     at AsyncSeriesHook.eval [as callAsync] (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:7:1)
+[17:04:48.606]     at AsyncSeriesHook.lazyCompileHook (/vercel/path0/node_modules/tapable/lib/Hook.js:154:20)
+[17:04:48.606]     at /vercel/path0/node_modules/webpack/lib/Compilation.js:1409:36
+[17:04:48.606]     at AsyncSeriesHook.eval [as callAsync] (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:6:1)
+[17:04:48.606]     at AsyncSeriesHook.lazyCompileHook (/vercel/path0/node_modules/tapable/lib/Hook.js:154:20)
+[17:04:48.606]     at /vercel/path0/node_modules/webpack/lib/Compilation.js:1405:32
+[17:04:48.606]     at AsyncSeriesHook.eval [as callAsync] (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:6:1)
+[17:04:48.607]     at AsyncSeriesHook.lazyCompileHook (/vercel/path0/node_modules/tapable/lib/Hook.js:154:20)
+[17:04:48.607]     at Compilation.seal (/vercel/path0/node_modules/webpack/lib/Compilation.js:1342:27)
+[17:04:48.607]     at /vercel/path0/node_modules/webpack/lib/Compiler.js:675:18
+[17:04:48.607]     at /vercel/path0/node_modules/webpack/lib/Compilation.js:1261:4
+[17:04:48.607]     at AsyncSeriesHook.eval [as callAsync] (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:24:1)
+[17:04:48.607]     at AsyncSeriesHook.lazyCompileHook (/vercel/path0/node_modules/tapable/lib/Hook.js:154:20)
+[17:04:48.607]     at Compilation.finish (/vercel/path0/node_modules/webpack/lib/Compilation.js:1253:28)
+[17:04:48.607]     at /vercel/path0/node_modules/webpack/lib/Compiler.js:672:17
+[17:04:48.607]     at _done (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:9:1)
+[17:04:48.607]     at eval (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:32:22)
+[17:04:48.607]     at /vercel/path0/node_modules/webpack/lib/Compilation.js:1185:12
+[17:04:48.607]     at /vercel/path0/node_modules/webpack/lib/Compilation.js:1097:9
+[17:04:48.607]     at process.processTicksAndRejections (node:internal/process/task_queues:85:11)
+[17:04:48.607] 
+[17:04:48.607]  error  
+[17:04:48.607] 
+[17:04:48.607] js/chunk-0fd4fbbb.a75e0873.js from Terser
+[17:04:48.607] Error: error:0308010C:digital envelope routines::unsupported
+[17:04:48.608]     at new Hash (node:internal/crypto/hash:79:19)
+[17:04:48.608]     at Object.createHash (node:crypto:139:10)
+[17:04:48.608]     at /vercel/path0/node_modules/terser-webpack-plugin/dist/index.js:217:37
+[17:04:48.608]     at Array.forEach (<anonymous>)
+[17:04:48.608]     at TerserPlugin.optimizeFn (/vercel/path0/node_modules/terser-webpack-plugin/dist/index.js:160:259)
+[17:04:48.608]     at AsyncSeriesHook.eval [as callAsync] (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:7:1)
+[17:04:48.608]     at AsyncSeriesHook.lazyCompileHook (/vercel/path0/node_modules/tapable/lib/Hook.js:154:20)
+[17:04:48.608]     at /vercel/path0/node_modules/webpack/lib/Compilation.js:1409:36
+[17:04:48.608]     at AsyncSeriesHook.eval [as callAsync] (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:6:1)
+[17:04:48.608]     at AsyncSeriesHook.lazyCompileHook (/vercel/path0/node_modules/tapable/lib/Hook.js:154:20)
+[17:04:48.608]     at /vercel/path0/node_modules/webpack/lib/Compilation.js:1405:32
+[17:04:48.608]     at AsyncSeriesHook.eval [as callAsync] (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:6:1)
+[17:04:48.609]     at AsyncSeriesHook.lazyCompileHook (/vercel/path0/node_modules/tapable/lib/Hook.js:154:20)
+[17:04:48.609]     at Compilation.seal (/vercel/path0/node_modules/webpack/lib/Compilation.js:1342:27)
+[17:04:48.609]     at /vercel/path0/node_modules/webpack/lib/Compiler.js:675:18
+[17:04:48.609]     at /vercel/path0/node_modules/webpack/lib/Compilation.js:1261:4
+[17:04:48.610]     at AsyncSeriesHook.eval [as callAsync] (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:24:1)
+[17:04:48.610]     at AsyncSeriesHook.lazyCompileHook (/vercel/path0/node_modules/tapable/lib/Hook.js:154:20)
+[17:04:48.610]     at Compilation.finish (/vercel/path0/node_modules/webpack/lib/Compilation.js:1253:28)
+[17:04:48.610]     at /vercel/path0/node_modules/webpack/lib/Compiler.js:672:17
+[17:04:48.610]     at _done (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:9:1)
+[17:04:48.610]     at eval (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:32:22)
+[17:04:48.610]     at /vercel/path0/node_modules/webpack/lib/Compilation.js:1185:12
+[17:04:48.611]     at /vercel/path0/node_modules/webpack/lib/Compilation.js:1097:9
+[17:04:48.611]     at process.processTicksAndRejections (node:internal/process/task_queues:85:11)
+[17:04:48.611] 
+[17:04:48.611]  error  
+[17:04:48.611] 
+[17:04:48.612] js/chunk-24171a38.466596ee.js from Terser
+[17:04:48.612] Error: error:0308010C:digital envelope routines::unsupported
+[17:04:48.612]     at new Hash (node:internal/crypto/hash:79:19)
+[17:04:48.612]     at Object.createHash (node:crypto:139:10)
+[17:04:48.612]     at /vercel/path0/node_modules/terser-webpack-plugin/dist/index.js:217:37
+[17:04:48.612]     at Array.forEach (<anonymous>)
+[17:04:48.612]     at TerserPlugin.optimizeFn (/vercel/path0/node_modules/terser-webpack-plugin/dist/index.js:160:259)
+[17:04:48.612]     at AsyncSeriesHook.eval [as callAsync] (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:7:1)
+[17:04:48.612]     at AsyncSeriesHook.lazyCompileHook (/vercel/path0/node_modules/tapable/lib/Hook.js:154:20)
+[17:04:48.612]     at /vercel/path0/node_modules/webpack/lib/Compilation.js:1409:36
+[17:04:48.612]     at AsyncSeriesHook.eval [as callAsync] (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:6:1)
+[17:04:48.612]     at AsyncSeriesHook.lazyCompileHook (/vercel/path0/node_modules/tapable/lib/Hook.js:154:20)
+[17:04:48.612]     at /vercel/path0/node_modules/webpack/lib/Compilation.js:1405:32
+[17:04:48.612]     at AsyncSeriesHook.eval [as callAsync] (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:6:1)
+[17:04:48.612]     at AsyncSeriesHook.lazyCompileHook (/vercel/path0/node_modules/tapable/lib/Hook.js:154:20)
+[17:04:48.612]     at Compilation.seal (/vercel/path0/node_modules/webpack/lib/Compilation.js:1342:27)
+[17:04:48.612]     at /vercel/path0/node_modules/webpack/lib/Compiler.js:675:18
+[17:04:48.612]     at /vercel/path0/node_modules/webpack/lib/Compilation.js:1261:4
+[17:04:48.613]     at AsyncSeriesHook.eval [as callAsync] (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:24:1)
+[17:04:48.613]     at AsyncSeriesHook.lazyCompileHook (/vercel/path0/node_modules/tapable/lib/Hook.js:154:20)
+[17:04:48.613]     at Compilation.finish (/vercel/path0/node_modules/webpack/lib/Compilation.js:1253:28)
+[17:04:48.613]     at /vercel/path0/node_modules/webpack/lib/Compiler.js:672:17
+[17:04:48.613]     at _done (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:9:1)
+[17:04:48.613]     at eval (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:32:22)
+[17:04:48.613]     at /vercel/path0/node_modules/webpack/lib/Compilation.js:1185:12
+[17:04:48.613]     at /vercel/path0/node_modules/webpack/lib/Compilation.js:1097:9
+[17:04:48.613]     at process.processTicksAndRejections (node:internal/process/task_queues:85:11)
+[17:04:48.613] 
+[17:04:48.613]  error  
+[17:04:48.614] 
+[17:04:48.614] js/chunk-2d216257.58872a85.js from Terser
+[17:04:48.614] Error: error:0308010C:digital envelope routines::unsupported
+[17:04:48.614]     at new Hash (node:internal/crypto/hash:79:19)
+[17:04:48.614]     at Object.createHash (node:crypto:139:10)
+[17:04:48.614]     at /vercel/path0/node_modules/terser-webpack-plugin/dist/index.js:217:37
+[17:04:48.614]     at Array.forEach (<anonymous>)
+[17:04:48.614]     at TerserPlugin.optimizeFn (/vercel/path0/node_modules/terser-webpack-plugin/dist/index.js:160:259)
+[17:04:48.614]     at AsyncSeriesHook.eval [as callAsync] (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:7:1)
+[17:04:48.614]     at AsyncSeriesHook.lazyCompileHook (/vercel/path0/node_modules/tapable/lib/Hook.js:154:20)
+[17:04:48.614]     at /vercel/path0/node_modules/webpack/lib/Compilation.js:1409:36
+[17:04:48.614]     at AsyncSeriesHook.eval [as callAsync] (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:6:1)
+[17:04:48.614]     at AsyncSeriesHook.lazyCompileHook (/vercel/path0/node_modules/tapable/lib/Hook.js:154:20)
+[17:04:48.614]     at /vercel/path0/node_modules/webpack/lib/Compilation.js:1405:32
+[17:04:48.614]     at AsyncSeriesHook.eval [as callAsync] (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:6:1)
+[17:04:48.614]     at AsyncSeriesHook.lazyCompileHook (/vercel/path0/node_modules/tapable/lib/Hook.js:154:20)
+[17:04:48.614]     at Compilation.seal (/vercel/path0/node_modules/webpack/lib/Compilation.js:1342:27)
+[17:04:48.614]     at /vercel/path0/node_modules/webpack/lib/Compiler.js:675:18
+[17:04:48.614]     at /vercel/path0/node_modules/webpack/lib/Compilation.js:1261:4
+[17:04:48.614]     at AsyncSeriesHook.eval [as callAsync] (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:24:1)
+[17:04:48.614]     at AsyncSeriesHook.lazyCompileHook (/vercel/path0/node_modules/tapable/lib/Hook.js:154:20)
+[17:04:48.620]     at Compilation.finish (/vercel/path0/node_modules/webpack/lib/Compilation.js:1253:28)
+[17:04:48.620]     at /vercel/path0/node_modules/webpack/lib/Compiler.js:672:17
+[17:04:48.620]     at _done (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:9:1)
+[17:04:48.620]     at eval (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:32:22)
+[17:04:48.620]     at /vercel/path0/node_modules/webpack/lib/Compilation.js:1185:12
+[17:04:48.620]     at /vercel/path0/node_modules/webpack/lib/Compilation.js:1097:9
+[17:04:48.620]     at process.processTicksAndRejections (node:internal/process/task_queues:85:11)
+[17:04:48.620] 
+[17:04:48.620]  error  
+[17:04:48.620] 
+[17:04:48.620] js/chunk-2d226168.b8ade778.js from Terser
+[17:04:48.620] Error: error:0308010C:digital envelope routines::unsupported
+[17:04:48.621]     at new Hash (node:internal/crypto/hash:79:19)
+[17:04:48.621]     at Object.createHash (node:crypto:139:10)
+[17:04:48.621]     at /vercel/path0/node_modules/terser-webpack-plugin/dist/index.js:217:37
+[17:04:48.621]     at Array.forEach (<anonymous>)
+[17:04:48.621]     at TerserPlugin.optimizeFn (/vercel/path0/node_modules/terser-webpack-plugin/dist/index.js:160:259)
+[17:04:48.621]     at AsyncSeriesHook.eval [as callAsync] (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:7:1)
+[17:04:48.621]     at AsyncSeriesHook.lazyCompileHook (/vercel/path0/node_modules/tapable/lib/Hook.js:154:20)
+[17:04:48.621]     at /vercel/path0/node_modules/webpack/lib/Compilation.js:1409:36
+[17:04:48.621]     at AsyncSeriesHook.eval [as callAsync] (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:6:1)
+[17:04:48.621]     at AsyncSeriesHook.lazyCompileHook (/vercel/path0/node_modules/tapable/lib/Hook.js:154:20)
+[17:04:48.621]     at /vercel/path0/node_modules/webpack/lib/Compilation.js:1405:32
+[17:04:48.621]     at AsyncSeriesHook.eval [as callAsync] (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:6:1)
+[17:04:48.621]     at AsyncSeriesHook.lazyCompileHook (/vercel/path0/node_modules/tapable/lib/Hook.js:154:20)
+[17:04:48.621]     at Compilation.seal (/vercel/path0/node_modules/webpack/lib/Compilation.js:1342:27)
+[17:04:48.621]     at /vercel/path0/node_modules/webpack/lib/Compiler.js:675:18
+[17:04:48.621]     at /vercel/path0/node_modules/webpack/lib/Compilation.js:1261:4
+[17:04:48.621]     at AsyncSeriesHook.eval [as callAsync] (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:24:1)
+[17:04:48.621]     at AsyncSeriesHook.lazyCompileHook (/vercel/path0/node_modules/tapable/lib/Hook.js:154:20)
+[17:04:48.622]     at Compilation.finish (/vercel/path0/node_modules/webpack/lib/Compilation.js:1253:28)
+[17:04:48.622]     at /vercel/path0/node_modules/webpack/lib/Compiler.js:672:17
+[17:04:48.622]     at _done (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:9:1)
+[17:04:48.622]     at eval (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:32:22)
+[17:04:48.622]     at /vercel/path0/node_modules/webpack/lib/Compilation.js:1185:12
+[17:04:48.622]     at /vercel/path0/node_modules/webpack/lib/Compilation.js:1097:9
+[17:04:48.622]     at process.processTicksAndRejections (node:internal/process/task_queues:85:11)
+[17:04:48.622] 
+[17:04:48.622]  error  
+[17:04:48.622] 
+[17:04:48.622] js/chunk-2e73aee3.773cf6bf.js from Terser
+[17:04:48.622] Error: error:0308010C:digital envelope routines::unsupported
+[17:04:48.622]     at new Hash (node:internal/crypto/hash:79:19)
+[17:04:48.622]     at Object.createHash (node:crypto:139:10)
+[17:04:48.622]     at /vercel/path0/node_modules/terser-webpack-plugin/dist/index.js:217:37
+[17:04:48.622]     at Array.forEach (<anonymous>)
+[17:04:48.622]     at TerserPlugin.optimizeFn (/vercel/path0/node_modules/terser-webpack-plugin/dist/index.js:160:259)
+[17:04:48.622]     at AsyncSeriesHook.eval [as callAsync] (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:7:1)
+[17:04:48.622]     at AsyncSeriesHook.lazyCompileHook (/vercel/path0/node_modules/tapable/lib/Hook.js:154:20)
+[17:04:48.623]     at /vercel/path0/node_modules/webpack/lib/Compilation.js:1409:36
+[17:04:48.623]     at AsyncSeriesHook.eval [as callAsync] (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:6:1)
+[17:04:48.623]     at AsyncSeriesHook.lazyCompileHook (/vercel/path0/node_modules/tapable/lib/Hook.js:154:20)
+[17:04:48.623]     at /vercel/path0/node_modules/webpack/lib/Compilation.js:1405:32
+[17:04:48.623]     at AsyncSeriesHook.eval [as callAsync] (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:6:1)
+[17:04:48.623]     at AsyncSeriesHook.lazyCompileHook (/vercel/path0/node_modules/tapable/lib/Hook.js:154:20)
+[17:04:48.623]     at Compilation.seal (/vercel/path0/node_modules/webpack/lib/Compilation.js:1342:27)
+[17:04:48.623]     at /vercel/path0/node_modules/webpack/lib/Compiler.js:675:18
+[17:04:48.623]     at /vercel/path0/node_modules/webpack/lib/Compilation.js:1261:4
+[17:04:48.623]     at AsyncSeriesHook.eval [as callAsync] (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:24:1)
+[17:04:48.623]     at AsyncSeriesHook.lazyCompileHook (/vercel/path0/node_modules/tapable/lib/Hook.js:154:20)
+[17:04:48.623]     at Compilation.finish (/vercel/path0/node_modules/webpack/lib/Compilation.js:1253:28)
+[17:04:48.623]     at /vercel/path0/node_modules/webpack/lib/Compiler.js:672:17
+[17:04:48.623]     at _done (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:9:1)
+[17:04:48.623]     at eval (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:32:22)
+[17:04:48.623]     at /vercel/path0/node_modules/webpack/lib/Compilation.js:1185:12
+[17:04:48.623]     at /vercel/path0/node_modules/webpack/lib/Compilation.js:1097:9
+[17:04:48.623]     at process.processTicksAndRejections (node:internal/process/task_queues:85:11)
+[17:04:48.624] 
+[17:04:48.624]  error  
+[17:04:48.624] 
+[17:04:48.624] js/chunk-7367ceab.844fbb86.js from Terser
+[17:04:48.624] Error: error:0308010C:digital envelope routines::unsupported
+[17:04:48.624]     at new Hash (node:internal/crypto/hash:79:19)
+[17:04:48.624]     at Object.createHash (node:crypto:139:10)
+[17:04:48.624]     at /vercel/path0/node_modules/terser-webpack-plugin/dist/index.js:217:37
+[17:04:48.624]     at Array.forEach (<anonymous>)
+[17:04:48.624]     at TerserPlugin.optimizeFn (/vercel/path0/node_modules/terser-webpack-plugin/dist/index.js:160:259)
+[17:04:48.624]     at AsyncSeriesHook.eval [as callAsync] (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:7:1)
+[17:04:48.624]     at AsyncSeriesHook.lazyCompileHook (/vercel/path0/node_modules/tapable/lib/Hook.js:154:20)
+[17:04:48.624]     at /vercel/path0/node_modules/webpack/lib/Compilation.js:1409:36
+[17:04:48.624]     at AsyncSeriesHook.eval [as callAsync] (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:6:1)
+[17:04:48.624]     at AsyncSeriesHook.lazyCompileHook (/vercel/path0/node_modules/tapable/lib/Hook.js:154:20)
+[17:04:48.624]     at /vercel/path0/node_modules/webpack/lib/Compilation.js:1405:32
+[17:04:48.624]     at AsyncSeriesHook.eval [as callAsync] (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:6:1)
+[17:04:48.624]     at AsyncSeriesHook.lazyCompileHook (/vercel/path0/node_modules/tapable/lib/Hook.js:154:20)
+[17:04:48.624]     at Compilation.seal (/vercel/path0/node_modules/webpack/lib/Compilation.js:1342:27)
+[17:04:48.624]     at /vercel/path0/node_modules/webpack/lib/Compiler.js:675:18
+[17:04:48.624]     at /vercel/path0/node_modules/webpack/lib/Compilation.js:1261:4
+[17:04:48.624]     at AsyncSeriesHook.eval [as callAsync] (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:24:1)
+[17:04:48.624]     at AsyncSeriesHook.lazyCompileHook (/vercel/path0/node_modules/tapable/lib/Hook.js:154:20)
+[17:04:48.624]     at Compilation.finish (/vercel/path0/node_modules/webpack/lib/Compilation.js:1253:28)
+[17:04:48.624]     at /vercel/path0/node_modules/webpack/lib/Compiler.js:672:17
+[17:04:48.624]     at _done (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:9:1)
+[17:04:48.624]     at eval (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:32:22)
+[17:04:48.624]     at /vercel/path0/node_modules/webpack/lib/Compilation.js:1185:12
+[17:04:48.624]     at /vercel/path0/node_modules/webpack/lib/Compilation.js:1097:9
+[17:04:48.624]     at process.processTicksAndRejections (node:internal/process/task_queues:85:11)
+[17:04:48.624] 
+[17:04:48.624]  error  
+[17:04:48.624] 
+[17:04:48.624] js/chunk-764583ba.10b025ff.js from Terser
+[17:04:48.624] Error: error:0308010C:digital envelope routines::unsupported
+[17:04:48.624]     at new Hash (node:internal/crypto/hash:79:19)
+[17:04:48.625]     at Object.createHash (node:crypto:139:10)
+[17:04:48.625]     at /vercel/path0/node_modules/terser-webpack-plugin/dist/index.js:217:37
+[17:04:48.625]     at Array.forEach (<anonymous>)
+[17:04:48.625]     at TerserPlugin.optimizeFn (/vercel/path0/node_modules/terser-webpack-plugin/dist/index.js:160:259)
+[17:04:48.626]     at AsyncSeriesHook.eval [as callAsync] (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:7:1)
+[17:04:48.626]     at AsyncSeriesHook.lazyCompileHook (/vercel/path0/node_modules/tapable/lib/Hook.js:154:20)
+[17:04:48.626]     at /vercel/path0/node_modules/webpack/lib/Compilation.js:1409:36
+[17:04:48.626]     at AsyncSeriesHook.eval [as callAsync] (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:6:1)
+[17:04:48.626]     at AsyncSeriesHook.lazyCompileHook (/vercel/path0/node_modules/tapable/lib/Hook.js:154:20)
+[17:04:48.626]     at /vercel/path0/node_modules/webpack/lib/Compilation.js:1405:32
+[17:04:48.626]     at AsyncSeriesHook.eval [as callAsync] (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:6:1)
+[17:04:48.626]     at AsyncSeriesHook.lazyCompileHook (/vercel/path0/node_modules/tapable/lib/Hook.js:154:20)
+[17:04:48.626]     at Compilation.seal (/vercel/path0/node_modules/webpack/lib/Compilation.js:1342:27)
+[17:04:48.626]     at /vercel/path0/node_modules/webpack/lib/Compiler.js:675:18
+[17:04:48.626]     at /vercel/path0/node_modules/webpack/lib/Compilation.js:1261:4
+[17:04:48.626]     at AsyncSeriesHook.eval [as callAsync] (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:24:1)
+[17:04:48.626]     at AsyncSeriesHook.lazyCompileHook (/vercel/path0/node_modules/tapable/lib/Hook.js:154:20)
+[17:04:48.626]     at Compilation.finish (/vercel/path0/node_modules/webpack/lib/Compilation.js:1253:28)
+[17:04:48.626]     at /vercel/path0/node_modules/webpack/lib/Compiler.js:672:17
+[17:04:48.626]     at _done (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:9:1)
+[17:04:48.626]     at eval (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:32:22)
+[17:04:48.626]     at /vercel/path0/node_modules/webpack/lib/Compilation.js:1185:12
+[17:04:48.626]     at /vercel/path0/node_modules/webpack/lib/Compilation.js:1097:9
+[17:04:48.626]     at process.processTicksAndRejections (node:internal/process/task_queues:85:11)
+[17:04:48.626] 
+[17:04:48.626]  error  
+[17:04:48.626] 
+[17:04:48.627] js/chunk-832efbf4.15c4634f.js from Terser
+[17:04:48.627] Error: error:0308010C:digital envelope routines::unsupported
+[17:04:48.627]     at new Hash (node:internal/crypto/hash:79:19)
+[17:04:48.627]     at Object.createHash (node:crypto:139:10)
+[17:04:48.627]     at /vercel/path0/node_modules/terser-webpack-plugin/dist/index.js:217:37
+[17:04:48.627]     at Array.forEach (<anonymous>)
+[17:04:48.627]     at TerserPlugin.optimizeFn (/vercel/path0/node_modules/terser-webpack-plugin/dist/index.js:160:259)
+[17:04:48.627]     at AsyncSeriesHook.eval [as callAsync] (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:7:1)
+[17:04:48.627]     at AsyncSeriesHook.lazyCompileHook (/vercel/path0/node_modules/tapable/lib/Hook.js:154:20)
+[17:04:48.627]     at /vercel/path0/node_modules/webpack/lib/Compilation.js:1409:36
+[17:04:48.627]     at AsyncSeriesHook.eval [as callAsync] (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:6:1)
+[17:04:48.627]     at AsyncSeriesHook.lazyCompileHook (/vercel/path0/node_modules/tapable/lib/Hook.js:154:20)
+[17:04:48.627]     at /vercel/path0/node_modules/webpack/lib/Compilation.js:1405:32
+[17:04:48.627]     at AsyncSeriesHook.eval [as callAsync] (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:6:1)
+[17:04:48.627]     at AsyncSeriesHook.lazyCompileHook (/vercel/path0/node_modules/tapable/lib/Hook.js:154:20)
+[17:04:48.627]     at Compilation.seal (/vercel/path0/node_modules/webpack/lib/Compilation.js:1342:27)
+[17:04:48.627]     at /vercel/path0/node_modules/webpack/lib/Compiler.js:675:18
+[17:04:48.627]     at /vercel/path0/node_modules/webpack/lib/Compilation.js:1261:4
+[17:04:48.627]     at AsyncSeriesHook.eval [as callAsync] (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:24:1)
+[17:04:48.627]     at AsyncSeriesHook.lazyCompileHook (/vercel/path0/node_modules/tapable/lib/Hook.js:154:20)
+[17:04:48.627]     at Compilation.finish (/vercel/path0/node_modules/webpack/lib/Compilation.js:1253:28)
+[17:04:48.627]     at /vercel/path0/node_modules/webpack/lib/Compiler.js:672:17
+[17:04:48.627]     at _done (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:9:1)
+[17:04:48.627]     at eval (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:32:22)
+[17:04:48.627]     at /vercel/path0/node_modules/webpack/lib/Compilation.js:1185:12
+[17:04:48.627]     at /vercel/path0/node_modules/webpack/lib/Compilation.js:1097:9
+[17:04:48.627]     at process.processTicksAndRejections (node:internal/process/task_queues:85:11)
+[17:04:48.627] 
+[17:04:48.627]  error  
+[17:04:48.627] 
+[17:04:48.627] js/chunk-ae0e23fc.1da84873.js from Terser
+[17:04:48.627] Error: error:0308010C:digital envelope routines::unsupported
+[17:04:48.627]     at new Hash (node:internal/crypto/hash:79:19)
+[17:04:48.627]     at Object.createHash (node:crypto:139:10)
+[17:04:48.627]     at /vercel/path0/node_modules/terser-webpack-plugin/dist/index.js:217:37
+[17:04:48.627]     at Array.forEach (<anonymous>)
+[17:04:48.627]     at TerserPlugin.optimizeFn (/vercel/path0/node_modules/terser-webpack-plugin/dist/index.js:160:259)
+[17:04:48.627]     at AsyncSeriesHook.eval [as callAsync] (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:7:1)
+[17:04:48.627]     at AsyncSeriesHook.lazyCompileHook (/vercel/path0/node_modules/tapable/lib/Hook.js:154:20)
+[17:04:48.627]     at /vercel/path0/node_modules/webpack/lib/Compilation.js:1409:36
+[17:04:48.627]     at AsyncSeriesHook.eval [as callAsync] (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:6:1)
+[17:04:48.627]     at AsyncSeriesHook.lazyCompileHook (/vercel/path0/node_modules/tapable/lib/Hook.js:154:20)
+[17:04:48.627]     at /vercel/path0/node_modules/webpack/lib/Compilation.js:1405:32
+[17:04:48.627]     at AsyncSeriesHook.eval [as callAsync] (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:6:1)
+[17:04:48.627]     at AsyncSeriesHook.lazyCompileHook (/vercel/path0/node_modules/tapable/lib/Hook.js:154:20)
+[17:04:48.627]     at Compilation.seal (/vercel/path0/node_modules/webpack/lib/Compilation.js:1342:27)
+[17:04:48.627]     at /vercel/path0/node_modules/webpack/lib/Compiler.js:675:18
+[17:04:48.627]     at /vercel/path0/node_modules/webpack/lib/Compilation.js:1261:4
+[17:04:48.627]     at AsyncSeriesHook.eval [as callAsync] (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:24:1)
+[17:04:48.627]     at AsyncSeriesHook.lazyCompileHook (/vercel/path0/node_modules/tapable/lib/Hook.js:154:20)
+[17:04:48.627]     at Compilation.finish (/vercel/path0/node_modules/webpack/lib/Compilation.js:1253:28)
+[17:04:48.627]     at /vercel/path0/node_modules/webpack/lib/Compiler.js:672:17
+[17:04:48.627]     at _done (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:9:1)
+[17:04:48.627]     at eval (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:32:22)
+[17:04:48.627]     at /vercel/path0/node_modules/webpack/lib/Compilation.js:1185:12
+[17:04:48.627]     at /vercel/path0/node_modules/webpack/lib/Compilation.js:1097:9
+[17:04:48.627]     at process.processTicksAndRejections (node:internal/process/task_queues:85:11)
+[17:04:48.628] 
+[17:04:48.628]  error  
+[17:04:48.628] 
+[17:04:48.628] js/element.9556824d.js from Terser
+[17:04:48.628] Error: error:0308010C:digital envelope routines::unsupported
+[17:04:48.628]     at new Hash (node:internal/crypto/hash:79:19)
+[17:04:48.628]     at Object.createHash (node:crypto:139:10)
+[17:04:48.628]     at /vercel/path0/node_modules/terser-webpack-plugin/dist/index.js:217:37
+[17:04:48.628]     at Array.forEach (<anonymous>)
+[17:04:48.628]     at TerserPlugin.optimizeFn (/vercel/path0/node_modules/terser-webpack-plugin/dist/index.js:160:259)
+[17:04:48.628]     at AsyncSeriesHook.eval [as callAsync] (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:7:1)
+[17:04:48.628]     at AsyncSeriesHook.lazyCompileHook (/vercel/path0/node_modules/tapable/lib/Hook.js:154:20)
+[17:04:48.628]     at /vercel/path0/node_modules/webpack/lib/Compilation.js:1409:36
+[17:04:48.628]     at AsyncSeriesHook.eval [as callAsync] (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:6:1)
+[17:04:48.628]     at AsyncSeriesHook.lazyCompileHook (/vercel/path0/node_modules/tapable/lib/Hook.js:154:20)
+[17:04:48.628]     at /vercel/path0/node_modules/webpack/lib/Compilation.js:1405:32
+[17:04:48.628]     at AsyncSeriesHook.eval [as callAsync] (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:6:1)
+[17:04:48.628]     at AsyncSeriesHook.lazyCompileHook (/vercel/path0/node_modules/tapable/lib/Hook.js:154:20)
+[17:04:48.628]     at Compilation.seal (/vercel/path0/node_modules/webpack/lib/Compilation.js:1342:27)
+[17:04:48.628]     at /vercel/path0/node_modules/webpack/lib/Compiler.js:675:18
+[17:04:48.628]     at /vercel/path0/node_modules/webpack/lib/Compilation.js:1261:4
+[17:04:48.628]     at AsyncSeriesHook.eval [as callAsync] (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:24:1)
+[17:04:48.628]     at AsyncSeriesHook.lazyCompileHook (/vercel/path0/node_modules/tapable/lib/Hook.js:154:20)
+[17:04:48.628]     at Compilation.finish (/vercel/path0/node_modules/webpack/lib/Compilation.js:1253:28)
+[17:04:48.628]     at /vercel/path0/node_modules/webpack/lib/Compiler.js:672:17
+[17:04:48.628]     at _done (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:9:1)
+[17:04:48.628]     at eval (eval at create (/vercel/path0/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:32:22)
+[17:04:48.628]     at /vercel/path0/node_modules/webpack/lib/Compilation.js:1185:12
+[17:04:48.628]     at /vercel/path0/node_modules/webpack/lib/Compilation.js:1097:9
+[17:04:48.628]     at process.processTicksAndRejections (node:internal/process/task_queues:85:11)
+[17:04:48.628] 
+[17:04:48.629]  ERROR  Build failed with errors.
+[17:04:48.651] error Command failed with exit code 1.
+[17:04:48.652] info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.
+[17:04:48.674] Error: Command "yarn run build" exited with 1
+[17:04:49.033] 
+[17:04:51.998] Exiting build container

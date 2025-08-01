@@ -1,0 +1,12 @@
+{
+  "name": "blogwriter-static",
+  "version": "1.0.0",
+  "description": "BlogWriter static deployment",
+  "main": "index.html",
+  "scripts": {
+    "build": "echo 'Static site - no build needed'"
+  },
+  "engines": {
+    "node": "16.x"
+  }
+}
