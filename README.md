@@ -1,177 +1,167 @@
-<p align="center"><a href="https://www.niceshare.site/?ref=github.com" target="_blank"><img width="100"src="https://cdn.jsdelivr.net/gh/nicejade/markdown-online-editor/src/assets/images/logo.png"></a></p>
+# 增强版 Markdown 编辑器
 
-<h1 align="center">
-  <a href="https://markdown.lovejade.cn/?ref=github.com">Arya - 在线 Markdown 编辑器</a>
-</h1>
+一个功能强大的在线Markdown编辑器，专为博客和随笔写作而设计，集成GitHub发布功能。
 
-<div align="center">
-  <strong>
-    📝 基于 <a href="https://site.lovejade.cn/post/5b1a221c0526c920d6dfaada">Vue2</a>、<a href="https://github.com/Vanessa219/vditor">Vditor</a>，所构建的在线 Markdown 编辑器，支持绘制流程图、甘特图、时序图、任务列表、Echarts 图表、五线谱，以及 PPT 预览、视频音频解析、HTML 自动转换为 Markdown 等功能。<a href="https://markdown.lovejade.cn/?ref=github.com">markdown.lovejade.cn</a>。
-  </strong>
-</div>
+## ✨ 主要功能
 
-<br>
+### 🎯 内容类型管理
+- **通用文档**: 普通的Markdown文档
+- **博客文章**: 自动生成包含标题、分类、发布日期、描述的YAML frontmatter
+- **随笔**: 包含标题、发布日期、心情、描述的个人随笔格式
 
-<div align="center">
-  <a href="https://github.com/nicejade/markdown-online-editor">
-    <img alt="GitHub package.json version" src="https://img.shields.io/github/package-json/v/nicejade/markdown-online-editor">
-  </a>
-  <a href="https://github.com/nicejade/markdown-online-editor">
-    <img src="https://img.shields.io/github/license/nicejade/markdown-online-editor.svg" alt="LICENSE">
-  </a>
-  <a href="https://prettier.io/">
-    <img src="https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat" alt="Prettier">
-  </a>
-  <a href="https://gitmoji.dev">
-    <img
-      src="https://img.shields.io/badge/gitmoji-%20😜%20😍-FFDD67.svg?style=flat-square"
-      alt="Gitmoji"
-    />
-  </a>
-  <a href="https://www.jeffjade.com/2019/05/31/155-arya-markdown-online-editor/">
-    <img src="https://img.shields.io/badge/chat-on%20blog-brightgreen.svg" alt="Arya - 在线 Markdown 编辑器">
-  </a>
-  <a href="https://v2ex.com/t/623128">
-   <img src="https://img.shields.io/badge/chat-on%20v2ex-brightgreen.svg" alt="Chat On V2ex">
-  </a>
-  <a href="https://niceshare.site/?ref=github.com">
-    <img src="https://img.shields.io/badge/Author-nicejade-%23a696c8.svg" alt="Author nicejade">
-  </a>
-</div>
+### 📝 强大的编辑器
+- 基于Vditor的分屏预览编辑器
+- 默认分屏模式，实时预览功能
+- 丰富的工具栏
+- 支持表格、代码块、数学公式等
+- 自动保存到本地缓存
+- 🌙 **暗夜模式支持**：一键切换亮色/暗色主题
 
-## 背景初衷
+### 🚀 GitHub集成
+- 一键发布到GitHub仓库
+- **支持Astro项目结构**：
+  - 博客文章发布到 `src/content/posts/`
+  - 随笔发布到 `src/content/essays/`
+- 支持创建和更新文件
+- 自动生成合适的文件路径和提交消息
+- 支持Jekyll、Hugo、Astro等静态站点生成器
 
-早期就有关注到由`黑客派`所出品的 [Vditor](https://github.com/Vanessa219/vditor)：一款为未来而构建的下一代 Markdown 编辑器。然，现而今市面上所存在的 Markdown 编辑器，或多或少都存在一些问题（或功能不全，或高级功能收费...），因此基于自身所需，加之 [Vditor](https://github.com/Vanessa219/vditor) 的强大，就诞生了做一款[在线 Markdown 编辑器](https://markdown.lovejade.cn/?ref=github.com) 的念头；取其名曰 [`Arya`（二丫）](https://quickapp.lovejade.cn/talking-game-of-thrones/?ref=github.com)。
+## 🚀 快速开始
 
-## 功能支持
+### 1. 打开编辑器
+访问 `index.html` 查看主页，然后点击"开始写作"进入编辑器。
 
-- [x] 🎉 通常 `Markdown` 解析器自带的基本功能；
-- [x] 🍀 支持**流程图**、**甘特图**、**时序图**、**任务列表**；
-- [x] 🏁 支持粘贴 HTML 自动转换为 Markdown；
-- [x] 💃🏻 支持插入原生 Emoji、设置常用表情列表；
-- [x] 🚑 支持编辑内容保存**本地存储**，防止意外丢失；
-- [x] 📝 支持**实时预览**，主窗口大小拖拽，字符计数；
-- [x] 🛠 支持常用快捷键(**Tab**)，及代码块添加复制；
-- [x] ✨ 支持**导出**携带样式的 PDF、PNG、JPEG 等；
-- [x] ✨ 升级 Vditor，新增对 `echarts` 图表的支持；
-- [x] ✨ 注入 [RevealJs](https://revealjs.com/#/)，增设对 `PPT` 预览支持；
-- [x] 👏 支持检查并格式化 Markdown 语法，使其专业；
-- [x] 🦑 支持五线谱、及[部分站点、视频、音频解析](https://github.com/Vanessa219/vditor)；
-- [x] 🌟 增加对**所见即所得**编辑模式的支持(`⌘-⇧-M`)；
-- [x] 🌟 新增复制到微信公众号等周边功能；
-- [x] 🌟 支持导入本地 Markdown（`*.md`） 文件；
+### 2. 配置GitHub（可选）
+如果要使用发布功能，需要配置GitHub：
 
-## 如何使用
+1. 获取GitHub Personal Access Token
+   - 访问 [GitHub Settings > Tokens](https://github.com/settings/tokens)
+   - 创建新token，确保有`repo`权限
 
-清空目前 [Arya](https://markdown.lovejade.cn/?ref=github.com) 编辑区默认文档，即可使用。
+2. 在编辑器中点击"配置GitHub"
+3. 填写以下信息：
+   - **Personal Token**: 你的GitHub token
+   - **仓库所有者**: GitHub用户名或组织名
+   - **仓库名称**: 目标仓库名称
 
-默认为[所见即所得](https://b3log.org/vditor/)模式，可通过 `⌘-⇧-M`（`Ctrl-⇧-M`）进行切换；或通过以下方式：
+4. 点击"测试连接"验证配置
+5. 保存配置
 
-- 所见即所得：`⌘-⌥-7`（`Ctrl-alt-7`）；
-- 即时渲染：`⌘-⌥-8`（`Ctrl-alt-8`）；
-- 分屏渲染：`⌘-⌥-9`（`Ctrl-alt-9`）；
+### 3. 开始写作
 
-### PPT 预览
+1. **选择内容类型**
+   - 点击顶部的按钮选择：通用文档、博客文章或随笔
 
-如果您用作 `PPT` 预览（入口在`设置`中），需要注意，这里暂还不能支持各种图表的渲染；您可以使用 `---` 来定义水平方向上幻灯片，用 `--` 来定义垂直幻灯片；更多设定可以参见 [Reveal.js Markdown 文档](https://revealjs.com/markdown/)。
+2. **编辑元数据**（博客和随笔）
+   - 点击"编辑元数据"设置标题、分类、发布日期等信息
 
-## 如何部署？
+3. **编写内容**
+   - 在编辑器中编写Markdown内容
+   - 支持实时预览
 
-### 采用 [pm2](https://pm2.keymetrics.io/) 部署
+4. **发布到GitHub**
+   - 点击"发布到GitHub"将内容推送到仓库
+   - 系统会自动生成合适的文件路径和YAML frontmatter
 
-PM2 是一个强大的生产环境进程管理器，它不仅支持通过命令行启动应用，还可以使用配置文件（通常名为 `ecosystem.config.js`）来管理复杂的部署场景。您可以通过执行如下命令实现快速部署：
+## 📂 文件结构
 
-```bash
-# 🎉 克隆项目
-git clone https://github.com/nicejade/markdown-online-editor.git
-cd markdown-online-editor
+发布的文件会按以下结构组织（适配Astro项目）：
 
-# ➕ 安装依赖
-yarn
-yarn global add pm2
-
-# 🔧 构建产物
-yarn build
-
-# 🚀 部署服务
-cd dist
-npx pm2 start "npx http-server -p 8866" --name "markdown-editor"
+```
+your-astro-blog/
+├── src/content/
+│   ├── posts/        # 博客文章
+│   │   └── 2024-01-01-article-title.md
+│   └── essays/       # 随笔
+│       └── 2024-01-01-essay-title.md
+└── docs/             # 通用文档
+    └── document-title.md
 ```
 
-### Docker 自托管
+## 🎨 YAML Frontmatter 格式
 
-已将最新版本使用 [Docker](https://docs.docker.com/engine/install/)  打包镜像并上传至  [Docker Hub](https://hub.docker.com/r/nicejade/markdown-online-editor)，可通过如下方式进行使用：
-
-```shell
-docker run -d -p [Your-Specified-Port]:80 nicejade/markdown-online-editor:[tagname]
-
-# 示例：
-docker run -d -p 8866:80 nicejade/markdown-online-editor:latest
-```
-
-基于如上示例，如果您在本地执行，只需打开网址——[http://localhost:8866](http://localhost:8866/) 即可访问。如果在服务器运行，可以通过 http://[Server-IP]:8866 来访问。构建 Docker 镜像过程，可参见：[如何为 markdown-online-editor 服务构建 docker 镜像？](https://memo.lovejade.cn/m/49a7b493bddeed71)。您也可以通过 **Cloudflare Pages** 或 Github Pages，托管编译产物（`dist` 目录下内容），从而实现**无需服务器情况下快速部署**。
-
-或者**使用 [docker compose](https://docs.docker.com/compose/)**：
-
-创建一个 `docker-compose.yml` 文件，并在其中定义服务（其中 version: '3' 指定了 Docker Compose 文件的版本；您可以根据实际情况进行调整）：
-
+### 博客文章
 ```yaml
-version: '3'
-services:
-  markdown-editor:
-    image: nicejade/markdown-online-editor:latest
-    ports:
-      - '8866:80'
-    restart: always
+---
+title: "文章标题"
+categories: ["技术", "教程"]
+date: "2024-01-01 12:00:00"
+description: "文章描述"
+---
 ```
 
-在包含 `docker-compose.yml` 文件的目录中，运行以下命令启动服务：
-
-```bash
-docker-compose up -d
+### 随笔
+```yaml
+---
+title: "随笔标题"
+date: "2024-01-01 12:00:00"
+mood: "愉快"
+description: "随笔描述"
+---
 ```
 
-这将在后台启动服务，并且效果与下面的  `docker run`  命令相同。使用 Docker Compose 可以更方便地管理多个容器，并且配置更易读和维护。
+## 🔧 技术栈
 
-## 如何开发
+- **前端框架**: Vue.js 2.x
+- **UI组件**: Element UI
+- **编辑器**: Vditor
+- **API集成**: GitHub REST API
+- **存储**: localStorage（配置和缓存）
 
-### 先决条件
+## 🎨 主题功能
 
-说明用户在安装和使用前，需要准备的一些先决条件，譬如：您需要安装或升级  [Node.js](https://nodejs.org/en/)（>= `16.*`，< `18.*`），推荐使用  [Pnpm](https://pnpm.io/)  或  [Yarn](https://www.jeffjade.com/2017/12/30/135-npm-vs-yarn-detial-memo/)  作为首选包管理工具。
+### 暗夜模式
+- 点击右上角的 🌙/☀️ 按钮切换主题
+- 自动保存主题偏好设置
+- 编辑器和预览都会同步切换主题
 
-```bash
-# 🎉 克隆项目
-git clone https://github.com/nicejade/markdown-online-editor.git
-cd markdown-online-editor
+## 📱 响应式设计
 
-# ➕ 安装依赖
-yarn
+编辑器完全支持移动设备：
+- 自适应布局
+- 触摸友好的界面
+- 移动端优化的工具栏
 
-# 🚧 开始开发
-yarn start
+## 🔒 安全说明
 
-# 🚀 部署 Github Pages(需修改 commands/deploy.sh)
-yarn deploy
-```
+- GitHub token仅存储在浏览器本地
+- 不会发送到任何第三方服务器
+- 建议使用最小权限的token（仅repo权限）
 
-## 特别鸣谢
+## 🚀 部署到Vercel
 
-[Arya](https://markdown.lovejade.cn/?utm_source=github.com) 的产生，得益于 [Vditor](https://github.com/b3log/vditor)：一款浏览器端的 Markdown 编辑器，同时也离不开 [Vue、Reveal.js 等开源库](https://github.com/nicejade/markdown-online-editor/blob/master/package.json#L25-L64)的支持，感谢 🙌。
+1. 将所有文件上传到GitHub仓库
+2. 在Vercel中导入仓库
+3. 设置构建命令为空（静态文件）
+4. 部署完成
 
-## 相关链接
+## 📝 使用示例
 
-- [清风明月轩](https://www.thebettersites.com/?ref=github.com)
-- [逍遥自在轩](https://www.niceshare.site/?ref=github.com)
-- [晚晴幽草轩](https://www.jeffjade.com/nicelinks?ref=github.com)
-- [缘知随心庭](https://fine.niceshare.site/?ref=github.com)
-- [静轩之别苑](https://quickapp.lovejade.cn/?ref=github.com)
-- [悠然宜想亭](https://forum.lovejade.cn/?ref=github.com)
-- [SegmentFault](https://segmentfault.com/u/jeffjade)
-- [X（Twitter）](https://x.com/MarshalXuan)
-- [@MarshalXuan](https://www.youtube.com/@MarshalXuan)
+### 写博客文章
+1. 选择"博客文章"类型
+2. 编辑元数据：设置标题、分类等
+3. 编写文章内容
+4. 发布到GitHub的`_posts`目录
 
-## License
+### 写随笔
+1. 选择"随笔"类型
+2. 编辑元数据：设置标题、心情等
+3. 编写随笔内容
+4. 发布到GitHub的`src/content/essays`目录
 
-[MIT](http://opensource.org/licenses/MIT)
+### 使用暗夜模式
+1. 点击右上角的 🌙 按钮切换到暗夜模式
+2. 点击 ☀️ 按钮切换回亮色模式
+3. 主题设置会自动保存到本地
 
-Copyright (c) 2018-present, [nicejade](https://www.thebettersites.com).
+## 🤝 贡献
+
+欢迎提交Issue和Pull Request来改进这个项目！
+
+## 📄 许可证
+
+MIT License
+
+---
+
+**享受写作的乐趣！** ✨
