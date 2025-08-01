@@ -20,7 +20,7 @@
         </span>
       </el-option>
     </el-select>
-
+    
     <el-button
       v-if="selectedType !== contentTypes.GENERAL"
       type="primary"
@@ -54,22 +54,22 @@ export default {
   props: {
     value: {
       type: String,
-      default: contentTypes.GENERAL,
-    },
+      default: contentTypes.GENERAL
+    }
   },
 
   data() {
     return {
       selectedType: this.value,
       contentTypes,
-      contentTypeLabels,
+      contentTypeLabels
     }
   },
 
   watch: {
     value(newVal) {
       this.selectedType = newVal
-    },
+    }
   },
 
   methods: {
@@ -82,7 +82,7 @@ export default {
       const iconMap = {
         [contentTypes.GENERAL]: 'document',
         [contentTypes.BLOG]: 'blog',
-        [contentTypes.ESSAY]: 'essay',
+        [contentTypes.ESSAY]: 'essay'
       }
       return iconMap[type] || 'document'
     },
@@ -93,8 +93,8 @@ export default {
 
     showPublishDialog() {
       this.$emit('show-publish-dialog')
-    },
-  },
+    }
+  }
 }
 </script>
 

@@ -7,7 +7,14 @@
     "build": "echo 'Static site - no build needed'",
     "start": "echo 'Static site ready'"
   },
-  "keywords": ["markdown", "editor", "blog", "github", "vditor", "vue"],
+  "keywords": [
+    "markdown",
+    "editor",
+    "blog",
+    "github",
+    "vditor",
+    "vue"
+  ],
   "author": "BlogWriter",
   "license": "MIT"
 }
