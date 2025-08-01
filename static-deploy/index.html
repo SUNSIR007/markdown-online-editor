@@ -511,20 +511,15 @@
                     width="500px"
                     @close="close">
                     <el-form :model="config" label-width="100px">
-                        <el-form-item label="Token">
+                        <el-form-item label="Personal Access Token">
                             <el-input
                                 v-model="config.token"
                                 type="password"
-                                placeholder="请输入GitHub Token"
+                                placeholder="请输入GitHub Personal Access Token"
                                 show-password>
                             </el-input>
-                            <div style="font-size: 12px; color: #666; margin-top: 8px; line-height: 1.4;">
-                                <strong>获取Token步骤：</strong><br>
-                                1. 登录GitHub → 右上角头像 → Settings<br>
-                                2. 左侧菜单 → Developer settings → Personal access tokens → Tokens (classic)<br>
-                                3. Generate new token → Generate new token (classic)<br>
-                                4. 勾选 <strong>repo</strong> 权限 → Generate token<br>
-                                5. 复制生成的token并粘贴到此处
+                            <div style="font-size: 12px; color: #999; margin-top: 5px;">
+                                需要repo权限，用于读写仓库文件
                             </div>
                         </el-form-item>
 
@@ -605,14 +600,17 @@
                         preview: {
                             theme: {
                                 current: 'dark'
-                            }
+                            },
+                            actions: []
                         },
                         toolbar: [
                             'emoji', 'headings', 'bold', 'italic', 'strike', 'link', '|',
                             'list', 'ordered-list', 'check', 'outdent', 'indent', '|',
                             'quote', 'line', 'code', 'inline-code', 'insert-before', 'insert-after', '|',
                             'table', '|',
-                            'undo', 'redo'
+                            'undo', 'redo', '|',
+                            'edit-mode', 'content-theme', 'code-theme', '|',
+                            'outline', 'preview', 'fullscreen'
                         ],
                         cache: {
                             enable: false
