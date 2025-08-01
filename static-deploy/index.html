@@ -368,26 +368,54 @@
             background: rgba(255, 255, 255, 0.1);
         }
 
-        /* 保存按钮克莱因蓝样式 */
+        /* 保存按钮克莱因蓝样式 - 更强制的选择器 */
         .save-button,
-        .el-dialog .save-button {
+        .el-dialog .save-button,
+        .el-dialog__footer .save-button,
+        .el-dialog .el-button.save-button,
+        .el-dialog__footer .el-button.save-button,
+        button.save-button,
+        .el-button--primary.save-button {
+            background: #002FA7 !important;
             background-color: #002FA7 !important;
             border-color: #002FA7 !important;
             color: white !important;
+            box-shadow: none !important;
         }
 
         .save-button:hover,
-        .el-dialog .save-button:hover {
+        .el-dialog .save-button:hover,
+        .el-dialog__footer .save-button:hover,
+        .el-dialog .el-button.save-button:hover,
+        .el-dialog__footer .el-button.save-button:hover,
+        button.save-button:hover,
+        .el-button--primary.save-button:hover {
+            background: #0033B8 !important;
             background-color: #0033B8 !important;
             border-color: #0033B8 !important;
             color: white !important;
+            box-shadow: none !important;
         }
 
         .save-button:focus,
-        .el-dialog .save-button:focus {
+        .save-button:active,
+        .el-dialog .save-button:focus,
+        .el-dialog .save-button:active,
+        .el-dialog__footer .save-button:focus,
+        .el-dialog__footer .save-button:active,
+        .el-dialog .el-button.save-button:focus,
+        .el-dialog .el-button.save-button:active,
+        .el-dialog__footer .el-button.save-button:focus,
+        .el-dialog__footer .el-button.save-button:active,
+        button.save-button:focus,
+        button.save-button:active,
+        .el-button--primary.save-button:focus,
+        .el-button--primary.save-button:active {
+            background: #002FA7 !important;
             background-color: #002FA7 !important;
             border-color: #002FA7 !important;
             color: white !important;
+            box-shadow: none !important;
         }
 
         .dark-mode .el-button {
