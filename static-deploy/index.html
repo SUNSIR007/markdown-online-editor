@@ -463,15 +463,38 @@
             }
 
             .content-type-selector {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 10px;
+                /* 保持水平布局，让所有按钮在一行 */
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+                gap: 8px;
             }
 
-            .type-buttons,
+            .type-buttons {
+                display: flex;
+                gap: 8px;
+                flex-shrink: 0;
+            }
+
             .action-buttons {
-                justify-content: center;
-                flex-wrap: wrap;
+                display: flex;
+                gap: 8px;
+                flex-shrink: 0;
+            }
+
+            /* 减小移动端按钮尺寸以适应一行显示 */
+            .type-buttons .el-button {
+                padding: 8px 12px !important;
+                font-size: 13px !important;
+            }
+
+            .github-config-button {
+                width: 36px !important;
+                height: 36px !important;
+            }
+
+            .publish-button {
+                padding: 8px 12px !important;
             }
         }
 
@@ -480,8 +503,28 @@
                 height: calc(100vh - 120px);
             }
 
-            .type-buttons, .action-buttons {
-                justify-content: center;
+            /* 超小屏幕进一步优化按钮尺寸 */
+            .type-buttons .el-button {
+                padding: 6px 10px !important;
+                font-size: 12px !important;
+            }
+
+            .github-config-button {
+                width: 32px !important;
+                height: 32px !important;
+            }
+
+            .publish-button {
+                padding: 6px 10px !important;
+            }
+
+            .content-type-selector {
+                gap: 6px;
+            }
+
+            .type-buttons,
+            .action-buttons {
+                gap: 6px;
             }
         }
     </style>
