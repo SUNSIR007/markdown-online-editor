@@ -242,6 +242,24 @@
             color: #e0e0e0 !important;
         }
 
+        /* 更强制的所见即所得模式背景设置 */
+        .dark-mode .vditor-wysiwyg__main,
+        .dark-mode .vditor-wysiwyg__main .vditor-wysiwyg__main,
+        .dark-mode .vditor-wysiwyg .vditor-wysiwyg__main .vditor-wysiwyg__main,
+        .dark-mode .vditor-wysiwyg__main > div,
+        .dark-mode .vditor-wysiwyg__main .vditor-wysiwyg__main > div {
+            background: #000000 !important;
+            background-color: #000000 !important;
+            color: #e0e0e0 !important;
+        }
+
+        /* 针对所见即所得模式的编辑区域 */
+        .dark-mode .vditor-wysiwyg__main[contenteditable="true"] {
+            background: #000000 !important;
+            background-color: #000000 !important;
+            color: #e0e0e0 !important;
+        }
+
         .dark-mode .vditor-ir {
             background: #000000 !important;
         }
@@ -260,6 +278,20 @@
         .dark-mode .vditor-preview {
             background: #000000 !important;
             color: #e0e0e0 !important;
+        }
+
+        /* 强制覆盖所有可能的Vditor背景样式 */
+        .dark-mode .vditor-wysiwyg *,
+        .dark-mode .vditor-ir * {
+            background-color: transparent !important;
+        }
+
+        .dark-mode .vditor-wysiwyg,
+        .dark-mode .vditor-wysiwyg__main,
+        .dark-mode .vditor-ir,
+        .dark-mode .vditor-ir__main {
+            background: #000000 !important;
+            background-color: #000000 !important;
         }
 
         .dark-mode .vditor-sv {
