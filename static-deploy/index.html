@@ -336,20 +336,35 @@
             display: none !important;
         }
 
-        /* GitHub配置弹窗样式 */
-        .el-dialog {
+        /* GitHub配置弹窗样式 - 强制灰色背景 */
+        .el-dialog,
+        .el-dialog.el-dialog,
+        div.el-dialog {
             border-radius: 20px !important;
             overflow: hidden;
+            background: #f5f5f5 !important;
             background-color: #f5f5f5 !important;
         }
 
-        .el-dialog__header {
+        .el-dialog__header,
+        .el-dialog .el-dialog__header {
             border-radius: 20px 20px 0 0 !important;
+            background: #f5f5f5 !important;
             background-color: #f5f5f5 !important;
         }
 
-        .el-dialog__body {
+        .el-dialog__body,
+        .el-dialog .el-dialog__body {
             border-radius: 0 0 20px 20px !important;
+            background: #f5f5f5 !important;
+            background-color: #f5f5f5 !important;
+        }
+
+        /* 确保弹窗内容区域也是灰色背景 */
+        .el-dialog__wrapper .el-dialog,
+        .el-dialog__wrapper .el-dialog__header,
+        .el-dialog__wrapper .el-dialog__body {
+            background: #f5f5f5 !important;
             background-color: #f5f5f5 !important;
         }
 
@@ -735,7 +750,7 @@
                     if (this.isMobileDevice()) {
                         // 设置为Essays模式
                         this.currentType = contentTypes.ESSAY;
-                        console.log('检测到移动设备，已设置为Essays模式和即时渲染编辑模式');
+                        console.log('检测到移动设备，已设置为Essays模式');
                     }
                 },
 
@@ -744,8 +759,8 @@
                 },
 
                 initVditor() {
-                    // 根据设备类型设置编辑模式：手机使用即时渲染(ir)，桌面使用分屏(sv)
-                    const editorMode = this.isMobileDevice() ? 'ir' : 'sv';
+                    // 所有设备都默认使用即时渲染模式
+                    const editorMode = 'ir';
 
                     this.vditor = new Vditor('vditor', {
                         height: '100%',
