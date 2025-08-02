@@ -178,38 +178,37 @@ export default {
         const metadataBar = document.createElement('div')
         metadataBar.className = 'vditor-metadata-bar'
         metadataBar.innerHTML = `
-          <div class="metadata-content" style="display: flex; align-items: center; gap: 12px; width: 100%;">
-            <span class="metadata-label" style="color: #fff; font-weight: bold;">📝 元数据栏</span>
-            <select class="metadata-type-select" style="padding: 4px 8px; border-radius: 4px; border: 1px solid #409eff; background: white;">
+          <div class="metadata-content">
+            <span class="metadata-label">📝 元数据栏</span>
+            <select class="metadata-type-select">
               <option value="general">📄 通用文档</option>
               <option value="blog">📝 博客文章</option>
               <option value="essay">✍️ 随笔</option>
             </select>
-            <div class="metadata-fields" style="display: none; gap: 8px;">
-              <input placeholder="标题" class="metadata-input" style="padding: 4px; border-radius: 4px; border: 1px solid #409eff;" />
-              <input placeholder="分类" class="metadata-input" style="padding: 4px; border-radius: 4px; border: 1px solid #409eff;" />
-              <input placeholder="日期" class="metadata-input" style="padding: 4px; border-radius: 4px; border: 1px solid #409eff;" />
-              <input placeholder="描述" class="metadata-input" style="padding: 4px; border-radius: 4px; border: 1px solid #409eff;" />
+            <div class="metadata-fields" style="display: none;">
+              <input placeholder="标题" class="metadata-input" />
+              <input placeholder="分类" class="metadata-input" />
+              <input placeholder="日期" class="metadata-input" />
+              <input placeholder="描述" class="metadata-input" />
             </div>
-            <button class="metadata-btn" style="padding: 4px 12px; background: #409eff; color: white; border: none; border-radius: 4px; cursor: pointer;">插入模板</button>
-            <button class="metadata-btn" style="padding: 4px 12px; background: #f56c6c; color: white; border: none; border-radius: 4px; cursor: pointer;">清空</button>
-            <span class="metadata-debug" style="color: #67c23a; font-weight: bold; margin-left: auto;">✅ 元数据栏已激活</span>
+            <button class="metadata-btn">插入模板</button>
+            <button class="metadata-btn">清空</button>
+            <span class="metadata-debug">测试成功</span>
           </div>
         `
 
-        // 添加样式 - 使用明亮的颜色确保在黑色背景下可见
+        // 添加样式
         metadataBar.style.cssText = `
           height: 40px;
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-          border: 2px solid #409eff;
+          background: #f8f9fa;
+          border-left: 1px solid #d1d5da;
+          border-right: 1px solid #d1d5da;
+          border-bottom: 1px solid #d1d5da;
           display: flex;
           align-items: center;
           padding: 0 12px;
           font-size: 12px;
           overflow-x: auto;
-          color: white;
-          font-weight: 600;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.3);
         `
 
         // 插入到工具栏下方
@@ -234,20 +233,6 @@ export default {
         })
 
         console.log('✅ 元数据栏插入成功')
-
-        // 添加闪烁效果确保可见性
-        let flashCount = 0
-        const flashInterval = setInterval(() => {
-          metadataBar.style.background = flashCount % 2 === 0
-            ? 'linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%)'
-            : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
-          flashCount++
-          if (flashCount >= 6) {
-            clearInterval(flashInterval)
-            metadataBar.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
-          }
-        }, 300)
-
       }, 100) // 延迟100ms确保DOM渲染完成
     },
 
