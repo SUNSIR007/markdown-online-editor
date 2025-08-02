@@ -30,35 +30,7 @@ export class ConfigManager {
       defaultFileName: 'arya-export'
     })
 
-    // 内容类型配置
-    this.set('contentTypes', {
-      GENERAL: 'general',
-      BLOG: 'blog',
-      ESSAY: 'essay'
-    })
-
-    // 内容类型标签
-    this.set('contentTypeLabels', {
-      general: '通用文档',
-      blog: '博客文章',
-      essay: '随笔'
-    })
-
-    // 元数据字段配置
-    this.set('metadataFields', {
-      blog: [
-        { key: 'title', label: '标题', type: 'text', required: true },
-        { key: 'categories', label: '分类', type: 'tags', required: true },
-        { key: 'pubDate', label: '发布日期', type: 'datetime', required: true },
-        { key: 'description', label: '描述', type: 'textarea', required: true },
-      ],
-      essay: [
-        { key: 'title', label: '标题', type: 'text', required: true },
-        { key: 'categories', label: '分类', type: 'tags', required: true },
-        { key: 'pubDate', label: '发布日期', type: 'datetime', required: true },
-        { key: 'description', label: '描述', type: 'textarea', required: false },
-      ]
-    })
+    // 由于删除了元数据编辑功能，移除相关配置
 
     // Vditor配置
     this.set('vditor', {
