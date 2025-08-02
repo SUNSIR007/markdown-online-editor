@@ -17,15 +17,12 @@ Vue.prototype.$utils = $utils
 Vue.prototype.$message = options => Message(options)
 
 /* ------------------------Vue Global Components------------------------------ */
-import { Button, Dropdown, DropdownMenu, DropdownItem, Loading, Select, Option, Input } from 'element-ui'
+import { Button, Dropdown, DropdownMenu, DropdownItem, Loading } from 'element-ui'
 Vue.use(Button)
 Vue.use(Dropdown)
 Vue.use(DropdownMenu)
 Vue.use(DropdownItem)
 Vue.use(Loading)
-Vue.use(Select)
-Vue.use(Option)
-Vue.use(Input)
 
 import VueMeta from 'vue-meta'
 Vue.use(VueMeta)
