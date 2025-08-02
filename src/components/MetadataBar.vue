@@ -4,23 +4,21 @@
   <div class="metadata-bar" :class="{ 'mobile': isMobile }">
     <!-- 内容类型选择器 -->
     <div class="content-type-selector">
-      <el-select 
-        v-model="currentContentType" 
+      <el-select
+        v-model="currentContentType"
         @change="onContentTypeChange"
         size="small"
         class="type-select"
+        placeholder="选择内容类型"
       >
         <el-option value="general" label="通用文档">
-          <icon name="document" class="option-icon" />
-          <span>通用文档</span>
+          <span>📄 通用文档</span>
         </el-option>
         <el-option value="blog" label="博客文章">
-          <icon name="document" class="option-icon" />
-          <span>博客文章</span>
+          <span>📝 博客文章</span>
         </el-option>
         <el-option value="essay" label="随笔">
-          <icon name="document" class="option-icon" />
-          <span>随笔</span>
+          <span>✍️ 随笔</span>
         </el-option>
       </el-select>
     </div>
@@ -34,9 +32,9 @@
       >
         <label class="field-label">{{ field.label }}:</label>
         <el-input
-          v-model="metadataValues[field.key]"
+          :value="metadataValues[field.key] || ''"
           :placeholder="field.placeholder"
-          @input="onMetadataChange"
+          @input="(value) => updateMetadataField(field.key, value)"
           size="small"
           class="field-input"
         />
@@ -45,7 +43,7 @@
 
     <!-- 操作按钮 -->
     <div class="action-buttons">
-      <el-button 
+      <el-button
         v-if="currentContentType !== 'general'"
         @click="insertTemplate"
         size="small"
@@ -54,7 +52,7 @@
       >
         插入模板
       </el-button>
-      <el-button 
+      <el-button
         v-if="hasMetadata"
         @click="clearMetadata"
         size="small"
@@ -63,6 +61,10 @@
       >
         清空
       </el-button>
+      <!-- 调试信息 -->
+      <span class="debug-info" style="font-size: 12px; color: #999;">
+        {{ currentContentType }} | {{ Object.keys(metadataValues).length }}
+      </span>
     </div>
   </div>
 </template>
@@ -79,8 +81,24 @@ export default {
       isMobile: window.innerWidth <= 960,
       currentContentType: 'general',
       metadataValues: {},
-      contentTypes: configManager.get('contentTypes'),
-      metadataFields: configManager.get('metadataFields')
+      contentTypes: configManager.get('contentTypes') || {
+        GENERAL: 'general',
+        BLOG: 'blog',
+        ESSAY: 'essay'
+      },
+      metadataFields: configManager.get('metadataFields') || {
+        blog: [
+          { key: 'title', label: '标题', placeholder: '请输入文章标题' },
+          { key: 'categories', label: '分类', placeholder: '技术,Vue,前端' },
+          { key: 'pubDate', label: '发布日期', placeholder: '2024-01-15' },
+          { key: 'description', label: '描述', placeholder: '文章简介' }
+        ],
+        essay: [
+          { key: 'title', label: '标题', placeholder: '请输入随笔标题' },
+          { key: 'categories', label: '分类', placeholder: '随笔,生活' },
+          { key: 'pubDate', label: '发布日期', placeholder: '2024-01-15' }
+        ]
+      }
     }
   },
 
@@ -95,6 +113,7 @@ export default {
   },
 
   mounted() {
+    console.log('MetadataBar mounted')
     this.parseExistingMetadata()
     this.handleResize()
     window.addEventListener('resize', this.handleResize)
@@ -134,10 +153,11 @@ export default {
     },
 
     initMetadataValues() {
-      this.metadataValues = {}
+      const newValues = {}
       this.currentFields.forEach(field => {
-        this.metadataValues[field.key] = ''
+        newValues[field.key] = ''
       })
+      this.metadataValues = newValues
     },
 
     parseExistingMetadata() {
@@ -186,6 +206,11 @@ export default {
       }
 
       return metadata
+    },
+
+    updateMetadataField(key, value) {
+      this.$set(this.metadataValues, key, value)
+      this.updateEditorContent()
     },
 
     onMetadataChange() {
@@ -301,10 +326,10 @@ export default {
 
 .metadata-bar {
   position: fixed;
-  top: @header-height;
+  top: 60px; /* 直接使用像素值而不是变量 */
   left: 0;
   right: 0;
-  height: @header-height;
+  height: 60px; /* 直接使用像素值 */
   background: #f8f9fa;
   border-bottom: 1px solid #e4e7ed;
   display: flex;
@@ -314,6 +339,7 @@ export default {
   z-index: 999;
   overflow-x: auto;
   overflow-y: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 
   .content-type-selector {
     flex-shrink: 0;
@@ -327,12 +353,7 @@ export default {
       }
     }
     
-    .option-icon {
-      width: 14px;
-      height: 14px;
-      margin-right: 6px;
-      vertical-align: middle;
-    }
+
   }
 
   .metadata-fields {
@@ -383,7 +404,7 @@ export default {
   // 移动端样式
   &.mobile {
     position: fixed;
-    top: @header-height;
+    top: 60px; /* 直接使用像素值 */
     padding: 12px 10px;
     flex-direction: column;
     height: auto;
@@ -454,9 +475,5 @@ export default {
 .el-select-dropdown__item {
   display: flex;
   align-items: center;
-  
-  .option-icon {
-    margin-right: 6px;
-  }
 }
 </style>
