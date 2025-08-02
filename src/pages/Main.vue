@@ -95,9 +95,6 @@ export default {
           window.vditorInstance = this.vditor
 
           console.log('✅ Vditor初始化完成')
-
-          // 插入元数据栏
-          this.insertMetadataBar()
         }
       }
       this.vditor = new Vditor('vditor', options)
