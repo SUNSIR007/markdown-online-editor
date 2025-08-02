@@ -93,6 +93,9 @@ export default {
           // 在vditor工具栏下方插入元数据栏
           this.insertMetadataBar()
 
+          // 强制插入测试栏 - 确保能看到
+          this.forceInsertTestBar()
+
           // 添加全局调试函数
           window.debugVditorStructure = () => {
             const vditor = document.getElementById('vditor')
@@ -249,6 +252,103 @@ export default {
         }, 300)
 
       }, 100) // 延迟100ms确保DOM渲染完成
+    },
+
+    forceInsertTestBar() {
+      console.log('🚀 强制插入测试栏开始')
+
+      setTimeout(() => {
+        // 移除之前的测试栏
+        const oldBars = document.querySelectorAll('.force-test-bar')
+        oldBars.forEach(bar => bar.remove())
+
+        // 查找vditor容器
+        const vditor = document.getElementById('vditor')
+        console.log('🔍 Vditor容器:', vditor)
+
+        if (!vditor) {
+          console.error('❌ 未找到vditor容器')
+          return
+        }
+
+        // 创建超级明显的测试栏
+        const testBar = document.createElement('div')
+        testBar.className = 'force-test-bar'
+        testBar.style.cssText = `
+          position: fixed !important;
+          top: 100px !important;
+          left: 50% !important;
+          transform: translateX(-50%) !important;
+          width: 80% !important;
+          height: 60px !important;
+          background: linear-gradient(45deg, #ff0000, #00ff00, #0000ff) !important;
+          color: white !important;
+          font-size: 20px !important;
+          font-weight: bold !important;
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          z-index: 999999 !important;
+          border: 5px solid yellow !important;
+          border-radius: 10px !important;
+          box-shadow: 0 0 20px rgba(255,255,255,0.8) !important;
+          animation: rainbow 2s infinite !important;
+        `
+
+        testBar.innerHTML = `
+          <div style="text-align: center;">
+            <div>🌈 强制插入测试栏 - 如果您看到这个，说明插入功能正常！</div>
+            <div style="font-size: 14px; margin-top: 5px;">这个栏会在5秒后消失</div>
+          </div>
+        `
+
+        // 添加彩虹动画
+        const style = document.createElement('style')
+        style.textContent = `
+          @keyframes rainbow {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
+          }
+        `
+        document.head.appendChild(style)
+
+        // 插入到body顶部确保可见
+        document.body.appendChild(testBar)
+
+        console.log('✅ 强制测试栏已插入到页面顶部')
+
+        // 5秒后移除
+        setTimeout(() => {
+          testBar.remove()
+          console.log('🗑️ 强制测试栏已移除')
+        }, 5000)
+
+        // 同时尝试在vditor内部插入
+        const vditorTestBar = document.createElement('div')
+        vditorTestBar.className = 'vditor-internal-test'
+        vditorTestBar.style.cssText = `
+          height: 40px !important;
+          background: linear-gradient(135deg, #ff6b6b, #4ecdc4) !important;
+          color: white !important;
+          font-weight: bold !important;
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          border: 2px solid #ffd93d !important;
+          margin: 2px 0 !important;
+        `
+        vditorTestBar.textContent = '📍 Vditor内部测试栏'
+
+        // 尝试多种插入方式
+        if (vditor.children.length > 0) {
+          vditor.insertBefore(vditorTestBar, vditor.children[0])
+          console.log('✅ 已在vditor内部插入测试栏')
+        } else {
+          vditor.appendChild(vditorTestBar)
+          console.log('✅ 已在vditor末尾添加测试栏')
+        }
+
+      }, 200)
     },
 
 
