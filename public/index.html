@@ -48,6 +48,23 @@
   </noscript>
   <div id="app"></div>
   <!-- built files will be auto injected -->
+
+  <!-- 临时测试脚本 -->
+  <script>
+    console.log('🚀 HTML页面已加载')
+    alert('HTML页面JavaScript正在执行！')
+
+    // 检查Vue是否加载
+    setTimeout(() => {
+      if (window.Vue) {
+        console.log('✅ Vue已加载')
+        alert('Vue已加载')
+      } else {
+        console.log('❌ Vue未加载')
+        alert('Vue未加载 - 可能有编译错误')
+      }
+    }, 2000)
+  </script>
 </body>
 
 </html>
