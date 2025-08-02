@@ -152,15 +152,23 @@ export default {
           return
         }
 
-        // 根据开发者工具，查找正确的工具栏元素
         const toolbar = vditorElement.querySelector('.vditor-toolbar')
         console.log('🔍 工具栏元素:', toolbar)
 
+        // 尝试查找其他可能的工具栏选择器
         if (!toolbar) {
-          console.error('❌ 未找到工具栏元素，重试中...')
-          console.log('🔍 Vditor内部结构:', vditorElement.innerHTML.substring(0, 500))
-          setTimeout(() => this.insertMetadataBar(), 500)
-          return
+          const alternativeToolbar = vditorElement.querySelector('.vditor--toolbar') ||
+                                   vditorElement.querySelector('[class*="toolbar"]') ||
+                                   vditorElement.querySelector('.vditor-reset')
+          console.log('🔍 备用工具栏元素:', alternativeToolbar)
+
+          if (!alternativeToolbar) {
+            console.error('❌ 未找到任何工具栏元素，重试中...')
+            console.log('🔍 Vditor内部结构:', vditorElement.innerHTML.substring(0, 500))
+            // 如果没找到，再次尝试
+            setTimeout(() => this.insertMetadataBar(), 500)
+            return
+          }
         }
 
         // 检查是否已经插入过
@@ -207,32 +215,9 @@ export default {
           box-shadow: 0 2px 8px rgba(0,0,0,0.3);
         `
 
-        // 先插入一个临时测试栏验证位置
-        const testBar = document.createElement('div')
-        testBar.style.cssText = `
-          background: #ff4444;
-          color: white;
-          padding: 8px 16px;
-          font-size: 14px;
-          border-bottom: 1px solid #ddd;
-          width: 100%;
-          box-sizing: border-box;
-          text-align: center;
-        `
-        testBar.textContent = '⚠️ 测试栏 - 这里应该是元数据栏的位置'
-
-        // 插入到工具栏正下方
-        toolbar.parentNode.insertBefore(testBar, toolbar.nextSibling)
-
-        // 3秒后移除测试栏并插入真正的元数据栏
-        setTimeout(() => {
-          if (testBar.parentNode) {
-            testBar.parentNode.removeChild(testBar)
-          }
-          // 插入真正的元数据栏
-          toolbar.parentNode.insertBefore(metadataBar, toolbar.nextSibling)
-          console.log('📍 元数据栏已插入到工具栏下方')
-        }, 3000)
+        // 插入到工具栏下方
+        const targetToolbar = toolbar || alternativeToolbar
+        targetToolbar.parentNode.insertBefore(metadataBar, targetToolbar.nextSibling)
 
         // 添加事件监听
         const typeSelect = metadataBar.querySelector('.metadata-type-select')
