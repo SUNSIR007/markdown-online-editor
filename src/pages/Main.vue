@@ -11,7 +11,7 @@
 <script>
 import Vditor from 'vditor'
 import HeaderNav from './partials/HeaderNav'
-import MetadataBar from '@components/SimpleMetadataBar'
+import MetadataBar from '@components/MetadataBar'
 import defaultText from '@config/default'
 
 export default {
@@ -159,10 +159,10 @@ export default {
 
   .vditor {
     position: absolute;
-    top: 120px; /* 60px工具栏 + 60px元数据栏 */
+    top: calc(@header-height * 2); // 为元数据栏留出空间
     max-width: @max-body-width;
     width: 80%;
-    height: calc(100vh - 140px); /* 调整高度以适应元数据栏 */
+    height: calc(100vh - 140px); // 调整高度以适应元数据栏
     margin: 20px auto;
     text-align: left;
 
@@ -192,8 +192,8 @@ export default {
 @media (max-width: 960px) {
   .index-page {
     .vditor {
-      top: 180px; /* 60px工具栏 + 120px移动端元数据栏 */
-      height: calc(100vh - 200px);
+      top: calc(@header-height + 120px); // 移动端元数据栏高度更大
+      height: calc(100vh - 180px);
       padding: 10px;
       margin: 0px auto;
       width: 100%;
