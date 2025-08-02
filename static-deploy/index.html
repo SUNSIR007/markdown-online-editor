@@ -398,14 +398,15 @@
         }
 
         .github-config-dialog .el-form-item__label {
-            color: #8b949e !important;
+            color: #c9d1d9 !important;
+            white-space: nowrap;
         }
 
         .github-config-dialog .el-input__inner {
             background: #010409 !important;
             border: 1px solid #30363d !important;
             color: #c9d1d9 !important;
-            border-radius: 6px !important;
+            border-radius: 20px !important;
         }
 
         .github-config-dialog .el-input__inner:focus {
@@ -845,7 +846,7 @@
                     width="550px"
                     @close="close"
                     custom-class="github-config-dialog">
-                    <el-form :model="config" label-width="120px">
+                    <el-form :model="config" label-width="140px">
                         <el-form-item label="Personal Token">
                             <el-input
                                 v-model="config.token"
