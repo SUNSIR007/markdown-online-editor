@@ -92,16 +92,6 @@ export default {
 
           // 在vditor工具栏下方插入元数据栏
           this.insertMetadataBar()
-
-          // 添加全局调试函数
-          window.debugVditorStructure = () => {
-            const vditor = document.getElementById('vditor')
-            console.log('🔍 Vditor调试信息:')
-            console.log('- Vditor元素:', vditor)
-            console.log('- 子元素数量:', vditor?.children.length)
-            console.log('- 类名列表:', Array.from(vditor?.children || []).map(el => el.className))
-            console.log('- HTML结构:', vditor?.innerHTML.substring(0, 500))
-          }
         }
       }
       this.vditor = new Vditor('vditor', options)
@@ -142,30 +132,13 @@ export default {
       setTimeout(() => {
         // 查找vditor的工具栏
         const vditorElement = document.getElementById('vditor')
-        console.log('🔍 Vditor元素:', vditorElement)
+        const toolbar = vditorElement?.querySelector('.vditor-toolbar')
 
-        if (!vditorElement) {
-          console.error('❌ 未找到vditor元素')
-          return
-        }
-
-        const toolbar = vditorElement.querySelector('.vditor-toolbar')
-        console.log('🔍 工具栏元素:', toolbar)
-
-        // 尝试查找其他可能的工具栏选择器
         if (!toolbar) {
-          const alternativeToolbar = vditorElement.querySelector('.vditor--toolbar') ||
-                                   vditorElement.querySelector('[class*="toolbar"]') ||
-                                   vditorElement.querySelector('.vditor-reset')
-          console.log('🔍 备用工具栏元素:', alternativeToolbar)
-
-          if (!alternativeToolbar) {
-            console.error('❌ 未找到任何工具栏元素，重试中...')
-            console.log('🔍 Vditor内部结构:', vditorElement.innerHTML.substring(0, 500))
-            // 如果没找到，再次尝试
-            setTimeout(() => this.insertMetadataBar(), 500)
-            return
-          }
+          console.error('❌ 未找到vditor工具栏，重试中...')
+          // 如果没找到，再次尝试
+          setTimeout(() => this.insertMetadataBar(), 500)
+          return
         }
 
         // 检查是否已经插入过
@@ -174,63 +147,62 @@ export default {
           return
         }
 
-        // 创建元数据栏
-        const metadataBar = document.createElement('div')
-        metadataBar.className = 'vditor-metadata-bar'
-        metadataBar.innerHTML = `
-          <div class="metadata-content">
-            <span class="metadata-label">📝 元数据栏</span>
-            <select class="metadata-type-select">
-              <option value="general">📄 通用文档</option>
-              <option value="blog">📝 博客文章</option>
-              <option value="essay">✍️ 随笔</option>
-            </select>
-            <div class="metadata-fields" style="display: none;">
-              <input placeholder="标题" class="metadata-input" />
-              <input placeholder="分类" class="metadata-input" />
-              <input placeholder="日期" class="metadata-input" />
-              <input placeholder="描述" class="metadata-input" />
-            </div>
-            <button class="metadata-btn">插入模板</button>
-            <button class="metadata-btn">清空</button>
-            <span class="metadata-debug">测试成功</span>
+      // 创建元数据栏
+      const metadataBar = document.createElement('div')
+      metadataBar.className = 'vditor-metadata-bar'
+      metadataBar.innerHTML = `
+        <div class="metadata-content">
+          <span class="metadata-label">📝 元数据栏</span>
+          <select class="metadata-type-select">
+            <option value="general">📄 通用文档</option>
+            <option value="blog">📝 博客文章</option>
+            <option value="essay">✍️ 随笔</option>
+          </select>
+          <div class="metadata-fields" style="display: none;">
+            <input placeholder="标题" class="metadata-input" />
+            <input placeholder="分类" class="metadata-input" />
+            <input placeholder="日期" class="metadata-input" />
+            <input placeholder="描述" class="metadata-input" />
           </div>
-        `
+          <button class="metadata-btn">插入模板</button>
+          <button class="metadata-btn">清空</button>
+          <span class="metadata-debug">测试成功</span>
+        </div>
+      `
 
-        // 添加样式
-        metadataBar.style.cssText = `
-          height: 40px;
-          background: #f8f9fa;
-          border-left: 1px solid #d1d5da;
-          border-right: 1px solid #d1d5da;
-          border-bottom: 1px solid #d1d5da;
-          display: flex;
-          align-items: center;
-          padding: 0 12px;
-          font-size: 12px;
-          overflow-x: auto;
-        `
+      // 添加样式
+      metadataBar.style.cssText = `
+        height: 40px;
+        background: #f8f9fa;
+        border-left: 1px solid #d1d5da;
+        border-right: 1px solid #d1d5da;
+        border-bottom: 1px solid #d1d5da;
+        display: flex;
+        align-items: center;
+        padding: 0 12px;
+        font-size: 12px;
+        overflow-x: auto;
+      `
 
-        // 插入到工具栏下方
-        const targetToolbar = toolbar || alternativeToolbar
-        targetToolbar.parentNode.insertBefore(metadataBar, targetToolbar.nextSibling)
+      // 插入到工具栏下方
+      toolbar.parentNode.insertBefore(metadataBar, toolbar.nextSibling)
 
-        // 添加事件监听
-        const typeSelect = metadataBar.querySelector('.metadata-type-select')
-        const fieldsContainer = metadataBar.querySelector('.metadata-fields')
+      // 添加事件监听
+      const typeSelect = metadataBar.querySelector('.metadata-type-select')
+      const fieldsContainer = metadataBar.querySelector('.metadata-fields')
 
-        typeSelect.addEventListener('change', (e) => {
-          const type = e.target.value
-          console.log('📝 元数据类型切换为:', type)
+      typeSelect.addEventListener('change', (e) => {
+        const type = e.target.value
+        console.log('📝 元数据类型切换为:', type)
 
-          if (type === 'general') {
-            fieldsContainer.style.display = 'none'
-          } else {
-            fieldsContainer.style.display = 'flex'
-            fieldsContainer.style.gap = '8px'
-            fieldsContainer.style.marginLeft = '12px'
-          }
-        })
+        if (type === 'general') {
+          fieldsContainer.style.display = 'none'
+        } else {
+          fieldsContainer.style.display = 'flex'
+          fieldsContainer.style.gap = '8px'
+          fieldsContainer.style.marginLeft = '12px'
+        }
+      })
 
         console.log('✅ 元数据栏插入成功')
       }, 100) // 延迟100ms确保DOM渲染完成
