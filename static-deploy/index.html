@@ -210,12 +210,21 @@
             background: #fafafa;
         }
         .metadata-editor {
-            padding: 15px 25px;
-            background: #000000;
-            border-bottom: 1px solid #888;
             display: flex;
-            flex-direction: column;
-            gap: 10px;
+            gap: 15px;
+            padding: 10px 15px;
+            background-color: #0d1117;
+            border-bottom: 1px solid #30363d;
+        }
+        .metadata-editor .el-input {
+            flex: 1;
+        }
+        .metadata-editor .el-input[placeholder="文章标题"] {
+            flex: 2; /* 标题框更宽 */
+        }
+        .metadata-editor .el-input__inner {
+            height: 32px;
+            line-height: 32px;
         }
         .dark-mode .el-input__inner {
             background-color: #1a1a1a !important;
@@ -627,13 +636,15 @@
             </div>
         </div>
 
-        <div class="metadata-editor" v-if="currentType !== 'general'">
-            <el-input v-if="metadataFields[currentType].some(f => f.key === 'title')" v-model="metadata.title" placeholder="文章标题"></el-input>
-            <el-input v-if="metadataFields[currentType].some(f => f.key === 'categories')" v-model="metadata.categories" placeholder="分类 (逗号分隔)"></el-input>
-            <el-input v-if="metadataFields[currentType].some(f => f.key === 'description')" v-model="metadata.description" placeholder="文章描述"></el-input>
-        </div>
-
-        <div class="editor-container" :style="{ height: currentType !== 'general' ? 'calc(100vh - 230px)' : 'calc(100vh - 90px)' }">
+        <div class="editor-container">
+            <!-- 元数据编辑器将通过JS移动到Vditor工具栏下方 -->
+            <div id="metadata-editor-wrapper" style="display: none;">
+                <div class="metadata-editor" v-if="currentType !== 'general'">
+                    <el-input v-if="metadataFields[currentType].some(f => f.key === 'title')" v-model="metadata.title" placeholder="文章标题" size="small"></el-input>
+                    <el-input v-if="metadataFields[currentType].some(f => f.key === 'categories')" v-model="metadata.categories" placeholder="分类 (逗号分隔)" size="small"></el-input>
+                    <el-input v-if="metadataFields[currentType].some(f => f.key === 'description')" v-model="metadata.description" placeholder="文章描述" size="small"></el-input>
+                </div>
+            </div>
             <div id="vditor"></div>
         </div>
 
@@ -899,6 +910,16 @@
                         cache: { enable: false },
                         after: () => {
                             console.log('Vditor初始化完成');
+                            
+                            // 将元数据编辑器移动到工具栏下方
+                            const vditorElement = document.getElementById('vditor');
+                            const toolbar = vditorElement.querySelector('.vditor-toolbar');
+                            const metadataEditor = document.getElementById('metadata-editor-wrapper');
+                            if (toolbar && metadataEditor) {
+                                toolbar.insertAdjacentElement('afterend', metadataEditor);
+                                metadataEditor.style.display = 'block';
+                            }
+
                             // 绑定 input 事件，将编辑器内容同步到 bodyContent
                             this.vditor.vditor.element.addEventListener('input', () => {
                                 this.bodyContent = this.vditor.getValue();
