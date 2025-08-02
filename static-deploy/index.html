@@ -368,36 +368,84 @@
             display: none !important;
         }
 
-        /* GitHub配置弹窗样式 - 强制灰色背景 */
-        .el-dialog,
-        .el-dialog.el-dialog,
-        div.el-dialog {
-            border-radius: 20px !important;
-            overflow: hidden;
-            background: #f5f5f5 !important;
-            background-color: #f5f5f5 !important;
+        /* 美化GitHub配置弹窗 */
+        .el-dialog, .el-dialog__wrapper {
+            background: transparent !important;
         }
 
-        .el-dialog__header,
-        .el-dialog .el-dialog__header {
-            border-radius: 20px 20px 0 0 !important;
-            background: #f5f5f5 !important;
-            background-color: #f5f5f5 !important;
+        .github-config-dialog .el-dialog {
+            background: #161b22 !important;
+            border-radius: 12px !important;
+            border: 1px solid #30363d !important;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5) !important;
         }
 
-        .el-dialog__body,
-        .el-dialog .el-dialog__body {
-            border-radius: 0 0 20px 20px !important;
-            background: #f5f5f5 !important;
-            background-color: #f5f5f5 !important;
+        .github-config-dialog .el-dialog__header {
+            background: #161b22 !important;
+            color: #c9d1d9 !important;
+            border-bottom: 1px solid #30363d !important;
         }
 
-        /* 确保弹窗内容区域也是灰色背景 */
-        .el-dialog__wrapper .el-dialog,
-        .el-dialog__wrapper .el-dialog__header,
-        .el-dialog__wrapper .el-dialog__body {
-            background: #f5f5f5 !important;
-            background-color: #f5f5f5 !important;
+        .github-config-dialog .el-dialog__title {
+            font-size: 18px !important;
+            font-weight: 600;
+        }
+
+        .github-config-dialog .el-dialog__body {
+            background: #0d1117 !important;
+            color: #c9d1d9 !important;
+            padding: 25px 30px !important;
+        }
+
+        .github-config-dialog .el-form-item__label {
+            color: #8b949e !important;
+        }
+
+        .github-config-dialog .el-input__inner {
+            background: #010409 !important;
+            border: 1px solid #30363d !important;
+            color: #c9d1d9 !important;
+            border-radius: 6px !important;
+        }
+
+        .github-config-dialog .el-input__inner:focus {
+            border-color: #002FA7 !important;
+            box-shadow: 0 0 0 3px rgba(0, 47, 167, 0.3) !important;
+        }
+
+        .github-config-dialog .token-instructions {
+            font-size: 12px;
+            color: #8b949e;
+            margin-top: 8px;
+            line-height: 1.6;
+            background: #161b22;
+            padding: 10px;
+            border-radius: 6px;
+        }
+
+        .github-config-dialog .el-dialog__footer {
+            background: #161b22 !important;
+            border-top: 1px solid #30363d !important;
+            padding: 15px 30px !important;
+        }
+
+        .github-config-dialog .test-result {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+
+        .github-config-dialog .test-result.success {
+            background-color: rgba(34, 139, 34, 0.2);
+            color: #3fb950;
+            border: 1px solid rgba(34, 139, 34, 0.5);
+        }
+
+        .github-config-dialog .test-result.error {
+            background-color: rgba(210, 4, 45, 0.2);
+            color: #f85149;
+            border: 1px solid rgba(210, 4, 45, 0.5);
         }
 
         .metadata-info {
@@ -792,49 +840,52 @@
             },
             template: `
                 <el-dialog
-                    title="GitHub配置"
+                    title="GitHub Configuration"
                     :visible.sync="visible"
-                    width="500px"
-                    @close="close">
-                    <el-form :model="config" label-width="100px">
-                        <el-form-item label="Token">
+                    width="550px"
+                    @close="close"
+                    custom-class="github-config-dialog">
+                    <el-form :model="config" label-width="120px">
+                        <el-form-item label="Personal Token">
                             <el-input
                                 v-model="config.token"
                                 type="password"
-                                placeholder="请输入GitHub Token"
+                                placeholder="Enter your GitHub Personal Access Token"
                                 show-password>
                             </el-input>
-                            <div style="font-size: 12px; color: #666; margin-top: 8px; line-height: 1.4;">
-                                <strong>获取Token步骤：</strong><br>
-                                1. 登录GitHub → 右上角头像 → Settings<br>
-                                2. 左侧菜单 → Developer settings → Personal access tokens → Tokens (classic)<br>
-                                3. Generate new token → Generate new token (classic)<br>
-                                4. 勾选 <strong>repo</strong> 权限 → Generate token<br>
-                                5. 复制生成的token并粘贴到此处
+                            <div class="token-instructions">
+                                <strong>How to get a token:</strong><br>
+                                1. GitHub → Settings → Developer settings<br>
+                                2. Personal access tokens → Tokens (classic)<br>
+                                3. Generate new token (classic)<br>
+                                4. Check the <strong>repo</strong> scope → Generate token<br>
+                                5. Copy the token and paste it here.
                             </div>
                         </el-form-item>
 
-                        <el-form-item label="仓库所有者">
+                        <el-form-item label="Repository Owner">
                             <el-input
                                 v-model="config.owner"
-                                placeholder="GitHub用户名或组织名">
+                                placeholder="Your GitHub username or organization">
                             </el-input>
                         </el-form-item>
 
-                        <el-form-item label="仓库名称">
+                        <el-form-item label="Repository Name">
                             <el-input
                                 v-model="config.repo"
-                                placeholder="仓库名称">
+                                placeholder="The name of the repository">
                             </el-input>
                         </el-form-item>
-
-
                     </el-form>
 
+                    <div v-if="testResult" :class="['test-result', testResult.success ? 'success' : 'error']">
+                        {{ testResult.message }}
+                    </div>
+
                     <div slot="footer" class="dialog-footer">
-                        <el-button @click="testConnection">测试连接</el-button>
-                        <el-button @click="close">取消</el-button>
-                        <el-button type="primary" @click="save" class="save-button">保存</el-button>
+                        <el-button @click="testConnection" :loading="testing">Test Connection</el-button>
+                        <el-button @click="close">Cancel</el-button>
+                        <el-button type="primary" @click="save" class="save-button">Save Configuration</el-button>
                     </div>
                 </el-dialog>
             `
