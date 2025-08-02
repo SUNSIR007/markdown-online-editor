@@ -37,32 +37,6 @@ export default {
 
   mounted() {
     console.log('🚀 Main.vue mounted - 开始初始化')
-
-    // 立即创建一个超级明显的测试元素
-    const immediateTest = document.createElement('div')
-    immediateTest.style.cssText = `
-      position: fixed !important;
-      top: 0 !important;
-      left: 0 !important;
-      width: 100% !important;
-      height: 50px !important;
-      background: red !important;
-      color: white !important;
-      font-size: 20px !important;
-      font-weight: bold !important;
-      display: flex !important;
-      align-items: center !important;
-      justify-content: center !important;
-      z-index: 999999 !important;
-    `
-    immediateTest.textContent = '🚨 JavaScript正在执行 - 如果您看到这个，说明JS没问题！'
-    document.body.appendChild(immediateTest)
-
-    // 3秒后移除
-    setTimeout(() => {
-      immediateTest.remove()
-    }, 3000)
-
     this.initVditor()
     this.$nextTick(() => {
       this.isLoading = false
