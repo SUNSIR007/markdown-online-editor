@@ -3,6 +3,7 @@
 <template>
   <div class="index-page" v-loading="isLoading">
     <HeaderNav />
+    <MetadataBar ref="metadataBar" />
     <div id="vditor" class="vditor" />
   </div>
 </template>
@@ -10,6 +11,7 @@
 <script>
 import Vditor from 'vditor'
 import HeaderNav from './partials/HeaderNav'
+import MetadataBar from '@components/MetadataBar'
 import defaultText from '@config/default'
 
 export default {
@@ -33,6 +35,7 @@ export default {
 
   components: {
     HeaderNav,
+    MetadataBar,
   },
 
   mounted() {
@@ -84,6 +87,16 @@ export default {
           const content = localStorage.getItem('vditorvditor') || defaultText
           this.vditor.setValue(content)
           this.vditor.focus()
+
+          // 将vditor实例暴露给MetadataBar组件使用
+          window.vditorInstance = this.vditor
+
+          // 通知MetadataBar解析现有元数据
+          this.$nextTick(() => {
+            if (this.$refs.metadataBar) {
+              this.$refs.metadataBar.parseExistingMetadata()
+            }
+          })
         }
       }
       this.vditor = new Vditor('vditor', options)
@@ -122,6 +135,13 @@ export default {
         const content = localStorage.getItem('vditorvditor') || ''
         this.vditor.setValue(content)
         this.vditor.focus()
+
+        // 重新解析元数据
+        this.$nextTick(() => {
+          if (this.$refs.metadataBar) {
+            this.$refs.metadataBar.parseExistingMetadata()
+          }
+        })
       }
     },
   },
@@ -139,10 +159,10 @@ export default {
 
   .vditor {
     position: absolute;
-    top: @header-height;
+    top: calc(@header-height * 2); // 为元数据栏留出空间
     max-width: @max-body-width;
     width: 80%;
-    height: calc(100vh - 100px);
+    height: calc(100vh - 140px); // 调整高度以适应元数据栏
     margin: 20px auto;
     text-align: left;
 
@@ -172,9 +192,11 @@ export default {
 @media (max-width: 960px) {
   .index-page {
     .vditor {
-      height: calc(100vh - 60px);
+      top: calc(@header-height + 120px); // 移动端元数据栏高度更大
+      height: calc(100vh - 180px);
       padding: 10px;
       margin: 0px auto;
+      width: 100%;
     }
   }
 }

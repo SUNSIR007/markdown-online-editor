@@ -30,7 +30,27 @@ export class ConfigManager {
       defaultFileName: 'arya-export'
     })
 
-    // 由于删除了元数据编辑功能，移除相关配置
+    // 内容类型配置
+    this.set('contentTypes', {
+      GENERAL: 'general',
+      BLOG: 'blog',
+      ESSAY: 'essay'
+    })
+
+    // 元数据字段配置
+    this.set('metadataFields', {
+      blog: [
+        { key: 'title', label: '标题', placeholder: '请输入文章标题' },
+        { key: 'categories', label: '分类', placeholder: '技术,Vue,前端' },
+        { key: 'pubDate', label: '发布日期', placeholder: '2024-01-15' },
+        { key: 'description', label: '描述', placeholder: '文章简介' }
+      ],
+      essay: [
+        { key: 'title', label: '标题', placeholder: '请输入随笔标题' },
+        { key: 'categories', label: '分类', placeholder: '随笔,生活' },
+        { key: 'pubDate', label: '发布日期', placeholder: '2024-01-15' }
+      ]
+    })
 
     // Vditor配置
     this.set('vditor', {
