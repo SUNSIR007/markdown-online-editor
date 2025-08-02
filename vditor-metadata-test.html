@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vditor元数据栏测试</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vditor@3.8.17/dist/index.css" />
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            background: #409eff;
+            color: white;
+            padding: 16px 20px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .vditor-metadata-bar {
+            height: 40px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #d1d5da;
+            display: flex;
+            align-items: center;
+            padding: 0 12px;
+            font-size: 12px;
+            overflow-x: auto;
+        }
+        
+        .metadata-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+        }
+        
+        .metadata-label {
+            font-weight: 600;
+            color: #303133;
+            white-space: nowrap;
+        }
+        
+        .metadata-type-select {
+            padding: 4px 8px;
+            border: 1px solid #dcdfe6;
+            border-radius: 3px;
+            background: white;
+            font-size: 12px;
+            min-width: 100px;
+        }
+        
+        .metadata-fields {
+            display: flex;
+            gap: 8px;
+            flex: 1;
+        }
+        
+        .metadata-input {
+            padding: 4px 6px;
+            border: 1px solid #dcdfe6;
+            border-radius: 3px;
+            font-size: 11px;
+            width: 80px;
+        }
+        
+        .metadata-input:focus {
+            outline: none;
+            border-color: #409eff;
+        }
+        
+        .metadata-btn {
+            padding: 4px 8px;
+            border: 1px solid #dcdfe6;
+            border-radius: 3px;
+            background: white;
+            cursor: pointer;
+            font-size: 11px;
+            white-space: nowrap;
+        }
+        
+        .metadata-btn:hover {
+            background: #f5f7fa;
+        }
+        
+        .metadata-debug {
+            margin-left: auto;
+            font-size: 10px;
+            color: #909399;
+            background: rgba(64, 158, 255, 0.1);
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+        
+        .status {
+            background: #e7f5e7;
+            border: 1px solid #4caf50;
+            color: #2e7d32;
+            padding: 16px;
+            margin: 20px;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+        
+        .instructions {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            color: #856404;
+            padding: 16px;
+            margin: 20px;
+            border-radius: 8px;
+        }
+        
+        .instructions h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+        
+        .instructions ul {
+            margin-left: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 5px;
+        }
+        
+        #vditor {
+            height: 500px;
+        }
+        
+        @media (max-width: 960px) {
+            .metadata-content {
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+            
+            .metadata-fields {
+                width: 100%;
+                margin-left: 0 !important;
+            }
+            
+            .metadata-input {
+                flex: 1;
+                min-width: 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            📝 Vditor + 元数据栏集成测试
+        </div>
+        
+        <div id="vditor"></div>
+    </div>
+    
+    <div class="status">
+        ✅ 这个页面演示了如何在Vditor工具栏下方插入元数据栏
+    </div>
+    
+    <div class="instructions">
+        <h3>📋 实现原理：</h3>
+        <ul>
+            <li>在Vditor初始化完成后（after回调中）</li>
+            <li>查找 .vditor-toolbar 元素</li>
+            <li>在工具栏下方插入自定义的元数据栏</li>
+            <li>添加相应的样式和事件监听</li>
+        </ul>
+    </div>
+    
+    <div class="instructions">
+        <h3>🎯 预期效果：</h3>
+        <ul>
+            <li>元数据栏应该出现在Vditor工具栏正下方</li>
+            <li>与工具栏样式保持一致</li>
+            <li>包含内容类型选择器和相关输入字段</li>
+            <li>支持响应式布局</li>
+        </ul>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vditor@3.8.17/dist/index.min.js"></script>
+    <script>
+        function insertMetadataBar() {
+            console.log('🚀 开始插入元数据栏到vditor工具栏下方')
+            
+            // 查找vditor的工具栏
+            const vditorElement = document.getElementById('vditor')
+            const toolbar = vditorElement?.querySelector('.vditor-toolbar')
+            
+            if (!toolbar) {
+                console.error('❌ 未找到vditor工具栏')
+                return
+            }
+            
+            // 创建元数据栏
+            const metadataBar = document.createElement('div')
+            metadataBar.className = 'vditor-metadata-bar'
+            metadataBar.innerHTML = `
+                <div class="metadata-content">
+                    <span class="metadata-label">📝 元数据栏</span>
+                    <select class="metadata-type-select">
+                        <option value="general">📄 通用文档</option>
+                        <option value="blog">📝 博客文章</option>
+                        <option value="essay">✍️ 随笔</option>
+                    </select>
+                    <div class="metadata-fields" style="display: none;">
+                        <input placeholder="标题" class="metadata-input" />
+                        <input placeholder="分类" class="metadata-input" />
+                        <input placeholder="日期" class="metadata-input" />
+                        <input placeholder="描述" class="metadata-input" />
+                    </div>
+                    <button class="metadata-btn">插入模板</button>
+                    <button class="metadata-btn">清空</button>
+                    <span class="metadata-debug">✅ 插入成功</span>
+                </div>
+            `
+            
+            // 插入到工具栏下方
+            toolbar.parentNode.insertBefore(metadataBar, toolbar.nextSibling)
+            
+            // 添加事件监听
+            const typeSelect = metadataBar.querySelector('.metadata-type-select')
+            const fieldsContainer = metadataBar.querySelector('.metadata-fields')
+            
+            typeSelect.addEventListener('change', (e) => {
+                const type = e.target.value
+                console.log('📝 元数据类型切换为:', type)
+                
+                if (type === 'general') {
+                    fieldsContainer.style.display = 'none'
+                } else {
+                    fieldsContainer.style.display = 'flex'
+                    fieldsContainer.style.gap = '8px'
+                    fieldsContainer.style.marginLeft = '12px'
+                }
+            })
+            
+            console.log('✅ 元数据栏插入成功')
+        }
+        
+        // 初始化Vditor
+        const vditor = new Vditor('vditor', {
+            height: 500,
+            mode: 'sv',
+            preview: {
+                delay: 100,
+                show: true,
+            },
+            after: () => {
+                vditor.setValue(`---
+title: 测试文章
+categories: ["技术", "Vue"]
+pubDate: 2024-01-15
+description: 这是一个测试文章
+---
+
+# 测试文章
+
+这是一个包含元数据的测试文章。
+
+您应该能看到在工具栏下方有一个元数据输入栏。`)
+                
+                // 插入元数据栏
+                insertMetadataBar()
+            }
+        })
+        
+        console.log('🚀 Vditor初始化完成')
+    </script>
+</body>
+</html>

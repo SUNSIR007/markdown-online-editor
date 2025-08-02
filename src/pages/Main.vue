@@ -3,24 +3,6 @@
 <template>
   <div class="index-page" v-loading="isLoading">
     <HeaderNav />
-
-    <!-- 最简单的测试元素 -->
-    <div style="position: fixed; top: 60px; left: 0; right: 0; height: 60px; background: red; z-index: 9999; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 16px;">
-      🚨 紧急测试：如果您看到这个红色条，说明元数据栏位置正确！当前类型: {{ testType }}
-    </div>
-
-    <!-- 原来的测试元数据栏 -->
-    <div class="test-metadata-bar">
-      <div class="test-content">
-        <span class="test-label">🎯 元数据栏测试 - 如果您看到这行文字，说明元数据栏正常显示！</span>
-        <select v-model="testType" @change="onTestTypeChange" class="test-select">
-          <option value="general">📄 通用文档</option>
-          <option value="blog">📝 博客文章</option>
-          <option value="essay">✍️ 随笔</option>
-        </select>
-        <span class="test-debug">当前: {{ testType }}</span>
-      </div>
-    </div>
     <div id="vditor" class="vditor" />
   </div>
 </template>
@@ -38,7 +20,6 @@ export default {
       isLoading: true,
       isMobile: window.innerWidth <= 960,
       vditor: null,
-      testType: 'general', // 测试用的数据
     }
   },
 
@@ -108,6 +89,9 @@ export default {
 
           // 将vditor实例暴露给全局使用
           window.vditorInstance = this.vditor
+
+          // 在vditor工具栏下方插入元数据栏
+          this.insertMetadataBar()
         }
       }
       this.vditor = new Vditor('vditor', options)
@@ -141,10 +125,90 @@ export default {
         localStorage.setItem('vditorvditor', defaultText)
       }
     },
-    onTestTypeChange() {
-      console.log('🔄 内容类型切换为:', this.testType)
-      alert(`内容类型已切换为: ${this.testType}`)
+    insertMetadataBar() {
+      console.log('🚀 开始插入元数据栏到vditor工具栏下方')
+
+      // 使用setTimeout确保DOM完全渲染
+      setTimeout(() => {
+        // 查找vditor的工具栏
+        const vditorElement = document.getElementById('vditor')
+        const toolbar = vditorElement?.querySelector('.vditor-toolbar')
+
+        if (!toolbar) {
+          console.error('❌ 未找到vditor工具栏，重试中...')
+          // 如果没找到，再次尝试
+          setTimeout(() => this.insertMetadataBar(), 500)
+          return
+        }
+
+        // 检查是否已经插入过
+        if (vditorElement.querySelector('.vditor-metadata-bar')) {
+          console.log('⚠️ 元数据栏已存在，跳过插入')
+          return
+        }
+
+      // 创建元数据栏
+      const metadataBar = document.createElement('div')
+      metadataBar.className = 'vditor-metadata-bar'
+      metadataBar.innerHTML = `
+        <div class="metadata-content">
+          <span class="metadata-label">📝 元数据栏</span>
+          <select class="metadata-type-select">
+            <option value="general">📄 通用文档</option>
+            <option value="blog">📝 博客文章</option>
+            <option value="essay">✍️ 随笔</option>
+          </select>
+          <div class="metadata-fields" style="display: none;">
+            <input placeholder="标题" class="metadata-input" />
+            <input placeholder="分类" class="metadata-input" />
+            <input placeholder="日期" class="metadata-input" />
+            <input placeholder="描述" class="metadata-input" />
+          </div>
+          <button class="metadata-btn">插入模板</button>
+          <button class="metadata-btn">清空</button>
+          <span class="metadata-debug">测试成功</span>
+        </div>
+      `
+
+      // 添加样式
+      metadataBar.style.cssText = `
+        height: 40px;
+        background: #f8f9fa;
+        border-left: 1px solid #d1d5da;
+        border-right: 1px solid #d1d5da;
+        border-bottom: 1px solid #d1d5da;
+        display: flex;
+        align-items: center;
+        padding: 0 12px;
+        font-size: 12px;
+        overflow-x: auto;
+      `
+
+      // 插入到工具栏下方
+      toolbar.parentNode.insertBefore(metadataBar, toolbar.nextSibling)
+
+      // 添加事件监听
+      const typeSelect = metadataBar.querySelector('.metadata-type-select')
+      const fieldsContainer = metadataBar.querySelector('.metadata-fields')
+
+      typeSelect.addEventListener('change', (e) => {
+        const type = e.target.value
+        console.log('📝 元数据类型切换为:', type)
+
+        if (type === 'general') {
+          fieldsContainer.style.display = 'none'
+        } else {
+          fieldsContainer.style.display = 'flex'
+          fieldsContainer.style.gap = '8px'
+          fieldsContainer.style.marginLeft = '12px'
+        }
+      })
+
+        console.log('✅ 元数据栏插入成功')
+      }, 100) // 延迟100ms确保DOM渲染完成
     },
+
+
 
     reloadContent() {
       if (this.vditor && this.vditor.getValue) {
@@ -168,42 +232,42 @@ export default {
   background-color: @white;
   .flex-box-center(column);
 
-  /* 测试元数据栏样式 - 使用明显的颜色 */
-  .test-metadata-bar {
-    position: fixed !important;
-    top: 120px !important; /* 在红色测试栏下方 */
-    left: 0 !important;
-    right: 0 !important;
-    height: 60px !important;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-    border-bottom: 3px solid #ff6b6b !important;
-    z-index: 9998 !important; /* 比红色测试栏低一点 */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
-
-    .test-content {
-      height: 100%;
+  /* vditor元数据栏样式 */
+  .vditor-metadata-bar {
+    .metadata-content {
       display: flex;
       align-items: center;
-      padding: 0 20px;
-      gap: 16px;
-      max-width: @max-body-width;
-      margin: 0 auto;
+      gap: 12px;
+      width: 100%;
     }
 
-    .test-label {
-      font-weight: 700;
-      color: white;
-      font-size: 14px;
-      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    .metadata-label {
+      font-weight: 600;
+      color: #303133;
+      white-space: nowrap;
     }
 
-    .test-select {
-      padding: 8px 12px;
+    .metadata-type-select {
+      padding: 4px 8px;
       border: 1px solid #dcdfe6;
-      border-radius: 4px;
+      border-radius: 3px;
       background: white;
-      font-size: 14px;
-      min-width: 140px;
+      font-size: 12px;
+      min-width: 100px;
+    }
+
+    .metadata-fields {
+      display: flex;
+      gap: 8px;
+      flex: 1;
+    }
+
+    .metadata-input {
+      padding: 4px 6px;
+      border: 1px solid #dcdfe6;
+      border-radius: 3px;
+      font-size: 11px;
+      width: 80px;
 
       &:focus {
         outline: none;
@@ -211,24 +275,36 @@ export default {
       }
     }
 
-    .test-debug {
+    .metadata-btn {
+      padding: 4px 8px;
+      border: 1px solid #dcdfe6;
+      border-radius: 3px;
+      background: white;
+      cursor: pointer;
+      font-size: 11px;
+      white-space: nowrap;
+
+      &:hover {
+        background: #f5f7fa;
+      }
+    }
+
+    .metadata-debug {
       margin-left: auto;
-      font-size: 12px;
-      color: white;
-      background: rgba(255, 255, 255, 0.2);
-      padding: 6px 12px;
-      border-radius: 20px;
-      font-weight: 600;
-      border: 1px solid rgba(255, 255, 255, 0.3);
+      font-size: 10px;
+      color: #909399;
+      background: rgba(64, 158, 255, 0.1);
+      padding: 2px 6px;
+      border-radius: 3px;
     }
   }
 
   .vditor {
     position: absolute;
-    top: 180px; /* 60px工具栏 + 60px红色测试栏 + 60px元数据栏 */
+    top: @header-height;
     max-width: @max-body-width;
     width: 80%;
-    height: calc(100vh - 200px); /* 调整高度以适应两个测试栏 */
+    height: calc(100vh - 80px);
     margin: 20px auto;
     text-align: left;
 
@@ -257,33 +333,29 @@ export default {
 
 @media (max-width: 960px) {
   .index-page {
-    .test-metadata-bar {
-      height: auto;
-      min-height: 80px;
-
-      .test-content {
-        flex-direction: column;
-        align-items: stretch;
-        padding: 12px;
-        gap: 8px;
-      }
-
-      .test-select {
-        width: 100%;
-      }
-
-      .test-debug {
-        margin-left: 0;
-        text-align: center;
-      }
-    }
-
     .vditor {
-      top: 140px; /* 调整移动端的顶部位置 */
-      height: calc(100vh - 160px);
+      top: @header-height;
+      height: calc(100vh - 80px);
       padding: 10px;
       margin: 0px auto;
       width: 100%;
+    }
+
+    .vditor-metadata-bar {
+      .metadata-content {
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .metadata-fields {
+        width: 100%;
+        margin-left: 0 !important;
+      }
+
+      .metadata-input {
+        flex: 1;
+        min-width: 60px;
+      }
     }
   }
 }
