@@ -209,6 +209,22 @@
             padding: 0;
             background: #fafafa;
         }
+        .metadata-editor {
+            padding: 15px 25px;
+            background: #000000;
+            border-bottom: 1px solid #888;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .dark-mode .el-input__inner {
+            background-color: #1a1a1a !important;
+            border-color: #555 !important;
+            color: #e0e0e0 !important;
+        }
+        .dark-mode .el-input__inner:hover, .dark-mode .el-input__inner:focus {
+            border-color: #002FA7 !important;
+        }
         #vditor {
             height: 100%;
             border-radius: 0;
@@ -611,7 +627,13 @@
             </div>
         </div>
 
-        <div class="editor-container">
+        <div class="metadata-editor" v-if="currentType !== 'general'">
+            <el-input v-if="metadataFields[currentType].some(f => f.key === 'title')" v-model="metadata.title" placeholder="文章标题"></el-input>
+            <el-input v-if="metadataFields[currentType].some(f => f.key === 'categories')" v-model="metadata.categories" placeholder="分类 (逗号分隔)"></el-input>
+            <el-input v-if="metadataFields[currentType].some(f => f.key === 'description')" v-model="metadata.description" placeholder="文章描述"></el-input>
+        </div>
+
+        <div class="editor-container" :style="{ height: currentType !== 'general' ? 'calc(100vh - 230px)' : 'calc(100vh - 90px)' }">
             <div id="vditor"></div>
         </div>
 
@@ -814,33 +836,23 @@
                 return {
                     vditor: null,
                     currentType: contentTypes.BLOG,
-                    metadata: {
-                        title: '',
-                        categories: [],
-                        description: '',
-                        pubDate: ''
-                    },
+                    metadata: {},
                     githubConfigVisible: false,
                     contentTypeLabels,
                     isGitHubConfigured: false,
-                    isDarkMode: true
+                    isDarkMode: true,
+                    metadataFields,
+                    bodyContent: ''
                 };
             },
 
             mounted() {
                 this.initTheme();
-
-                // 为移动设备设置默认配置（在初始化Vditor之前）
                 this.setupMobileDefaults();
-
                 this.initVditor();
                 this.checkGitHubConfig();
                 this.checkForEditFile();
-
-                // 初始化时插入默认模板
-                setTimeout(() => {
-                    this.insertMetadataTemplate(this.currentType);
-                }, 800);
+                this.selectType(this.currentType);
             },
 
             methods: {
@@ -866,17 +878,13 @@
                 },
 
                 initVditor() {
-                    // 所有设备都默认使用即时渲染模式
                     const editorMode = 'ir';
-
                     this.vditor = new Vditor('vditor', {
                         height: '100%',
                         mode: editorMode,
                         theme: 'dark',
                         preview: {
-                            theme: {
-                                current: 'dark'
-                            },
+                            theme: { current: 'dark' },
                             actions: []
                         },
                         toolbar: [
@@ -888,11 +896,13 @@
                             'edit-mode', 'content-theme', 'code-theme', '|',
                             'outline', 'preview', 'fullscreen'
                         ],
-                        cache: {
-                            enable: false
-                        },
+                        cache: { enable: false },
                         after: () => {
                             console.log('Vditor初始化完成');
+                            // 绑定 input 事件，将编辑器内容同步到 bodyContent
+                            this.vditor.vditor.element.addEventListener('input', () => {
+                                this.bodyContent = this.vditor.getValue();
+                            });
                         }
                     });
                 },
@@ -919,24 +929,21 @@
                         this.$message.warning('请先配置GitHub');
                         return;
                     }
-
                     try {
-                        this.$message({
-                            message: '正在加载文件...',
-                            type: 'info'
-                        });
-
+                        this.$message({ message: '正在加载文件...', type: 'info' });
                         const fileData = await window.githubService.getFile(filePath);
                         if (fileData) {
-                            this.vditor.setValue(fileData.content);
-
-                            // 根据文件路径判断内容类型
+                            const { metadata, content } = this.parseContentWithFrontmatter(fileData.content);
+                            
                             if (filePath.includes('/posts/')) {
                                 this.currentType = contentTypes.BLOG;
                             } else if (filePath.includes('/essays/')) {
                                 this.currentType = contentTypes.ESSAY;
                             }
-
+                            
+                            this.metadata = metadata;
+                            this.bodyContent = content;
+                            this.vditor.setValue(content);
                             this.$message.success('文件加载成功');
                         }
                     } catch (error) {
@@ -954,57 +961,32 @@
 
                 selectType(type) {
                     this.currentType = type;
-                    this.insertMetadataTemplate(type);
+                    this.resetMetadata(type);
+                    this.bodyContent = '';
+                    this.vditor.setValue('');
                 },
 
-                insertMetadataTemplate(type) {
+                resetMetadata(type) {
                     const now = new Date();
-                    let template = '';
-                    let cursorPosition = 0;
+                    let newMeta = {};
 
                     if (type === contentTypes.BLOG) {
-                        // 博客模板
-                        const dateStr = now.toISOString().split('T')[0]; // YYYY-MM-DD格式
-                        template = `---
-title:
-categories: ["Daily"]
-pubDate: ${dateStr}
-description: ''
----
-
-`;
-                        // 计算title字段后的位置
-                        cursorPosition = template.indexOf('title: ') + 'title: '.length;
+                        const dateStr = now.toISOString().split('T')[0];
+                        newMeta = {
+                            title: '',
+                            categories: 'Daily',
+                            pubDate: dateStr,
+                            description: ''
+                        };
                     } else if (type === contentTypes.ESSAY) {
-                        // 随笔模板
-                        const year = now.getFullYear();
-                        const month = String(now.getMonth() + 1).padStart(2, '0');
-                        const day = String(now.getDate()).padStart(2, '0');
-                        const hour = String(now.getHours()).padStart(2, '0');
-                        const minute = String(now.getMinutes()).padStart(2, '0');
-                        const second = String(now.getSeconds()).padStart(2, '0');
-                        const dateTimeStr = `${year}-${month}-${day} ${hour}:${minute}:${second}`;
-
-                        template = `---
-pubDate: "${dateTimeStr}"
-description: ""
-categories: ["随笔"]
----
-
-`;
-                        // 光标定位到模板末尾（元数据下方）
-                        cursorPosition = template.length;
+                        const dateTimeStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+                        newMeta = {
+                            pubDate: `"${dateTimeStr}"`,
+                            description: "",
+                            categories: "随笔"
+                        };
                     }
-
-                    // 设置编辑器内容
-                    if (this.vditor) {
-                        this.vditor.setValue(template);
-                        // 将光标定位到指定位置
-                        setTimeout(() => {
-                            this.vditor.focus();
-                            this.setCursorToPosition(cursorPosition);
-                        }, 300);
-                    }
+                    this.metadata = newMeta;
                 },
 
                 setCursorToPosition(position) {
@@ -1102,33 +1084,27 @@ categories: ["随笔"]
                         return;
                     }
 
-                    const content = this.vditor.getValue();
-                    if (!content.trim()) {
+                    // 从编辑器获取最新的正文
+                    this.bodyContent = this.vditor.getValue();
+
+                    if (!this.bodyContent.trim() && Object.keys(this.metadata).length === 0) {
                         this.$message.warning('请先编写内容');
                         return;
                     }
 
-                    // 解析编辑器中的frontmatter和内容
-                    const { metadata, content: bodyContent } = this.parseContentWithFrontmatter(content);
-
-                    // 检查是否有必要的元数据（只有博客需要标题）
-                    if (this.currentType === contentTypes.BLOG && !metadata.title) {
+                    if (this.currentType === contentTypes.BLOG && !this.metadata.title) {
                         this.$message.warning('请先设置标题');
                         return;
                     }
 
-                    // 直接使用解析出的完整内容（包含frontmatter）
-                    const finalContent = content;
+                    const finalContent = generateContentWithMetadata(this.currentType, this.metadata, this.bodyContent);
 
                     try {
-                        this.$message({
-                            message: '正在发布...',
-                            type: 'info'
-                        });
+                        this.$message({ message: '正在发布...', type: 'info' });
 
                         const result = await window.githubService.publishContent(
                             this.currentType,
-                            metadata,
+                            this.metadata,
                             finalContent
                         );
 
@@ -1137,17 +1113,7 @@ categories: ["随笔"]
                                 message: `发布成功！文件已${result.action === 'add' ? '创建' : '更新'}`,
                                 type: 'success'
                             });
-
-                            // 清空编辑器内容
-                            this.vditor.setValue('');
-
-                            // 重置元数据
-                            this.metadata = {
-                                title: '',
-                                categories: [],
-                                description: '',
-                                pubDate: ''
-                            };
+                            this.selectType(this.currentType); // 重置
                         }
                     } catch (error) {
                         console.error('发布失败:', error);
