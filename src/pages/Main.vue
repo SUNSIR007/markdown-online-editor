@@ -38,35 +38,13 @@ export default {
   mounted() {
     console.log('🚀 Main.vue mounted - 开始初始化')
 
-    // 立即创建一个超级明显的测试元素
-    const immediateTest = document.createElement('div')
-    immediateTest.style.cssText = `
-      position: fixed !important;
-      top: 0 !important;
-      left: 0 !important;
-      width: 100% !important;
-      height: 50px !important;
-      background: red !important;
-      color: white !important;
-      font-size: 20px !important;
-      font-weight: bold !important;
-      display: flex !important;
-      align-items: center !important;
-      justify-content: center !important;
-      z-index: 999999 !important;
-    `
-    immediateTest.textContent = '🚨 JavaScript正在执行 - 如果您看到这个，说明JS没问题！'
-    document.body.appendChild(immediateTest)
-
-    // 3秒后移除
-    setTimeout(() => {
-      immediateTest.remove()
-    }, 3000)
+    // 简单测试 - 直接alert
+    alert('JavaScript正在执行！')
 
     this.initVditor()
     this.$nextTick(() => {
       this.isLoading = false
-      console.log('✅ Main.vue 加载完成，元数据栏应该可见')
+      console.log('✅ Main.vue 加载完成')
     })
     this.$root.$on('reload-content', this.reloadContent)
   },
@@ -116,21 +94,7 @@ export default {
           // 将vditor实例暴露给全局使用
           window.vditorInstance = this.vditor
 
-          // 在vditor工具栏下方插入元数据栏
-          this.insertMetadataBar()
-
-          // 强制插入测试栏 - 确保能看到
-          this.forceInsertTestBar()
-
-          // 添加全局调试函数
-          window.debugVditorStructure = () => {
-            const vditor = document.getElementById('vditor')
-            console.log('🔍 Vditor调试信息:')
-            console.log('- Vditor元素:', vditor)
-            console.log('- 子元素数量:', vditor?.children.length)
-            console.log('- 类名列表:', Array.from(vditor?.children || []).map(el => el.className))
-            console.log('- HTML结构:', vditor?.innerHTML.substring(0, 500))
-          }
+          console.log('✅ Vditor初始化完成')
         }
       }
       this.vditor = new Vditor('vditor', options)
