@@ -3,11 +3,12 @@
 import Vue from 'vue'
 const $lodash = require('./lodash').default
 
-if (typeof String.prototype.startsWith !== 'function') {
-  Window.String.prototype.startsWith = function (prefix) {
-    return this.slice(0, prefix.length) === prefix
-  }
-}
+// 修复拼写错误：Window -> window，但现代浏览器已支持startsWith，可以移除此polyfill
+// if (typeof String.prototype.startsWith !== 'function') {
+//   window.String.prototype.startsWith = function (prefix) {
+//     return this.slice(0, prefix.length) === prefix
+//   }
+// }
 
 export default {
   resMsg(res) {
@@ -78,7 +79,9 @@ export default {
   },
 
   getExportFileName() {
-    const type = location.pathname.split('/')[0]
+    // 修复边界条件：处理根路径情况
+    const pathParts = location.pathname.split('/').filter(part => part)
+    const type = pathParts.length > 0 ? pathParts[0] : 'export'
     const timestamp = this.getTimestamp()
     const filename = `arya-${timestamp}.${type}`
     return filename
@@ -92,20 +95,26 @@ export default {
 
   hideVditorTextarea() {
     const exportVditorNode = document.getElementById('khaleesi')
+    if (!exportVditorNode) return
+
     const option = {
       childList: true, // 子节点的变动（新增、删除或者更改）
       attributes: true, // 属性的变动
       characterData: true, // 节点内容或节点文本的变动
-
       subtree: true, // 是否将观察器应用于该节点的所有后代节点
       attributeFilter: ['class', 'style'], // 观察特定属性
       attributeOldValue: true, // 观察 attributes 变动时，是否需要记录变动前的属性值
       characterDataOldValue: true, // 观察 characterData 变动，是否需要记录变动前的值
     }
+
+    // 优化DOM查询：缓存选择器并使用更高效的查询方式
+    let vditorTextarea = null
     const mutationObserver = new MutationObserver(() => {
-      const vditorTextarea = document.getElementsByClassName('vditor-textarea')
-      if (vditorTextarea && vditorTextarea[0]) {
-        vditorTextarea[0].style.display = 'none'
+      if (!vditorTextarea) {
+        vditorTextarea = exportVditorNode.querySelector('.vditor-textarea')
+      }
+      if (vditorTextarea) {
+        vditorTextarea.style.display = 'none'
         mutationObserver.disconnect()
       }
     })

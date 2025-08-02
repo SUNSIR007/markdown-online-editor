@@ -1,20 +1,20 @@
 <!-- @format -->
 
 <template>
-  <div class="export-page">
-    <div class="button-group">
-      <el-button round @click="onBackToMainPage">返回主页</el-button>
-      <el-button round @click="onExportBtnClick" type="primary" :disabled="exporting">
-        {{ exporting ? '正在导出...' : '生成导出' }}
-      </el-button>
-    </div>
+  <ExportPageLayout
+    :loading="exporting"
+    @back="onBackToMainPage"
+    @export="onExportBtnClick"
+  >
     <PreviewVditor :pdata="pdata" />
-  </div>
+  </ExportPageLayout>
 </template>
 
 <script>
 import html2pdf from 'html2pdf.js'
 import PreviewVditor from '@components/PreviewVditor'
+import ExportPageLayout from '@components/ExportPageLayout'
+import ErrorHandler from '@/utils/errorHandler'
 
 export default {
   name: 'export-pdf',
@@ -27,13 +27,10 @@ export default {
     }
   },
 
-  created() {},
-
   components: {
     PreviewVditor,
+    ExportPageLayout,
   },
-
-  mounted() {},
 
   methods: {
     exportAndDownloadPdf(element, filename) {
@@ -69,10 +66,11 @@ export default {
           this.exporting = false
         })
         .catch((error) => {
-          console.error('PDF导出失败:', error)
+          ErrorHandler.handle(error, 'PDF导出', {
+            userMessage: 'PDF导出失败，请重试'
+          })
           this.isLoading = false
           this.exporting = false
-          this.$message.error('PDF导出失败，请重试')
         })
     },
     /* ---------------------Callback Event--------------------- */

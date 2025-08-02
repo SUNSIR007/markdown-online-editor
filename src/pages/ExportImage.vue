@@ -1,19 +1,19 @@
 <!-- @format -->
 <template>
-  <div class="export-page">
-    <div class="button-group">
-      <el-button round @click="onBackToMainPage">返回主页</el-button>
-      <el-button round @click="onExportBtnClick" type="primary" :loading="isExporting">
-        {{ isExporting ? '正在导出...' : '生成导出' }}
-      </el-button>
-    </div>
+  <ExportPageLayout
+    :loading="isExporting"
+    @back="onBackToMainPage"
+    @export="onExportBtnClick"
+  >
     <PreviewVditor :pdata="pdata" />
-  </div>
+  </ExportPageLayout>
 </template>
 
 <script>
 import { generateScreenshot } from '@helper/export'
 import PreviewVditor from '@components/PreviewVditor'
+import ExportPageLayout from '@components/ExportPageLayout'
+import ErrorHandler from '@/utils/errorHandler'
 
 export default {
   name: 'export-image',
@@ -26,15 +26,10 @@ export default {
     }
   },
 
-  created() {},
-
   components: {
     PreviewVditor,
+    ExportPageLayout,
   },
-
-  mounted() {},
-
-  updated() {},
 
   methods: {
     async exportAndDownloadImg(element, filename) {
@@ -48,9 +43,9 @@ export default {
           link.click()
         }
       } catch (error) {
-        console.error('导出图片失败:', error)
-        this.$message.closeAll()
-        this.$message.error('导出图片失败，请检查控制台获取详细错误信息')
+        ErrorHandler.handle(error, '导出图片', {
+          userMessage: '导出图片失败，请重试'
+        })
       } finally {
         this.isLoading = false
         this.isExporting = false

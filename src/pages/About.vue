@@ -18,13 +18,9 @@ export default {
     }
   },
 
-  created() {},
-
   components: {
     PreviewVditor
   },
-
-  mounted() {},
 
   methods: {
     handleCallBack() {

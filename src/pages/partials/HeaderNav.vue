@@ -118,8 +118,11 @@ export default {
   },
 
   methods: {
-    launchFullScreen() {
+    // 添加防抖处理，避免频繁触发全屏操作
+    launchFullScreen: this.$_.debounce(function() {
       const element = document.getElementById('vditor')
+      if (!element) return
+
       if (element.requestFullscreen) {
         element.requestFullscreen()
       } else if (element.msRequestFullscreen) {
@@ -129,7 +132,7 @@ export default {
       } else if (element.webkitRequestFullscreen) {
         element.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT)
       }
-    },
+    }, 300),
     cancelFullScreen() {
       if (document.exitFullscreen) {
         document.exitFullscreen()

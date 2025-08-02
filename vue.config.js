@@ -45,6 +45,7 @@ module.exports = {
   chainWebpack: (config) => {
     config.resolve.alias
       .set('vue$', 'vue/dist/vue.esm.js')
+      .set('@', resolveRealPath('src'))
       .set('@helper', resolveRealPath('src/helper'))
       .set('@config', resolveRealPath('src/config'))
       .set('@pages', resolveRealPath('src/pages'))

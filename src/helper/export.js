@@ -86,35 +86,40 @@ const handleCaptureSvg = (targetElem) => {
       const canvas = document.createElement('canvas')
       // 设置canvas尺寸与SVG相同
       const svgRect = node.getBoundingClientRect()
-      canvas.width = svgRect.width
-      canvas.height = svgRect.height
+
+      // 优化：确保canvas尺寸有效
+      canvas.width = Math.max(svgRect.width, 1)
+      canvas.height = Math.max(svgRect.height, 1)
 
       // 使用canvg渲染SVG到canvas
       const ctx = canvas.getContext('2d')
-      canvg(canvas, svgXml, {
-        ignoreMouse: true,
-        ignoreAnimation: true,
-        ignoreDimensions: false,
-        ignoreClear: true,
-      })
+      if (ctx && typeof canvg === 'function') {
+        canvg(canvas, svgXml, {
+          ignoreMouse: true,
+          ignoreAnimation: true,
+          ignoreDimensions: false,
+          ignoreClear: true,
+        })
 
-      // 保存原始节点信息以便恢复
-      nodesToRecover.push({
-        parent: parentNode,
-        child: node,
-      })
+        // 保存原始节点信息以便恢复
+        nodesToRecover.push({
+          parent: parentNode,
+          child: node,
+        })
 
-      // 临时移除SVG节点
-      parentNode.removeChild(node)
+        // 临时移除SVG节点
+        parentNode.removeChild(node)
 
-      // 添加canvas替代SVG
-      nodesToRemove.push({
-        parent: parentNode,
-        child: canvas,
-      })
-      parentNode.appendChild(canvas)
+        // 添加canvas替代SVG
+        nodesToRemove.push({
+          parent: parentNode,
+          child: canvas,
+        })
+        parentNode.appendChild(canvas)
+      }
     } catch (error) {
       console.error('处理SVG时出错:', error)
+      // 继续处理其他SVG元素，不中断整个流程
     }
   }
 
@@ -123,21 +128,26 @@ const handleCaptureSvg = (targetElem) => {
 }
 
 export const generateScreenshot = async (targetDom) => {
-  handleCaptureSvg(targetDom)
-  const domStyleObj = getComputedStyle(targetDom)
-  TARGET_WIDTH = +domStyleObj.width.replace(`px`, '')
-  TARGET_HEIGHT = +domStyleObj.height.replace(`px`, '')
+  try {
+    handleCaptureSvg(targetDom)
+    const domStyleObj = getComputedStyle(targetDom)
+    TARGET_WIDTH = +domStyleObj.width.replace(`px`, '')
+    TARGET_HEIGHT = +domStyleObj.height.replace(`px`, '')
 
-  const scale = window.devicePixelRatio
-  const options = {
-    scale,
-    allowTaint: true,
-    useCORS: true, // 启用CORS支持
-    backgroundColor: '#fefefe',
-    imageTimeout: 0, // 禁用图像超时
-    logging: false,
+    const scale = window.devicePixelRatio
+    const options = {
+      scale,
+      allowTaint: true,
+      useCORS: true, // 启用CORS支持
+      backgroundColor: '#fefefe',
+      imageTimeout: 0, // 禁用图像超时
+      logging: false,
+    }
+    const origCanvas = await html2canvas(targetDom, options)
+    const roundCanvas = drawRoundedRec(origCanvas, scale)
+    return drawShadow(roundCanvas)
+  } catch (error) {
+    console.error('生成截图失败:', error)
+    throw new Error(`截图生成失败: ${error.message}`)
   }
-  const origCanvas = await html2canvas(targetDom, options)
-  const roundCanvas = drawRoundedRec(origCanvas, scale)
-  return drawShadow(roundCanvas)
 }

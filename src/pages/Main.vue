@@ -25,7 +25,10 @@ export default {
 
   created() {
     this.setDefaultText()
-    console.log = () => { }
+    // 修复全局变量污染：只在生产环境禁用console.log
+    if (process.env.NODE_ENV === 'production') {
+      console.log = () => { }
+    }
   },
 
   components: {
@@ -42,6 +45,11 @@ export default {
 
   beforeDestroy() {
     this.$root.$off('reload-content', this.reloadContent)
+    // 修复内存泄漏：销毁Vditor实例
+    if (this.vditor && typeof this.vditor.destroy === 'function') {
+      this.vditor.destroy()
+      this.vditor = null
+    }
   },
 
   methods: {

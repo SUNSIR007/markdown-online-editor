@@ -28,5 +28,9 @@ Vue.use(Loading)
 import VueMeta from 'vue-meta'
 Vue.use(VueMeta)
 
+// 注册错误处理服务
+import { install as ErrorHandlerInstall } from '@/utils/errorHandler'
+Vue.use(ErrorHandlerInstall)
+
 import Icon from '@components/Icon'
 Vue.component('icon', Icon)

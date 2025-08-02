@@ -34,7 +34,7 @@ export default {
     this.savedMdContent = localStorage.getItem('vditorvditor')
   },
 
-  components: {},
+
 
   mounted() {
     this.initReveal()
