@@ -73,6 +73,138 @@
             font-size: 18px !important;
         }
 
+        /* 发布成功动画 */
+        .publish-success-animation {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10000;
+            pointer-events: none;
+        }
+
+        .success-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 32px rgba(76, 175, 80, 0.4);
+            animation: successPulse 0.6s ease-out;
+        }
+
+        .success-checkmark {
+            width: 60px;
+            height: 60px;
+            position: relative;
+        }
+
+        .success-checkmark::before {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 35px;
+            border: 4px solid white;
+            border-top: none;
+            border-left: none;
+            transform: rotate(45deg);
+            left: 18px;
+            top: 8px;
+            animation: checkmarkDraw 0.4s ease-out 0.2s both;
+        }
+
+        @keyframes successPulse {
+            0% {
+                transform: translate(-50%, -50%) scale(0);
+                opacity: 0;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.1);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes checkmarkDraw {
+            0% {
+                height: 0;
+                width: 0;
+                opacity: 0;
+            }
+            50% {
+                height: 0;
+                width: 20px;
+                opacity: 1;
+            }
+            100% {
+                height: 35px;
+                width: 20px;
+                opacity: 1;
+            }
+        }
+
+        .success-text {
+            position: absolute;
+            top: 140px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #4CAF50;
+            font-size: 18px;
+            font-weight: 600;
+            white-space: nowrap;
+            animation: textFadeIn 0.4s ease-out 0.4s both;
+        }
+
+        @keyframes textFadeIn {
+            0% {
+                opacity: 0;
+                transform: translateX(-50%) translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        /* 发布按钮动画状态 */
+        .publish-button.publishing {
+            animation: publishingPulse 1s infinite;
+        }
+
+        @keyframes publishingPulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 2px 8px rgba(0, 51, 184, 0.3);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 4px 16px rgba(0, 51, 184, 0.5);
+            }
+        }
+
+        .publish-button.success {
+            background-color: #4CAF50 !important;
+            border-color: #4CAF50 !important;
+            animation: successBounce 0.6s ease-out;
+        }
+
+        @keyframes successBounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+
         /* GitHub配置按钮 */
         .github-config-button {
             width: 40px;
@@ -902,14 +1034,15 @@
             data() {
                 return {
                     vditor: null,
-                    currentType: contentTypes.BLOG,
+                    currentType: contentTypes.ESSAY, // 默认为Essays模式
                     metadata: {},
                     githubConfigVisible: false,
                     contentTypeLabels,
                     isGitHubConfigured: false,
                     isDarkMode: true,
                     metadataFields,
-                    bodyContent: ''
+                    bodyContent: '',
+                    hasUserInteracted: false
                 };
             },
 
@@ -920,6 +1053,13 @@
                 this.checkGitHubConfig();
                 this.checkForEditFile();
                 this.selectType(this.currentType);
+
+                // 自动聚焦到编辑器
+                if (this.isMobileDevice()) {
+                    this.setupMobileAutoFocus();
+                } else {
+                    this.setupDesktopAutoFocus();
+                }
             },
 
             methods: {
@@ -1175,7 +1315,15 @@
 
                     const finalContent = generateContentWithMetadata(this.currentType, this.metadata, this.bodyContent);
 
+                    // 获取发布按钮元素
+                    const publishButton = document.querySelector('.publish-button');
+
                     try {
+                        // 添加发布中动画
+                        if (publishButton) {
+                            publishButton.classList.add('publishing');
+                        }
+
                         this.$message({ message: '正在发布...', type: 'info' });
 
                         const result = await window.githubService.publishContent(
@@ -1185,16 +1333,77 @@
                         );
 
                         if (result.success) {
-                            this.$message({
-                                message: `发布成功！文件已${result.action === 'add' ? '创建' : '更新'}`,
-                                type: 'success'
-                            });
+                            // 移除发布中动画
+                            if (publishButton) {
+                                publishButton.classList.remove('publishing');
+                                publishButton.classList.add('success');
+
+                                // 2秒后移除成功状态
+                                setTimeout(() => {
+                                    publishButton.classList.remove('success');
+                                }, 2000);
+                            }
+
+                            // 显示成功动画
+                            this.showPublishSuccessAnimation(result.action);
+
+                            // 延迟显示消息，让动画先播放
+                            setTimeout(() => {
+                                this.$message({
+                                    message: `发布成功！文件已${result.action === 'add' ? '创建' : '更新'}`,
+                                    type: 'success'
+                                });
+                            }, 800);
+
                             this.selectType(this.currentType); // 重置
                         }
                     } catch (error) {
+                        // 移除发布中动画
+                        if (publishButton) {
+                            publishButton.classList.remove('publishing');
+                        }
+
                         console.error('发布失败:', error);
                         this.$message.error(`发布失败: ${error.message}`);
                     }
+                },
+
+                // 显示发布成功动画
+                showPublishSuccessAnimation(action) {
+                    // 创建动画容器
+                    const animationContainer = document.createElement('div');
+                    animationContainer.className = 'publish-success-animation';
+
+                    // 创建成功圆圈和对勾
+                    const successCircle = document.createElement('div');
+                    successCircle.className = 'success-circle';
+
+                    const checkmark = document.createElement('div');
+                    checkmark.className = 'success-checkmark';
+
+                    const successText = document.createElement('div');
+                    successText.className = 'success-text';
+                    successText.textContent = action === 'add' ? '文件已创建！' : '文件已更新！';
+
+                    successCircle.appendChild(checkmark);
+                    animationContainer.appendChild(successCircle);
+                    animationContainer.appendChild(successText);
+
+                    // 添加到页面
+                    document.body.appendChild(animationContainer);
+
+                    // 2秒后移除动画
+                    setTimeout(() => {
+                        if (animationContainer.parentNode) {
+                            animationContainer.style.opacity = '0';
+                            animationContainer.style.transition = 'opacity 0.3s ease';
+                            setTimeout(() => {
+                                if (animationContainer.parentNode) {
+                                    animationContainer.parentNode.removeChild(animationContainer);
+                                }
+                            }, 300);
+                        }
+                    }, 2000);
                 },
 
                 configureGitHub() {
@@ -1206,6 +1415,144 @@
                         window.githubService.setConfig(config);
                         this.checkGitHubConfig();
                         this.$message.success('GitHub配置已保存');
+                    }
+                },
+
+                // 电脑端自动聚焦
+                setupDesktopAutoFocus() {
+                    // 延迟聚焦，确保编辑器完全加载
+                    setTimeout(() => {
+                        this.focusEditor();
+                    }, 1000);
+                },
+
+                // 移动端自动聚焦
+                setupMobileAutoFocus() {
+                    if (!this.isMobileDevice()) return;
+
+                    // 立即创建触发输入框
+                    this.createImmediateTrigger();
+
+                    // 多次尝试聚焦，确保成功
+                    const attemptFocus = () => {
+                        this.focusEditor();
+
+                        // 继续尝试，直到成功聚焦
+                        setTimeout(() => {
+                            const editorElement = this.vditor?.vditor?.ir?.element;
+                            if (editorElement && document.activeElement !== editorElement) {
+                                this.focusEditor();
+                            }
+                        }, 100);
+                    };
+
+                    // 立即尝试聚焦
+                    setTimeout(attemptFocus, 500);
+
+                    // 再次尝试（确保编辑器完全加载）
+                    setTimeout(attemptFocus, 1000);
+
+                    // 最后一次尝试
+                    setTimeout(attemptFocus, 1500);
+                },
+
+                // 立即创建触发器
+                createImmediateTrigger() {
+                    // 创建一个立即可见的输入框
+                    const immediateInput = document.createElement('input');
+                    immediateInput.type = 'text';
+                    immediateInput.style.cssText = `
+                        position: fixed;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        width: 200px;
+                        height: 40px;
+                        font-size: 16px;
+                        border: 2px solid #667eea;
+                        border-radius: 8px;
+                        padding: 8px;
+                        background: rgba(255, 255, 255, 0.95);
+                        z-index: 10000;
+                        text-align: center;
+                    `;
+                    immediateInput.placeholder = '正在加载编辑器...';
+                    immediateInput.readOnly = true;
+
+                    document.body.appendChild(immediateInput);
+
+                    // 立即聚焦
+                    setTimeout(() => {
+                        immediateInput.focus();
+                    }, 100);
+
+                    // 等待编辑器加载完成后转移焦点
+                    const checkAndTransfer = () => {
+                        if (this.vditor && this.vditor.vditor && this.vditor.vditor.ir) {
+                            // 编辑器已准备好，转移焦点
+                            this.focusEditor();
+
+                            // 移除临时输入框
+                            setTimeout(() => {
+                                if (immediateInput.parentNode) {
+                                    immediateInput.style.opacity = '0';
+                                    immediateInput.style.transition = 'opacity 0.3s ease';
+                                    setTimeout(() => {
+                                        if (immediateInput.parentNode) {
+                                            immediateInput.parentNode.removeChild(immediateInput);
+                                        }
+                                    }, 300);
+                                }
+                            }, 500);
+                        } else {
+                            // 继续等待
+                            setTimeout(checkAndTransfer, 200);
+                        }
+                    };
+
+                    setTimeout(checkAndTransfer, 1000);
+                },
+
+                // 聚焦编辑器
+                focusEditor() {
+                    if (!this.vditor || !this.vditor.vditor) {
+                        // 如果编辑器还没准备好，稍后重试
+                        setTimeout(() => this.focusEditor(), 200);
+                        return;
+                    }
+
+                    try {
+                        // 获取编辑器的文本区域
+                        const editorElement = this.vditor.vditor.ir.element;
+                        if (editorElement) {
+                            // 聚焦编辑器
+                            editorElement.focus();
+
+                            // 将光标移到内容末尾
+                            const range = document.createRange();
+                            const selection = window.getSelection();
+
+                            if (editorElement.childNodes.length > 0) {
+                                range.selectNodeContents(editorElement);
+                                range.collapse(false);
+                            } else {
+                                range.setStart(editorElement, 0);
+                                range.setEnd(editorElement, 0);
+                            }
+
+                            selection.removeAllRanges();
+                            selection.addRange(range);
+
+                            // 滚动到编辑器位置
+                            setTimeout(() => {
+                                editorElement.scrollIntoView({
+                                    behavior: 'smooth',
+                                    block: 'center'
+                                });
+                            }, 100);
+                        }
+                    } catch (error) {
+                        console.log('聚焦编辑器失败:', error);
                     }
                 }
             }
