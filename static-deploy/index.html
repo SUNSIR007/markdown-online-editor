@@ -927,11 +927,6 @@
                 this.checkGitHubConfig();
                 this.checkForEditFile();
                 this.selectType(this.currentType);
-
-                // 移动端自动聚焦
-                if (this.isMobileDevice()) {
-                    this.setupMobileAutoFocus();
-                }
             },
 
             methods: {
@@ -1296,147 +1291,30 @@
 
                 // 移动端自动聚焦编辑器
                 setupMobileAutoFocus() {
-                    if (!this.isMobileDevice()) return;
-
-                    // 立即创建触发输入框
-                    this.createImmediateTrigger();
-
-                    // 多次尝试聚焦，确保成功
-                    const attemptFocus = () => {
-                        this.focusEditor();
-
-                        // 继续尝试，直到成功聚焦
-                        setTimeout(() => {
-                            const editorElement = this.vditor?.vditor?.ir?.element;
-                            if (editorElement && document.activeElement !== editorElement) {
-                                this.focusEditor();
-                            }
-                        }, 100);
-                    };
-
-                    // 立即尝试聚焦
-                    setTimeout(attemptFocus, 500);
-
-                    // 再次尝试（确保编辑器完全加载）
-                    setTimeout(attemptFocus, 1000);
-
-                    // 最后一次尝试
-                    setTimeout(attemptFocus, 1500);
-                },
-
-                // 立即创建触发器
-                createImmediateTrigger() {
-                    // 创建一个立即可见的输入框
-                    const immediateInput = document.createElement('input');
-                    immediateInput.type = 'text';
-                    immediateInput.style.cssText = `
-                        position: fixed;
-                        top: 50%;
-                        left: 50%;
-                        transform: translate(-50%, -50%);
-                        width: 200px;
-                        height: 40px;
-                        font-size: 16px;
-                        border: 2px solid #667eea;
-                        border-radius: 8px;
-                        padding: 8px;
-                        background: rgba(255, 255, 255, 0.95);
-                        z-index: 10000;
-                        text-align: center;
-                    `;
-                    immediateInput.placeholder = '正在加载编辑器...';
-                    immediateInput.readOnly = true;
-
-                    document.body.appendChild(immediateInput);
-
-                    // 立即聚焦
+                    // 延迟执行，确保编辑器已完全初始化
                     setTimeout(() => {
-                        immediateInput.focus();
-                    }, 100);
-
-                    // 等待编辑器加载完成后转移焦点
-                    const checkAndTransfer = () => {
-                        if (this.vditor && this.vditor.vditor && this.vditor.vditor.ir) {
-                            // 编辑器已准备好，转移焦点
-                            this.focusEditor();
-
-                            // 移除临时输入框
-                            setTimeout(() => {
-                                if (immediateInput.parentNode) {
-                                    immediateInput.style.opacity = '0';
-                                    immediateInput.style.transition = 'opacity 0.3s ease';
-                                    setTimeout(() => {
-                                        if (immediateInput.parentNode) {
-                                            immediateInput.parentNode.removeChild(immediateInput);
-                                        }
-                                    }, 300);
-                                }
-                            }, 500);
-                        } else {
-                            // 继续等待
-                            setTimeout(checkAndTransfer, 200);
-                        }
-                    };
-
-                    setTimeout(checkAndTransfer, 1000);
+                        this.autoFocusEditor();
+                    }, 1500); // 给编辑器足够的初始化时间
                 },
 
-                // 自动聚焦编辑器（强制版本）
+                // 自动聚焦编辑器
                 autoFocusEditor() {
-                    if (!this.isMobileDevice()) return;
-
                     try {
-                        // 直接聚焦，不等待用户交互
-                        this.focusEditor();
+                        // 检查是否有用户交互（避免在某些浏览器中被阻止）
+                        if (this.hasUserInteracted) {
+                            this.focusEditor();
+                            return;
+                        }
 
-                        // 创建一个隐藏的输入框来触发键盘
-                        this.createTriggerInput();
+                        // 创建一个用户友好的提示，引导用户点击开始编辑
+                        this.showMobileFocusHint();
+
+                        // 监听第一次用户交互
+                        this.setupFirstInteractionListener();
 
                     } catch (error) {
-                        console.log('自动聚焦失败:', error);
-                        // 降级到提示模式
-                        this.showMobileFocusHint();
-                        this.setupFirstInteractionListener();
+                        console.log('自动聚焦失败，这在某些浏览器中是正常的:', error);
                     }
-                },
-
-                // 创建触发输入框
-                createTriggerInput() {
-                    // 创建一个临时的输入框来触发键盘
-                    const triggerInput = document.createElement('input');
-                    triggerInput.type = 'text';
-                    triggerInput.style.cssText = `
-                        position: fixed;
-                        top: 50%;
-                        left: 50%;
-                        transform: translate(-50%, -50%);
-                        width: 1px;
-                        height: 1px;
-                        opacity: 0.01;
-                        border: none;
-                        background: transparent;
-                        font-size: 16px;
-                        z-index: 9999;
-                    `;
-
-                    document.body.appendChild(triggerInput);
-
-                    // 立即聚焦触发输入框
-                    setTimeout(() => {
-                        triggerInput.focus();
-                        triggerInput.click();
-
-                        // 快速转移到编辑器
-                        setTimeout(() => {
-                            this.focusEditor();
-                            // 延迟移除触发输入框
-                            setTimeout(() => {
-                                if (triggerInput.parentNode) {
-                                    triggerInput.parentNode.removeChild(triggerInput);
-                                }
-                            }, 500);
-                        }, 200);
-                    }, 50);
                 },
 
                 // 显示移动端聚焦提示
@@ -1540,36 +1418,24 @@
                     document.addEventListener('click', handleFirstInteraction, { once: true });
                 },
 
-                // 聚焦编辑器（强制版本）
+                // 聚焦编辑器
                 focusEditor() {
-                    if (!this.vditor || !this.vditor.vditor) {
-                        // 如果编辑器还没准备好，稍后重试
-                        setTimeout(() => this.focusEditor(), 200);
-                        return;
-                    }
+                    if (!this.vditor || !this.vditor.vditor) return;
 
                     try {
                         // 获取编辑器的文本区域
                         const editorElement = this.vditor.vditor.ir.element;
                         if (editorElement) {
-                            // 强制聚焦编辑器
-                            editorElement.focus({ preventScroll: false });
+                            // 聚焦编辑器
+                            editorElement.focus();
 
-                            // 触发点击事件来确保聚焦
-                            const clickEvent = new MouseEvent('click', {
-                                bubbles: true,
-                                cancelable: true,
-                                view: window
-                            });
-                            editorElement.dispatchEvent(clickEvent);
-
-                            // 设置光标位置
-                            this.setCursorPosition(editorElement);
-
-                            // 强制显示键盘（移动端）
-                            if (this.isMobileDevice()) {
-                                this.forceShowKeyboard(editorElement);
-                            }
+                            // 将光标移到内容末尾
+                            const range = document.createRange();
+                            const selection = window.getSelection();
+                            range.selectNodeContents(editorElement);
+                            range.collapse(false);
+                            selection.removeAllRanges();
+                            selection.addRange(range);
 
                             // 滚动到编辑器位置
                             setTimeout(() => {
@@ -1581,58 +1447,6 @@
                         }
                     } catch (error) {
                         console.log('聚焦编辑器失败:', error);
-                    }
-                },
-
-                // 设置光标位置
-                setCursorPosition(element) {
-                    try {
-                        // 将光标移到内容末尾
-                        const range = document.createRange();
-                        const selection = window.getSelection();
-
-                        if (element.childNodes.length > 0) {
-                            range.selectNodeContents(element);
-                            range.collapse(false);
-                        } else {
-                            range.setStart(element, 0);
-                            range.setEnd(element, 0);
-                        }
-
-                        selection.removeAllRanges();
-                        selection.addRange(range);
-                    } catch (error) {
-                        console.log('设置光标位置失败:', error);
-                    }
-                },
-
-                // 强制显示键盘
-                forceShowKeyboard(element) {
-                    try {
-                        // 设置contenteditable确保可编辑
-                        element.contentEditable = true;
-
-                        // 触发输入事件
-                        const inputEvent = new Event('input', {
-                            bubbles: true,
-                            cancelable: true
-                        });
-                        element.dispatchEvent(inputEvent);
-
-                        // 触发焦点事件
-                        const focusEvent = new FocusEvent('focus', {
-                            bubbles: true,
-                            cancelable: true
-                        });
-                        element.dispatchEvent(focusEvent);
-
-                        // 强制重新聚焦
-                        setTimeout(() => {
-                            element.focus();
-                        }, 50);
-
-                    } catch (error) {
-                        console.log('强制显示键盘失败:', error);
                     }
                 }
             }
