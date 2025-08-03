@@ -1162,7 +1162,8 @@
                     // 从编辑器获取最新的正文
                     this.bodyContent = this.vditor.getValue();
 
-                    if (!this.bodyContent.trim() && Object.keys(this.metadata).length === 0) {
+                    // 检查是否有内容（正文不能为空）
+                    if (!this.bodyContent.trim()) {
                         this.$message.warning('请先编写内容');
                         return;
                     }
