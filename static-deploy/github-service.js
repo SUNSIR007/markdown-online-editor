@@ -24,14 +24,14 @@ class GitHubService {
     this.repo = config.repo
 
     // 保存到localStorage
-    localStorage.setItem('github_config', JSON.stringify(config))
+    localStorage.setItem('github-config', JSON.stringify(config))
   }
 
   /**
    * 从localStorage加载配置
    */
   loadConfig() {
-    const saved = localStorage.getItem('github_config')
+    const saved = localStorage.getItem('github-config')
     if (saved) {
       const config = JSON.parse(saved)
       this.setConfig(config)

@@ -936,7 +936,6 @@
                     if (this.isMobileDevice()) {
                         // 设置为Essays模式
                         this.currentType = contentTypes.ESSAY;
-                        console.log('检测到移动设备，已设置为Essays模式');
                     }
                 },
 
@@ -965,7 +964,6 @@
                         ],
                         cache: { enable: false },
                         after: () => {
-                            console.log('Vditor初始化完成');
                             
                             // 将元数据编辑器移动到工具栏下方
                             const vditorElement = document.getElementById('vditor');
@@ -1074,7 +1072,7 @@
                             return;
                         }
                     } catch (e) {
-                        console.log('Vditor API method failed, trying direct DOM manipulation');
+                        // Vditor API method failed, trying direct DOM manipulation
                     }
 
                     // 方法2: 直接操作DOM元素
@@ -1215,5 +1213,4 @@
         }); // 结束DOMContentLoaded事件监听器
     </script>
 </body>
-</html>
 </html>
