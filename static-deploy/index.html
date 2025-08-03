@@ -12,12 +12,6 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="msapplication-navbutton-color" content="#000000">
 
-    <!-- 移动端性能优化 -->
-    <meta name="format-detection" content="telephone=no">
-    <meta name="apple-mobile-web-app-title" content="BlogWriter">
-    <link rel="preconnect" href="https://unpkg.com">
-    <link rel="dns-prefetch" href="https://unpkg.com">
-
     <link rel="icon" type="image/png" href="./img/icons/write.png">
     <script src="https://unpkg.com/vue@2.6.14/dist/vue.js"></script>
     <script src="https://unpkg.com/element-ui@2.15.13/lib/index.js"></script>
@@ -169,18 +163,11 @@
         }
 
         .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border-bottom: none;
             padding: 15px 25px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.1);
             color: white;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-            min-height: 60px;
         }
         .content-type-selector {
             display: flex;
@@ -550,37 +537,27 @@
         /* 响应式设计 */
         @media (max-width: 768px) {
             .header {
-                padding: 10px 15px;
-                min-height: 50px;
-                flex-wrap: wrap;
-                gap: 8px;
+                padding: 12px 15px;
             }
 
             .content-type-selector {
-                width: 100%;
+                /* 保持水平布局，让所有按钮在一行 */
+                flex-direction: row;
+                align-items: center;
                 justify-content: space-between;
                 gap: 8px;
-                flex-wrap: nowrap;
             }
 
             .type-buttons {
-                flex: 1;
-                justify-content: flex-start;
-                gap: 6px;
-                flex-wrap: nowrap;
-                overflow-x: auto;
-                scrollbar-width: none;
-                -ms-overflow-style: none;
-            }
-
-            .type-buttons::-webkit-scrollbar {
-                display: none;
+                display: flex;
+                gap: 8px;
+                flex-shrink: 0;
             }
 
             .action-buttons {
+                display: flex;
+                gap: 8px;
                 flex-shrink: 0;
-                gap: 6px;
-                flex-wrap: nowrap;
             }
 
             /* 减小移动端按钮尺寸以适应一行显示 */
@@ -596,42 +573,6 @@
 
             .publish-button {
                 padding: 8px 12px !important;
-            }
-
-            /* 移动端编辑器工具栏优化 */
-            .vditor-toolbar {
-                padding: 8px 12px !important;
-                flex-wrap: wrap !important;
-                gap: 4px !important;
-            }
-
-            .vditor-toolbar .vditor-toolbar__item {
-                margin: 2px !important;
-                min-width: 32px !important;
-                height: 32px !important;
-            }
-
-            .vditor-toolbar .vditor-toolbar__item button {
-                padding: 4px !important;
-                font-size: 14px !important;
-            }
-
-            /* 移动端编辑器文本区域优化 */
-            .vditor-ir {
-                font-size: 16px !important; /* 防止iOS缩放 */
-                line-height: 1.6 !important;
-                padding: 12px !important;
-            }
-
-            .vditor-ir .vditor-ir__marker {
-                font-size: 14px !important;
-            }
-
-            /* 移动端预览优化 */
-            .vditor-preview {
-                padding: 12px !important;
-                font-size: 16px !important;
-                line-height: 1.6 !important;
             }
         }
 
@@ -662,47 +603,6 @@
             .type-buttons,
             .action-buttons {
                 gap: 6px;
-            }
-
-            /* 超小屏幕编辑器工具栏进一步优化 */
-            .vditor-toolbar {
-                padding: 6px 8px !important;
-            }
-
-            .vditor-toolbar .vditor-toolbar__item {
-                min-width: 28px !important;
-                height: 28px !important;
-                margin: 1px !important;
-            }
-
-            .vditor-toolbar .vditor-toolbar__item button {
-                padding: 2px !important;
-                font-size: 12px !important;
-            }
-
-            /* 超小屏幕文本区域优化 */
-            .vditor-ir {
-                padding: 8px !important;
-                font-size: 16px !important; /* 保持16px防止缩放 */
-            }
-
-            .vditor-preview {
-                padding: 8px !important;
-            }
-
-            /* 元数据编辑器在超小屏幕的优化 */
-            .metadata-editor {
-                padding: 8px 10px !important;
-                gap: 8px !important;
-            }
-
-            .metadata-editor .el-input {
-                font-size: 14px !important;
-            }
-
-            .metadata-editor .el-input__inner {
-                padding: 8px 10px !important;
-                font-size: 14px !important;
             }
         }
 
@@ -755,148 +655,11 @@
             /* 移动端表单元素优化 */
             .el-input__inner {
                 font-size: 16px !important; /* 防止iOS缩放 */
-                padding: 12px 15px !important;
-                border-radius: 8px !important;
-            }
-
-            .el-textarea__inner {
-                font-size: 16px !important; /* 防止iOS缩放 */
-                padding: 12px 15px !important;
-                border-radius: 8px !important;
-                line-height: 1.5 !important;
             }
 
             .el-button {
-                padding: 10px 20px !important;
+                padding: 8px 15px !important;
                 font-size: 14px !important;
-                border-radius: 20px !important;
-                min-height: 44px !important; /* 符合移动端触摸标准 */
-            }
-
-            .el-form-item {
-                margin-bottom: 20px !important;
-            }
-
-            .el-form-item__label {
-                font-size: 14px !important;
-                line-height: 1.4 !important;
-                margin-bottom: 8px !important;
-            }
-
-            /* 移动端弹窗内容优化 */
-            .el-dialog__body .el-form {
-                padding: 0 !important;
-            }
-
-            .el-dialog__body .el-form-item:last-child {
-                margin-bottom: 0 !important;
-            }
-
-            /* 移动端按钮组优化 */
-            .el-dialog__footer .el-button {
-                margin-left: 0 !important;
-                margin-right: 10px !important;
-                margin-bottom: 10px !important;
-                width: calc(50% - 5px) !important;
-            }
-
-            .el-dialog__footer .el-button:last-child {
-                margin-right: 0 !important;
-            }
-        }
-
-        /* 移动端触摸优化 */
-        @media (max-width: 768px) {
-            /* 增加触摸目标大小 */
-            .el-button, button {
-                min-height: 44px !important;
-                min-width: 44px !important;
-                touch-action: manipulation;
-            }
-
-            /* 优化触摸反馈 */
-            .el-button:active,
-            button:active {
-                transform: scale(0.95) !important;
-                transition: transform 0.1s ease !important;
-            }
-
-            /* 移动端滚动优化 */
-            .vditor-ir,
-            .vditor-preview,
-            .el-dialog__body {
-                -webkit-overflow-scrolling: touch;
-                scroll-behavior: smooth;
-            }
-
-            /* 防止双击缩放 */
-            .vditor-ir,
-            .vditor-preview {
-                touch-action: pan-y;
-            }
-
-            /* 移动端选择优化 */
-            .vditor-ir {
-                -webkit-user-select: text;
-                user-select: text;
-            }
-
-            /* 移动端工具栏触摸优化 */
-            .vditor-toolbar .vditor-toolbar__item {
-                touch-action: manipulation;
-            }
-
-            .vditor-toolbar .vditor-toolbar__item:active {
-                background-color: rgba(255, 255, 255, 0.1) !important;
-            }
-        }
-
-        /* 移动端手势支持 */
-        @media (max-width: 768px) {
-            /* 滑动提示 */
-            .type-buttons::after {
-                content: '';
-                position: absolute;
-                right: 0;
-                top: 50%;
-                transform: translateY(-50%);
-                width: 20px;
-                height: 100%;
-                background: linear-gradient(to right, transparent, rgba(0,0,0,0.1));
-                pointer-events: none;
-                opacity: 0;
-                transition: opacity 0.3s ease;
-            }
-
-            .type-buttons:hover::after {
-                opacity: 1;
-            }
-
-            /* 长按提示 */
-            .github-config-button {
-                position: relative;
-            }
-
-            .github-config-button::before {
-                content: attr(title);
-                position: absolute;
-                bottom: 100%;
-                left: 50%;
-                transform: translateX(-50%);
-                background: rgba(0, 0, 0, 0.8);
-                color: white;
-                padding: 4px 8px;
-                border-radius: 4px;
-                font-size: 12px;
-                white-space: nowrap;
-                opacity: 0;
-                pointer-events: none;
-                transition: opacity 0.3s ease;
-                z-index: 1000;
-            }
-
-            .github-config-button:hover::before {
-                opacity: 1;
             }
         }
     </style>
@@ -1153,7 +916,6 @@
             mounted() {
                 this.initTheme();
                 this.setupMobileDefaults();
-                this.optimizeMobilePerformance();
                 this.initVditor();
                 this.checkGitHubConfig();
                 this.checkForEditFile();
@@ -1174,144 +936,6 @@
                     if (this.isMobileDevice()) {
                         // 设置为Essays模式
                         this.currentType = contentTypes.ESSAY;
-
-                        // 移动端特定优化
-                        this.setupMobileTouchOptimizations();
-                    }
-                },
-
-                // 移动端触摸优化
-                setupMobileTouchOptimizations() {
-                    // 防止双击缩放
-                    document.addEventListener('touchstart', function(e) {
-                        if (e.touches.length > 1) {
-                            e.preventDefault();
-                        }
-                    }, { passive: false });
-
-                    let lastTouchEnd = 0;
-                    document.addEventListener('touchend', function(e) {
-                        const now = (new Date()).getTime();
-                        if (now - lastTouchEnd <= 300) {
-                            e.preventDefault();
-                        }
-                        lastTouchEnd = now;
-                    }, false);
-
-                    // 优化滚动性能
-                    if (window.DeviceMotionEvent) {
-                        document.body.style.webkitOverflowScrolling = 'touch';
-                    }
-
-                    // 移动端键盘优化
-                    this.setupMobileKeyboardOptimizations();
-                },
-
-                // 移动端键盘优化
-                setupMobileKeyboardOptimizations() {
-                    const viewport = document.querySelector('meta[name=viewport]');
-                    const originalContent = viewport.content;
-
-                    // 监听输入框焦点，调整视口
-                    document.addEventListener('focusin', (e) => {
-                        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' ||
-                            e.target.classList.contains('vditor-ir')) {
-                            // 键盘弹出时防止缩放
-                            viewport.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
-
-                            // 滚动到输入框
-                            setTimeout(() => {
-                                e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                            }, 300);
-                        }
-                    });
-
-                    document.addEventListener('focusout', () => {
-                        // 恢复原始视口设置
-                        setTimeout(() => {
-                            viewport.content = originalContent;
-                        }, 300);
-                    });
-                },
-
-                // 移动端性能优化
-                optimizeMobilePerformance() {
-                    if (!this.isMobileDevice()) return;
-
-                    // 延迟加载非关键资源
-                    this.deferNonCriticalResources();
-
-                    // 优化滚动性能
-                    this.optimizeScrollPerformance();
-
-                    // 内存管理
-                    this.setupMemoryManagement();
-                },
-
-                // 延迟加载非关键资源
-                deferNonCriticalResources() {
-                    // 延迟加载图标字体
-                    setTimeout(() => {
-                        const iconLink = document.createElement('link');
-                        iconLink.rel = 'stylesheet';
-                        iconLink.href = 'https://unpkg.com/element-ui@2.15.13/lib/theme-chalk/index.css';
-                        document.head.appendChild(iconLink);
-                    }, 1000);
-                },
-
-                // 优化滚动性能
-                optimizeScrollPerformance() {
-                    // 使用 passive 事件监听器
-                    const scrollElements = document.querySelectorAll('.vditor-ir, .vditor-preview');
-                    scrollElements.forEach(element => {
-                        element.addEventListener('scroll', this.throttle(() => {
-                            // 滚动时的优化处理
-                        }, 16), { passive: true });
-                    });
-                },
-
-                // 内存管理
-                setupMemoryManagement() {
-                    // 监听页面可见性变化
-                    document.addEventListener('visibilitychange', () => {
-                        if (document.hidden) {
-                            // 页面隐藏时清理不必要的资源
-                            this.cleanupResources();
-                        }
-                    });
-
-                    // 监听内存压力
-                    if ('memory' in performance) {
-                        setInterval(() => {
-                            const memInfo = performance.memory;
-                            if (memInfo.usedJSHeapSize / memInfo.totalJSHeapSize > 0.8) {
-                                this.cleanupResources();
-                            }
-                        }, 30000);
-                    }
-                },
-
-                // 清理资源
-                cleanupResources() {
-                    // 清理编辑器缓存
-                    if (this.vditor && this.vditor.vditor) {
-                        // 清理不必要的DOM节点
-                        const unusedElements = document.querySelectorAll('.vditor-hint, .vditor-tip');
-                        unusedElements.forEach(el => el.remove());
-                    }
-                },
-
-                // 节流函数
-                throttle(func, limit) {
-                    let inThrottle;
-                    return function() {
-                        const args = arguments;
-                        const context = this;
-                        if (!inThrottle) {
-                            func.apply(context, args);
-                            inThrottle = true;
-                            setTimeout(() => inThrottle = false, limit);
-                        }
                     }
                 },
 
@@ -1321,27 +945,6 @@
 
                 initVditor() {
                     const editorMode = 'ir';
-                    const isMobile = this.isMobileDevice();
-
-                    // 移动端使用简化的工具栏
-                    const mobileToolbar = [
-                        'headings', 'bold', 'italic', 'link', '|',
-                        'list', 'ordered-list', 'quote', '|',
-                        'undo', 'redo', '|',
-                        'preview', 'fullscreen'
-                    ];
-
-                    // 桌面端使用完整工具栏
-                    const desktopToolbar = [
-                        'emoji', 'headings', 'bold', 'italic', 'strike', 'link', '|',
-                        'list', 'ordered-list', 'check', 'outdent', 'indent', '|',
-                        'quote', 'line', 'code', 'inline-code', 'insert-before', 'insert-after', '|',
-                        'table', '|',
-                        'undo', 'redo', '|',
-                        'edit-mode', 'content-theme', 'code-theme', '|',
-                        'outline', 'preview', 'fullscreen'
-                    ];
-
                     this.vditor = new Vditor('vditor', {
                         height: '100%',
                         mode: editorMode,
@@ -1350,7 +953,15 @@
                             theme: { current: 'dark' },
                             actions: []
                         },
-                        toolbar: isMobile ? mobileToolbar : desktopToolbar,
+                        toolbar: [
+                            'emoji', 'headings', 'bold', 'italic', 'strike', 'link', '|',
+                            'list', 'ordered-list', 'check', 'outdent', 'indent', '|',
+                            'quote', 'line', 'code', 'inline-code', 'insert-before', 'insert-after', '|',
+                            'table', '|',
+                            'undo', 'redo', '|',
+                            'edit-mode', 'content-theme', 'code-theme', '|',
+                            'outline', 'preview', 'fullscreen'
+                        ],
                         cache: { enable: false },
                         after: () => {
                             
