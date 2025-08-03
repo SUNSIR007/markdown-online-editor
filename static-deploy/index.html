@@ -73,135 +73,76 @@
             font-size: 18px !important;
         }
 
-        /* 发布成功动画 */
-        .publish-success-animation {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 10000;
+        /* 发布按钮加载动画 */
+        .publish-button {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .publish-button.loading {
             pointer-events: none;
         }
 
-        .success-circle {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #4CAF50, #45a049);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 8px 32px rgba(76, 175, 80, 0.4);
-            animation: successPulse 0.6s ease-out;
-        }
-
-        .success-checkmark {
-            width: 60px;
-            height: 60px;
-            position: relative;
-        }
-
-        .success-checkmark::before {
+        .publish-button.loading::before {
             content: '';
             position: absolute;
-            width: 20px;
-            height: 35px;
-            border: 4px solid white;
-            border-top: none;
-            border-left: none;
-            transform: rotate(45deg);
-            left: 18px;
-            top: 8px;
-            animation: checkmarkDraw 0.4s ease-out 0.2s both;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border: 3px solid transparent;
+            border-radius: inherit;
+            background: linear-gradient(90deg, transparent, transparent) padding-box,
+                        linear-gradient(90deg, #002FA7, #4A90E2, #002FA7) border-box;
+            animation: borderProgress 2s ease-in-out forwards;
+            z-index: 1;
         }
 
-        @keyframes successPulse {
+        @keyframes borderProgress {
             0% {
-                transform: translate(-50%, -50%) scale(0);
-                opacity: 0;
+                background: linear-gradient(90deg, transparent, transparent) padding-box,
+                           conic-gradient(from 0deg, #002FA7 0deg, transparent 0deg, transparent 360deg) border-box;
+            }
+            25% {
+                background: linear-gradient(90deg, transparent, transparent) padding-box,
+                           conic-gradient(from 0deg, #002FA7 0deg, #4A90E2 90deg, transparent 90deg, transparent 360deg) border-box;
             }
             50% {
-                transform: translate(-50%, -50%) scale(1.1);
-                opacity: 1;
+                background: linear-gradient(90deg, transparent, transparent) padding-box,
+                           conic-gradient(from 0deg, #002FA7 0deg, #4A90E2 180deg, transparent 180deg, transparent 360deg) border-box;
+            }
+            75% {
+                background: linear-gradient(90deg, transparent, transparent) padding-box,
+                           conic-gradient(from 0deg, #002FA7 0deg, #4A90E2 270deg, transparent 270deg, transparent 360deg) border-box;
             }
             100% {
-                transform: translate(-50%, -50%) scale(1);
-                opacity: 1;
-            }
-        }
-
-        @keyframes checkmarkDraw {
-            0% {
-                height: 0;
-                width: 0;
-                opacity: 0;
-            }
-            50% {
-                height: 0;
-                width: 20px;
-                opacity: 1;
-            }
-            100% {
-                height: 35px;
-                width: 20px;
-                opacity: 1;
-            }
-        }
-
-        .success-text {
-            position: absolute;
-            top: 140px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: #4CAF50;
-            font-size: 18px;
-            font-weight: 600;
-            white-space: nowrap;
-            animation: textFadeIn 0.4s ease-out 0.4s both;
-        }
-
-        @keyframes textFadeIn {
-            0% {
-                opacity: 0;
-                transform: translateX(-50%) translateY(20px);
-            }
-            100% {
-                opacity: 1;
-                transform: translateX(-50%) translateY(0);
-            }
-        }
-
-        /* 发布按钮动画状态 */
-        .publish-button.publishing {
-            animation: publishingPulse 1s infinite;
-        }
-
-        @keyframes publishingPulse {
-            0%, 100% {
-                transform: scale(1);
-                box-shadow: 0 2px 8px rgba(0, 51, 184, 0.3);
-            }
-            50% {
-                transform: scale(1.05);
-                box-shadow: 0 4px 16px rgba(0, 51, 184, 0.5);
+                background: linear-gradient(90deg, transparent, transparent) padding-box,
+                           conic-gradient(from 0deg, #002FA7 0deg, #4A90E2 360deg) border-box;
             }
         }
 
         .publish-button.success {
             background-color: #4CAF50 !important;
             border-color: #4CAF50 !important;
-            animation: successBounce 0.6s ease-out;
+            animation: successPulse 0.6s ease-out;
         }
 
-        @keyframes successBounce {
-            0%, 20%, 50%, 80%, 100% {
-                transform: translateY(0);
+        .publish-button.success::before {
+            display: none;
+        }
+
+        @keyframes successPulse {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
             }
-            40% {
-                transform: translateY(-10px);
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 4px 16px rgba(76, 175, 80, 0.6);
             }
-            60% {
-                transform: translateY(-5px);
+            100% {
+                transform: scale(1);
+                box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
             }
         }
 
@@ -1319,9 +1260,9 @@
                     const publishButton = document.querySelector('.publish-button');
 
                     try {
-                        // 添加发布中动画
+                        // 添加加载动画
                         if (publishButton) {
-                            publishButton.classList.add('publishing');
+                            publishButton.classList.add('loading');
                         }
 
                         this.$message({ message: '正在发布...', type: 'info' });
@@ -1333,77 +1274,33 @@
                         );
 
                         if (result.success) {
-                            // 移除发布中动画
+                            // 移除加载动画，添加成功状态
                             if (publishButton) {
-                                publishButton.classList.remove('publishing');
+                                publishButton.classList.remove('loading');
                                 publishButton.classList.add('success');
 
-                                // 2秒后移除成功状态
+                                // 1.5秒后移除成功状态
                                 setTimeout(() => {
                                     publishButton.classList.remove('success');
-                                }, 2000);
+                                }, 1500);
                             }
 
-                            // 显示成功动画
-                            this.showPublishSuccessAnimation(result.action);
-
-                            // 延迟显示消息，让动画先播放
-                            setTimeout(() => {
-                                this.$message({
-                                    message: `发布成功！文件已${result.action === 'add' ? '创建' : '更新'}`,
-                                    type: 'success'
-                                });
-                            }, 800);
+                            this.$message({
+                                message: `发布成功！文件已${result.action === 'add' ? '创建' : '更新'}`,
+                                type: 'success'
+                            });
 
                             this.selectType(this.currentType); // 重置
                         }
                     } catch (error) {
-                        // 移除发布中动画
+                        // 移除加载动画
                         if (publishButton) {
-                            publishButton.classList.remove('publishing');
+                            publishButton.classList.remove('loading');
                         }
 
                         console.error('发布失败:', error);
                         this.$message.error(`发布失败: ${error.message}`);
                     }
-                },
-
-                // 显示发布成功动画
-                showPublishSuccessAnimation(action) {
-                    // 创建动画容器
-                    const animationContainer = document.createElement('div');
-                    animationContainer.className = 'publish-success-animation';
-
-                    // 创建成功圆圈和对勾
-                    const successCircle = document.createElement('div');
-                    successCircle.className = 'success-circle';
-
-                    const checkmark = document.createElement('div');
-                    checkmark.className = 'success-checkmark';
-
-                    const successText = document.createElement('div');
-                    successText.className = 'success-text';
-                    successText.textContent = action === 'add' ? '文件已创建！' : '文件已更新！';
-
-                    successCircle.appendChild(checkmark);
-                    animationContainer.appendChild(successCircle);
-                    animationContainer.appendChild(successText);
-
-                    // 添加到页面
-                    document.body.appendChild(animationContainer);
-
-                    // 2秒后移除动画
-                    setTimeout(() => {
-                        if (animationContainer.parentNode) {
-                            animationContainer.style.opacity = '0';
-                            animationContainer.style.transition = 'opacity 0.3s ease';
-                            setTimeout(() => {
-                                if (animationContainer.parentNode) {
-                                    animationContainer.parentNode.removeChild(animationContainer);
-                                }
-                            }, 300);
-                        }
-                    }, 2000);
                 },
 
                 configureGitHub() {
