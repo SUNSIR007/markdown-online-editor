@@ -73,62 +73,11 @@
             font-size: 18px !important;
         }
 
-        /* 发布按钮加载动画 */
-        .publish-button {
-            position: relative;
-            overflow: hidden;
-        }
-
-        .publish-button.loading {
-            pointer-events: none;
-        }
-
-        .publish-button.loading::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            border: 3px solid transparent;
-            border-radius: inherit;
-            background: linear-gradient(90deg, transparent, transparent) padding-box,
-                        linear-gradient(90deg, #002FA7, #4A90E2, #002FA7) border-box;
-            animation: borderProgress 2s ease-in-out forwards;
-            z-index: 1;
-        }
-
-        @keyframes borderProgress {
-            0% {
-                background: linear-gradient(90deg, transparent, transparent) padding-box,
-                           conic-gradient(from 0deg, #002FA7 0deg, transparent 0deg, transparent 360deg) border-box;
-            }
-            25% {
-                background: linear-gradient(90deg, transparent, transparent) padding-box,
-                           conic-gradient(from 0deg, #002FA7 0deg, #4A90E2 90deg, transparent 90deg, transparent 360deg) border-box;
-            }
-            50% {
-                background: linear-gradient(90deg, transparent, transparent) padding-box,
-                           conic-gradient(from 0deg, #002FA7 0deg, #4A90E2 180deg, transparent 180deg, transparent 360deg) border-box;
-            }
-            75% {
-                background: linear-gradient(90deg, transparent, transparent) padding-box,
-                           conic-gradient(from 0deg, #002FA7 0deg, #4A90E2 270deg, transparent 270deg, transparent 360deg) border-box;
-            }
-            100% {
-                background: linear-gradient(90deg, transparent, transparent) padding-box,
-                           conic-gradient(from 0deg, #002FA7 0deg, #4A90E2 360deg) border-box;
-            }
-        }
-
+        /* 发布按钮成功动画 */
         .publish-button.success {
             background-color: #4CAF50 !important;
             border-color: #4CAF50 !important;
             animation: successPulse 0.6s ease-out;
-        }
-
-        .publish-button.success::before {
-            display: none;
         }
 
         @keyframes successPulse {
@@ -1260,11 +1209,6 @@
                     const publishButton = document.querySelector('.publish-button');
 
                     try {
-                        // 添加加载动画
-                        if (publishButton) {
-                            publishButton.classList.add('loading');
-                        }
-
                         this.$message({ message: '正在发布...', type: 'info' });
 
                         const result = await window.githubService.publishContent(
@@ -1274,9 +1218,8 @@
                         );
 
                         if (result.success) {
-                            // 移除加载动画，添加成功状态
+                            // 添加成功状态动画
                             if (publishButton) {
-                                publishButton.classList.remove('loading');
                                 publishButton.classList.add('success');
 
                                 // 1.5秒后移除成功状态
@@ -1293,11 +1236,6 @@
                             this.selectType(this.currentType); // 重置
                         }
                     } catch (error) {
-                        // 移除加载动画
-                        if (publishButton) {
-                            publishButton.classList.remove('loading');
-                        }
-
                         console.error('发布失败:', error);
                         this.$message.error(`发布失败: ${error.message}`);
                     }
