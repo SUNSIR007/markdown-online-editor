@@ -12,12 +12,6 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="msapplication-navbutton-color" content="#000000">
 
-    <!-- 移动端优化 -->
-    <meta name="format-detection" content="telephone=no">
-    <meta name="apple-mobile-web-app-title" content="BlogWriter">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-touch-fullscreen" content="yes">
-
     <link rel="icon" type="image/png" href="./img/icons/write.png">
     <script src="https://unpkg.com/vue@2.6.14/dist/vue.js"></script>
     <script src="https://unpkg.com/element-ui@2.15.13/lib/index.js"></script>
@@ -915,8 +909,7 @@
                     isGitHubConfigured: false,
                     isDarkMode: true,
                     metadataFields,
-                    bodyContent: '',
-                    hasUserInteracted: false
+                    bodyContent: ''
                 };
             },
 
@@ -943,12 +936,6 @@
                     if (this.isMobileDevice()) {
                         // 设置为Essays模式
                         this.currentType = contentTypes.ESSAY;
-
-                        // 移动端特定优化
-                        this.setupMobileTouchOptimizations();
-
-                        // 移动端自动聚焦编辑器
-                        this.setupMobileAutoFocus();
                     }
                 },
 
@@ -958,27 +945,6 @@
 
                 initVditor() {
                     const editorMode = 'ir';
-                    const isMobile = this.isMobileDevice();
-
-                    // 移动端使用简化的工具栏
-                    const mobileToolbar = [
-                        'headings', 'bold', 'italic', 'link', '|',
-                        'list', 'ordered-list', 'quote', '|',
-                        'undo', 'redo', '|',
-                        'preview', 'fullscreen'
-                    ];
-
-                    // 桌面端使用完整工具栏
-                    const desktopToolbar = [
-                        'emoji', 'headings', 'bold', 'italic', 'strike', 'link', '|',
-                        'list', 'ordered-list', 'check', 'outdent', 'indent', '|',
-                        'quote', 'line', 'code', 'inline-code', 'insert-before', 'insert-after', '|',
-                        'table', '|',
-                        'undo', 'redo', '|',
-                        'edit-mode', 'content-theme', 'code-theme', '|',
-                        'outline', 'preview', 'fullscreen'
-                    ];
-
                     this.vditor = new Vditor('vditor', {
                         height: '100%',
                         mode: editorMode,
@@ -987,7 +953,15 @@
                             theme: { current: 'dark' },
                             actions: []
                         },
-                        toolbar: isMobile ? mobileToolbar : desktopToolbar,
+                        toolbar: [
+                            'emoji', 'headings', 'bold', 'italic', 'strike', 'link', '|',
+                            'list', 'ordered-list', 'check', 'outdent', 'indent', '|',
+                            'quote', 'line', 'code', 'inline-code', 'insert-before', 'insert-after', '|',
+                            'table', '|',
+                            'undo', 'redo', '|',
+                            'edit-mode', 'content-theme', 'code-theme', '|',
+                            'outline', 'preview', 'fullscreen'
+                        ],
                         cache: { enable: false },
                         after: () => {
                             
@@ -1232,221 +1206,6 @@
                         window.githubService.setConfig(config);
                         this.checkGitHubConfig();
                         this.$message.success('GitHub配置已保存');
-                    }
-                },
-
-                // 移动端触摸优化
-                setupMobileTouchOptimizations() {
-                    // 防止双击缩放
-                    document.addEventListener('touchstart', function(e) {
-                        if (e.touches.length > 1) {
-                            e.preventDefault();
-                        }
-                    }, { passive: false });
-
-                    let lastTouchEnd = 0;
-                    document.addEventListener('touchend', function(e) {
-                        const now = (new Date()).getTime();
-                        if (now - lastTouchEnd <= 300) {
-                            e.preventDefault();
-                        }
-                        lastTouchEnd = now;
-                    }, false);
-
-                    // 优化滚动性能
-                    if (window.DeviceMotionEvent) {
-                        document.body.style.webkitOverflowScrolling = 'touch';
-                    }
-
-                    // 移动端键盘优化
-                    this.setupMobileKeyboardOptimizations();
-                },
-
-                // 移动端键盘优化
-                setupMobileKeyboardOptimizations() {
-                    const viewport = document.querySelector('meta[name=viewport]');
-                    const originalContent = viewport.content;
-
-                    // 监听输入框焦点，调整视口
-                    document.addEventListener('focusin', (e) => {
-                        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' ||
-                            e.target.classList.contains('vditor-ir')) {
-                            // 键盘弹出时防止缩放
-                            viewport.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
-
-                            // 滚动到输入框
-                            setTimeout(() => {
-                                e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                            }, 300);
-                        }
-                    });
-
-                    document.addEventListener('focusout', () => {
-                        // 恢复原始视口设置
-                        setTimeout(() => {
-                            viewport.content = originalContent;
-                        }, 300);
-                    });
-                },
-
-                // 移动端自动聚焦编辑器
-                setupMobileAutoFocus() {
-                    // 延迟执行，确保编辑器已完全初始化
-                    setTimeout(() => {
-                        this.autoFocusEditor();
-                    }, 1500); // 给编辑器足够的初始化时间
-                },
-
-                // 自动聚焦编辑器
-                autoFocusEditor() {
-                    try {
-                        // 检查是否有用户交互（避免在某些浏览器中被阻止）
-                        if (this.hasUserInteracted) {
-                            this.focusEditor();
-                            return;
-                        }
-
-                        // 创建一个用户友好的提示，引导用户点击开始编辑
-                        this.showMobileFocusHint();
-
-                        // 监听第一次用户交互
-                        this.setupFirstInteractionListener();
-
-                    } catch (error) {
-                        console.log('自动聚焦失败，这在某些浏览器中是正常的:', error);
-                    }
-                },
-
-                // 显示移动端聚焦提示
-                showMobileFocusHint() {
-                    if (!this.isMobileDevice()) return;
-
-                    // 创建提示元素
-                    const hint = document.createElement('div');
-                    hint.className = 'mobile-focus-hint';
-                    hint.innerHTML = `
-                        <div class="hint-content">
-                            <i class="el-icon-edit"></i>
-                            <span>点击此处开始编写</span>
-                        </div>
-                    `;
-
-                    // 添加样式
-                    hint.style.cssText = `
-                        position: absolute;
-                        top: 50%;
-                        left: 50%;
-                        transform: translate(-50%, -50%);
-                        background: rgba(102, 126, 234, 0.9);
-                        color: white;
-                        padding: 15px 25px;
-                        border-radius: 25px;
-                        font-size: 16px;
-                        z-index: 1000;
-                        pointer-events: none;
-                        animation: pulse 2s infinite;
-                        box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
-                    `;
-
-                    // 添加动画样式
-                    if (!document.querySelector('#mobile-hint-style')) {
-                        const style = document.createElement('style');
-                        style.id = 'mobile-hint-style';
-                        style.textContent = `
-                            @keyframes pulse {
-                                0% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
-                                50% { transform: translate(-50%, -50%) scale(1.05); opacity: 1; }
-                                100% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
-                            }
-                            .hint-content {
-                                display: flex;
-                                align-items: center;
-                                gap: 8px;
-                            }
-                            .hint-content i {
-                                font-size: 18px;
-                            }
-                        `;
-                        document.head.appendChild(style);
-                    }
-
-                    // 添加到编辑器容器
-                    const editorContainer = document.querySelector('.editor-container');
-                    if (editorContainer) {
-                        editorContainer.style.position = 'relative';
-                        editorContainer.appendChild(hint);
-
-                        // 3秒后自动消失
-                        setTimeout(() => {
-                            if (hint.parentNode) {
-                                hint.style.opacity = '0';
-                                hint.style.transition = 'opacity 0.5s ease';
-                                setTimeout(() => {
-                                    if (hint.parentNode) {
-                                        hint.parentNode.removeChild(hint);
-                                    }
-                                }, 500);
-                            }
-                        }, 3000);
-                    }
-                },
-
-                // 设置第一次交互监听器
-                setupFirstInteractionListener() {
-                    const handleFirstInteraction = () => {
-                        this.hasUserInteracted = true;
-                        this.focusEditor();
-
-                        // 移除提示
-                        const hint = document.querySelector('.mobile-focus-hint');
-                        if (hint) {
-                            hint.style.opacity = '0';
-                            hint.style.transition = 'opacity 0.3s ease';
-                            setTimeout(() => {
-                                if (hint.parentNode) {
-                                    hint.parentNode.removeChild(hint);
-                                }
-                            }, 300);
-                        }
-
-                        // 移除监听器
-                        document.removeEventListener('touchstart', handleFirstInteraction);
-                        document.removeEventListener('click', handleFirstInteraction);
-                    };
-
-                    document.addEventListener('touchstart', handleFirstInteraction, { once: true, passive: true });
-                    document.addEventListener('click', handleFirstInteraction, { once: true });
-                },
-
-                // 聚焦编辑器
-                focusEditor() {
-                    if (!this.vditor || !this.vditor.vditor) return;
-
-                    try {
-                        // 获取编辑器的文本区域
-                        const editorElement = this.vditor.vditor.ir.element;
-                        if (editorElement) {
-                            // 聚焦编辑器
-                            editorElement.focus();
-
-                            // 将光标移到内容末尾
-                            const range = document.createRange();
-                            const selection = window.getSelection();
-                            range.selectNodeContents(editorElement);
-                            range.collapse(false);
-                            selection.removeAllRanges();
-                            selection.addRange(range);
-
-                            // 滚动到编辑器位置
-                            setTimeout(() => {
-                                editorElement.scrollIntoView({
-                                    behavior: 'smooth',
-                                    block: 'center'
-                                });
-                            }, 100);
-                        }
-                    } catch (error) {
-                        console.log('聚焦编辑器失败:', error);
                     }
                 }
             }
