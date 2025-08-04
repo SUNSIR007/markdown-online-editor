@@ -9,7 +9,7 @@ class ImageService {
     this.token = null
     this.owner = null
     this.repo = null
-    this.branch = 'main'
+    this.branch = 'master'  // 改为默认使用master分支
     
     // CDN链接规则配置
     this.linkRules = {
@@ -56,7 +56,7 @@ class ImageService {
     this.token = config.token
     this.owner = config.owner
     this.repo = config.repo
-    this.branch = config.branch || 'main'
+    this.branch = config.branch || 'master'
 
     // 清理imageDir，确保不以斜杠开头或结尾
     let imageDir = (config.imageDir || 'images').trim()
