@@ -34,7 +34,7 @@ class PicXAPI {
             token: '',
             owner: '',
             repo: '',
-            branch: 'master',
+            branch: 'main',
             selectedDir: '/', // PicX使用selectedDir而不是path
             imageLinkType: 'jsDelivr', // 默认使用 jsDelivr CDN
             compress: true,
@@ -143,22 +143,8 @@ class PicXAPI {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.onload = () => {
-                console.log('🔍 FileReader结果:', {
-                    fullResult: reader.result.substring(0, 100) + '...',
-                    resultType: typeof reader.result,
-                    hasComma: reader.result.includes(','),
-                    splitLength: reader.result.split(',').length
-                });
-
                 // 移除 data:image/xxx;base64, 前缀
                 const base64 = reader.result.split(',')[1];
-
-                console.log('🔍 Base64提取结果:', {
-                    base64Length: base64 ? base64.length : 0,
-                    base64Preview: base64 ? base64.substring(0, 50) + '...' : 'null',
-                    base64Type: typeof base64
-                });
-
                 resolve(base64);
             };
             reader.onerror = reject;
@@ -184,9 +170,6 @@ class PicXAPI {
 
     // 上传图片到 GitHub（完全按照PicX的uploadImageToGitHub函数）
     async uploadToGitHub(file) {
-        console.log('🚀🚀🚀 开始上传到GitHub:', file.name);
-        console.log('🚀🚀🚀 当前配置:', this.config);
-
         if (!this.isConfigured()) {
             throw new Error('请先配置 GitHub 信息');
         }
@@ -255,22 +238,13 @@ class PicXAPI {
         // 使用GitHub API返回的path（这是关键！）
         const actualPath = result.content.path;
 
-        // 关键检查：确保actualPath不是base64数据
-        if (actualPath && (actualPath.includes('base64') || actualPath.includes('data:image'))) {
-            console.error('❌ 严重错误：actualPath包含base64或data:image数据！');
-            console.error('❌ actualPath内容:', actualPath.substring(0, 200));
-            console.error('❌ 完整的result.content:', result.content);
-            throw new Error('GitHub API返回的路径包含base64数据，这是不正常的');
-        }
-
         console.log('🔍 调试信息 - GitHub API 响应:', {
             contentName: result.content.name,
             contentPath: result.content.path,
             contentSha: result.content.sha,
             contentSize: result.content.size,
             contentType: typeof result.content.path,
-            pathIsString: typeof result.content.path === 'string',
-            pathStartsWith: result.content.path ? result.content.path.substring(0, 20) : 'null'
+            pathIsString: typeof result.content.path === 'string'
         });
 
         console.log('🔍 调试信息 - 路径对比:', {
