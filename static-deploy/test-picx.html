@@ -85,16 +85,23 @@
             <input type="text" id="branch" value="main" placeholder="分支名">
         </div>
         <div class="form-group">
-            <label>存储路径:</label>
-            <input type="text" id="path" value="images/" placeholder="存储路径">
+            <label>存储目录:</label>
+            <input type="text" id="selectedDir" value="/" placeholder="存储目录（/表示根目录）">
         </div>
         <div class="form-group">
-            <label>CDN服务:</label>
-            <select id="cdn">
-                <option value="jsdelivr">jsDelivr CDN</option>
-                <option value="github">GitHub Raw</option>
-                <option value="statically">Statically CDN</option>
+            <label>图片链接类型:</label>
+            <select id="imageLinkType">
+                <option value="jsDelivr">jsDelivr CDN</option>
+                <option value="GitHub">GitHub Raw</option>
+                <option value="Statically">Statically CDN</option>
+                <option value="GitHubPages">GitHub Pages</option>
+                <option value="ChinaJsDelivr">中国 jsDelivr CDN</option>
             </select>
+        </div>
+        <div class="form-group">
+            <label>
+                <input type="checkbox" id="enableHash"> 启用哈希化文件名
+            </label>
         </div>
         <button onclick="saveConfig()">保存配置</button>
         <button onclick="testConnection()">测试连接</button>
@@ -115,8 +122,9 @@
             document.getElementById('owner').value = config.owner || '';
             document.getElementById('repo').value = config.repo || '';
             document.getElementById('branch').value = config.branch || 'main';
-            document.getElementById('path').value = config.path || 'images/';
-            document.getElementById('cdn').value = config.cdn || 'jsdelivr';
+            document.getElementById('selectedDir').value = config.selectedDir || '/';
+            document.getElementById('imageLinkType').value = config.imageLinkType || 'jsDelivr';
+            document.getElementById('enableHash').checked = config.enableHash !== false;
         }
 
         // 保存配置
@@ -126,15 +134,15 @@
                 owner: document.getElementById('owner').value,
                 repo: document.getElementById('repo').value,
                 branch: document.getElementById('branch').value,
-                path: document.getElementById('path').value,
-                cdn: document.getElementById('cdn').value,
+                selectedDir: document.getElementById('selectedDir').value,
+                imageLinkType: document.getElementById('imageLinkType').value,
+                enableHash: document.getElementById('enableHash').checked,
                 compress: true,
                 quality: 0.8,
-                rename: true,
                 addPrefix: false,
                 prefix: ''
             };
-            
+
             picxAPI.saveConfig(config);
             showResult('配置已保存', 'success');
         }

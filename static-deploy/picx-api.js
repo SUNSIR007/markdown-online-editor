@@ -1,15 +1,29 @@
 /**
  * PicX 风格的 GitHub API 图床服务
- * 基于 PicX 项目的实现逻辑
+ * 完全基于 PicX 项目的源码实现
  */
 class PicXAPI {
     constructor() {
         this.config = this.loadConfig();
         this.baseURL = 'https://api.github.com';
-        this.cdnConfig = {
-            github: 'https://raw.githubusercontent.com',
-            jsdelivr: 'https://cdn.jsdelivr.net/gh',
-            statically: 'https://cdn.statically.io/gh'
+
+        // 图片链接规则（完全按照PicX源码）
+        this.imageLinkRules = {
+            'GitHub': {
+                rule: 'https://github.com/{{owner}}/{{repo}}/raw/{{branch}}/{{path}}'
+            },
+            'jsDelivr': {
+                rule: 'https://cdn.jsdelivr.net/gh/{{owner}}/{{repo}}@{{branch}}/{{path}}'
+            },
+            'Statically': {
+                rule: 'https://cdn.statically.io/gh/{{owner}}/{{repo}}@{{branch}}/{{path}}'
+            },
+            'GitHubPages': {
+                rule: 'https://{{owner}}.github.io/{{repo}}/{{path}}'
+            },
+            'ChinaJsDelivr': {
+                rule: 'https://jsd.cdn.zzko.cn/gh/{{owner}}/{{repo}}@{{branch}}/{{path}}'
+            }
         };
     }
 
@@ -21,11 +35,11 @@ class PicXAPI {
             owner: '',
             repo: '',
             branch: 'main',
-            path: 'images/',
-            cdn: 'jsdelivr', // 默认使用 jsDelivr CDN
+            selectedDir: '/', // PicX使用selectedDir而不是path
+            imageLinkType: 'jsDelivr', // 默认使用 jsDelivr CDN
             compress: true,
             quality: 0.8,
-            rename: true,
+            enableHash: true, // PicX的重命名选项
             addPrefix: false,
             prefix: ''
         };
@@ -50,29 +64,26 @@ class PicXAPI {
         return !!(this.config.token && this.config.owner && this.config.repo);
     }
 
-    // 生成文件名（PicX 风格）
+    // 生成文件名（完全按照PicX源码逻辑）
     generateFileName(file) {
-        const timestamp = Date.now();
-        const randomStr = Math.random().toString(36).substring(2, 8);
         const extension = file.name.split('.').pop().toLowerCase();
-        
         let fileName = '';
-        
-        if (this.config.rename) {
-            // 重命名：时间戳 + 随机字符串
-            fileName = `${timestamp}_${randomStr}.${extension}`;
+
+        if (this.config.enableHash) {
+            // PicX的哈希化命名：使用时间戳 + 随机字符串
+            const timestamp = Date.now();
+            const randomStr = Math.random().toString(36).substring(2, 8);
+            fileName = `${timestamp}.${randomStr}.${extension}`;
         } else {
-            // 保持原名，但添加时间戳避免冲突，清理特殊字符
-            const originalName = file.name.replace(/\.[^/.]+$/, '').replace(/[^a-zA-Z0-9_-]/g, '_');
-            fileName = `${originalName}_${timestamp}.${extension}`;
+            // 保持原名
+            fileName = file.name;
         }
 
         // 添加前缀
         if (this.config.addPrefix && this.config.prefix) {
-            const cleanPrefix = this.config.prefix.replace(/[^a-zA-Z0-9_-]/g, '_');
-            fileName = `${cleanPrefix}_${fileName}`;
+            fileName = `${this.config.prefix}${fileName}`;
         }
-        
+
         return fileName;
     }
 
@@ -156,7 +167,7 @@ class PicXAPI {
         }
     }
 
-    // 上传图片到 GitHub
+    // 上传图片到 GitHub（完全按照PicX的uploadImageToGitHub函数）
     async uploadToGitHub(file) {
         if (!this.isConfigured()) {
             throw new Error('请先配置 GitHub 信息');
@@ -164,40 +175,45 @@ class PicXAPI {
 
         // 压缩图片
         const compressedFile = await this.compressImage(file);
-        
+
         // 生成文件名
         const fileName = this.generateFileName(compressedFile);
-        // 确保路径格式正确
-        let path = this.config.path || 'images/';
-        if (path && !path.endsWith('/')) {
-            path += '/';
+
+        // 构建文件路径（按照PicX逻辑）
+        const { selectedDir } = this.config;
+        let filePath = fileName;
+        if (selectedDir !== '/') {
+            filePath = `${selectedDir}/${fileName}`;
         }
-        const filePath = `${path}${fileName}`;
-        
-        // 检查文件是否已存在
-        const exists = await this.checkFileExists(filePath);
-        if (exists) {
-            throw new Error(`文件 ${fileName} 已存在`);
-        }
-        
+
         // 转换为 Base64
         const base64Content = await this.fileToBase64(compressedFile);
-        
-        // 上传到 GitHub
-        const url = `${this.baseURL}/repos/${this.config.owner}/${this.config.repo}/contents/${filePath}`;
-        
-        const response = await fetch(url, {
+
+        // 构建上传URL（按照PicX的uploadUrlHandle函数）
+        const uploadUrl = `${this.baseURL}/repos/${this.config.owner}/${this.config.repo}/contents/${filePath}`;
+
+        // 构建请求数据（按照PicX源码）
+        const uploadData = {
+            message: 'Upload image via PicX', // PicX使用的提交信息
+            branch: this.config.branch,
+            content: base64Content
+        };
+
+        console.log('上传请求:', {
+            url: uploadUrl,
+            fileName,
+            filePath,
+            branch: this.config.branch
+        });
+
+        const response = await fetch(uploadUrl, {
             method: 'PUT',
             headers: {
                 'Authorization': `token ${this.config.token}`,
                 'Accept': 'application/vnd.github.v3+json',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                message: `Upload image: ${fileName}`,
-                content: base64Content,
-                branch: this.config.branch
-            })
+            body: JSON.stringify(uploadData)
         });
 
         if (!response.ok) {
@@ -207,62 +223,59 @@ class PicXAPI {
 
         const result = await response.json();
 
-        // 生成 CDN 链接
-        const cdnUrl = this.generateCDNUrl(filePath);
+        // 生成图片链接（按照PicX的generateImageLink函数）
+        const imageLink = this.generateImageLink(filePath);
 
         console.log('GitHub API 响应:', result);
         console.log('上传成功:', {
             fileName,
             filePath,
-            cdnUrl,
-            downloadUrl: result.content.download_url,
-            htmlUrl: result.content.html_url
+            imageLink,
+            downloadUrl: result.content.download_url
         });
 
         return {
             success: true,
             fileName: fileName,
             filePath: filePath,
-            url: cdnUrl,
+            url: imageLink,
             rawUrl: result.content.download_url,
             sha: result.content.sha,
             size: compressedFile.size,
             originalSize: file.size,
-            cdn: this.config.cdn
+            linkType: this.config.imageLinkType
         };
     }
 
-    // 生成 CDN 链接
-    generateCDNUrl(filePath) {
-        const { owner, repo, branch } = this.config;
-        const cdnBase = this.cdnConfig[this.config.cdn];
+    // 生成图片链接（完全按照PicX源码的generateImageLink函数）
+    generateImageLink(imagePath) {
+        const { owner, repo, branch, imageLinkType } = this.config;
 
-        console.log('生成CDN链接:', {
+        // 获取对应的链接规则
+        const linkRule = this.imageLinkRules[imageLinkType];
+        if (!linkRule) {
+            console.error('未找到链接规则:', imageLinkType);
+            return null;
+        }
+
+        // 使用模板替换生成链接（完全按照PicX源码）
+        const imageLink = linkRule.rule
+            .replaceAll('{{owner}}', owner)
+            .replaceAll('{{repo}}', repo)
+            .replaceAll('{{branch}}', branch)
+            .replaceAll('{{path}}', imagePath);
+
+        console.log('生成图片链接:', {
             owner,
             repo,
             branch,
-            filePath,
-            cdn: this.config.cdn,
-            cdnBase
+            imagePath,
+            linkType: imageLinkType,
+            rule: linkRule.rule,
+            result: imageLink
         });
 
-        let url;
-        switch (this.config.cdn) {
-            case 'github':
-                url = `${cdnBase}/${owner}/${repo}/${branch}/${filePath}`;
-                break;
-            case 'jsdelivr':
-                url = `${cdnBase}/${owner}/${repo}@${branch}/${filePath}`;
-                break;
-            case 'statically':
-                url = `${cdnBase}/${owner}/${repo}/${branch}/${filePath}`;
-                break;
-            default:
-                url = `${this.cdnConfig.github}/${owner}/${repo}/${branch}/${filePath}`;
-        }
-
-        console.log('生成的CDN URL:', url);
-        return url;
+        return imageLink;
     }
 
     // 删除图片
