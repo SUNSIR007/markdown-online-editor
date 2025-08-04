@@ -19,6 +19,9 @@
     <script src="https://cdn.jsdelivr.net/npm/vditor@3.9.4/dist/index.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vditor@3.9.4/dist/index.css">
     <script src="github-service.js"></script>
+    <script src="image-upload-service.js"></script>
+    <script src="drag-drop-handler.js"></script>
+    <link rel="stylesheet" href="upload-styles.css">
     <style>
         body {
             margin: 0;
@@ -121,6 +124,49 @@
 
         .github-config-button .el-icon-setting {
             font-size: 18px;
+        }
+
+        /* 图片上传配置按钮 */
+        .image-config-button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            margin-left: 10px;
+        }
+
+        .image-config-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .image-config-button .el-icon-picture {
+            font-size: 18px;
+        }
+
+        /* 图片上传按钮 */
+        .image-upload-toolbar-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 6px;
+            color: white;
+            padding: 6px 12px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-left: 8px;
+        }
+
+        .image-upload-toolbar-button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
         }
 
         /* Vditor YAML frontmatter 预览样式 */
@@ -593,8 +639,18 @@
                 height: 36px !important;
             }
 
+            .image-config-button {
+                width: 36px !important;
+                height: 36px !important;
+            }
+
             .publish-button {
                 padding: 8px 12px !important;
+            }
+
+            .image-upload-toolbar-button {
+                padding: 4px 8px !important;
+                font-size: 11px !important;
             }
         }
 
@@ -614,8 +670,18 @@
                 height: 32px !important;
             }
 
+            .image-config-button {
+                width: 32px !important;
+                height: 32px !important;
+            }
+
             .publish-button {
                 padding: 6px 10px !important;
+            }
+
+            .image-upload-toolbar-button {
+                padding: 3px 6px !important;
+                font-size: 10px !important;
             }
 
             .content-type-selector {
@@ -703,10 +769,17 @@
                     <button class="github-config-button" @click="configureGitHub" :title="isGitHubConfigured ? 'GitHub已配置' : '配置GitHub'">
                         <i class="el-icon-setting"></i>
                     </button>
+                    <button class="image-config-button" @click="configureImageUpload" :title="isImageUploadConfigured ? '图床已配置' : '配置图床'">
+                        <i class="el-icon-picture"></i>
+                    </button>
                 </div>
                 <div class="action-buttons">
+                    <button class="image-upload-toolbar-button" @click="selectAndUploadImage" :disabled="!isImageUploadConfigured" title="上传图片">
+                        <i class="el-icon-picture-outline"></i> 图片
+                    </button>
                     <el-button @click="publish" size="medium" type="success" icon="el-icon-upload" :disabled="!isGitHubConfigured" class="publish-button">
                     </el-button>
+                    <input type="file" ref="imageFileInput" class="image-upload-input" @change="handleImageFileSelect" accept="image/*" multiple>
                 </div>
             </div>
         </div>
@@ -730,6 +803,12 @@
             @close="githubConfigVisible = false"
             @save="handleGitHubConfigSave">
         </github-config>
+
+        <image-upload-config
+            :visible="imageUploadConfigVisible"
+            @close="imageUploadConfigVisible = false"
+            @save="handleImageUploadConfigSave">
+        </image-upload-config>
     </div>
 
     <script>
@@ -918,6 +997,194 @@
             `
         });
 
+        // 图床配置组件
+        Vue.component('image-upload-config', {
+            props: ['visible'],
+            data() {
+                return {
+                    config: {
+                        provider: 'github',
+                        github: {
+                            token: '',
+                            owner: '',
+                            repo: '',
+                            branch: 'main',
+                            path: 'images/'
+                        },
+                        smms: {
+                            token: ''
+                        }
+                    },
+                    testing: false,
+                    testResult: null,
+                    providers: [
+                        { value: 'github', label: 'GitHub' },
+                        { value: 'smms', label: 'SM.MS' }
+                    ]
+                }
+            },
+            watch: {
+                visible(newVal) {
+                    if (newVal) {
+                        this.loadConfig();
+                    }
+                }
+            },
+            methods: {
+                loadConfig() {
+                    if (window.imageUploadService) {
+                        this.config = { ...window.imageUploadService.config };
+                    }
+                },
+                async testConnection() {
+                    if (!window.imageUploadService) {
+                        this.$message.error('图床服务未初始化');
+                        return;
+                    }
+
+                    this.testing = true;
+                    this.testResult = null;
+
+                    try {
+                        // 临时设置配置进行测试
+                        const tempConfig = { ...this.config };
+                        window.imageUploadService.saveConfig(tempConfig);
+                        window.imageUploadService.setProvider(this.config.provider);
+
+                        const result = await window.imageUploadService.testConnection();
+
+                        if (result.success) {
+                            this.testResult = { type: 'success', message: result.message };
+                            this.$message.success('连接测试成功');
+                        } else {
+                            this.testResult = { type: 'error', message: result.message };
+                            this.$message.error('连接测试失败');
+                        }
+                    } catch (error) {
+                        this.testResult = { type: 'error', message: error.message };
+                        this.$message.error(`连接测试失败: ${error.message}`);
+                    } finally {
+                        this.testing = false;
+                    }
+                },
+                save() {
+                    if (this.config.provider === 'github') {
+                        if (!this.config.github.token || !this.config.github.owner || !this.config.github.repo) {
+                            this.$message.warning('请填写完整的GitHub配置信息');
+                            return;
+                        }
+                    } else if (this.config.provider === 'smms') {
+                        // SM.MS的token是可选的
+                    }
+
+                    if (window.imageUploadService) {
+                        window.imageUploadService.saveConfig(this.config);
+                        window.imageUploadService.setProvider(this.config.provider);
+                    }
+
+                    this.$emit('save', this.config);
+                    this.close();
+                },
+                close() {
+                    this.$emit('close');
+                }
+            },
+            template: `
+                <el-dialog
+                    title="图床配置"
+                    :visible.sync="visible"
+                    width="600px"
+                    @close="close"
+                    custom-class="image-config-dialog">
+                    <el-form :model="config" label-width="120px">
+                        <el-form-item label="图床服务">
+                            <el-select v-model="config.provider" placeholder="选择图床服务">
+                                <el-option
+                                    v-for="provider in providers"
+                                    :key="provider.value"
+                                    :label="provider.label"
+                                    :value="provider.value">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+
+                        <!-- GitHub配置 -->
+                        <template v-if="config.provider === 'github'">
+                            <el-form-item label="GitHub Token">
+                                <el-input
+                                    v-model="config.github.token"
+                                    type="password"
+                                    placeholder="输入GitHub Personal Access Token"
+                                    show-password>
+                                </el-input>
+                                <div class="token-instructions">
+                                    <strong>获取Token步骤:</strong><br>
+                                    1. GitHub → Settings → Developer settings<br>
+                                    2. Personal access tokens → Tokens (classic)<br>
+                                    3. Generate new token → 勾选 <strong>repo</strong> 权限
+                                </div>
+                            </el-form-item>
+
+                            <el-form-item label="仓库所有者">
+                                <el-input
+                                    v-model="config.github.owner"
+                                    placeholder="GitHub用户名或组织名">
+                                </el-input>
+                            </el-form-item>
+
+                            <el-form-item label="仓库名称">
+                                <el-input
+                                    v-model="config.github.repo"
+                                    placeholder="用于存储图片的仓库名">
+                                </el-input>
+                            </el-form-item>
+
+                            <el-form-item label="分支">
+                                <el-input
+                                    v-model="config.github.branch"
+                                    placeholder="分支名 (默认: main)">
+                                </el-input>
+                            </el-form-item>
+
+                            <el-form-item label="存储路径">
+                                <el-input
+                                    v-model="config.github.path"
+                                    placeholder="图片存储路径 (默认: images/)">
+                                </el-input>
+                            </el-form-item>
+                        </template>
+
+                        <!-- SM.MS配置 -->
+                        <template v-if="config.provider === 'smms'">
+                            <el-form-item label="SM.MS Token">
+                                <el-input
+                                    v-model="config.smms.token"
+                                    type="password"
+                                    placeholder="SM.MS API Token (可选)"
+                                    show-password>
+                                </el-input>
+                                <div class="token-instructions">
+                                    <strong>说明:</strong><br>
+                                    Token为可选项，不填写则使用游客模式上传<br>
+                                    注册账号可获得更大的上传限制和管理功能
+                                </div>
+                            </el-form-item>
+                        </template>
+
+                        <div v-if="testResult" :class="['test-result', testResult.type]">
+                            {{ testResult.message }}
+                        </div>
+                    </el-form>
+
+                    <div slot="footer" class="dialog-footer">
+                        <el-button @click="testConnection" :loading="testing">测试连接</el-button>
+                        <el-button @click="close">取消</el-button>
+                        <el-button type="primary" @click="save">保存配置</el-button>
+                    </div>
+                </el-dialog>
+            `
+        });
+
         // 主Vue实例
         new Vue({
             el: '#app',
@@ -927,8 +1194,10 @@
                     currentType: contentTypes.ESSAY, // 默认为Essays模式
                     metadata: {},
                     githubConfigVisible: false,
+                    imageUploadConfigVisible: false,
                     contentTypeLabels,
                     isGitHubConfigured: false,
+                    isImageUploadConfigured: false,
                     isDarkMode: true,
                     metadataFields,
                     bodyContent: '',
@@ -941,6 +1210,7 @@
                 this.setupMobileDefaults();
                 this.initVditor();
                 this.checkGitHubConfig();
+                this.checkImageUploadConfig();
                 this.checkForEditFile();
                 this.selectType(this.currentType);
             },
@@ -1002,13 +1272,16 @@
                                 this.bodyContent = this.vditor.getValue();
                             });
 
-                            // 编辑器初始化完成后，触发自动聚焦
+                            // 编辑器初始化完成后，触发自动聚焦和初始化拖拽
                             this.$nextTick(() => {
                                 if (this.isMobileDevice()) {
                                     this.setupMobileAutoFocus();
                                 } else {
                                     this.setupDesktopAutoFocus();
                                 }
+
+                                // 初始化拖拽处理器
+                                this.initDragDropHandler();
                             });
                         }.bind(this)
                     });
@@ -1253,6 +1526,62 @@
                         this.checkGitHubConfig();
                         this.$message.success('GitHub配置已保存');
                     }
+                },
+
+                // 检查图床配置
+                checkImageUploadConfig() {
+                    if (window.imageUploadService) {
+                        const config = window.imageUploadService.config;
+                        this.isImageUploadConfigured = !!(
+                            config.provider &&
+                            ((config.provider === 'github' && config.github.token && config.github.owner && config.github.repo) ||
+                             (config.provider === 'smms'))
+                        );
+                    }
+                },
+
+                // 配置图床
+                configureImageUpload() {
+                    this.imageUploadConfigVisible = true;
+                },
+
+                // 处理图床配置保存
+                handleImageUploadConfigSave(config) {
+                    this.checkImageUploadConfig();
+                    this.$message.success('图床配置已保存');
+                },
+
+                // 初始化拖拽处理器
+                initDragDropHandler() {
+                    if (window.DragDropHandler && window.imageUploadService && this.vditor) {
+                        this.dragDropHandler = new DragDropHandler(this.vditor, window.imageUploadService);
+                    }
+                },
+
+                // 选择并上传图片
+                selectAndUploadImage() {
+                    if (!this.isImageUploadConfigured) {
+                        this.$message.warning('请先配置图床服务');
+                        return;
+                    }
+
+                    this.$refs.imageFileInput.click();
+                },
+
+                // 处理文件选择
+                async handleImageFileSelect(event) {
+                    const files = Array.from(event.target.files);
+
+                    if (files.length === 0) return;
+
+                    for (const file of files) {
+                        if (this.dragDropHandler) {
+                            await this.dragDropHandler.uploadAndInsertImage(file);
+                        }
+                    }
+
+                    // 清空文件输入框
+                    event.target.value = '';
                 },
 
                 // 电脑端自动聚焦
