@@ -159,38 +159,16 @@
 
         // 上传文件
         async function uploadFile() {
-            console.log('🚀 开始上传文件...');
             const fileInput = document.getElementById('fileInput');
             const file = fileInput.files[0];
-
-            if (!file) {
-                console.log('❌ 没有选择文件');
-                return;
-            }
-
-            console.log('📁 选择的文件:', {
-                name: file.name,
-                size: file.size,
-                type: file.type
-            });
-
-            // 检查配置
-            if (!picxAPI.isConfigured()) {
-                showResult('请先配置 GitHub 信息', 'error');
-                console.log('❌ 配置不完整');
-                return;
-            }
-
-            console.log('⚙️ 当前配置:', picxAPI.config);
-
+            
+            if (!file) return;
+            
             try {
                 showResult('正在上传...', 'success');
-                console.log('📤 调用 uploadToGitHub...');
                 const result = await picxAPI.uploadToGitHub(file);
-                console.log('✅ 上传完成:', result);
                 showResult(JSON.stringify(result, null, 2), 'success');
             } catch (error) {
-                console.error('❌ 上传失败:', error);
                 showResult('上传失败: ' + error.message, 'error');
             }
         }
