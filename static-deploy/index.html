@@ -124,6 +124,18 @@
             font-size: 18px;
         }
 
+        /* 自定义图标样式 */
+        .github-config-button img {
+            transition: all 0.3s ease;
+            /* 将黑色线条转换为白色 */
+            filter: invert(1) brightness(0.9);
+        }
+
+        .github-config-button:hover img {
+            filter: invert(1) brightness(1.1) drop-shadow(0 0 3px rgba(255,255,255,0.3));
+            transform: scale(1.05);
+        }
+
         /* Vditor YAML frontmatter 预览样式 */
         .vditor-preview .language-yaml,
         .vditor-preview pre[data-lang="yaml"],
@@ -790,7 +802,7 @@
                         <i class="el-icon-setting"></i>
                     </button>
                     <button class="github-config-button" @click="configureImageService" :title="isImageServiceConfigured ? '图床已配置' : '配置图床'" style="margin-left: 5px;">
-                        <i class="el-icon-picture"></i>
+                        <img src="./img/icons/pic.png" alt="图床配置" style="width: 16px; height: 16px;">
                     </button>
                     <button v-if="isPWAMode && !isImageServiceConfigured" class="github-config-button quick-config-button" @click="showQuickConfig" title="PWA快速配置" style="margin-left: 5px;">
                         <i class="el-icon-magic-stick"></i>
