@@ -147,46 +147,101 @@ class ImageService {
     })
 
     try {
-      const response = await fetch(url, {
+      const fetchOptions = {
         ...options,
         headers,
-        // 移动端添加超时处理
-        ...(isMobile && {
-          signal: AbortSignal.timeout(30000) // 30秒超时
-        })
-      })
+      }
 
-      if (!response.ok) {
-        const error = await response.json().catch(() => ({}))
-        console.error('GitHub API Error Details:', {
-          status: response.status,
-          statusText: response.statusText,
-          url,
-          error,
-          owner: this.owner,
-          repo: this.repo,
-          branch: this.branch,
-          isMobile,
-          headers: Object.fromEntries(response.headers.entries())
-        })
+      // 移动端添加超时处理
+      if (isMobile) {
+        const controller = new AbortController()
+        const timeoutId = setTimeout(() => controller.abort(), 30000)
+        fetchOptions.signal = controller.signal
 
-        // 特殊处理404错误
-        if (response.status === 404) {
+        try {
+          const response = await fetch(url, fetchOptions)
+          clearTimeout(timeoutId)
+
+          if (!response.ok) {
+            const error = await response.json().catch(() => ({}))
+            console.error('GitHub API Error Details:', {
+              status: response.status,
+              statusText: response.statusText,
+              url,
+              error,
+              owner: this.owner,
+              repo: this.repo,
+              branch: this.branch,
+              isMobile,
+              responseHeaders: Object.fromEntries(response.headers.entries())
+            })
+
+            // 特殊处理404错误
+            if (response.status === 404) {
+              throw new Error(
+                `仓库或路径不存在 (404): 请检查仓库 ${this.owner}/${this.repo} 是否存在，分支 ${this.branch} 是否正确`
+              )
+            }
+
+            throw new Error(
+              `GitHub API Error: ${response.status} - ${error.message || response.statusText}`,
+            )
+          }
+
+          return response.json()
+        } catch (mobileError) {
+          clearTimeout(timeoutId)
+          throw mobileError
+        }
+      } else {
+        const response = await fetch(url, fetchOptions)
+
+        if (!response.ok) {
+          const error = await response.json().catch(() => ({}))
+          console.error('GitHub API Error Details:', {
+            status: response.status,
+            statusText: response.statusText,
+            url,
+            error,
+            owner: this.owner,
+            repo: this.repo,
+            branch: this.branch,
+            isMobile,
+            responseHeaders: Object.fromEntries(response.headers.entries())
+          })
+
+          // 特殊处理404错误
+          if (response.status === 404) {
+            throw new Error(
+              `仓库或路径不存在 (404): 请检查仓库 ${this.owner}/${this.repo} 是否存在，分支 ${this.branch} 是否正确`
+            )
+          }
+
           throw new Error(
-            `仓库或路径不存在 (404): 请检查仓库 ${this.owner}/${this.repo} 是否存在，分支 ${this.branch} 是否正确`
+            `GitHub API Error: ${response.status} - ${error.message || response.statusText}`,
           )
         }
 
-        throw new Error(
-          `GitHub API Error: ${response.status} - ${error.message || response.statusText}`,
-        )
+        return response.json()
       }
-
-      return response.json()
     } catch (fetchError) {
+      console.error('Fetch Error Details:', {
+        name: fetchError.name,
+        message: fetchError.message,
+        stack: fetchError.stack,
+        url,
+        isMobile,
+        userAgent: navigator.userAgent
+      })
+
       if (fetchError.name === 'AbortError') {
         throw new Error('请求超时，请检查网络连接')
       }
+
+      if (fetchError.name === 'TypeError' && fetchError.message.includes('Failed to fetch')) {
+        throw new Error('网络连接失败，可能是CORS问题或网络不可达')
+      }
+
       throw fetchError
     }
   }
@@ -391,7 +446,30 @@ class ImageService {
 
     } catch (error) {
       console.error('图片上传失败:', error)
-      throw new Error(`图片上传失败: ${error.message}`)
+      console.error('Upload error details:', {
+        name: error.name,
+        message: error.message,
+        stack: error.stack,
+        fileName: file.name,
+        fileSize: file.size,
+        owner: this.owner,
+        repo: this.repo,
+        branch: this.branch
+      })
+
+      // 提供更具体的错误信息
+      let errorMessage = error.message
+      if (error.message.includes('Failed to fetch')) {
+        errorMessage = '网络连接失败，请检查网络连接或稍后重试'
+      } else if (error.message.includes('404')) {
+        errorMessage = '仓库不存在或无权限访问，请检查仓库配置'
+      } else if (error.message.includes('401')) {
+        errorMessage = 'GitHub Token无效或已过期，请重新配置'
+      } else if (error.message.includes('403')) {
+        errorMessage = '权限不足，请确保Token有repo权限'
+      }
+
+      throw new Error(`图片上传失败: ${errorMessage}`)
     }
   }
 
@@ -470,23 +548,40 @@ class ImageService {
    */
   async testConnection() {
     try {
+      console.log('Testing GitHub connection...')
+      console.log('Connection test config:', {
+        owner: this.owner,
+        repo: this.repo,
+        branch: this.branch,
+        hasToken: !!this.token,
+        tokenLength: this.token ? this.token.length : 0,
+        userAgent: navigator.userAgent,
+        isMobile: /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
+      })
+
       // 测试用户信息
+      console.log('Testing user access...')
       const userResponse = await this.request('/user')
+      console.log('User response:', userResponse)
 
       // 测试仓库访问权限
+      console.log('Testing repository access...')
       const repoResponse = await this.request(`/repos/${this.owner}/${this.repo}`)
+      console.log('Repository response:', repoResponse)
 
       // 检查权限
       const permissions = repoResponse.permissions || {}
       const hasWriteAccess = permissions.push || permissions.admin
 
       if (!hasWriteAccess) {
+        console.error('Insufficient permissions:', permissions)
         return {
           success: false,
           error: `权限不足！当前用户: ${userResponse.login}，但对仓库 ${this.owner}/${this.repo} 没有写入权限。请确保Token有完整的repo权限。`,
         }
       }
 
+      console.log('Connection test successful')
       return {
         success: true,
         repo: repoResponse.full_name,
@@ -495,6 +590,12 @@ class ImageService {
         permissions: permissions.admin ? '管理员' : '写入',
       }
     } catch (error) {
+      console.error('Connection test failed:', error)
+      console.error('Error details:', {
+        name: error.name,
+        message: error.message,
+        stack: error.stack
+      })
       return {
         success: false,
         error: error.message
