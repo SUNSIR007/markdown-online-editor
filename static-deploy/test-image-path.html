@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图床路径测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .config-section {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+        .path-example {
+            background: #e9ecef;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            word-break: break-all;
+            margin: 5px 0;
+        }
+        .warning {
+            color: #856404;
+            background: #fff3cd;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .success {
+            color: #155724;
+            background: #d4edda;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>图床路径测试工具</h1>
+        
+        <div class="config-section">
+            <h3>当前配置</h3>
+            <div id="current-config">加载中...</div>
+        </div>
+
+        <div class="config-section">
+            <h3>路径示例</h3>
+            <div id="path-examples">计算中...</div>
+        </div>
+
+        <div class="config-section">
+            <h3>优化建议</h3>
+            <div id="optimization-tips">分析中...</div>
+        </div>
+
+        <button onclick="refreshConfig()">刷新配置</button>
+    </div>
+
+    <script src="picx-api.js"></script>
+    <script>
+        function analyzeCurrentConfig() {
+            if (!window.picxAPI) {
+                document.getElementById('current-config').innerHTML = '<div class="warning">PicX API 未加载</div>';
+                return;
+            }
+
+            const config = window.picxAPI.config;
+            const currentConfig = document.getElementById('current-config');
+            
+            currentConfig.innerHTML = `
+                <strong>Token:</strong> ${config.token ? '已配置' : '未配置'}<br>
+                <strong>Owner:</strong> ${config.owner || '未设置'}<br>
+                <strong>Repo:</strong> ${config.repo || '未设置'}<br>
+                <strong>Branch:</strong> ${config.branch || 'main'}<br>
+                <strong>存储路径:</strong> ${config.selectedDir || '/'}<br>
+                <strong>CDN类型:</strong> ${config.imageLinkType || 'jsDelivr'}<br>
+                <strong>压缩:</strong> ${config.compress ? '开启' : '关闭'}<br>
+                <strong>重命名:</strong> ${config.enableHash ? '开启' : '关闭'}
+            `;
+
+            // 计算路径示例
+            const pathExamples = document.getElementById('path-examples');
+            const testFileName = 'test-image.png';
+            const timestamp = Date.now();
+            const randomStr = 'abc123';
+            
+            let fileName;
+            if (config.enableHash) {
+                fileName = `${timestamp}.${randomStr}.png`;
+            } else {
+                fileName = testFileName;
+            }
+
+            let fullPath;
+            if (config.selectedDir && config.selectedDir !== '/') {
+                fullPath = `${config.selectedDir}/${fileName}`;
+            } else {
+                fullPath = fileName;
+            }
+
+            // 生成不同CDN的链接
+            const owner = config.owner || 'username';
+            const repo = config.repo || 'repo-name';
+            const branch = config.branch || 'main';
+
+            let cdnUrl;
+            switch (config.imageLinkType) {
+                case 'GitHub':
+                    cdnUrl = `https://github.com/${owner}/${repo}/raw/${branch}/${fullPath}`;
+                    break;
+                case 'jsDelivr':
+                    cdnUrl = `https://cdn.jsdelivr.net/gh

@@ -41,7 +41,8 @@ class PicXAPI {
             quality: 0.8,
             enableHash: true, // PicX的重命名选项
             addPrefix: false,
-            prefix: ''
+            prefix: '',
+            useShortName: true // 新增：使用短文件名
         };
     }
 
@@ -64,22 +65,22 @@ class PicXAPI {
         return !!(this.config.token && this.config.owner && this.config.repo);
     }
 
-    // 生成文件名（完全按照PicX源码逻辑）
+    // 生成文件名（优化版本）
     generateFileName(file) {
         const extension = file.name.split('.').pop().toLowerCase();
         let fileName = '';
 
         if (this.config.enableHash) {
-            // PicX的哈希化命名：使用时间戳 + 随机字符串
-            const timestamp = Date.now();
-            const randomStr = Math.random().toString(36).substring(2, 8);
-            fileName = `${timestamp}.${randomStr}.${extension}`;
+            // 优化：使用更短的哈希，只保留时间戳后几位
+            const timestamp = Date.now().toString(36); // 转换为36进制，更短
+            const shortTimestamp = timestamp.slice(-6); // 只取后6位
+            fileName = `${shortTimestamp}.${extension}`;
         } else {
-            // 保持原名
-            fileName = file.name;
+            // 保持原名，但清理特殊字符
+            fileName = file.name.replace(/[^\w\-\.]/g, '_');
         }
 
-        // 添加前缀
+        // 添加前缀（可选）
         if (this.config.addPrefix && this.config.prefix) {
             fileName = `${this.config.prefix}${fileName}`;
         }

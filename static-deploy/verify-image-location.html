@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图床位置验证</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .info-box {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .path-example {
+            background: #f0f0f0;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            word-break: break-all;
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>图床位置验证</h1>
+        
+        <div class="info-box">
+            <h3>📍 图片保存位置确认</h3>
+            <p>您的图片将保存到以下GitHub仓库路径：</p>
+            <div id="save-location">加载中...</div>
+        </div>
+
+        <div class="info-box">
+            <h3>🔗 链接长度优化</h3>
+            <p>已优化文件名生成规则，链接长度将显著缩短：</p>
+            <ul>
+                <li>原文件名：1722754056789.abc123.png (31字符)</li>
+                <li>优化后：lz8w2f.png (7字符)</li>
+            </ul>
+        </div>
+
+        <button onclick="refreshLocation()">刷新配置</button>
+    </div>
+
+    <script src="picx-api.js"></script>
+    <script>
+        function displaySaveLocation() {
+            if (!window.picxAPI || !window.picxAPI.isConfigured()) {
+                document.getElementById('save-location').innerHTML = 
+                    '<span style="color: red;">请先配置PicX图床</span>';
+                return;
+            }
+
+            const config = window.picxAPI.config;
+            const location = `
+                <strong>仓库：</strong> https://github.com/${config.owner}/${config.repo}<br>
+                <strong>分支：</strong> ${config.branch || 'main'}<br>
+                <strong>存储路径：</strong> ${config.selectedDir || '/'}<br>
+                <strong>CDN服务：</strong> ${config.imageLinkType || 'jsDelivr'}<br>
+                <div class="path-example">
+                    示例链接：https://cdn.jsdelivr.net/gh/${config.owner}/${config.repo}@${config.branch || 'main'}/${config.selectedDir || ''}abc123.png
+                </div>
+            `;
+            document.getElementById('save-location').innerHTML = location;
+        }
+
+        function refreshLocation() {
+            displaySaveLocation();
+        }
+
+        // 页面加载完成后显示
+        window.addEventListener('load', displaySaveLocation);
+    </script>
+</body>
+</html>
