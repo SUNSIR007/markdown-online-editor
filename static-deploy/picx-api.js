@@ -190,6 +190,12 @@ class PicXAPI {
         // 转换为 Base64
         const base64Content = await this.fileToBase64(compressedFile);
 
+        console.log('🔍 Base64转换完成:', {
+            originalFileName: compressedFile.name,
+            base64Length: base64Content.length,
+            base64Preview: base64Content.substring(0, 50) + '...'
+        });
+
         // 构建上传URL（按照PicX的uploadUrlHandle函数）
         const uploadUrl = `${this.baseURL}/repos/${this.config.owner}/${this.config.repo}/contents/${filePath}`;
 
@@ -200,11 +206,13 @@ class PicXAPI {
             content: base64Content
         };
 
-        console.log('上传请求:', {
+        console.log('🔍 上传请求详情:', {
             url: uploadUrl,
             fileName,
             filePath,
-            branch: this.config.branch
+            branch: this.config.branch,
+            contentLength: uploadData.content.length,
+            contentPreview: uploadData.content.substring(0, 50) + '...'
         });
 
         const response = await fetch(uploadUrl, {
@@ -224,6 +232,9 @@ class PicXAPI {
 
         const result = await response.json();
 
+        console.log('🔍 完整的GitHub API响应:', result);
+        console.log('🔍 result.content详情:', result.content);
+
         // 使用GitHub API返回的path（这是关键！）
         const actualPath = result.content.path;
 
@@ -231,7 +242,9 @@ class PicXAPI {
             contentName: result.content.name,
             contentPath: result.content.path,
             contentSha: result.content.sha,
-            contentSize: result.content.size
+            contentSize: result.content.size,
+            contentType: typeof result.content.path,
+            pathIsString: typeof result.content.path === 'string'
         });
 
         console.log('🔍 调试信息 - 路径对比:', {
