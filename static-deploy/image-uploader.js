@@ -245,19 +245,28 @@ class ImageUploader {
             return;
         }
 
+        console.log('插入图片到编辑器:', result);
+
         const markdownImage = `![${result.fileName}](${result.url})`;
-        
+
+        console.log('生成的Markdown:', markdownImage);
+
         // 获取当前内容和光标位置
         const currentValue = this.editor.getValue();
         const cursorPos = this.editor.vditor.ir.element.selectionStart || currentValue.length;
-        
+
+        console.log('当前编辑器内容长度:', currentValue.length);
+        console.log('光标位置:', cursorPos);
+
         // 在光标位置插入图片
-        const newValue = currentValue.slice(0, cursorPos) + 
-                        '\n' + markdownImage + '\n' + 
+        const newValue = currentValue.slice(0, cursorPos) +
+                        '\n' + markdownImage + '\n' +
                         currentValue.slice(cursorPos);
-        
+
+        console.log('新内容长度:', newValue.length);
+
         this.editor.setValue(newValue);
-        
+
         // 将光标移动到插入内容之后
         setTimeout(() => {
             const newCursorPos = cursorPos + markdownImage.length + 2;

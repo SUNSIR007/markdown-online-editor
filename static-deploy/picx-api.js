@@ -62,14 +62,15 @@ class PicXAPI {
             // 重命名：时间戳 + 随机字符串
             fileName = `${timestamp}_${randomStr}.${extension}`;
         } else {
-            // 保持原名，但添加时间戳避免冲突
-            const originalName = file.name.replace(/\.[^/.]+$/, '');
+            // 保持原名，但添加时间戳避免冲突，清理特殊字符
+            const originalName = file.name.replace(/\.[^/.]+$/, '').replace(/[^a-zA-Z0-9_-]/g, '_');
             fileName = `${originalName}_${timestamp}.${extension}`;
         }
-        
+
         // 添加前缀
         if (this.config.addPrefix && this.config.prefix) {
-            fileName = `${this.config.prefix}_${fileName}`;
+            const cleanPrefix = this.config.prefix.replace(/[^a-zA-Z0-9_-]/g, '_');
+            fileName = `${cleanPrefix}_${fileName}`;
         }
         
         return fileName;
@@ -166,7 +167,12 @@ class PicXAPI {
         
         // 生成文件名
         const fileName = this.generateFileName(compressedFile);
-        const filePath = `${this.config.path}${fileName}`;
+        // 确保路径格式正确
+        let path = this.config.path || 'images/';
+        if (path && !path.endsWith('/')) {
+            path += '/';
+        }
+        const filePath = `${path}${fileName}`;
         
         // 检查文件是否已存在
         const exists = await this.checkFileExists(filePath);
@@ -200,10 +206,19 @@ class PicXAPI {
         }
 
         const result = await response.json();
-        
+
         // 生成 CDN 链接
         const cdnUrl = this.generateCDNUrl(filePath);
-        
+
+        console.log('GitHub API 响应:', result);
+        console.log('上传成功:', {
+            fileName,
+            filePath,
+            cdnUrl,
+            downloadUrl: result.content.download_url,
+            htmlUrl: result.content.html_url
+        });
+
         return {
             success: true,
             fileName: fileName,
@@ -221,17 +236,33 @@ class PicXAPI {
     generateCDNUrl(filePath) {
         const { owner, repo, branch } = this.config;
         const cdnBase = this.cdnConfig[this.config.cdn];
-        
+
+        console.log('生成CDN链接:', {
+            owner,
+            repo,
+            branch,
+            filePath,
+            cdn: this.config.cdn,
+            cdnBase
+        });
+
+        let url;
         switch (this.config.cdn) {
             case 'github':
-                return `${cdnBase}/${owner}/${repo}/${branch}/${filePath}`;
+                url = `${cdnBase}/${owner}/${repo}/${branch}/${filePath}`;
+                break;
             case 'jsdelivr':
-                return `${cdnBase}/${owner}/${repo}@${branch}/${filePath}`;
+                url = `${cdnBase}/${owner}/${repo}@${branch}/${filePath}`;
+                break;
             case 'statically':
-                return `${cdnBase}/${owner}/${repo}/${branch}/${filePath}`;
+                url = `${cdnBase}/${owner}/${repo}/${branch}/${filePath}`;
+                break;
             default:
-                return `${this.cdnConfig.github}/${owner}/${repo}/${branch}/${filePath}`;
+                url = `${this.cdnConfig.github}/${owner}/${repo}/${branch}/${filePath}`;
         }
+
+        console.log('生成的CDN URL:', url);
+        return url;
     }
 
     // 删除图片

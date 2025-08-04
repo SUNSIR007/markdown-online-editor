@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PicX API 测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #fff;
+        }
+        .config-section, .test-section {
+            background: #2d2d2d;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #555;
+            border-radius: 4px;
+            background: #1a1a1a;
+            color: #fff;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        button:hover {
+            background: #5a6fd8;
+        }
+        .result {
+            background: #333;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 15px;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+        .success {
+            border-left: 4px solid #4CAF50;
+        }
+        .error {
+            border-left: 4px solid #f44336;
+        }
+    </style>
+</head>
+<body>
+    <h1>PicX API 测试工具</h1>
+    
+    <div class="config-section">
+        <h2>配置 PicX</h2>
+        <div class="form-group">
+            <label>GitHub Token:</label>
+            <input type="password" id="token" placeholder="输入GitHub Personal Access Token">
+        </div>
+        <div class="form-group">
+            <label>仓库所有者:</label>
+            <input type="text" id="owner" placeholder="GitHub用户名">
+        </div>
+        <div class="form-group">
+            <label>仓库名称:</label>
+            <input type="text" id="repo" placeholder="仓库名">
+        </div>
+        <div class="form-group">
+            <label>分支:</label>
+            <input type="text" id="branch" value="main" placeholder="分支名">
+        </div>
+        <div class="form-group">
+            <label>存储路径:</label>
+            <input type="text" id="path" value="images/" placeholder="存储路径">
+        </div>
+        <div class="form-group">
+            <label>CDN服务:</label>
+            <select id="cdn">
+                <option value="jsdelivr">jsDelivr CDN</option>
+                <option value="github">GitHub Raw</option>
+                <option value="statically">Statically CDN</option>
+            </select>
+        </div>
+        <button onclick="saveConfig()">保存配置</button>
+        <button onclick="testConnection()">测试连接</button>
+    </div>
+    
+    <div class="test-section">
+        <h2>测试上传</h2>
+        <input type="file" id="fileInput" accept="image/*" onchange="uploadFile()">
+        <div id="result" class="result" style="display: none;"></div>
+    </div>
+
+    <script src="picx-api.js"></script>
+    <script>
+        // 加载已保存的配置
+        function loadConfig() {
+            const config = picxAPI.config;
+            document.getElementById('token').value = config.token || '';
+            document.getElementById('owner').value = config.owner || '';
+            document.getElementById('repo').value = config.repo || '';
+            document.getElementById('branch').value = config.branch || 'main';
+            document.getElementById('path').value = config.path || 'images/';
+            document.getElementById('cdn').value = config.cdn || 'jsdelivr';
+        }
+
+        // 保存配置
+        function saveConfig() {
+            const config = {
+                token: document.getElementById('token').value,
+                owner: document.getElementById('owner').value,
+                repo: document.getElementById('repo').value,
+                branch: document.getElementById('branch').value,
+                path: document.getElementById('path').value,
+                cdn: document.getElementById('cdn').value,
+                compress: true,
+                quality: 0.8,
+                rename: true,
+                addPrefix: false,
+                prefix: ''
+            };
+            
+            picxAPI.saveConfig(config);
+            showResult('配置已保存', 'success');
+        }
+
+        // 测试连接
+        async function testConnection() {
+            try {
+                const result = await picxAPI.testConnection();
+                showResult(JSON.stringify(result, null, 2), result.success ? 'success' : 'error');
+            } catch (error) {
+                showResult('测试失败: ' + error.message, 'error');
+            }
+        }
+
+        // 上传文件
+        async function uploadFile() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            
+            if (!file) return;
+            
+            try {
+                showResult('正在上传...', 'success');
+                const result = await picxAPI.uploadToGitHub(file);
+                showResult(JSON.stringify(result, null, 2), 'success');
+            } catch (error) {
+                showResult('上传失败: ' + error.message, 'error');
+            }
+        }
+
+        // 显示结果
+        function showResult(message, type) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.textContent = message;
+            resultDiv.className = `result ${type}`;
+            resultDiv.style.display = 'block';
+        }
+
+        // 页面加载时加载配置
+        window.onload = loadConfig;
+    </script>
+</body>
+</html>
