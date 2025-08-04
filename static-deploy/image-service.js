@@ -794,8 +794,10 @@ class ImageService {
       }
 
       console.log('Connection test successful')
+      const message = `用户: ${userResponse.login}，仓库: ${repoResponse.full_name}，权限: ${permissions.admin ? '管理员' : '写入'}`
       return {
         success: true,
+        message: message,
         repo: repoResponse.full_name,
         private: repoResponse.private,
         user: userResponse.login,
@@ -810,6 +812,7 @@ class ImageService {
       })
       return {
         success: false,
+        message: `连接失败: ${error.message}`,
         error: error.message
       }
     }
