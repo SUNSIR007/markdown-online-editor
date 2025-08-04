@@ -804,6 +804,21 @@
                 <el-progress :percentage="uploadProgress.progress" :show-text="false"></el-progress>
             </div>
         </el-dialog>
+
+        <!-- 移动端错误显示对话框 -->
+        <el-dialog
+            title="错误详情"
+            :visible.sync="mobileErrorDialog.visible"
+            width="90%"
+            :close-on-click-modal="false">
+            <div style="font-family: monospace; font-size: 12px; white-space: pre-wrap; max-height: 400px; overflow-y: auto; background: #f5f5f5; padding: 10px; border-radius: 4px;">
+                {{ mobileErrorDialog.content }}
+            </div>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="copyErrorToClipboard">复制错误信息</el-button>
+                <el-button type="primary" @click="mobileErrorDialog.visible = false">关闭</el-button>
+            </div>
+        </el-dialog>
     </div>
 
     <script>
@@ -1192,6 +1207,11 @@
                         fileName: '',
                         stage: '',
                         progress: 0
+                    },
+                    // 移动端错误显示
+                    mobileErrorDialog: {
+                        visible: false,
+                        content: ''
                     }
                 };
             },
@@ -1692,6 +1712,21 @@
                         vditorElement.classList.remove('drag-over');
                     }
 
+                    // 移动端调试信息
+                    if (this.isMobileDevice()) {
+                        console.log('移动端上传开始:', {
+                            fileCount: fileArray.length,
+                            files: fileArray.map(f => ({ name: f.name, size: f.size, type: f.type })),
+                            userAgent: navigator.userAgent,
+                            imageServiceConfig: {
+                                owner: window.imageService?.owner,
+                                repo: window.imageService?.repo,
+                                branch: window.imageService?.branch,
+                                isConfigured: window.imageService?.isConfigured()
+                            }
+                        });
+                    }
+
                     try {
                         const results = await window.imageService.uploadImages(fileArray, {
                             compress: true,
@@ -1711,6 +1746,10 @@
                                     this.$message.success(`图片 ${result.fileName} 上传成功`);
                                 } else {
                                     this.$message.error(`图片 ${result.fileName} 上传失败: ${result.error}`);
+                                    // 移动端额外错误信息
+                                    if (this.isMobileDevice()) {
+                                        console.error('移动端上传失败详情:', result);
+                                    }
                                 }
                             }
                         });
@@ -1725,7 +1764,13 @@
                         return Promise.resolve(results);
 
                     } catch (error) {
-                        this.$message.error(`图片上传失败: ${error.message}`);
+                        console.error('图片上传错误:', error);
+                        // 移动端显示详细错误对话框
+                        if (this.isMobileDevice()) {
+                            this.showMobileError(error, '图片上传');
+                        } else {
+                            this.$message.error(`图片上传失败: ${error.message}`);
+                        }
                         return Promise.reject(error);
                     } finally {
                         this.uploadingImages = false;
@@ -1737,6 +1782,50 @@
                 insertTextToEditor(text) {
                     if (this.vditor) {
                         this.vditor.insertValue(text);
+                    }
+                },
+
+                // 检测是否为移动设备
+                isMobileDevice() {
+                    return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+                },
+
+                // 显示移动端错误详情
+                showMobileError(error, context = '') {
+                    if (this.isMobileDevice()) {
+                        const errorInfo = {
+                            时间: new Date().toLocaleString(),
+                            错误: error.message || error,
+                            上下文: context,
+                            用户代理: navigator.userAgent,
+                            URL: window.location.href,
+                            图床配置: window.imageService ? {
+                                owner: window.imageService.owner,
+                                repo: window.imageService.repo,
+                                branch: window.imageService.branch,
+                                已配置: window.imageService.isConfigured()
+                            } : '未初始化'
+                        };
+
+                        this.mobileErrorDialog.content = JSON.stringify(errorInfo, null, 2);
+                        this.mobileErrorDialog.visible = true;
+                    }
+                },
+
+                // 复制错误信息到剪贴板
+                async copyErrorToClipboard() {
+                    try {
+                        await navigator.clipboard.writeText(this.mobileErrorDialog.content);
+                        this.$message.success('错误信息已复制到剪贴板');
+                    } catch (err) {
+                        // 降级方案
+                        const textArea = document.createElement('textarea');
+                        textArea.value = this.mobileErrorDialog.content;
+                        document.body.appendChild(textArea);
+                        textArea.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(textArea);
+                        this.$message.success('错误信息已复制到剪贴板');
                     }
                 },
 

@@ -119,6 +119,10 @@ class ImageService {
     }
 
     const url = `${this.baseURL}${endpoint}`
+
+    // 检测移动端并添加特殊处理
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
+
     const headers = {
       Authorization: `token ${this.token}`,
       Accept: 'application/vnd.github.v3+json',
@@ -126,36 +130,65 @@ class ImageService {
       ...options.headers,
     }
 
+    // 移动端添加额外的头部
+    if (isMobile) {
+      headers['User-Agent'] = 'MarkdownEditor/1.0 (Mobile)'
+      headers['Cache-Control'] = 'no-cache'
+    }
+
     console.log('GitHub API Request:', {
       url,
       method: options.method || 'GET',
       owner: this.owner,
       repo: this.repo,
-      branch: this.branch
+      branch: this.branch,
+      isMobile,
+      userAgent: navigator.userAgent
     })
 
-    const response = await fetch(url, {
-      ...options,
-      headers,
-    })
-
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({}))
-      console.error('GitHub API Error Details:', {
-        status: response.status,
-        statusText: response.statusText,
-        url,
-        error,
-        owner: this.owner,
-        repo: this.repo,
-        branch: this.branch
+    try {
+      const response = await fetch(url, {
+        ...options,
+        headers,
+        // 移动端添加超时处理
+        ...(isMobile && {
+          signal: AbortSignal.timeout(30000) // 30秒超时
+        })
       })
-      throw new Error(
-        `GitHub API Error: ${response.status} - ${error.message || response.statusText}`,
-      )
-    }
 
-    return response.json()
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}))
+        console.error('GitHub API Error Details:', {
+          status: response.status,
+          statusText: response.statusText,
+          url,
+          error,
+          owner: this.owner,
+          repo: this.repo,
+          branch: this.branch,
+          isMobile,
+          headers: Object.fromEntries(response.headers.entries())
+        })
+
+        // 特殊处理404错误
+        if (response.status === 404) {
+          throw new Error(
+            `仓库或路径不存在 (404): 请检查仓库 ${this.owner}/${this.repo} 是否存在，分支 ${this.branch} 是否正确`
+          )
+        }
+
+        throw new Error(
+          `GitHub API Error: ${response.status} - ${error.message || response.statusText}`,
+        )
+      }
+
+      return response.json()
+    } catch (fetchError) {
+      if (fetchError.name === 'AbortError') {
+        throw new Error('请求超时，请检查网络连接')
+      }
+      throw fetchError
+    }
   }
 
   /**
