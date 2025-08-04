@@ -223,13 +223,17 @@ class PicXAPI {
 
         const result = await response.json();
 
+        // 使用GitHub API返回的path（这是关键！）
+        const actualPath = result.content.path;
+
         // 生成图片链接（按照PicX的generateImageLink函数）
-        const imageLink = this.generateImageLink(filePath);
+        const imageLink = this.generateImageLink(actualPath);
 
         console.log('GitHub API 响应:', result);
         console.log('上传成功:', {
             fileName,
-            filePath,
+            requestPath: filePath,
+            actualPath: actualPath,
             imageLink,
             downloadUrl: result.content.download_url
         });
@@ -237,7 +241,7 @@ class PicXAPI {
         return {
             success: true,
             fileName: fileName,
-            filePath: filePath,
+            filePath: actualPath, // 使用实际的path
             url: imageLink,
             rawUrl: result.content.download_url,
             sha: result.content.sha,
