@@ -728,6 +728,48 @@
         .upload-progress .progress-item:last-child {
             margin-bottom: 0;
         }
+
+        /* PWA配置对话框样式 */
+        .pwa-config-dialog .el-message-box {
+            width: 90% !important;
+            max-width: 400px !important;
+        }
+
+        .pwa-config-dialog .el-message-box__message {
+            font-size: 14px !important;
+            line-height: 1.6 !important;
+            color: #606266 !important;
+        }
+
+        .pwa-config-dialog .el-message-box__btns {
+            padding: 15px 20px 20px !important;
+        }
+
+        .pwa-config-dialog .el-button {
+            font-size: 14px !important;
+            padding: 8px 16px !important;
+        }
+
+        /* 快速配置按钮样式 */
+        .quick-config-button {
+            background: linear-gradient(45deg, #FF6B6B, #4ECDC4) !important;
+            border: none !important;
+            animation: quickConfigPulse 2s infinite;
+        }
+
+        .quick-config-button:hover {
+            background: linear-gradient(45deg, #FF5252, #26C6DA) !important;
+            transform: scale(1.05);
+        }
+
+        @keyframes quickConfigPulse {
+            0%, 100% {
+                box-shadow: 0 0 5px rgba(255, 107, 107, 0.5);
+            }
+            50% {
+                box-shadow: 0 0 15px rgba(78, 205, 196, 0.7);
+            }
+        }
     </style>
 </head>
 <body class="dark-mode">
@@ -749,6 +791,9 @@
                     </button>
                     <button class="github-config-button" @click="configureImageService" :title="isImageServiceConfigured ? '图床已配置' : '配置图床'" style="margin-left: 5px;">
                         <i class="el-icon-picture"></i>
+                    </button>
+                    <button v-if="isPWAMode && !isImageServiceConfigured" class="github-config-button quick-config-button" @click="showQuickConfig" title="PWA快速配置" style="margin-left: 5px;">
+                        <i class="el-icon-magic-stick"></i>
                     </button>
                 </div>
                 <div class="action-buttons">
@@ -1218,7 +1263,9 @@
                     mobileErrorDialog: {
                         visible: false,
                         content: ''
-                    }
+                    },
+                    // PWA模式检测
+                    isPWAMode: false
                 };
             },
 
@@ -1230,6 +1277,8 @@
                 this.checkImageServiceConfig();
                 this.checkForEditFile();
                 this.selectType(this.currentType);
+                this.detectPWAMode();
+                this.checkPWAConfigMissing();
             },
 
             methods: {
@@ -1698,6 +1747,107 @@
                 // 检查图片服务配置
                 checkImageServiceConfig() {
                     this.isImageServiceConfigured = window.imageService && window.imageService.isConfigured();
+                },
+
+                // 检测PWA模式
+                detectPWAMode() {
+                    this.isPWAMode = window.navigator.standalone === true ||
+                                     window.matchMedia('(display-mode: standalone)').matches;
+                },
+
+                // 检查PWA模式下配置缺失的情况
+                checkPWAConfigMissing() {
+                    // 检测是否为PWA模式（保存到主屏幕）
+                    const isPWA = window.navigator.standalone === true ||
+                                  window.matchMedia('(display-mode: standalone)').matches;
+
+                    if (isPWA) {
+                        // 延迟检查，确保所有组件都已初始化
+                        setTimeout(() => {
+                            const hasImageConfig = localStorage.getItem('image-service-config');
+                            const hasGitHubConfig = localStorage.getItem('github-config');
+
+                            if (!hasImageConfig || !hasGitHubConfig) {
+                                this.showPWAConfigDialog();
+                            }
+                        }, 1000);
+                    }
+                },
+
+                showPWAConfigDialog() {
+                    this.$confirm(
+                        'PWA模式下需要重新配置。这是因为PWA和浏览器使用不同的存储空间。是否现在配置？',
+                        'PWA配置提醒',
+                        {
+                            confirmButtonText: '立即配置',
+                            cancelButtonText: '稍后配置',
+                            type: 'info',
+                            customClass: 'pwa-config-dialog'
+                        }
+                    ).then(() => {
+                        // 优先配置图片服务
+                        this.imageConfigVisible = true;
+                    }).catch(() => {
+                        // 用户选择稍后配置，显示提示
+                        this.$message({
+                            message: '提示：图片上传功能需要先配置GitHub仓库信息',
+                            type: 'warning',
+                            duration: 5000
+                        });
+                    });
+                },
+
+                // 快速配置功能（用于PWA模式）
+                showQuickConfig() {
+                    this.$prompt('请输入GitHub Token:', '快速配置', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        inputType: 'password',
+                        inputPlaceholder: '请输入您的GitHub Personal Access Token'
+                    }).then(({ value }) => {
+                        if (value) {
+                            this.applyQuickConfig(value);
+                        }
+                    }).catch(() => {
+                        this.$message.info('已取消配置');
+                    });
+                },
+
+                applyQuickConfig(token) {
+                    // 使用预设的配置信息
+                    const imageConfig = {
+                        token: token,
+                        owner: 'SUNSIR007',
+                        repo: 'picx-images-hosting',
+                        branch: 'master',
+                        imageDir: 'images'
+                    };
+
+                    const githubConfig = {
+                        token: token,
+                        owner: 'SUNSIR007',
+                        repo: 'markdown-online-editor'
+                    };
+
+                    // 保存配置
+                    localStorage.setItem('image-service-config', JSON.stringify(imageConfig));
+                    localStorage.setItem('github-config', JSON.stringify(githubConfig));
+                    localStorage.setItem('image-service-link-rule', 'jsdelivr');
+
+                    // 应用配置
+                    if (window.imageService) {
+                        window.imageService.setConfig(imageConfig);
+                        window.imageService.setLinkRule('jsdelivr');
+                    }
+                    if (window.githubService) {
+                        window.githubService.setConfig(githubConfig);
+                    }
+
+                    // 更新状态
+                    this.checkGitHubConfig();
+                    this.checkImageServiceConfig();
+
+                    this.$message.success('快速配置完成！');
                 },
 
                 // 处理图片上传

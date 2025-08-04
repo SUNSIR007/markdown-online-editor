@@ -476,7 +476,15 @@ class ImageService {
    */
   async uploadImage(file, options = {}) {
     if (!this.isConfigured()) {
-      throw new Error('图床未配置，请先配置GitHub仓库信息')
+      // 检测是否为PWA模式
+      const isPWA = window.navigator.standalone === true ||
+                    window.matchMedia('(display-mode: standalone)').matches;
+
+      const errorMsg = isPWA
+        ? '图床未配置，PWA模式下需要重新配置GitHub仓库信息'
+        : '图床未配置，请先配置GitHub仓库信息';
+
+      throw new Error(errorMsg)
     }
 
     // 验证文件
