@@ -266,6 +266,94 @@ class GitHubService {
       throw error
     }
   }
+
+  /**
+   * 上传图片到指定仓库
+   * @param {string} imageRepo - 图片仓库名称
+   * @param {string} filePath - 文件路径
+   * @param {string} base64Content - Base64编码的图片内容
+   * @param {string} message - 提交消息
+   */
+  async uploadImageToRepo(imageRepo, filePath, base64Content, message) {
+    const data = {
+      message: message || `Upload image: ${filePath.split('/').pop()}`,
+      content: base64Content,
+      branch: 'main'
+    }
+
+    try {
+      const response = await this.request(`/repos/${this.owner}/${imageRepo}/contents/${filePath}`, {
+        method: 'PUT',
+        body: JSON.stringify(data)
+      })
+
+      return {
+        success: true,
+        sha: response.content.sha,
+        path: response.content.path,
+        htmlUrl: response.content.html_url,
+        downloadUrl: response.content.download_url
+      }
+    } catch (error) {
+      throw new Error(`图片上传失败: ${error.message}`)
+    }
+  }
+
+  /**
+   * 检查图片仓库是否存在且有权限
+   * @param {string} imageRepo - 图片仓库名称
+   */
+  async checkImageRepo(imageRepo) {
+    try {
+      const response = await this.request(`/repos/${this.owner}/${imageRepo}`)
+      const permissions = response.permissions || {}
+      const hasWriteAccess = permissions.push || permissions.admin
+
+      return {
+        exists: true,
+        hasWriteAccess,
+        private: response.private,
+        fullName: response.full_name
+      }
+    } catch (error) {
+      if (error.message.includes('404')) {
+        return {
+          exists: false,
+          hasWriteAccess: false
+        }
+      }
+      throw error
+    }
+  }
+
+  /**
+   * 创建图片仓库
+   * @param {string} imageRepo - 图片仓库名称
+   * @param {boolean} isPrivate - 是否为私有仓库
+   */
+  async createImageRepo(imageRepo, isPrivate = false) {
+    const data = {
+      name: imageRepo,
+      description: 'Image hosting repository for markdown editor',
+      private: isPrivate,
+      auto_init: true
+    }
+
+    try {
+      const response = await this.request('/user/repos', {
+        method: 'POST',
+        body: JSON.stringify(data)
+      })
+
+      return {
+        success: true,
+        fullName: response.full_name,
+        htmlUrl: response.html_url
+      }
+    } catch (error) {
+      throw new Error(`创建图片仓库失败: ${error.message}`)
+    }
+  }
 }
 
 // 创建全局实例
