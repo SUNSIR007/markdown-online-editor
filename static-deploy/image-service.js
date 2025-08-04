@@ -125,6 +125,35 @@ class ImageService {
     const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent)
     const isAndroid = /Android/i.test(navigator.userAgent)
 
+    // 检测代理环境
+    const isProxyEnvironment = () => {
+      try {
+        // 检查连接状态
+        const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection
+        if (connection && connection.effectiveType === 'slow-2g') {
+          return true
+        }
+
+        // 检查用户代理字符串
+        const userAgent = navigator.userAgent.toLowerCase()
+        if (userAgent.includes('proxy') || userAgent.includes('vpn')) {
+          return true
+        }
+
+        // 检查时区（代理可能改变时区）
+        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
+        if (timezone && !timezone.includes('Asia/Shanghai') && navigator.language.includes('zh')) {
+          return true
+        }
+
+        return false
+      } catch (e) {
+        return false
+      }
+    }
+
+    const usingProxy = isProxyEnvironment()
+
     const headers = {
       Authorization: `token ${this.token}`,
       Accept: 'application/vnd.github.v3+json',
@@ -161,32 +190,72 @@ class ImageService {
       const fetchOptions = {
         ...options,
         headers,
-        // 移动端添加额外的配置
-        ...(isMobile && {
+        // 移动端和代理环境的特殊配置
+        ...((isMobile || usingProxy) && {
           mode: 'cors',
           credentials: 'omit',
           cache: 'no-cache',
-          redirect: 'follow'
+          redirect: 'follow',
+          // 代理环境下的额外配置
+          referrerPolicy: 'no-referrer-when-downgrade',
+          // 代理环境可能需要更宽松的设置
+          keepalive: false
         })
       }
 
       let response
 
-      // 移动端使用更保守的超时处理
-      if (isMobile) {
-        // 使用Promise.race而不是AbortController，因为某些移动浏览器支持不完整
-        const fetchPromise = fetch(url, fetchOptions)
-        const timeoutPromise = new Promise((_, reject) => {
-          setTimeout(() => reject(new Error('请求超时')), 30000)
-        })
+      // 移动端和代理环境的特殊处理
+      if (isMobile || usingProxy) {
+        console.log(`检测到${isMobile ? '移动端' : ''}${usingProxy ? '代理环境' : ''}，使用特殊请求策略`)
+        // 代理环境下可能需要更长的超时时间
+        const timeoutMs = usingProxy ? 60000 : 45000 // 代理环境60秒，移动端45秒
 
-        try {
-          response = await Promise.race([fetchPromise, timeoutPromise])
-        } catch (raceError) {
-          if (raceError.message === '请求超时') {
-            throw new Error('请求超时，请检查网络连接')
+        // 尝试多种请求方式
+        const requestMethods = [
+          // 方法1: 标准请求
+          () => fetch(url, fetchOptions),
+          // 方法2: 简化请求（移除一些可能导致问题的选项）
+          () => fetch(url, {
+            method: fetchOptions.method || 'GET',
+            headers: {
+              'Authorization': headers.Authorization,
+              'Accept': headers.Accept,
+              'Content-Type': headers['Content-Type']
+            },
+            ...(fetchOptions.body && { body: fetchOptions.body })
+          }),
+          // 方法3: 最简请求
+          () => fetch(url, {
+            method: fetchOptions.method || 'GET',
+            headers: {
+              'Authorization': headers.Authorization
+            },
+            ...(fetchOptions.body && { body: fetchOptions.body })
+          })
+        ]
+
+        let lastError = null
+        for (let i = 0; i < requestMethods.length; i++) {
+          try {
+            console.log(`尝试请求方法 ${i + 1}/${requestMethods.length}`)
+            const fetchPromise = requestMethods[i]()
+            const timeoutPromise = new Promise((_, reject) => {
+              setTimeout(() => reject(new Error('请求超时')), timeoutMs)
+            })
+
+            response = await Promise.race([fetchPromise, timeoutPromise])
+            console.log(`请求方法 ${i + 1} 成功`)
+            break
+          } catch (error) {
+            console.log(`请求方法 ${i + 1} 失败:`, error.message)
+            lastError = error
+            if (i === requestMethods.length - 1) {
+              throw lastError
+            }
+            // 等待一小段时间再尝试下一种方法
+            await new Promise(resolve => setTimeout(resolve, 1000))
           }
-          throw raceError
         }
       } else {
         response = await fetch(url, fetchOptions)
@@ -570,6 +639,112 @@ class ImageService {
         results.push(errorResult)
         onSingleComplete(errorResult, i)
       }
+    }
+
+    return results
+  }
+
+  /**
+   * 检测网络环境和GitHub访问能力
+   * @returns {Promise<Object>} 检测结果
+   */
+  async detectNetworkEnvironment() {
+    const results = {
+      environment: 'unknown',
+      github_api: { accessible: false, time: null, error: null },
+      github_pages: { accessible: false, time: null, error: null },
+      jsdelivr_cdn: { accessible: false, time: null, error: null },
+      proxy_detected: false,
+      recommendations: []
+    }
+
+    // 检测代理环境
+    try {
+      const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection
+      if (connection && connection.effectiveType === 'slow-2g') {
+        results.proxy_detected = true
+        results.environment = 'proxy'
+      }
+
+      const userAgent = navigator.userAgent.toLowerCase()
+      if (userAgent.includes('proxy') || userAgent.includes('vpn')) {
+        results.proxy_detected = true
+        results.environment = 'proxy'
+      }
+    } catch (e) {
+      console.log('代理检测失败:', e.message)
+    }
+
+    // 测试GitHub API
+    try {
+      const startTime = Date.now()
+      const response = await fetch('https://api.github.com/rate_limit', {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/vnd.github.v3+json',
+          'User-Agent': 'ImageUploader/1.0'
+        },
+        mode: 'cors',
+        credentials: 'omit',
+        cache: 'no-cache'
+      })
+
+      if (response.ok) {
+        results.github_api.accessible = true
+        results.github_api.time = Date.now() - startTime
+      } else {
+        results.github_api.error = `HTTP ${response.status}`
+      }
+    } catch (error) {
+      results.github_api.error = error.message
+    }
+
+    // 测试GitHub Pages
+    try {
+      const startTime = Date.now()
+      const response = await fetch('https://github.com', {
+        method: 'HEAD',
+        mode: 'no-cors',
+        cache: 'no-cache'
+      })
+      results.github_pages.accessible = true
+      results.github_pages.time = Date.now() - startTime
+    } catch (error) {
+      results.github_pages.error = error.message
+    }
+
+    // 测试jsDelivr CDN
+    try {
+      const startTime = Date.now()
+      const response = await fetch('https://cdn.jsdelivr.net/npm/jquery@3.6.0/package.json', {
+        method: 'GET',
+        mode: 'cors',
+        cache: 'no-cache'
+      })
+
+      if (response.ok) {
+        results.jsdelivr_cdn.accessible = true
+        results.jsdelivr_cdn.time = Date.now() - startTime
+      } else {
+        results.jsdelivr_cdn.error = `HTTP ${response.status}`
+      }
+    } catch (error) {
+      results.jsdelivr_cdn.error = error.message
+    }
+
+    // 生成建议
+    if (results.github_api.accessible) {
+      results.recommendations.push('GitHub API可访问，图片上传功能正常')
+    } else {
+      results.recommendations.push('GitHub API不可访问，请检查网络连接或代理设置')
+    }
+
+    if (results.proxy_detected) {
+      results.recommendations.push('检测到代理环境，建议使用更长的超时时间')
+    }
+
+    if (!results.jsdelivr_cdn.accessible) {
+      results.recommendations.push('jsDelivr CDN不可访问，建议使用GitHub直链')
     }
 
     return results

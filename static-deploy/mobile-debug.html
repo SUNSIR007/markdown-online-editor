@@ -116,6 +116,29 @@
             color: #856404;
             border: 1px solid #ffeaa7;
         }
+
+        .recommendations {
+            margin-top: 20px;
+            padding: 15px;
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            border-radius: 4px;
+        }
+
+        .recommendations h4 {
+            margin: 0 0 10px 0;
+            color: #e65100;
+        }
+
+        .recommendations ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .recommendations li {
+            margin-bottom: 5px;
+            color: #bf360c;
+        }
         
         pre {
             background-color: #f8f9fa;
@@ -226,48 +249,77 @@
         // 检查网络状态
         async function checkNetwork() {
             const resultDiv = document.getElementById('network-status');
-            resultDiv.innerHTML = '<div class="loading">正在检查网络状态...</div>';
+            resultDiv.innerHTML = '<div class="loading">正在检查网络环境...</div>';
 
-            const tests = [
-                { name: 'GitHub API', url: 'https://api.github.com/zen', needAuth: false },
-                { name: 'GitHub主站', url: 'https://github.com', needAuth: false },
-                { name: 'jsDelivr CDN', url: 'https://cdn.jsdelivr.net', needAuth: false }
-            ];
+            try {
+                // 使用新的网络环境检测方法
+                const imageService = new ImageService();
+                const networkInfo = await imageService.detectNetworkEnvironment();
 
-            let results = [];
+                // 显示环境信息
+                let html = '<div class="result-grid">';
 
-            for (const test of tests) {
-                try {
-                    const startTime = Date.now();
-                    const response = await fetch(test.url, { 
-                        method: 'GET',
-                        cache: 'no-cache'
+                // 环境类型
+                html += `
+                    <div class="result info">
+                        <strong>网络环境:</strong> ${networkInfo.environment}
+                        ${networkInfo.proxy_detected ? ' (检测到代理)' : ''}
+                    </div>
+                `;
+
+                // GitHub API状态
+                const apiStatus = networkInfo.github_api.accessible ? '✅ 连接成功' : '❌ 连接失败';
+                const apiClass = networkInfo.github_api.accessible ? 'success' : 'error';
+                html += `
+                    <div class="result ${apiClass}">
+                        <strong>GitHub API:</strong> ${apiStatus}
+                        ${networkInfo.github_api.time ? `(${networkInfo.github_api.time}ms, 200)` : ''}
+                        ${networkInfo.github_api.error ? `<br><small>错误: ${networkInfo.github_api.error}</small>` : ''}
+                    </div>
+                `;
+
+                // GitHub主站状态
+                const pagesStatus = networkInfo.github_pages.accessible ? '✅ 连接成功' : '❌ 连接失败';
+                const pagesClass = networkInfo.github_pages.accessible ? 'success' : 'error';
+                html += `
+                    <div class="result ${pagesClass}">
+                        <strong>GitHub主站:</strong> ${pagesStatus}
+                        ${networkInfo.github_pages.time ? `(${networkInfo.github_pages.time}ms)` : ''}
+                        ${networkInfo.github_pages.error ? `<br><small>错误: ${networkInfo.github_pages.error}</small>` : ''}
+                    </div>
+                `;
+
+                // jsDelivr CDN状态
+                const cdnStatus = networkInfo.jsdelivr_cdn.accessible ? '✅ 连接成功' : '❌ 连接失败';
+                const cdnClass = networkInfo.jsdelivr_cdn.accessible ? 'success' : 'error';
+                html += `
+                    <div class="result ${cdnClass}">
+                        <strong>jsDelivr CDN:</strong> ${cdnStatus}
+                        ${networkInfo.jsdelivr_cdn.time ? `(${networkInfo.jsdelivr_cdn.time}ms, 200)` : ''}
+                        ${networkInfo.jsdelivr_cdn.error ? `<br><small>错误: ${networkInfo.jsdelivr_cdn.error}</small>` : ''}
+                    </div>
+                `;
+
+                html += '</div>';
+
+                // 显示建议
+                if (networkInfo.recommendations.length > 0) {
+                    html += '<div class="recommendations"><h4>💡 建议:</h4><ul>';
+                    networkInfo.recommendations.forEach(rec => {
+                        html += `<li>${rec}</li>`;
                     });
-                    const endTime = Date.now();
-                    
-                    results.push({
-                        name: test.name,
-                        status: 'success',
-                        time: endTime - startTime,
-                        statusCode: response.status,
-                        message: `✅ 连接成功 (${endTime - startTime}ms, ${response.status})`
-                    });
-                } catch (error) {
-                    results.push({
-                        name: test.name,
-                        status: 'error',
-                        message: `❌ 连接失败: ${error.message}`
-                    });
+                    html += '</ul></div>';
                 }
+
+                resultDiv.innerHTML = html;
+
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <strong>网络检测失败:</strong> ${error.message}
+                    </div>
+                `;
             }
-
-            const html = results.map(result => 
-                `<div class="result ${result.status}">
-                    <strong>${result.name}:</strong> ${result.message}
-                </div>`
-            ).join('');
-
-            resultDiv.innerHTML = html;
         }
 
         // 测试GitHub配置
