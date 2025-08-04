@@ -122,6 +122,8 @@ class ImageService {
 
     // 检测移动端并添加特殊处理
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
+    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent)
+    const isAndroid = /Android/i.test(navigator.userAgent)
 
     const headers = {
       Authorization: `token ${this.token}`,
@@ -130,10 +132,17 @@ class ImageService {
       ...options.headers,
     }
 
-    // 移动端添加额外的头部
+    // 移动端特殊处理
     if (isMobile) {
-      headers['User-Agent'] = 'MarkdownEditor/1.0 (Mobile)'
+      // 移除可能导致问题的自定义User-Agent
+      // headers['User-Agent'] = 'MarkdownEditor/1.0 (Mobile)'
       headers['Cache-Control'] = 'no-cache'
+      headers['Pragma'] = 'no-cache'
+
+      // iOS Safari特殊处理
+      if (isIOS) {
+        headers['X-Requested-With'] = 'XMLHttpRequest'
+      }
     }
 
     console.log('GitHub API Request:', {
@@ -143,6 +152,8 @@ class ImageService {
       repo: this.repo,
       branch: this.branch,
       isMobile,
+      isIOS,
+      isAndroid,
       userAgent: navigator.userAgent
     })
 
@@ -150,80 +161,78 @@ class ImageService {
       const fetchOptions = {
         ...options,
         headers,
+        // 移动端添加额外的配置
+        ...(isMobile && {
+          mode: 'cors',
+          credentials: 'omit',
+          cache: 'no-cache',
+          redirect: 'follow'
+        })
       }
 
-      // 移动端添加超时处理
+      let response
+
+      // 移动端使用更保守的超时处理
       if (isMobile) {
-        const controller = new AbortController()
-        const timeoutId = setTimeout(() => controller.abort(), 30000)
-        fetchOptions.signal = controller.signal
+        // 使用Promise.race而不是AbortController，因为某些移动浏览器支持不完整
+        const fetchPromise = fetch(url, fetchOptions)
+        const timeoutPromise = new Promise((_, reject) => {
+          setTimeout(() => reject(new Error('请求超时')), 30000)
+        })
 
         try {
-          const response = await fetch(url, fetchOptions)
-          clearTimeout(timeoutId)
-
-          if (!response.ok) {
-            const error = await response.json().catch(() => ({}))
-            console.error('GitHub API Error Details:', {
-              status: response.status,
-              statusText: response.statusText,
-              url,
-              error,
-              owner: this.owner,
-              repo: this.repo,
-              branch: this.branch,
-              isMobile,
-              responseHeaders: Object.fromEntries(response.headers.entries())
-            })
-
-            // 特殊处理404错误
-            if (response.status === 404) {
-              throw new Error(
-                `仓库或路径不存在 (404): 请检查仓库 ${this.owner}/${this.repo} 是否存在，分支 ${this.branch} 是否正确`
-              )
-            }
-
-            throw new Error(
-              `GitHub API Error: ${response.status} - ${error.message || response.statusText}`,
-            )
+          response = await Promise.race([fetchPromise, timeoutPromise])
+        } catch (raceError) {
+          if (raceError.message === '请求超时') {
+            throw new Error('请求超时，请检查网络连接')
           }
-
-          return response.json()
-        } catch (mobileError) {
-          clearTimeout(timeoutId)
-          throw mobileError
+          throw raceError
         }
       } else {
-        const response = await fetch(url, fetchOptions)
+        response = await fetch(url, fetchOptions)
+      }
 
-        if (!response.ok) {
-          const error = await response.json().catch(() => ({}))
-          console.error('GitHub API Error Details:', {
-            status: response.status,
-            statusText: response.statusText,
-            url,
-            error,
-            owner: this.owner,
-            repo: this.repo,
-            branch: this.branch,
-            isMobile,
-            responseHeaders: Object.fromEntries(response.headers.entries())
-          })
-
-          // 特殊处理404错误
-          if (response.status === 404) {
-            throw new Error(
-              `仓库或路径不存在 (404): 请检查仓库 ${this.owner}/${this.repo} 是否存在，分支 ${this.branch} 是否正确`
-            )
-          }
-
-          throw new Error(
-            `GitHub API Error: ${response.status} - ${error.message || response.statusText}`,
-          )
+      if (!response.ok) {
+        let error = {}
+        try {
+          error = await response.json()
+        } catch (jsonError) {
+          console.warn('无法解析错误响应JSON:', jsonError)
         }
 
-        return response.json()
+        console.error('GitHub API Error Details:', {
+          status: response.status,
+          statusText: response.statusText,
+          url,
+          error,
+          owner: this.owner,
+          repo: this.repo,
+          branch: this.branch,
+          isMobile,
+          isIOS,
+          isAndroid,
+          responseHeaders: response.headers ? Object.fromEntries(response.headers.entries()) : {}
+        })
+
+        // 特殊处理各种错误状态
+        if (response.status === 404) {
+          throw new Error(
+            `仓库或路径不存在 (404): 请检查仓库 ${this.owner}/${this.repo} 是否存在，分支 ${this.branch} 是否正确`
+          )
+        } else if (response.status === 401) {
+          throw new Error('GitHub Token无效或已过期，请重新配置Token')
+        } else if (response.status === 403) {
+          throw new Error('权限不足，请确保Token有完整的repo权限')
+        } else if (response.status === 422) {
+          throw new Error('请求参数错误，可能是文件已存在或路径无效')
+        }
+
+        throw new Error(
+          `GitHub API Error: ${response.status} - ${error.message || response.statusText}`,
+        )
       }
+
+      return response.json()
     } catch (fetchError) {
       console.error('Fetch Error Details:', {
         name: fetchError.name,
@@ -231,15 +240,38 @@ class ImageService {
         stack: fetchError.stack,
         url,
         isMobile,
-        userAgent: navigator.userAgent
+        isIOS,
+        isAndroid,
+        userAgent: navigator.userAgent,
+        online: navigator.onLine,
+        connection: navigator.connection ? {
+          effectiveType: navigator.connection.effectiveType,
+          downlink: navigator.connection.downlink,
+          rtt: navigator.connection.rtt
+        } : 'unknown'
       })
 
-      if (fetchError.name === 'AbortError') {
+      // 更详细的错误分类
+      if (fetchError.message === '请求超时') {
         throw new Error('请求超时，请检查网络连接')
       }
 
-      if (fetchError.name === 'TypeError' && fetchError.message.includes('Failed to fetch')) {
-        throw new Error('网络连接失败，可能是CORS问题或网络不可达')
+      if (fetchError.name === 'AbortError') {
+        throw new Error('请求被中断，请检查网络连接')
+      }
+
+      if (fetchError.name === 'TypeError') {
+        if (fetchError.message.includes('Failed to fetch')) {
+          if (!navigator.onLine) {
+            throw new Error('网络连接已断开，请检查网络设置')
+          } else if (isMobile) {
+            throw new Error('移动网络连接失败，请尝试切换网络或稍后重试')
+          } else {
+            throw new Error('网络连接失败，可能是CORS问题或网络不可达')
+          }
+        } else if (fetchError.message.includes('NetworkError')) {
+          throw new Error('网络错误，请检查网络连接')
+        }
       }
 
       throw fetchError
