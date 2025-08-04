@@ -126,6 +126,14 @@ class ImageService {
       ...options.headers,
     }
 
+    console.log('GitHub API Request:', {
+      url,
+      method: options.method || 'GET',
+      owner: this.owner,
+      repo: this.repo,
+      branch: this.branch
+    })
+
     const response = await fetch(url, {
       ...options,
       headers,
@@ -133,6 +141,15 @@ class ImageService {
 
     if (!response.ok) {
       const error = await response.json().catch(() => ({}))
+      console.error('GitHub API Error Details:', {
+        status: response.status,
+        statusText: response.statusText,
+        url,
+        error,
+        owner: this.owner,
+        repo: this.repo,
+        branch: this.branch
+      })
       throw new Error(
         `GitHub API Error: ${response.status} - ${error.message || response.statusText}`,
       )
@@ -291,6 +308,16 @@ class ImageService {
       // 生成文件名和路径
       const fileName = this.generateFileName(file.name, addHash)
       const filePath = this.generateFilePath(fileName)
+
+      console.log('Upload details:', {
+        originalFileName: file.name,
+        generatedFileName: fileName,
+        filePath,
+        fileSize: processedFile.size,
+        owner: this.owner,
+        repo: this.repo,
+        branch: this.branch
+      })
 
       onProgress({ stage: 'converting', progress: 50 })
 
