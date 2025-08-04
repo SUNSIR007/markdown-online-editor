@@ -1041,7 +1041,13 @@
                 loadConfig() {
                     const saved = localStorage.getItem('image-service-config');
                     if (saved) {
-                        this.config = { ...this.config, ...JSON.parse(saved) };
+                        const savedConfig = JSON.parse(saved);
+                        // 强制修正分支配置，如果是main则改为master
+                        if (savedConfig.branch === 'main') {
+                            savedConfig.branch = 'master';
+                            localStorage.setItem('image-service-config', JSON.stringify(savedConfig));
+                        }
+                        this.config = { ...this.config, ...savedConfig };
                     }
 
                     const savedRule = localStorage.getItem('image-service-link-rule');

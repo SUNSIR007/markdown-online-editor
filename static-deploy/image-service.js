@@ -56,7 +56,12 @@ class ImageService {
     this.token = config.token
     this.owner = config.owner
     this.repo = config.repo
-    this.branch = config.branch || 'master'
+    // 强制修正分支配置，如果是main则改为master
+    let branch = config.branch || 'master'
+    if (branch === 'main') {
+      branch = 'master'
+    }
+    this.branch = branch
 
     // 清理imageDir，确保不以斜杠开头或结尾
     let imageDir = (config.imageDir || 'images').trim()
