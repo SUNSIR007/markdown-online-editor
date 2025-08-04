@@ -226,28 +226,16 @@ class PicXAPI {
         // 使用GitHub API返回的path（这是关键！）
         const actualPath = result.content.path;
 
-        console.log('🔍 调试信息 - GitHub API 响应:', {
-            contentName: result.content.name,
-            contentPath: result.content.path,
-            contentSha: result.content.sha,
-            contentSize: result.content.size
-        });
-
-        console.log('🔍 调试信息 - 路径对比:', {
-            fileName,
-            requestPath: filePath,
-            actualPath: actualPath,
-            pathLength: actualPath.length,
-            pathPreview: actualPath.substring(0, 100) + (actualPath.length > 100 ? '...' : '')
-        });
-
         // 生成图片链接（按照PicX的generateImageLink函数）
         const imageLink = this.generateImageLink(actualPath);
 
-        console.log('🔍 调试信息 - 链接生成:', {
-            inputPath: actualPath,
-            outputLink: imageLink,
-            linkLength: imageLink ? imageLink.length : 0
+        console.log('GitHub API 响应:', result);
+        console.log('上传成功:', {
+            fileName,
+            requestPath: filePath,
+            actualPath: actualPath,
+            imageLink,
+            downloadUrl: result.content.download_url
         });
 
         return {
@@ -265,29 +253,14 @@ class PicXAPI {
 
     // 生成图片链接（完全按照PicX源码的generateImageLink函数）
     generateImageLink(imagePath) {
-        console.log('🔍 generateImageLink 输入参数:', {
-            imagePath,
-            pathType: typeof imagePath,
-            pathLength: imagePath ? imagePath.length : 0,
-            pathPreview: imagePath ? imagePath.substring(0, 100) + (imagePath.length > 100 ? '...' : '') : 'null'
-        });
-
         const { owner, repo, branch, imageLinkType } = this.config;
 
         // 获取对应的链接规则
         const linkRule = this.imageLinkRules[imageLinkType];
         if (!linkRule) {
-            console.error('❌ 未找到链接规则:', imageLinkType);
+            console.error('未找到链接规则:', imageLinkType);
             return null;
         }
-
-        console.log('🔍 链接规则:', {
-            linkType: imageLinkType,
-            rule: linkRule.rule,
-            owner,
-            repo,
-            branch
-        });
 
         // 使用模板替换生成链接（完全按照PicX源码）
         const imageLink = linkRule.rule
@@ -296,10 +269,14 @@ class PicXAPI {
             .replaceAll('{{branch}}', branch)
             .replaceAll('{{path}}', imagePath);
 
-        console.log('✅ 生成的图片链接:', {
-            result: imageLink,
-            resultLength: imageLink.length,
-            resultPreview: imageLink.substring(0, 100) + (imageLink.length > 100 ? '...' : '')
+        console.log('生成图片链接:', {
+            owner,
+            repo,
+            branch,
+            imagePath,
+            linkType: imageLinkType,
+            rule: linkRule.rule,
+            result: imageLink
         });
 
         return imageLink;
