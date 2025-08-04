@@ -19,9 +19,9 @@
     <script src="https://cdn.jsdelivr.net/npm/vditor@3.9.4/dist/index.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vditor@3.9.4/dist/index.css">
     <script src="github-service.js"></script>
-    <script src="image-upload-service.js"></script>
-    <script src="drag-drop-handler.js"></script>
-    <link rel="stylesheet" href="upload-styles.css">
+    <script src="picx-api.js"></script>
+    <script src="image-uploader.js"></script>
+    <link rel="stylesheet" href="picx-styles.css">
     <style>
         body {
             margin: 0;
@@ -126,48 +126,7 @@
             font-size: 18px;
         }
 
-        /* 图片上传配置按钮 */
-        .image-config-button {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            margin-left: 10px;
-        }
 
-        .image-config-button:hover {
-            transform: scale(1.1);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-        }
-
-        .image-config-button .el-icon-picture {
-            font-size: 18px;
-        }
-
-        /* 图片上传按钮 */
-        .image-upload-toolbar-button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border: none;
-            border-radius: 6px;
-            color: white;
-            padding: 6px 12px;
-            font-size: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-left: 8px;
-        }
-
-        .image-upload-toolbar-button:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
-        }
 
         /* Vditor YAML frontmatter 预览样式 */
         .vditor-preview .language-yaml,
@@ -639,7 +598,7 @@
                 height: 36px !important;
             }
 
-            .image-config-button {
+            .picx-config-button {
                 width: 36px !important;
                 height: 36px !important;
             }
@@ -648,7 +607,7 @@
                 padding: 8px 12px !important;
             }
 
-            .image-upload-toolbar-button {
+            .picx-upload-button {
                 padding: 4px 8px !important;
                 font-size: 11px !important;
             }
@@ -670,7 +629,7 @@
                 height: 32px !important;
             }
 
-            .image-config-button {
+            .picx-config-button {
                 width: 32px !important;
                 height: 32px !important;
             }
@@ -679,7 +638,7 @@
                 padding: 6px 10px !important;
             }
 
-            .image-upload-toolbar-button {
+            .picx-upload-button {
                 padding: 3px 6px !important;
                 font-size: 10px !important;
             }
@@ -769,17 +728,17 @@
                     <button class="github-config-button" @click="configureGitHub" :title="isGitHubConfigured ? 'GitHub已配置' : '配置GitHub'">
                         <i class="el-icon-setting"></i>
                     </button>
-                    <button class="image-config-button" @click="configureImageUpload" :title="isImageUploadConfigured ? '图床已配置' : '配置图床'">
+                    <button class="picx-config-button" @click="configurePicX" :title="isPicXConfigured ? 'PicX已配置' : '配置PicX图床'">
                         <i class="el-icon-picture"></i>
                     </button>
                 </div>
                 <div class="action-buttons">
-                    <button class="image-upload-toolbar-button" @click="selectAndUploadImage" :disabled="!isImageUploadConfigured" title="上传图片">
+                    <button class="picx-upload-button" @click="selectAndUploadImage" :disabled="!isPicXConfigured" title="上传图片">
                         <i class="el-icon-picture-outline"></i> 图片
                     </button>
                     <el-button @click="publish" size="medium" type="success" icon="el-icon-upload" :disabled="!isGitHubConfigured" class="publish-button">
                     </el-button>
-                    <input type="file" ref="imageFileInput" class="image-upload-input" @change="handleImageFileSelect" accept="image/*" multiple>
+                    <input type="file" ref="picxFileInput" class="picx-upload-input" @change="handlePicXFileSelect" accept="image/*" multiple style="display: none;">
                 </div>
             </div>
         </div>
@@ -804,11 +763,11 @@
             @save="handleGitHubConfigSave">
         </github-config>
 
-        <image-upload-config
-            :visible="imageUploadConfigVisible"
-            @close="imageUploadConfigVisible = false"
-            @save="handleImageUploadConfigSave">
-        </image-upload-config>
+        <picx-config
+            :visible="picxConfigVisible"
+            @close="picxConfigVisible = false"
+            @save="handlePicXConfigSave">
+        </picx-config>
     </div>
 
     <script>
@@ -997,29 +956,30 @@
             `
         });
 
-        // 图床配置组件
-        Vue.component('image-upload-config', {
+        // PicX 配置组件
+        Vue.component('picx-config', {
             props: ['visible'],
             data() {
                 return {
                     config: {
-                        provider: 'github',
-                        github: {
-                            token: '',
-                            owner: '',
-                            repo: '',
-                            branch: 'main',
-                            path: 'images/'
-                        },
-                        smms: {
-                            token: ''
-                        }
+                        token: '',
+                        owner: '',
+                        repo: '',
+                        branch: 'main',
+                        path: 'images/',
+                        cdn: 'jsdelivr',
+                        compress: true,
+                        quality: 0.8,
+                        rename: true,
+                        addPrefix: false,
+                        prefix: ''
                     },
                     testing: false,
                     testResult: null,
-                    providers: [
-                        { value: 'github', label: 'GitHub' },
-                        { value: 'smms', label: 'SM.MS' }
+                    cdnOptions: [
+                        { value: 'github', label: 'GitHub Raw' },
+                        { value: 'jsdelivr', label: 'jsDelivr CDN' },
+                        { value: 'statically', label: 'Statically CDN' }
                     ]
                 }
             },
@@ -1032,13 +992,13 @@
             },
             methods: {
                 loadConfig() {
-                    if (window.imageUploadService) {
-                        this.config = { ...window.imageUploadService.config };
+                    if (window.picxAPI) {
+                        this.config = { ...window.picxAPI.config };
                     }
                 },
                 async testConnection() {
-                    if (!window.imageUploadService) {
-                        this.$message.error('图床服务未初始化');
+                    if (!window.picxAPI) {
+                        this.$message.error('PicX API 未初始化');
                         return;
                     }
 
@@ -1047,11 +1007,9 @@
 
                     try {
                         // 临时设置配置进行测试
-                        const tempConfig = { ...this.config };
-                        window.imageUploadService.saveConfig(tempConfig);
-                        window.imageUploadService.setProvider(this.config.provider);
+                        window.picxAPI.saveConfig(this.config);
 
-                        const result = await window.imageUploadService.testConnection();
+                        const result = await window.picxAPI.testConnection();
 
                         if (result.success) {
                             this.testResult = { type: 'success', message: result.message };
@@ -1068,18 +1026,13 @@
                     }
                 },
                 save() {
-                    if (this.config.provider === 'github') {
-                        if (!this.config.github.token || !this.config.github.owner || !this.config.github.repo) {
-                            this.$message.warning('请填写完整的GitHub配置信息');
-                            return;
-                        }
-                    } else if (this.config.provider === 'smms') {
-                        // SM.MS的token是可选的
+                    if (!this.config.token || !this.config.owner || !this.config.repo) {
+                        this.$message.warning('请填写完整的 GitHub 配置信息');
+                        return;
                     }
 
-                    if (window.imageUploadService) {
-                        window.imageUploadService.saveConfig(this.config);
-                        window.imageUploadService.setProvider(this.config.provider);
+                    if (window.picxAPI) {
+                        window.picxAPI.saveConfig(this.config);
                     }
 
                     this.$emit('save', this.config);
@@ -1091,85 +1044,106 @@
             },
             template: `
                 <el-dialog
-                    title="图床配置"
+                    title="PicX 图床配置"
                     :visible.sync="visible"
-                    width="600px"
+                    width="700px"
                     @close="close"
                     custom-class="image-config-dialog">
                     <el-form :model="config" label-width="120px">
-                        <el-form-item label="图床服务">
-                            <el-select v-model="config.provider" placeholder="选择图床服务">
-                                <el-option
-                                    v-for="provider in providers"
-                                    :key="provider.value"
-                                    :label="provider.label"
-                                    :value="provider.value">
-                                </el-option>
-                            </el-select>
+                        <!-- GitHub 基础配置 -->
+                        <el-form-item label="GitHub Token">
+                            <el-input
+                                v-model="config.token"
+                                type="password"
+                                placeholder="输入GitHub Personal Access Token"
+                                show-password>
+                            </el-input>
+                            <div class="token-instructions">
+                                <strong>获取Token步骤:</strong><br>
+                                1. GitHub → Settings → Developer settings<br>
+                                2. Personal access tokens → Tokens (classic)<br>
+                                3. Generate new token → 勾选 <strong>repo</strong> 权限
+                            </div>
                         </el-form-item>
 
-                        <!-- GitHub配置 -->
-                        <template v-if="config.provider === 'github'">
-                            <el-form-item label="GitHub Token">
-                                <el-input
-                                    v-model="config.github.token"
-                                    type="password"
-                                    placeholder="输入GitHub Personal Access Token"
-                                    show-password>
-                                </el-input>
-                                <div class="token-instructions">
-                                    <strong>获取Token步骤:</strong><br>
-                                    1. GitHub → Settings → Developer settings<br>
-                                    2. Personal access tokens → Tokens (classic)<br>
-                                    3. Generate new token → 勾选 <strong>repo</strong> 权限
-                                </div>
-                            </el-form-item>
+                        <el-form-item label="仓库所有者">
+                            <el-input
+                                v-model="config.owner"
+                                placeholder="GitHub用户名或组织名">
+                            </el-input>
+                        </el-form-item>
 
-                            <el-form-item label="仓库所有者">
-                                <el-input
-                                    v-model="config.github.owner"
-                                    placeholder="GitHub用户名或组织名">
-                                </el-input>
-                            </el-form-item>
+                        <el-form-item label="仓库名称">
+                            <el-input
+                                v-model="config.repo"
+                                placeholder="用于存储图片的仓库名">
+                            </el-input>
+                        </el-form-item>
 
-                            <el-form-item label="仓库名称">
-                                <el-input
-                                    v-model="config.github.repo"
-                                    placeholder="用于存储图片的仓库名">
-                                </el-input>
-                            </el-form-item>
+                        <el-form-item label="分支">
+                            <el-input
+                                v-model="config.branch"
+                                placeholder="分支名 (默认: main)">
+                            </el-input>
+                        </el-form-item>
 
-                            <el-form-item label="分支">
-                                <el-input
-                                    v-model="config.github.branch"
-                                    placeholder="分支名 (默认: main)">
-                                </el-input>
-                            </el-form-item>
+                        <el-form-item label="存储路径">
+                            <el-input
+                                v-model="config.path"
+                                placeholder="图片存储路径 (默认: images/)">
+                            </el-input>
+                        </el-form-item>
 
-                            <el-form-item label="存储路径">
-                                <el-input
-                                    v-model="config.github.path"
-                                    placeholder="图片存储路径 (默认: images/)">
-                                </el-input>
-                            </el-form-item>
-                        </template>
+                        <!-- CDN 配置 -->
+                        <el-form-item label="CDN 服务">
+                            <el-select v-model="config.cdn" placeholder="选择CDN服务">
+                                <el-option
+                                    v-for="cdn in cdnOptions"
+                                    :key="cdn.value"
+                                    :label="cdn.label"
+                                    :value="cdn.value">
+                                </el-option>
+                            </el-select>
+                            <div class="token-instructions">
+                                <strong>CDN说明:</strong><br>
+                                • GitHub Raw: 直接访问，国内较慢<br>
+                                • jsDelivr: 免费CDN，国内访问快<br>
+                                • Statically: 备用CDN服务
+                            </div>
+                        </el-form-item>
 
-                        <!-- SM.MS配置 -->
-                        <template v-if="config.provider === 'smms'">
-                            <el-form-item label="SM.MS Token">
-                                <el-input
-                                    v-model="config.smms.token"
-                                    type="password"
-                                    placeholder="SM.MS API Token (可选)"
-                                    show-password>
-                                </el-input>
-                                <div class="token-instructions">
-                                    <strong>说明:</strong><br>
-                                    Token为可选项，不填写则使用游客模式上传<br>
-                                    注册账号可获得更大的上传限制和管理功能
-                                </div>
-                            </el-form-item>
-                        </template>
+                        <!-- 图片处理配置 -->
+                        <el-form-item label="图片压缩">
+                            <el-switch v-model="config.compress"></el-switch>
+                            <span style="margin-left: 10px; color: #666;">自动压缩图片以节省空间</span>
+                        </el-form-item>
+
+                        <el-form-item label="压缩质量" v-if="config.compress">
+                            <el-slider
+                                v-model="config.quality"
+                                :min="0.1"
+                                :max="1"
+                                :step="0.1"
+                                :format-tooltip="val => Math.round(val * 100) + '%'">
+                            </el-slider>
+                        </el-form-item>
+
+                        <el-form-item label="文件重命名">
+                            <el-switch v-model="config.rename"></el-switch>
+                            <span style="margin-left: 10px; color: #666;">使用时间戳重命名文件</span>
+                        </el-form-item>
+
+                        <el-form-item label="添加前缀">
+                            <el-switch v-model="config.addPrefix"></el-switch>
+                            <span style="margin-left: 10px; color: #666;">为文件名添加自定义前缀</span>
+                        </el-form-item>
+
+                        <el-form-item label="前缀内容" v-if="config.addPrefix">
+                            <el-input
+                                v-model="config.prefix"
+                                placeholder="输入文件名前缀">
+                            </el-input>
+                        </el-form-item>
 
                         <div v-if="testResult" :class="['test-result', testResult.type]">
                             {{ testResult.message }}
@@ -1194,10 +1168,10 @@
                     currentType: contentTypes.ESSAY, // 默认为Essays模式
                     metadata: {},
                     githubConfigVisible: false,
-                    imageUploadConfigVisible: false,
+                    picxConfigVisible: false,
                     contentTypeLabels,
                     isGitHubConfigured: false,
-                    isImageUploadConfigured: false,
+                    isPicXConfigured: false,
                     isDarkMode: true,
                     metadataFields,
                     bodyContent: '',
@@ -1210,7 +1184,7 @@
                 this.setupMobileDefaults();
                 this.initVditor();
                 this.checkGitHubConfig();
-                this.checkImageUploadConfig();
+                this.checkPicXConfig();
                 this.checkForEditFile();
                 this.selectType(this.currentType);
             },
@@ -1280,8 +1254,8 @@
                                     this.setupDesktopAutoFocus();
                                 }
 
-                                // 初始化拖拽处理器
-                                this.initDragDropHandler();
+                                // 初始化图片上传器
+                                this.initImageUploader();
                             });
                         }.bind(this)
                     });
@@ -1528,56 +1502,49 @@
                     }
                 },
 
-                // 检查图床配置
-                checkImageUploadConfig() {
-                    if (window.imageUploadService) {
-                        const config = window.imageUploadService.config;
-                        this.isImageUploadConfigured = !!(
-                            config.provider &&
-                            ((config.provider === 'github' && config.github.token && config.github.owner && config.github.repo) ||
-                             (config.provider === 'smms'))
-                        );
+                // 检查PicX配置
+                checkPicXConfig() {
+                    if (window.picxAPI) {
+                        this.isPicXConfigured = window.picxAPI.isConfigured();
                     }
                 },
 
-                // 配置图床
-                configureImageUpload() {
-                    this.imageUploadConfigVisible = true;
+                // 配置PicX
+                configurePicX() {
+                    this.picxConfigVisible = true;
                 },
 
-                // 处理图床配置保存
-                handleImageUploadConfigSave(config) {
-                    this.checkImageUploadConfig();
-                    this.$message.success('图床配置已保存');
+                // 处理PicX配置保存
+                handlePicXConfigSave(config) {
+                    this.checkPicXConfig();
+                    this.$message.success('PicX配置已保存');
                 },
 
-                // 初始化拖拽处理器
-                initDragDropHandler() {
-                    if (window.DragDropHandler && window.imageUploadService && this.vditor) {
-                        this.dragDropHandler = new DragDropHandler(this.vditor, window.imageUploadService);
+                // 初始化图片上传器
+                initImageUploader() {
+                    if (window.ImageUploader && window.picxAPI && this.vditor) {
+                        this.imageUploader = new ImageUploader(this.vditor, window.picxAPI);
                     }
                 },
 
                 // 选择并上传图片
                 selectAndUploadImage() {
-                    if (!this.isImageUploadConfigured) {
-                        this.$message.warning('请先配置图床服务');
+                    if (!this.isPicXConfigured) {
+                        this.$message.warning('请先配置 PicX 图床');
                         return;
                     }
 
-                    this.$refs.imageFileInput.click();
+                    this.$refs.picxFileInput.click();
                 },
 
                 // 处理文件选择
-                async handleImageFileSelect(event) {
+                async handlePicXFileSelect(event) {
                     const files = Array.from(event.target.files);
 
                     if (files.length === 0) return;
 
-                    for (const file of files) {
-                        if (this.dragDropHandler) {
-                            await this.dragDropHandler.uploadAndInsertImage(file);
-                        }
+                    if (this.imageUploader) {
+                        await this.imageUploader.uploadFiles(files);
                     }
 
                     // 清空文件输入框
