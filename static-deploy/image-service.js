@@ -423,7 +423,7 @@ class ImageService {
       const canvas = document.createElement('canvas')
       const ctx = canvas.getContext('2d')
       const img = new Image()
-      
+
       img.onload = () => {
         // 计算新尺寸
         let { width, height } = img
@@ -431,17 +431,102 @@ class ImageService {
           height = (height * maxWidth) / width
           width = maxWidth
         }
-        
+
         canvas.width = width
         canvas.height = height
-        
+
         // 绘制压缩后的图片
         ctx.drawImage(img, 0, 0, width, height)
-        
+
         // 转换为Blob
         canvas.toBlob(resolve, file.type, quality)
       }
-      
+
+      img.src = URL.createObjectURL(file)
+    })
+  }
+
+  /**
+   * 智能压缩图片到指定大小以内
+   * @param {File} file - 图片文件
+   * @param {number} targetSize - 目标大小（字节）
+   * @param {Function} onProgress - 进度回调
+   */
+  async compressToSize(file, targetSize = 10 * 1024 * 1024, onProgress = () => {}) {
+    // 如果文件已经小于目标大小，直接返回
+    if (file.size <= targetSize) {
+      return file
+    }
+
+    onProgress({ stage: 'analyzing', progress: 10 })
+
+    return new Promise((resolve) => {
+      const canvas = document.createElement('canvas')
+      const ctx = canvas.getContext('2d')
+      const img = new Image()
+
+      img.onload = async () => {
+        let { width, height } = img
+
+        // 设置canvas尺寸
+        canvas.width = width
+        canvas.height = height
+        ctx.drawImage(img, 0, 0, width, height)
+
+        // 渐进式压缩策略
+        let quality = 0.9 // 从高质量开始
+        let currentBlob = null
+        let attempts = 0
+        const maxAttempts = 8
+
+        onProgress({ stage: 'compressing', progress: 30 })
+
+        while (attempts < maxAttempts) {
+          // 尝试当前质量
+          currentBlob = await new Promise(resolve => {
+            canvas.toBlob(resolve, 'image/jpeg', quality)
+          })
+
+          onProgress({
+            stage: 'compressing',
+            progress: 30 + (attempts / maxAttempts) * 50,
+            currentSize: currentBlob.size,
+            targetSize: targetSize,
+            quality: quality
+          })
+
+          // 如果达到目标大小，返回结果
+          if (currentBlob.size <= targetSize) {
+            break
+          }
+
+          // 如果还是太大，降低质量
+          quality -= 0.1
+          attempts++
+
+          // 如果质量太低，尝试缩小尺寸
+          if (quality < 0.3 && width > 800) {
+            const scale = 0.8
+            width = Math.floor(width * scale)
+            height = Math.floor(height * scale)
+            canvas.width = width
+            canvas.height = height
+            ctx.drawImage(img, 0, 0, width, height)
+            quality = 0.7 // 重置质量
+          }
+        }
+
+        onProgress({ stage: 'finalizing', progress: 90 })
+
+        // 创建新的File对象
+        const compressedFile = new File([currentBlob], file.name, {
+          type: 'image/jpeg',
+          lastModified: Date.now()
+        })
+
+        resolve(compressedFile)
+      }
+
       img.src = URL.createObjectURL(file)
     })
   }
@@ -452,14 +537,14 @@ class ImageService {
    */
   validateImageFile(file) {
     const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp']
-    const maxSize = 10 * 1024 * 1024 // 10MB
+    const maxSize = 50 * 1024 * 1024 // 50MB (提高限制，因为我们会自动压缩)
 
     if (!allowedTypes.includes(file.type)) {
       throw new Error('不支持的图片格式，请使用 JPEG、PNG、GIF 或 WebP 格式')
     }
 
     if (file.size > maxSize) {
-      throw new Error('图片文件过大，请选择小于 10MB 的图片')
+      throw new Error('图片文件过大，请选择小于 50MB 的图片')
     }
 
     return true
@@ -502,10 +587,14 @@ class ImageService {
 
       // 处理图片（压缩等）
       let processedFile = file
-      if (compress && file.size > 500 * 1024) { // 大于500KB才压缩
-        onProgress({ stage: 'compressing', progress: 30 })
-        processedFile = await this.compressImage(file, quality)
+      const targetSize = 10 * 1024 * 1024 // 10MB
+
+      if (file.size > targetSize) {
+        // 超过10MB，使用智能压缩到10MB以内
+        onProgress({ stage: 'compressing', progress: 20 })
+        processedFile = await this.compressToSize(file, targetSize, onProgress)
       }
+      // 10MB以下的图片完全无损上传，不进行任何压缩
 
       // 生成文件名和路径
       const fileName = this.generateFileName(file.name, addHash)
@@ -521,12 +610,12 @@ class ImageService {
         branch: this.branch
       })
 
-      onProgress({ stage: 'converting', progress: 50 })
+      onProgress({ stage: 'converting', progress: 85 })
 
       // 转换为Base64
       const base64Content = await this.fileToBase64(processedFile)
 
-      onProgress({ stage: 'uploading', progress: 70 })
+      onProgress({ stage: 'uploading', progress: 90 })
 
       // 上传到GitHub
       const uploadData = {
@@ -540,7 +629,7 @@ class ImageService {
         body: JSON.stringify(uploadData)
       })
 
-      onProgress({ stage: 'generating', progress: 90 })
+      onProgress({ stage: 'generating', progress: 95 })
 
       // 生成CDN链接
       const imageUrl = this.generateImageUrl(filePath)

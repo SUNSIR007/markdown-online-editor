@@ -857,12 +857,11 @@
             <div style="text-align: center;">
                 <p>正在上传第 {{ uploadProgress.current }} / {{ uploadProgress.total }} 张图片</p>
                 <p>{{ uploadProgress.fileName }}</p>
-                <p>{{ uploadProgress.stage === 'preparing' ? '准备中...' :
-                     uploadProgress.stage === 'compressing' ? '压缩中...' :
-                     uploadProgress.stage === 'converting' ? '转换中...' :
-                     uploadProgress.stage === 'uploading' ? '上传中...' :
-                     uploadProgress.stage === 'generating' ? '生成链接...' :
-                     uploadProgress.stage === 'completed' ? '完成' : '处理中...' }}</p>
+                <p>{{ getStageText(uploadProgress.stage) }}</p>
+                <div v-if="uploadProgress.stage === 'compressing' && uploadProgress.currentSize > 0" style="font-size: 12px; color: #666; margin: 5px 0;">
+                    <p>压缩质量: {{ Math.round(uploadProgress.quality * 100) }}%</p>
+                    <p>当前大小: {{ formatFileSize(uploadProgress.currentSize) }} / 目标: {{ formatFileSize(uploadProgress.targetSize) }}</p>
+                </div>
                 <el-progress :percentage="uploadProgress.progress" :show-text="false"></el-progress>
             </div>
         </el-dialog>
@@ -1276,7 +1275,10 @@
                         total: 0,
                         fileName: '',
                         stage: '',
-                        progress: 0
+                        progress: 0,
+                        currentSize: 0,
+                        targetSize: 0,
+                        quality: 0
                     },
                     // 移动端错误显示
                     mobileErrorDialog: {
@@ -1942,6 +1944,9 @@
                                 this.uploadProgress.fileName = progress.fileName;
                                 this.uploadProgress.stage = progress.stage;
                                 this.uploadProgress.progress = progress.singleProgress || 0;
+                                this.uploadProgress.currentSize = progress.currentSize || 0;
+                                this.uploadProgress.targetSize = progress.targetSize || 0;
+                                this.uploadProgress.quality = progress.quality || 0;
                             },
                             onSingleComplete: (result, index) => {
                                 if (result.success) {
@@ -2103,6 +2108,30 @@
                         size: 0,
                         file: null
                     };
+                },
+
+                // 获取阶段文本
+                getStageText(stage) {
+                    const stageTexts = {
+                        'preparing': '准备中...',
+                        'analyzing': '分析图片...',
+                        'compressing': '智能压缩中...',
+                        'converting': '转换中...',
+                        'uploading': '上传中...',
+                        'generating': '生成链接...',
+                        'finalizing': '完成处理...',
+                        'completed': '完成'
+                    };
+                    return stageTexts[stage] || '处理中...';
+                },
+
+                // 格式化文件大小
+                formatFileSize(bytes) {
+                    if (bytes === 0) return '0 Bytes';
+                    const k = 1024;
+                    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                    const i = Math.floor(Math.log(bytes) / Math.log(k));
+                    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
                 },
 
                 async publishGalleryImage() {
