@@ -254,10 +254,6 @@
             top: 41px; /* Vditor toolbar height */
             z-index: 2;
         }
-
-        .metadata-editor.no-border {
-            border-bottom: none;
-        }
         .metadata-editor .el-input {
             flex: 1;
         }
@@ -825,8 +821,7 @@
             <!-- 元数据编辑器将通过JS移动到Vditor工具栏下方 -->
             <div id="metadata-editor-wrapper" style="display: none;">
                 <div class="metadata-editor"
-                     v-if="currentType !== 'general' && currentType !== 'gallery' && hasVisibleFields"
-                     :class="{ 'no-border': currentType === 'essay' }">
+                     v-if="currentType !== 'general' && currentType !== 'gallery' && currentType !== 'essay' && hasVisibleFields">
                     <el-input v-if="metadataFields[currentType].some(f => f.key === 'title')" v-model="metadata.title" placeholder="Title" size="small"></el-input>
                     <el-input v-if="metadataFields[currentType].some(f => f.key === 'categories')" v-model="metadata.categories" placeholder="Categories (comma-separated)" size="small"></el-input>
                     <el-input v-if="metadataFields[currentType].some(f => f.key === 'description')" v-model="metadata.description" placeholder="Description" size="small"></el-input>
