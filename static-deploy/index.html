@@ -783,177 +783,7 @@
             }
         }
 
-        /* Gallery上传界面样式 */
-        .gallery-upload-container {
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            padding: 20px;
-        }
 
-        .gallery-upload-area {
-            flex: 1;
-            border: 2px dashed #dcdfe6;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 300px;
-            background-color: #fafafa;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            position: relative;
-        }
-
-        .gallery-upload-area:hover {
-            border-color: #409eff;
-            background-color: #f0f9ff;
-        }
-
-        .gallery-upload-area.drag-over {
-            border-color: #409eff !important;
-            background-color: #f0f9ff !important;
-            transform: scale(1.02);
-        }
-
-        .gallery-upload-area.drag-over::after {
-            content: '松开鼠标上传图片';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(64, 158, 255, 0.9);
-            color: white;
-            padding: 12px 24px;
-            border-radius: 6px;
-            font-size: 16px;
-            font-weight: 500;
-            z-index: 10;
-            pointer-events: none;
-            box-shadow: 0 4px 12px rgba(64, 158, 255, 0.3);
-        }
-
-        .upload-content {
-            text-align: center;
-            color: #606266;
-        }
-
-        .upload-content h3 {
-            margin: 0 0 8px 0;
-            font-size: 18px;
-            color: #303133;
-        }
-
-        .upload-content p {
-            margin: 0 0 16px 0;
-            color: #909399;
-        }
-
-        .gallery-preview {
-            max-height: 400px;
-            overflow-y: auto;
-            border: 1px solid #dcdfe6;
-            border-radius: 8px;
-            padding: 16px;
-            background-color: #fff;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .gallery-preview h4 {
-            margin: 0 0 12px 0;
-            color: #303133;
-            font-size: 16px;
-            font-weight: 600;
-        }
-
-        .preview-image {
-            max-width: 100%;
-            max-height: 200px;
-            object-fit: contain;
-            border-radius: 4px;
-            margin-bottom: 12px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            transition: transform 0.2s ease;
-        }
-
-        .preview-image:hover {
-            transform: scale(1.02);
-        }
-
-        .preview-info {
-            background-color: #f8f9fa;
-            padding: 12px;
-            border-radius: 6px;
-            border-left: 4px solid #409eff;
-        }
-
-        .preview-info p {
-            margin: 4px 0;
-            font-size: 14px;
-            color: #606266;
-        }
-
-        .preview-info p strong {
-            color: #303133;
-            font-weight: 600;
-        }
-
-        /* Gallery模式响应式设计 */
-        @media (max-width: 768px) {
-            .gallery-upload-container {
-                padding: 12px;
-                gap: 16px;
-            }
-
-            .gallery-upload-area {
-                min-height: 200px;
-            }
-
-            .upload-content h3 {
-                font-size: 16px;
-            }
-
-            .upload-content p {
-                font-size: 14px;
-            }
-
-            .gallery-preview {
-                padding: 12px;
-            }
-
-            .preview-image {
-                max-height: 150px;
-            }
-
-            .gallery-upload-area.drag-over::after {
-                font-size: 14px;
-                padding: 10px 20px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .gallery-upload-area {
-                min-height: 180px;
-            }
-
-            .upload-content h3 {
-                font-size: 14px;
-            }
-
-            .upload-content p {
-                font-size: 12px;
-                margin-bottom: 12px;
-            }
-
-            .preview-info {
-                padding: 8px;
-            }
-
-            .preview-info p {
-                font-size: 12px;
-            }
-        }
     </style>
 </head>
 <body class="dark-mode">
@@ -999,37 +829,7 @@
                 </div>
             </div>
 
-            <!-- Gallery模式的图片上传界面 -->
-            <div v-if="currentType === 'gallery'" class="gallery-upload-container">
-                <div class="gallery-upload-area"
-                     :class="{ 'drag-over': isDragOver }"
-                     @dragover.prevent="handleDragOver"
-                     @dragenter.prevent="handleDragEnter"
-                     @dragleave.prevent="handleDragLeave"
-                     @drop.prevent="handleGalleryDrop"
-                     @click="selectGalleryImage">
-                    <div class="upload-content">
-                        <i class="el-icon-picture-outline" style="font-size: 48px; color: #909399; margin-bottom: 16px;"></i>
-                        <h3>上传图片到Gallery</h3>
-                        <p>拖拽图片到此处，或点击此区域选择图片</p>
-                        <el-button type="primary" @click.stop="selectGalleryImage" icon="el-icon-upload">选择图片</el-button>
-                        <input ref="galleryFileInput" type="file" accept="image/*" style="display: none;" @change="handleGalleryFileSelect">
-                    </div>
-                </div>
-
-                <!-- 图片预览 -->
-                <div v-if="galleryPreview.url" class="gallery-preview">
-                    <h4>图片预览</h4>
-                    <img :src="galleryPreview.url" :alt="metadata.alt || '预览图片'" class="preview-image">
-                    <div class="preview-info">
-                        <p><strong>文件名:</strong> {{ galleryPreview.fileName }}</p>
-                        <p><strong>大小:</strong> {{ formatFileSize(galleryPreview.size) }}</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 文本编辑器（非Gallery模式） -->
-            <div v-if="currentType !== 'gallery'" id="vditor"></div>
+            <div id="vditor"></div>
         </div>
 
 
@@ -1492,7 +1292,6 @@
                     // PWA模式检测
                     isPWAMode: false,
                     // Gallery模式相关
-                    isDragOver: false,
                     galleryPreview: {
                         url: null,
                         fileName: '',
@@ -1652,12 +1451,11 @@
                     this.currentType = type;
                     this.resetMetadata(type);
                     this.bodyContent = '';
+                    this.vditor.setValue('');
 
-                    // Gallery模式特殊处理
+                    // Gallery模式重置预览
                     if (type === contentTypes.GALLERY) {
                         this.resetGalleryPreview();
-                    } else {
-                        this.vditor.setValue('');
                     }
                 },
 
@@ -2309,96 +2107,6 @@
                     };
                 },
 
-                selectGalleryImage() {
-                    this.$refs.galleryFileInput.click();
-                },
-
-                handleGalleryFileSelect(event) {
-                    const files = Array.from(event.target.files);
-                    if (files.length > 0) {
-                        this.processGalleryImage(files[0]);
-                    }
-                    // 清空input值，允许重复选择同一文件
-                    event.target.value = '';
-                },
-
-                handleDragOver(event) {
-                    event.preventDefault();
-                    this.isDragOver = true;
-                },
-
-                handleDragEnter(event) {
-                    event.preventDefault();
-                    this.isDragOver = true;
-                },
-
-                handleDragLeave(event) {
-                    event.preventDefault();
-                    // 只有当离开整个拖拽区域时才重置状态
-                    if (!event.currentTarget.contains(event.relatedTarget)) {
-                        this.isDragOver = false;
-                    }
-                },
-
-                handleGalleryDrop(event) {
-                    event.preventDefault();
-                    this.isDragOver = false;
-
-                    const files = Array.from(event.dataTransfer.files).filter(file =>
-                        file.type.startsWith('image/')
-                    );
-
-                    if (files.length === 0) {
-                        this.$message.warning('请拖拽图片文件');
-                        return;
-                    }
-
-                    if (files.length > 1) {
-                        this.$message.warning('一次只能上传一张图片');
-                        return;
-                    }
-
-                    this.processGalleryImage(files[0]);
-                },
-
-                processGalleryImage(file) {
-                    // 验证文件类型
-                    if (!file.type.startsWith('image/')) {
-                        this.$message.error('请选择图片文件');
-                        return;
-                    }
-
-                    // 创建预览
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        this.galleryPreview = {
-                            url: e.target.result,
-                            fileName: file.name,
-                            size: file.size,
-                            file: file
-                        };
-
-                        // 自动填充alt文本（如果为空）
-                        if (!this.metadata.alt) {
-                            this.metadata.alt = file.name.replace(/\.[^/.]+$/, "");
-                        }
-
-                        // 自动填充标题（如果为空）
-                        if (!this.metadata.title) {
-                            this.metadata.title = file.name.replace(/\.[^/.]+$/, "");
-                        }
-                    };
-                    reader.readAsDataURL(file);
-                },
-
-                formatFileSize(bytes) {
-                    if (bytes === 0) return '0 Bytes';
-                    const k = 1024;
-                    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-                    const i = Math.floor(Math.log(bytes) / Math.log(k));
-                    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-                },
-
                 async publishGalleryImage() {
                     // 验证必填字段
                     if (!this.metadata.title) {
@@ -2411,43 +2119,28 @@
                         return;
                     }
 
-                    if (!this.galleryPreview.file) {
-                        this.$message.warning('请先选择要上传的图片');
+                    // 从编辑器内容中提取图片URL
+                    const content = this.vditor.getValue();
+                    const imageUrlMatch = content.match(/!\[.*?\]\((https?:\/\/[^\)]+)\)/);
+
+                    if (!imageUrlMatch) {
+                        this.$message.warning('请先在编辑器中上传图片');
                         return;
                     }
 
-                    if (!this.isImageServiceConfigured) {
-                        this.$message.warning('请先配置图床服务');
-                        return;
-                    }
+                    const imageUrl = imageUrlMatch[1];
 
                     const publishButton = document.querySelector('.publish-button');
 
                     try {
-                        this.$message({ message: '正在上传图片...', type: 'info' });
-
-                        // 上传图片到图床
-                        const uploadResult = await window.imageService.uploadImage(this.galleryPreview.file, {
-                            compress: true,
-                            quality: 0.8,
-                            addHash: true,
-                            onProgress: (progress) => {
-                                console.log('Upload progress:', progress);
-                            }
-                        });
-
-                        if (!uploadResult.success) {
-                            throw new Error(uploadResult.error || '图片上传失败');
-                        }
-
                         this.$message({ message: '正在保存图片信息...', type: 'info' });
 
                         // 创建图片数据
                         const imageData = {
                             title: this.metadata.title,
                             description: this.metadata.description || '',
-                            url: uploadResult.url,
-                            thumbnail: uploadResult.url, // 使用同一个URL作为缩略图
+                            url: imageUrl,
+                            thumbnail: imageUrl, // 使用同一个URL作为缩略图
                             alt: this.metadata.alt,
                             date: this.metadata.date
                         };
