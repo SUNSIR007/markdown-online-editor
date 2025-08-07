@@ -824,7 +824,6 @@
                     <el-input v-if="metadataFields[currentType].some(f => f.key === 'title')" v-model="metadata.title" placeholder="Title" size="small"></el-input>
                     <el-input v-if="metadataFields[currentType].some(f => f.key === 'categories')" v-model="metadata.categories" placeholder="Categories (comma-separated)" size="small"></el-input>
                     <el-input v-if="metadataFields[currentType].some(f => f.key === 'description')" v-model="metadata.description" placeholder="Description" size="small"></el-input>
-                    <el-input v-if="metadataFields[currentType].some(f => f.key === 'alt')" v-model="metadata.alt" placeholder="Alt text for accessibility" size="small"></el-input>
                     <el-date-picker v-if="metadataFields[currentType].some(f => f.key === 'date' && f.type === 'date')" v-model="metadata.date" type="date" placeholder="拍摄日期" size="small" format="yyyy-MM-dd" value-format="yyyy-MM-dd"></el-date-picker>
                 </div>
             </div>
@@ -907,18 +906,12 @@
             [contentTypes.BLOG]: [
                 { key: 'title', label: '标题', type: 'text', required: true },
                 { key: 'categories', label: '分类', type: 'tags' },
-                { key: 'date', label: '发布日期', type: 'datetime' },
-                { key: 'description', label: '描述', type: 'textarea' }
+                { key: 'date', label: '发布日期', type: 'datetime' }
             ],
             [contentTypes.ESSAY]: [
-                { key: 'categories', label: '分类', type: 'tags' },
-                { key: 'pubDate', label: '发布日期', type: 'datetime' },
-                { key: 'description', label: '描述', type: 'textarea' }
+                { key: 'pubDate', label: '发布日期', type: 'datetime' }
             ],
             [contentTypes.GALLERY]: [
-                { key: 'title', label: '图片标题', type: 'text', required: true },
-                { key: 'description', label: '图片描述', type: 'textarea' },
-                { key: 'alt', label: '替代文本', type: 'text', required: true },
                 { key: 'date', label: '拍摄日期', type: 'date' }
             ]
         };
@@ -1468,22 +1461,16 @@
                         newMeta = {
                             title: '',
                             categories: 'Daily',
-                            pubDate: dateStr,
-                            description: ''
+                            pubDate: dateStr
                         };
                     } else if (type === contentTypes.ESSAY) {
                         const dateTimeStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
                         newMeta = {
-                            pubDate: dateTimeStr,
-                            description: "",
-                            categories: "随笔"
+                            pubDate: dateTimeStr
                         };
                     } else if (type === contentTypes.GALLERY) {
                         const dateStr = now.toISOString().split('T')[0];
                         newMeta = {
-                            title: '',
-                            description: '',
-                            alt: '',
                             date: dateStr
                         };
                     }
@@ -2108,17 +2095,6 @@
                 },
 
                 async publishGalleryImage() {
-                    // 验证必填字段
-                    if (!this.metadata.title) {
-                        this.$message.warning('请先设置图片标题');
-                        return;
-                    }
-
-                    if (!this.metadata.alt) {
-                        this.$message.warning('请先设置替代文本');
-                        return;
-                    }
-
                     // 从编辑器内容中提取图片URL
                     const content = this.vditor.getValue();
                     const imageUrlMatch = content.match(/!\[.*?\]\((https?:\/\/[^\)]+)\)/);
@@ -2137,16 +2113,13 @@
 
                         // 创建图片数据
                         const imageData = {
-                            title: this.metadata.title,
-                            description: this.metadata.description || '',
                             url: imageUrl,
                             thumbnail: imageUrl, // 使用同一个URL作为缩略图
-                            alt: this.metadata.alt,
                             date: this.metadata.date
                         };
 
-                        // 生成文件名（使用标题的slug形式）
-                        const fileName = this.generateGalleryFileName(this.metadata.title);
+                        // 生成文件名（使用时间戳）
+                        const fileName = this.generateGalleryFileName();
                         const filePath = `src/content/photos/${fileName}.json`;
 
                         // 保存JSON文件到GitHub
@@ -2154,7 +2127,7 @@
                         const result = await window.githubService.createOrUpdateFile(
                             filePath,
                             jsonContent,
-                            `Add gallery image: ${this.metadata.title}`
+                            `Add gallery image: ${fileName}`
                         );
 
                         if (publishButton) {
@@ -2177,13 +2150,12 @@
                     }
                 },
 
-                generateGalleryFileName(title) {
-                    // 将标题转换为适合文件名的格式
-                    return title
-                        .toLowerCase()
-                        .replace(/[^a-z0-9\u4e00-\u9fa5]/g, '-') // 替换非字母数字和中文字符为连字符
-                        .replace(/-+/g, '-') // 合并多个连字符
-                        .replace(/^-|-$/g, ''); // 移除开头和结尾的连字符
+                generateGalleryFileName() {
+                    // 使用时间戳生成文件名
+                    const now = new Date();
+                    const timestamp = now.getTime();
+                    const dateStr = now.toISOString().split('T')[0]; // YYYY-MM-DD
+                    return `photo-${dateStr}-${timestamp}`;
                 }
             }
         });
