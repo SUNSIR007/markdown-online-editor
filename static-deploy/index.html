@@ -254,6 +254,10 @@
             top: 41px; /* Vditor toolbar height */
             z-index: 2;
         }
+
+        .metadata-editor.no-border {
+            border-bottom: none;
+        }
         .metadata-editor .el-input {
             flex: 1;
         }
@@ -820,7 +824,9 @@
         <div class="editor-container">
             <!-- 元数据编辑器将通过JS移动到Vditor工具栏下方 -->
             <div id="metadata-editor-wrapper" style="display: none;">
-                <div class="metadata-editor" v-if="currentType !== 'general'">
+                <div class="metadata-editor"
+                     v-if="currentType !== 'general' && currentType !== 'gallery' && hasVisibleFields"
+                     :class="{ 'no-border': currentType === 'essay' }">
                     <el-input v-if="metadataFields[currentType].some(f => f.key === 'title')" v-model="metadata.title" placeholder="Title" size="small"></el-input>
                     <el-input v-if="metadataFields[currentType].some(f => f.key === 'categories')" v-model="metadata.categories" placeholder="Categories (comma-separated)" size="small"></el-input>
                     <el-input v-if="metadataFields[currentType].some(f => f.key === 'description')" v-model="metadata.description" placeholder="Description" size="small"></el-input>
@@ -912,7 +918,7 @@
                 { key: 'pubDate', label: '发布日期', type: 'datetime' }
             ],
             [contentTypes.GALLERY]: [
-                { key: 'date', label: '拍摄日期', type: 'date' }
+                // Gallery模式不显示任何元数据字段，date在后台自动添加
             ]
         };
 
@@ -1292,6 +1298,16 @@
                         file: null
                     }
                 };
+            },
+
+            computed: {
+                hasVisibleFields() {
+                    if (!this.currentType || this.currentType === 'general' || this.currentType === 'gallery') {
+                        return false;
+                    }
+                    const fields = this.metadataFields[this.currentType];
+                    return fields && fields.length > 0;
+                }
             },
 
             mounted() {
