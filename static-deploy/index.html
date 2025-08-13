@@ -28,45 +28,151 @@
             transition: all 0.3s ease;
         }
 
+        /* 主题系统 */
+
         /* 暗夜模式样式 */
-        .dark-mode {
+        .theme-dark {
             background: #000000 !important;
             color: #e0e0e0;
         }
 
-        .dark-mode .header {
+        .theme-dark .header {
             background: #000000 !important;
             border-bottom-color: #888;
         }
 
-        .dark-mode .content-type-selector {
+        .theme-dark .content-type-selector {
             background: #000000;
         }
 
-        /* 克莱因蓝按钮样式 */
-        .dark-mode .content-type-selector .el-button--primary,
-        .dark-mode .el-button--primary {
+        /* 深灰色主题 */
+        .theme-gray {
+            background: #2d3748 !important;
+            color: #e2e8f0;
+        }
+
+        .theme-gray .header {
+            background: #1a202c !important;
+            border-bottom-color: #4a5568;
+        }
+
+        .theme-gray .content-type-selector {
+            background: #1a202c;
+        }
+
+        /* 纸黄色主题 */
+        .theme-paper {
+            background: #fef7e0 !important;
+            color: #744210;
+        }
+
+        .theme-paper .header {
+            background: #f6e05e !important;
+            border-bottom-color: #d69e2e;
+            color: #744210 !important;
+        }
+
+        .theme-paper .content-type-selector {
+            background: #f6e05e;
+        }
+
+        /* 森林绿主题 */
+        .theme-forest {
+            background: #1a2e1a !important;
+            color: #c6f6d5;
+        }
+
+        .theme-forest .header {
+            background: #22543d !important;
+            border-bottom-color: #38a169;
+        }
+
+        .theme-forest .content-type-selector {
+            background: #22543d;
+        }
+
+        /* 海洋蓝主题 */
+        .theme-ocean {
+            background: #1a365d !important;
+            color: #bee3f8;
+        }
+
+        .theme-ocean .header {
+            background: #2c5282 !important;
+            border-bottom-color: #3182ce;
+        }
+
+        .theme-ocean .content-type-selector {
+            background: #2c5282;
+        }
+
+        /* 主要按钮样式 - 适用于所有主题 */
+        .theme-dark .content-type-selector .el-button--primary,
+        .theme-dark .el-button--primary,
+        .theme-gray .content-type-selector .el-button--primary,
+        .theme-gray .el-button--primary,
+        .theme-forest .content-type-selector .el-button--primary,
+        .theme-forest .el-button--primary,
+        .theme-ocean .content-type-selector .el-button--primary,
+        .theme-ocean .el-button--primary {
             background: #002FA7 !important;
             border-color: #002FA7 !important;
             color: white !important;
         }
 
-        .dark-mode .content-type-selector .el-button--primary:hover,
-        .dark-mode .el-button--primary:hover {
+        .theme-dark .content-type-selector .el-button--primary:hover,
+        .theme-dark .el-button--primary:hover,
+        .theme-gray .content-type-selector .el-button--primary:hover,
+        .theme-gray .el-button--primary:hover,
+        .theme-forest .content-type-selector .el-button--primary:hover,
+        .theme-forest .el-button--primary:hover,
+        .theme-ocean .content-type-selector .el-button--primary:hover,
+        .theme-ocean .el-button--primary:hover {
             background: #0033B8 !important;
             border-color: #0033B8 !important;
             color: white !important;
         }
 
+        /* 纸黄色主题的按钮样式 */
+        .theme-paper .content-type-selector .el-button--primary,
+        .theme-paper .el-button--primary {
+            background: #d69e2e !important;
+            border-color: #d69e2e !important;
+            color: white !important;
+        }
+
+        .theme-paper .content-type-selector .el-button--primary:hover,
+        .theme-paper .el-button--primary:hover {
+            background: #b7791f !important;
+            border-color: #b7791f !important;
+            color: white !important;
+        }
+
         /* 强制覆盖Element UI的默认样式 */
-        .dark-mode .content-type-selector .el-button.el-button--primary {
+        .theme-dark .content-type-selector .el-button.el-button--primary,
+        .theme-gray .content-type-selector .el-button.el-button--primary,
+        .theme-forest .content-type-selector .el-button.el-button--primary,
+        .theme-ocean .content-type-selector .el-button.el-button--primary {
             background-color: #002FA7 !important;
             border-color: #002FA7 !important;
         }
 
-        .dark-mode .content-type-selector .el-button.el-button--primary:hover {
+        .theme-dark .content-type-selector .el-button.el-button--primary:hover,
+        .theme-gray .content-type-selector .el-button.el-button--primary:hover,
+        .theme-forest .content-type-selector .el-button.el-button--primary:hover,
+        .theme-ocean .content-type-selector .el-button.el-button--primary:hover {
             background-color: #0033B8 !important;
             border-color: #0033B8 !important;
+        }
+
+        .theme-paper .content-type-selector .el-button.el-button--primary {
+            background-color: #d69e2e !important;
+            border-color: #d69e2e !important;
+        }
+
+        .theme-paper .content-type-selector .el-button.el-button--primary:hover {
+            background-color: #b7791f !important;
+            border-color: #b7791f !important;
         }
 
         /* 发布按钮图标大小 */
@@ -185,24 +291,44 @@
             color: #FFA500 !important; /* 橙色用于字面量 */
         }
 
-        .dark-mode .editor-container {
+        /* 编辑器容器主题样式 */
+        .theme-dark .editor-container,
+        .theme-dark #vditor,
+        .theme-dark .vditor {
             background: #000000 !important;
         }
 
-        .dark-mode #vditor {
-            background: #000000 !important;
+        .theme-gray .editor-container,
+        .theme-gray #vditor,
+        .theme-gray .vditor {
+            background: #2d3748 !important;
         }
 
-        .dark-mode .vditor {
-            background: #000000 !important;
+        .theme-paper .editor-container,
+        .theme-paper #vditor,
+        .theme-paper .vditor {
+            background: #fef7e0 !important;
+        }
+
+        .theme-forest .editor-container,
+        .theme-forest #vditor,
+        .theme-forest .vditor {
+            background: #1a2e1a !important;
+        }
+
+        .theme-ocean .editor-container,
+        .theme-ocean #vditor,
+        .theme-ocean .vditor {
+            background: #1a365d !important;
         }
 
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border-bottom: none;
             padding: 15px 25px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.1);
             color: white;
+            /* 默认渐变背景，会被主题样式覆盖 */
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
         .content-type-selector {
             display: flex;
@@ -248,11 +374,36 @@
             display: flex;
             gap: 15px;
             padding: 10px 15px;
-            background-color: #000000;
             border-bottom: 1px solid #30363d;
             position: sticky;
             top: 41px; /* Vditor toolbar height */
             z-index: 2;
+        }
+
+        /* 元数据编辑器主题样式 */
+        .theme-dark .metadata-editor {
+            background-color: #000000;
+            border-bottom-color: #30363d;
+        }
+
+        .theme-gray .metadata-editor {
+            background-color: #1a202c;
+            border-bottom-color: #4a5568;
+        }
+
+        .theme-paper .metadata-editor {
+            background-color: #f6e05e;
+            border-bottom-color: #d69e2e;
+        }
+
+        .theme-forest .metadata-editor {
+            background-color: #22543d;
+            border-bottom-color: #38a169;
+        }
+
+        .theme-ocean .metadata-editor {
+            background-color: #2c5282;
+            border-bottom-color: #3182ce;
         }
         .metadata-editor .el-input {
             flex: 1;
@@ -264,13 +415,50 @@
             height: 32px;
             line-height: 32px;
         }
-        .dark-mode .el-input__inner {
+        /* 输入框主题样式 */
+        .theme-dark .el-input__inner {
             background-color: #1a1a1a !important;
             border-color: #555 !important;
             color: #e0e0e0 !important;
         }
-        .dark-mode .el-input__inner:hover, .dark-mode .el-input__inner:focus {
+        .theme-dark .el-input__inner:hover, .theme-dark .el-input__inner:focus {
             border-color: #002FA7 !important;
+        }
+
+        .theme-gray .el-input__inner {
+            background-color: #2d3748 !important;
+            border-color: #4a5568 !important;
+            color: #e2e8f0 !important;
+        }
+        .theme-gray .el-input__inner:hover, .theme-gray .el-input__inner:focus {
+            border-color: #002FA7 !important;
+        }
+
+        .theme-paper .el-input__inner {
+            background-color: #fffbeb !important;
+            border-color: #d69e2e !important;
+            color: #744210 !important;
+        }
+        .theme-paper .el-input__inner:hover, .theme-paper .el-input__inner:focus {
+            border-color: #b7791f !important;
+        }
+
+        .theme-forest .el-input__inner {
+            background-color: #22543d !important;
+            border-color: #38a169 !important;
+            color: #c6f6d5 !important;
+        }
+        .theme-forest .el-input__inner:hover, .theme-forest .el-input__inner:focus {
+            border-color: #48bb78 !important;
+        }
+
+        .theme-ocean .el-input__inner {
+            background-color: #2c5282 !important;
+            border-color: #3182ce !important;
+            color: #bee3f8 !important;
+        }
+        .theme-ocean .el-input__inner:hover, .theme-ocean .el-input__inner:focus {
+            border-color: #4299e1 !important;
         }
         #vditor {
             height: 100%;
@@ -284,110 +472,219 @@
             line-height: 1.6 !important;
         }
 
-        /* 暗夜模式下的编辑器样式 */
-        .dark-mode .editor-container {
-            background: #000000 !important;
-        }
+        /* Vditor编辑器主题样式 */
 
-        .dark-mode .header {
-            background: #000000 !important;
-        }
-
-        .dark-mode .vditor-toolbar {
+        /* 暗夜主题 */
+        .theme-dark .vditor-toolbar {
             background: #000000 !important;
             border-bottom-color: #888 !important;
         }
 
-        .dark-mode .vditor-content {
-            background: #000000 !important;
-        }
-
-        /* 确保所见即所得模式和即时渲染模式下编辑器背景为纯黑色 */
-        .dark-mode .vditor-wysiwyg {
-            background: #000000 !important;
-        }
-
-        .dark-mode .vditor-wysiwyg .vditor-wysiwyg__main {
+        .theme-dark .vditor-content,
+        .theme-dark .vditor-wysiwyg,
+        .theme-dark .vditor-wysiwyg .vditor-wysiwyg__main {
             background: #000000 !important;
             color: #e0e0e0 !important;
         }
 
-        /* 更强制的所见即所得模式背景设置 */
-        .dark-mode .vditor-wysiwyg__main,
-        .dark-mode .vditor-wysiwyg__main .vditor-wysiwyg__main,
-        .dark-mode .vditor-wysiwyg .vditor-wysiwyg__main .vditor-wysiwyg__main,
-        .dark-mode .vditor-wysiwyg__main > div,
-        .dark-mode .vditor-wysiwyg__main .vditor-wysiwyg__main > div {
+        /* 深灰主题 */
+        .theme-gray .vditor-toolbar {
+            background: #1a202c !important;
+            border-bottom-color: #4a5568 !important;
+        }
+
+        .theme-gray .vditor-content,
+        .theme-gray .vditor-wysiwyg,
+        .theme-gray .vditor-wysiwyg .vditor-wysiwyg__main {
+            background: #2d3748 !important;
+            color: #e2e8f0 !important;
+        }
+
+        /* 纸黄主题 */
+        .theme-paper .vditor-toolbar {
+            background: #f6e05e !important;
+            border-bottom-color: #d69e2e !important;
+        }
+
+        .theme-paper .vditor-content,
+        .theme-paper .vditor-wysiwyg,
+        .theme-paper .vditor-wysiwyg .vditor-wysiwyg__main {
+            background: #fef7e0 !important;
+            color: #744210 !important;
+        }
+
+        /* 森林主题 */
+        .theme-forest .vditor-toolbar {
+            background: #22543d !important;
+            border-bottom-color: #38a169 !important;
+        }
+
+        .theme-forest .vditor-content,
+        .theme-forest .vditor-wysiwyg,
+        .theme-forest .vditor-wysiwyg .vditor-wysiwyg__main {
+            background: #1a2e1a !important;
+            color: #c6f6d5 !important;
+        }
+
+        /* 海洋主题 */
+        .theme-ocean .vditor-toolbar {
+            background: #2c5282 !important;
+            border-bottom-color: #3182ce !important;
+        }
+
+        .theme-ocean .vditor-content,
+        .theme-ocean .vditor-wysiwyg,
+        .theme-ocean .vditor-wysiwyg .vditor-wysiwyg__main {
+            background: #1a365d !important;
+            color: #bee3f8 !important;
+        }
+
+        /* 详细的编辑器模式样式 */
+
+        /* 暗夜主题 - 详细样式 */
+        .theme-dark .vditor-wysiwyg__main,
+        .theme-dark .vditor-wysiwyg__main .vditor-wysiwyg__main,
+        .theme-dark .vditor-wysiwyg .vditor-wysiwyg__main .vditor-wysiwyg__main,
+        .theme-dark .vditor-wysiwyg__main > div,
+        .theme-dark .vditor-wysiwyg__main .vditor-wysiwyg__main > div,
+        .theme-dark .vditor-wysiwyg__main[contenteditable="true"],
+        .theme-dark .vditor-ir,
+        .theme-dark .vditor-ir .vditor-ir__main,
+        .theme-dark .vditor-ir .vditor-ir__main textarea {
             background: #000000 !important;
             background-color: #000000 !important;
             color: #e0e0e0 !important;
         }
 
-        /* 针对所见即所得模式的编辑区域 */
-        .dark-mode .vditor-wysiwyg__main[contenteditable="true"] {
+        /* 深灰主题 - 详细样式 */
+        .theme-gray .vditor-wysiwyg__main,
+        .theme-gray .vditor-wysiwyg__main .vditor-wysiwyg__main,
+        .theme-gray .vditor-wysiwyg .vditor-wysiwyg__main .vditor-wysiwyg__main,
+        .theme-gray .vditor-wysiwyg__main > div,
+        .theme-gray .vditor-wysiwyg__main .vditor-wysiwyg__main > div,
+        .theme-gray .vditor-wysiwyg__main[contenteditable="true"],
+        .theme-gray .vditor-ir,
+        .theme-gray .vditor-ir .vditor-ir__main,
+        .theme-gray .vditor-ir .vditor-ir__main textarea {
+            background: #2d3748 !important;
+            background-color: #2d3748 !important;
+            color: #e2e8f0 !important;
+        }
+
+        /* 纸黄主题 - 详细样式 */
+        .theme-paper .vditor-wysiwyg__main,
+        .theme-paper .vditor-wysiwyg__main .vditor-wysiwyg__main,
+        .theme-paper .vditor-wysiwyg .vditor-wysiwyg__main .vditor-wysiwyg__main,
+        .theme-paper .vditor-wysiwyg__main > div,
+        .theme-paper .vditor-wysiwyg__main .vditor-wysiwyg__main > div,
+        .theme-paper .vditor-wysiwyg__main[contenteditable="true"],
+        .theme-paper .vditor-ir,
+        .theme-paper .vditor-ir .vditor-ir__main,
+        .theme-paper .vditor-ir .vditor-ir__main textarea {
+            background: #fef7e0 !important;
+            background-color: #fef7e0 !important;
+            color: #744210 !important;
+        }
+
+        /* 森林主题 - 详细样式 */
+        .theme-forest .vditor-wysiwyg__main,
+        .theme-forest .vditor-wysiwyg__main .vditor-wysiwyg__main,
+        .theme-forest .vditor-wysiwyg .vditor-wysiwyg__main .vditor-wysiwyg__main,
+        .theme-forest .vditor-wysiwyg__main > div,
+        .theme-forest .vditor-wysiwyg__main .vditor-wysiwyg__main > div,
+        .theme-forest .vditor-wysiwyg__main[contenteditable="true"],
+        .theme-forest .vditor-ir,
+        .theme-forest .vditor-ir .vditor-ir__main,
+        .theme-forest .vditor-ir .vditor-ir__main textarea {
+            background: #1a2e1a !important;
+            background-color: #1a2e1a !important;
+            color: #c6f6d5 !important;
+        }
+
+        /* 海洋主题 - 详细样式 */
+        .theme-ocean .vditor-wysiwyg__main,
+        .theme-ocean .vditor-wysiwyg__main .vditor-wysiwyg__main,
+        .theme-ocean .vditor-wysiwyg .vditor-wysiwyg__main .vditor-wysiwyg__main,
+        .theme-ocean .vditor-wysiwyg__main > div,
+        .theme-ocean .vditor-wysiwyg__main .vditor-wysiwyg__main > div,
+        .theme-ocean .vditor-wysiwyg__main[contenteditable="true"],
+        .theme-ocean .vditor-ir,
+        .theme-ocean .vditor-ir .vditor-ir__main,
+        .theme-ocean .vditor-ir .vditor-ir__main textarea {
+            background: #1a365d !important;
+            background-color: #1a365d !important;
+            color: #bee3f8 !important;
+        }
+
+        /* 预览区域和分屏模式样式 */
+
+        /* 暗夜主题 - 预览和分屏 */
+        .theme-dark .vditor-preview,
+        .theme-dark .vditor-preview .vditor-reset,
+        .theme-dark .vditor-sv,
+        .theme-dark .vditor-sv .vditor-sv__main,
+        .theme-dark .vditor-sv .vditor-sv__preview,
+        .theme-dark .vditor-sv .vditor-sv__preview .vditor-reset {
             background: #000000 !important;
-            background-color: #000000 !important;
             color: #e0e0e0 !important;
         }
 
-        .dark-mode .vditor-ir {
-            background: #000000 !important;
+        /* 深灰主题 - 预览和分屏 */
+        .theme-gray .vditor-preview,
+        .theme-gray .vditor-preview .vditor-reset,
+        .theme-gray .vditor-sv,
+        .theme-gray .vditor-sv .vditor-sv__main,
+        .theme-gray .vditor-sv .vditor-sv__preview,
+        .theme-gray .vditor-sv .vditor-sv__preview .vditor-reset {
+            background: #2d3748 !important;
+            color: #e2e8f0 !important;
         }
 
-        .dark-mode .vditor-ir .vditor-ir__main {
-            background: #000000 !important;
-            color: #e0e0e0 !important;
+        /* 纸黄主题 - 预览和分屏 */
+        .theme-paper .vditor-preview,
+        .theme-paper .vditor-preview .vditor-reset,
+        .theme-paper .vditor-sv,
+        .theme-paper .vditor-sv .vditor-sv__main,
+        .theme-paper .vditor-sv .vditor-sv__preview,
+        .theme-paper .vditor-sv .vditor-sv__preview .vditor-reset {
+            background: #fef7e0 !important;
+            color: #744210 !important;
         }
 
-        .dark-mode .vditor-ir .vditor-ir__main textarea {
-            background: #000000 !important;
-            color: #e0e0e0 !important;
+        /* 森林主题 - 预览和分屏 */
+        .theme-forest .vditor-preview,
+        .theme-forest .vditor-preview .vditor-reset,
+        .theme-forest .vditor-sv,
+        .theme-forest .vditor-sv .vditor-sv__main,
+        .theme-forest .vditor-sv .vditor-sv__preview,
+        .theme-forest .vditor-sv .vditor-sv__preview .vditor-reset {
+            background: #1a2e1a !important;
+            color: #c6f6d5 !important;
         }
 
-        /* 确保预览区域也是纯黑色背景 */
-        .dark-mode .vditor-preview {
-            background: #000000 !important;
-            color: #e0e0e0 !important;
+        /* 海洋主题 - 预览和分屏 */
+        .theme-ocean .vditor-preview,
+        .theme-ocean .vditor-preview .vditor-reset,
+        .theme-ocean .vditor-sv,
+        .theme-ocean .vditor-sv .vditor-sv__main,
+        .theme-ocean .vditor-sv .vditor-sv__preview,
+        .theme-ocean .vditor-sv .vditor-sv__preview .vditor-reset {
+            background: #1a365d !important;
+            color: #bee3f8 !important;
         }
 
         /* 强制覆盖所有可能的Vditor背景样式 */
-        .dark-mode .vditor-wysiwyg *,
-        .dark-mode .vditor-ir * {
+        .theme-dark .vditor-wysiwyg *,
+        .theme-dark .vditor-ir *,
+        .theme-gray .vditor-wysiwyg *,
+        .theme-gray .vditor-ir *,
+        .theme-paper .vditor-wysiwyg *,
+        .theme-paper .vditor-ir *,
+        .theme-forest .vditor-wysiwyg *,
+        .theme-forest .vditor-ir *,
+        .theme-ocean .vditor-wysiwyg *,
+        .theme-ocean .vditor-ir * {
             background-color: transparent !important;
-        }
-
-        .dark-mode .vditor-wysiwyg,
-        .dark-mode .vditor-wysiwyg__main,
-        .dark-mode .vditor-ir,
-        .dark-mode .vditor-ir__main {
-            background: #000000 !important;
-            background-color: #000000 !important;
-        }
-
-        .dark-mode .vditor-sv {
-            background: #000000 !important;
-        }
-
-        .dark-mode .vditor-sv .vditor-sv__main {
-            background: #000000 !important;
-        }
-
-        .dark-mode .vditor-sv .vditor-sv__preview {
-            background: #000000 !important;
-        }
-
-        .dark-mode .vditor-sv .vditor-sv__preview .vditor-reset {
-            background: #000000 !important;
-            color: #e0e0e0 !important;
-        }
-
-        .dark-mode .vditor-preview {
-            background: #000000 !important;
-        }
-
-        .dark-mode .vditor-preview .vditor-reset {
-            background: #000000 !important;
-            color: #e0e0e0 !important;
         }
 
         /* 隐藏预览工具栏的Desktop/Tablet/Mobile等选项 */
@@ -498,9 +795,18 @@
             backdrop-filter: blur(10px);
         }
 
-        .dark-mode .metadata-info {
+        /* 元数据信息样式 */
+        .theme-dark .metadata-info,
+        .theme-gray .metadata-info,
+        .theme-forest .metadata-info,
+        .theme-ocean .metadata-info {
             color: rgba(224, 224, 224, 0.8);
             background: rgba(255, 255, 255, 0.1);
+        }
+
+        .theme-paper .metadata-info {
+            color: rgba(116, 66, 16, 0.8);
+            background: rgba(116, 66, 16, 0.1);
         }
 
         /* 保存按钮克莱因蓝样式 - 更强制的选择器 */
@@ -553,18 +859,39 @@
             box-shadow: none !important;
         }
 
-        .dark-mode .el-button {
+        /* 通用按钮样式 */
+        .theme-dark .el-button,
+        .theme-gray .el-button,
+        .theme-forest .el-button,
+        .theme-ocean .el-button {
             background: #333 !important;
             border-color: #555 !important;
             color: #e0e0e0 !important;
         }
 
-        .dark-mode .el-button:hover {
+        .theme-dark .el-button:hover,
+        .theme-gray .el-button:hover,
+        .theme-forest .el-button:hover,
+        .theme-ocean .el-button:hover {
             background: #444 !important;
             border-color: #666 !important;
         }
 
-        .dark-mode .el-button--primary {
+        .theme-paper .el-button {
+            background: #f7fafc !important;
+            border-color: #d69e2e !important;
+            color: #744210 !important;
+        }
+
+        .theme-paper .el-button:hover {
+            background: #edf2f7 !important;
+            border-color: #b7791f !important;
+        }
+
+        .theme-dark .el-button--primary,
+        .theme-gray .el-button--primary,
+        .theme-forest .el-button--primary,
+        .theme-ocean .el-button--primary {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
             border-color: transparent !important;
         }
@@ -601,7 +928,8 @@
                 font-size: 13px !important;
             }
 
-            .github-config-button {
+            .github-config-button,
+            .theme-toggle-button {
                 width: 36px !important;
                 height: 36px !important;
             }
@@ -622,7 +950,8 @@
                 font-size: 12px !important;
             }
 
-            .github-config-button {
+            .github-config-button,
+            .theme-toggle-button {
                 width: 32px !important;
                 height: 32px !important;
             }
@@ -783,10 +1112,108 @@
             }
         }
 
+        /* 主题切换按钮样式 */
+        .theme-toggle-button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            background: #667eea;
+            color: white;
+            margin-left: 10px;
+        }
+
+        .theme-toggle-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+            background: #5a67d8;
+        }
+
+        .theme-toggle-button .el-icon-brush {
+            font-size: 18px;
+        }
+
+        /* 主题选择下拉菜单样式 */
+        .theme-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .theme-menu {
+            position: absolute;
+            top: 50px;
+            right: 0;
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+            z-index: 1000;
+            min-width: 150px;
+            overflow: hidden;
+        }
+
+        .theme-menu-item {
+            padding: 12px 16px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            color: #c9d1d9;
+            border-bottom: 1px solid #30363d;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .theme-menu-item:last-child {
+            border-bottom: none;
+        }
+
+        .theme-menu-item:hover {
+            background: #21262d;
+        }
+
+        .theme-menu-item.active {
+            background: #0969da;
+            color: white;
+        }
+
+        .theme-color-preview {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        /* 主题菜单在不同主题下的样式 */
+        .theme-paper .theme-menu {
+            background: #fffbeb;
+            border-color: #d69e2e;
+        }
+
+        .theme-paper .theme-menu-item {
+            color: #744210;
+            border-bottom-color: #d69e2e;
+        }
+
+        .theme-paper .theme-menu-item:hover {
+            background: #fef7e0;
+        }
+
+        .theme-paper .theme-menu-item.active {
+            background: #d69e2e;
+            color: white;
+        }
+
 
     </style>
 </head>
-<body class="dark-mode">
+<body>
     <div id="app">
         <div class="header">
             <div class="content-type-selector">
@@ -811,6 +1238,22 @@
                     </button>
                 </div>
                 <div class="action-buttons">
+                    <div class="theme-dropdown">
+                        <button class="theme-toggle-button" @click="toggleThemeMenu" title="切换主题">
+                            <i class="el-icon-brush"></i>
+                        </button>
+                        <div v-if="showThemeMenu" class="theme-menu" @click.stop>
+                            <div
+                                v-for="theme in themes"
+                                :key="theme.id"
+                                class="theme-menu-item"
+                                :class="{ active: currentTheme === theme.id }"
+                                @click="selectTheme(theme.id)">
+                                <div class="theme-color-preview" :style="{ backgroundColor: theme.color }"></div>
+                                {{ theme.name }}
+                            </div>
+                        </div>
+                    </div>
                     <el-button @click="publish" size="medium" type="success" icon="el-icon-upload" :disabled="!isGitHubConfigured" class="publish-button">
                     </el-button>
                 </div>
@@ -1293,7 +1736,17 @@
                         fileName: '',
                         size: 0,
                         file: null
-                    }
+                    },
+                    // 主题相关
+                    currentTheme: 'dark',
+                    showThemeMenu: false,
+                    themes: [
+                        { id: 'dark', name: '暗夜模式', color: '#000000' },
+                        { id: 'gray', name: '深灰模式', color: '#2d3748' },
+                        { id: 'paper', name: '纸黄模式', color: '#fef7e0' },
+                        { id: 'forest', name: '森林模式', color: '#1a2e1a' },
+                        { id: 'ocean', name: '海洋模式', color: '#1a365d' }
+                    ]
                 };
             },
 
@@ -1337,17 +1790,77 @@
                 },
 
                 initTheme() {
-                    document.body.classList.add('dark-mode');
+                    // 从localStorage加载保存的主题，默认为暗夜模式
+                    const savedTheme = localStorage.getItem('selected-theme') || 'dark';
+                    this.currentTheme = savedTheme;
+                    this.applyTheme(savedTheme);
+                },
+
+                // 应用主题
+                applyTheme(themeId) {
+                    // 移除所有主题类
+                    document.body.classList.remove('theme-dark', 'theme-gray', 'theme-paper', 'theme-forest', 'theme-ocean');
+                    // 添加新主题类
+                    document.body.classList.add(`theme-${themeId}`);
+
+                    // 更新meta标签颜色
+                    const themeColors = {
+                        dark: '#000000',
+                        gray: '#2d3748',
+                        paper: '#fef7e0',
+                        forest: '#1a2e1a',
+                        ocean: '#1a365d'
+                    };
+
+                    const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+                    if (metaThemeColor) {
+                        metaThemeColor.setAttribute('content', themeColors[themeId]);
+                    }
+
+                    // 保存到localStorage
+                    localStorage.setItem('selected-theme', themeId);
+                },
+
+                // 切换主题菜单显示
+                toggleThemeMenu() {
+                    this.showThemeMenu = !this.showThemeMenu;
+
+                    // 点击其他地方关闭菜单
+                    if (this.showThemeMenu) {
+                        const closeMenu = (e) => {
+                            if (!e.target.closest('.theme-dropdown')) {
+                                this.showThemeMenu = false;
+                                document.removeEventListener('click', closeMenu);
+                            }
+                        };
+                        setTimeout(() => {
+                            document.addEventListener('click', closeMenu);
+                        }, 0);
+                    }
+                },
+
+                // 选择主题
+                selectTheme(themeId) {
+                    this.currentTheme = themeId;
+                    this.applyTheme(themeId);
+                    this.showThemeMenu = false;
+
+                    // 更新Vditor主题
+                    if (this.vditor) {
+                        const vditorTheme = themeId === 'paper' ? 'classic' : 'dark';
+                        this.vditor.setTheme(vditorTheme, vditorTheme, vditorTheme);
+                    }
                 },
 
                 initVditor() {
                     const editorMode = 'ir';
+                    const vditorTheme = this.currentTheme === 'paper' ? 'classic' : 'dark';
                     this.vditor = new Vditor('vditor', {
                         height: '100%',
                         mode: editorMode,
-                        theme: 'dark',
+                        theme: vditorTheme,
                         preview: {
-                            theme: { current: 'dark' },
+                            theme: { current: vditorTheme },
                             actions: []
                         },
                         toolbar: [
