@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>主题调色盘演示</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .feature-card {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #4ECDC4;
+        }
+        .theme-preview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .theme-item {
+            height: 80px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            transition: transform 0.3s ease;
+        }
+        .theme-item:hover {
+            transform: scale(1.05);
+        }
+        .theme-dark { background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%); }
+        .theme-ocean { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .theme-sunset { background: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%); }
+        .theme-forest { background: linear-gradient(135deg, #134e5e 0%, #71b280 100%); }
+        .theme-purple { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .theme-pink { background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%); }
+        .theme-blue { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); }
+        .theme-green { background: linear-gradient(135deg, #d299c2 0%, #fef9d7 100%); }
+        .theme-orange { background: linear-gradient(135deg, #fad0c4 0%, #ffd1ff 100%); }
+        .theme-red { background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%); }
+        .theme-teal { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); }
+        .theme-indigo { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .demo-button {
+            display: inline-block;
+            padding: 12px 24px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            border: 2px solid rgba(255,255,255,0.3);
+            transition: all 0.3s ease;
+            margin: 10px;
+            backdrop-filter: blur(10px);
+        }
+        .demo-button:hover {
+            background: rgba(255,255,255,0.3);
+            border-color: rgba(255,255,255,0.5);
+            transform: translateY(-2px);
+        }
+        .highlight {
+            background: rgba(255,255,255,0.2);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 主题调色盘功能演示</h1>
+        
+        <div class="feature-grid">
+            <div class="feature-card">
+                <h3>🌈 丰富的主题选择</h3>
+                <p>提供12种精美的预设主题，包括经典黑夜、海洋蓝、日落橙、森林绿等多种风格，满足不同用户的审美需求。</p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>🎯 自定义渐变</h3>
+                <p>支持自定义颜色选择器，用户可以选择任意两种颜色创建独特的渐变背景，打造个性化的编辑环境。</p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>💾 主题记忆</h3>
+                <p>自动保存用户选择的主题设置，下次打开应用时会自动应用上次使用的主题，提供一致的用户体验。</p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>📱 响应式设计</h3>
+                <p>主题选择器在移动端和桌面端都有优化的显示效果，确保在各种设备上都能流畅使用。</p>
+            </div>
+        </div>
+
+        <h2>🎨 主题预览</h2>
+        <div class="theme-preview">
+            <div class="theme-item theme-dark">🌙 经典黑夜</div>
+            <div class="theme-item theme-ocean">🌊 海洋蓝</div>
+            <div class="theme-item theme-sunset">🌅 日落橙</div>
+            <div class="theme-item theme-forest">🌲 森林绿</div>
+            <div class="theme-item theme-purple">💜 紫罗兰</div>
+            <div class="theme-item theme-pink">🌸 樱花粉</div>
+            <div class="theme-item theme-blue">☁️ 天空蓝</div>
+            <div class="theme-item theme-green">🍃 薄荷绿</div>
+            <div class="theme-item theme-orange">🍑 蜜桃橙</div>
+            <div class="theme-item theme-red">🌹 玫瑰红</div>
+            <div class="theme-item theme-teal">🐚 青绿色</div>
+            <div class="theme-item theme-indigo">🔮 靛蓝色</div>
+        </div>
+
+        <div class="highlight">
+            <h3>✨ 使用方法</h3>
+            <p>1. 点击编辑器顶部的彩色调色盘按钮 🎨</p>
+            <p>2. 在弹出的主题选择器中选择喜欢的预设主题</p>
+            <p>3. 或者使用自定义颜色选择器创建独特的渐变</p>
+            <p>4. 主题会立即应用并自动保存</p>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="index.html" class="demo-button">🚀 体验主题调色盘</a>
+            <a href="#" class="demo-button" onclick="window.history.back()">🔙 返回</a>
+        </div>
+    </div>
+</body>
+</html>
