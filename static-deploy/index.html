@@ -292,31 +292,51 @@
         }
 
         /* 编辑器容器主题样式 */
-        .theme-dark .editor-container,
+        .theme-dark .editor-container {
+            background: #000000 !important;
+            border-color: #333333 !important;
+            box-shadow: 0 4px 20px rgba(255,255,255,0.05);
+        }
         .theme-dark #vditor,
         .theme-dark .vditor {
             background: #000000 !important;
         }
 
-        .theme-gray .editor-container,
+        .theme-gray .editor-container {
+            background: #2d3748 !important;
+            border-color: #4a5568 !important;
+            box-shadow: 0 4px 20px rgba(255,255,255,0.05);
+        }
         .theme-gray #vditor,
         .theme-gray .vditor {
             background: #2d3748 !important;
         }
 
-        .theme-paper .editor-container,
+        .theme-paper .editor-container {
+            background: #fef7e0 !important;
+            border-color: #d69e2e !important;
+            box-shadow: 0 4px 20px rgba(214,158,46,0.2);
+        }
         .theme-paper #vditor,
         .theme-paper .vditor {
             background: #fef7e0 !important;
         }
 
-        .theme-forest .editor-container,
+        .theme-forest .editor-container {
+            background: #1a2e1a !important;
+            border-color: #38a169 !important;
+            box-shadow: 0 4px 20px rgba(56,161,105,0.2);
+        }
         .theme-forest #vditor,
         .theme-forest .vditor {
             background: #1a2e1a !important;
         }
 
-        .theme-ocean .editor-container,
+        .theme-ocean .editor-container {
+            background: #1a365d !important;
+            border-color: #3182ce !important;
+            box-shadow: 0 4px 20px rgba(49,130,206,0.2);
+        }
         .theme-ocean #vditor,
         .theme-ocean .vditor {
             background: #1a365d !important;
@@ -366,9 +386,14 @@
             padding: 0 !important;
         }
         .editor-container {
-            height: calc(100vh - 90px);
+            height: calc(100vh - 130px);
             padding: 0;
             background: #fafafa;
+            margin: 20px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            border: 2px solid;
         }
         .metadata-editor {
             display: flex;
@@ -463,6 +488,18 @@
         #vditor {
             height: 100%;
             border-radius: 0;
+            border: none !important;
+        }
+
+        /* 编辑器内容区域内边距 */
+        .vditor-ir .vditor-ir__main,
+        .vditor-wysiwyg .vditor-wysiwyg__main,
+        .vditor-sv .vditor-sv__main {
+            padding: 20px !important;
+        }
+
+        .vditor-preview {
+            padding: 20px !important;
         }
 
         /* 编辑器字体大小 */
@@ -902,6 +939,11 @@
                 padding: 12px 15px;
             }
 
+            .editor-container {
+                margin: 15px;
+                border-radius: 8px;
+            }
+
             .content-type-selector {
                 /* 保持水平布局，让所有按钮在一行 */
                 flex-direction: row;
@@ -941,7 +983,10 @@
 
         @media (max-width: 480px) {
             .editor-container {
-                height: calc(100vh - 120px);
+                height: calc(100vh - 160px);
+                margin: 8px;
+                border-radius: 6px;
+                border-width: 1px;
             }
 
             /* 超小屏幕进一步优化按钮尺寸 */
