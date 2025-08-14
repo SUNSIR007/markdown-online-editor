@@ -389,11 +389,12 @@
             height: calc(100vh - 130px);
             padding: 0;
             background: #fafafa;
-            margin: 20px;
+            margin: 20px auto;
             border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 4px 20px rgba(0,0,0,0.1);
             border: 2px solid;
+            max-width: 1200px;
         }
         .metadata-editor {
             display: flex;
@@ -495,11 +496,19 @@
         .vditor-ir .vditor-ir__main,
         .vditor-wysiwyg .vditor-wysiwyg__main,
         .vditor-sv .vditor-sv__main {
-            padding: 20px !important;
+            padding: 30px 60px !important;
+            max-width: none !important;
         }
 
         .vditor-preview {
-            padding: 20px !important;
+            padding: 30px 60px !important;
+            max-width: none !important;
+        }
+
+        /* 编辑器文本区域 */
+        .vditor-ir .vditor-ir__main textarea {
+            padding: 0 !important;
+            margin: 0 !important;
         }
 
         /* 编辑器字体大小 */
@@ -940,8 +949,17 @@
             }
 
             .editor-container {
-                margin: 15px;
+                margin: 15px auto;
                 border-radius: 8px;
+                max-width: calc(100% - 30px);
+            }
+
+            /* 移动端编辑器内边距调整 */
+            .vditor-ir .vditor-ir__main,
+            .vditor-wysiwyg .vditor-wysiwyg__main,
+            .vditor-sv .vditor-sv__main,
+            .vditor-preview {
+                padding: 20px 30px !important;
             }
 
             .content-type-selector {
@@ -984,9 +1002,18 @@
         @media (max-width: 480px) {
             .editor-container {
                 height: calc(100vh - 160px);
-                margin: 8px;
+                margin: 8px auto;
                 border-radius: 6px;
                 border-width: 1px;
+                max-width: calc(100% - 16px);
+            }
+
+            /* 超小屏幕编辑器内边距调整 */
+            .vditor-ir .vditor-ir__main,
+            .vditor-wysiwyg .vditor-wysiwyg__main,
+            .vditor-sv .vditor-sv__main,
+            .vditor-preview {
+                padding: 15px 20px !important;
             }
 
             /* 超小屏幕进一步优化按钮尺寸 */

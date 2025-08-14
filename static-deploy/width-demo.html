@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>编辑器宽度调整演示</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #fef7e0;
+            color: #744210;
+        }
+
+        .header {
+            background: #f6e05e;
+            padding: 15px 25px;
+            color: #744210;
+            text-align: center;
+        }
+
+        .demo-container {
+            display: flex;
+            gap: 20px;
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .demo-section {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .demo-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        /* 调整前的样式 */
+        .editor-old {
+            height: 400px;
+            background: #fef7e0;
+            border: 2px solid #d69e2e;
+            border-radius: 12px;
+            margin: 20px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(214,158,46,0.2);
+        }
+
+        .editor-content-old {
+            padding: 20px;
+            height: calc(100% - 40px);
+            overflow-y: auto;
+            border: 1px dashed #d69e2e;
+            margin: 10px;
+            border-radius: 8px;
+        }
+
+        /* 调整后的样式 */
+        .editor-new {
+            height: 400px;
+            background: #fef7e0;
+            border: 2px solid #d69e2e;
+            border-radius: 12px;
+            margin: 20px auto;
+            max-width: 1200px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(214,158,46,0.2);
+        }
+
+        .editor-content-new {
+            padding: 30px 60px;
+            height: calc(100% - 60px);
+            overflow-y: auto;
+            border: 1px dashed #d69e2e;
+            margin: 10px;
+            border-radius: 8px;
+        }
+
+        .cursor-demo {
+            position: relative;
+        }
+
+        .cursor-demo::before {
+            content: '|';
+            color: #d69e2e;
+            font-weight: bold;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        .distance-indicator {
+            position: relative;
+            margin: 10px 0;
+        }
+
+        .distance-line {
+            height: 2px;
+            background: #d69e2e;
+            position: relative;
+        }
+
+        .distance-text {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            background: #fef7e0;
+            padding: 2px 8px;
+            border-radius: 4px;
+            border: 1px solid #d69e2e;
+        }
+
+        .comparison-text {
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .highlight {
+            background: rgba(214,158,46,0.2);
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+
+        .benefits {
+            background: rgba(214,158,46,0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border-left: 4px solid #d69e2e;
+        }
+
+        .benefits h4 {
+            margin-top: 0;
+            color: #b7791f;
+        }
+
+        .benefits ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+
+        .benefits li {
+            margin: 5px 0;
+        }
+
+        @media (max-width: 768px) {
+            .demo-container {
+                flex-direction: column;
+                padding: 10px;
+            }
+            
+            .editor-content-new {
+                padding: 20px 30px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .editor-content-new {
+                padding: 15px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>编辑器宽度优化对比</h1>
+        <p>调整前后的编辑区域宽度对比演示</p>
+    </div>
+
+    <div class="demo-container">
+        <div class="demo-section">
+            <div class="demo-title">❌ 调整前：宽度过宽</div>
+            <div class="editor-old">
+                <div class="editor-content-old">
+                    <div class="cursor-demo">光标位置</div>
+                    <div class="distance-indicator">
+                        <div class="distance-line" style="width: 200px;">
+                            <div class="distance-text">距离边界很远</div>
+                        </div>
+                    </div>
+                    <p class="comparison-text">
+                        在宽屏显示器上，编辑区域占满整个宽度，导致：
+                    </p>
+                    <ul>
+                        <li>光标距离左边界距离过长</li>
+                        <li>文本行长度过长，阅读困难</li>
+                        <li>视线需要大幅度移动</li>
+                        <li>编辑体验不佳</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="demo-section">
+            <div class="demo-title">✅ 调整后：宽度适中</div>
+            <div class="editor-new">
+                <div class="editor-content-new">
+                    <div class="cursor-demo">光标位置</div>
+                    <div class="distance-indicator">
+                        <div class="distance-line" style="width: 80px;">
+                            <div class="distance-text">合适距离</div>
+                        </div>
+                    </div>
+                    <p class="comparison-text">
+                        优化后的编辑区域具有合适的宽度限制：
+                    </p>
+                    <ul>
+                        <li><span class="highlight">最大宽度1200px</span>，居中显示</li>
+                        <li><span class="highlight">左右内边距60px</span>，舒适间距</li>
+                        <li>文本行长度适中，易于阅读</li>
+                        <li>编辑体验更加专业</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="benefits">
+        <h4>🎯 优化效果总结</h4>
+        <ul>
+            <li><strong>最大宽度限制</strong>：1200px，避免在大屏幕上过度拉伸</li>
+            <li><strong>居中显示</strong>：编辑区域在页面中央，视觉平衡</li>
+            <li><strong>合适的内边距</strong>：
+                <ul>
+                    <li>桌面端：60px 左右内边距</li>
+                    <li>平板端：30px 左右内边距</li>
+                    <li>手机端：20px 左右内边距</li>
+                </ul>
+            </li>
+            <li><strong>响应式设计</strong>：不同屏幕尺寸自动调整</li>
+            <li><strong>更好的阅读体验</strong>：文本行长度符合阅读习惯</li>
+            <li><strong>专业的编辑环境</strong>：类似主流代码编辑器的布局</li>
+        </ul>
+    </div>
+
+    <div style="text-align: center; margin: 40px 0;">
+        <a href="index.html" style="color: #d69e2e; text-decoration: none; font-weight: 600;">
+            ← 返回编辑器体验优化效果
+        </a>
+    </div>
+</body>
+</html>
