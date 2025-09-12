@@ -16,19 +16,20 @@
         
         .header {
             position: fixed;
-            top: 0;
+            top: env(safe-area-inset-top, 0);
             left: 0;
             right: 0;
             background: #000000;
             padding: 14px 20px;
+            padding-top: calc(14px + env(safe-area-inset-top, 0));
             z-index: 9999;
             border-bottom: 1px solid #333;
             box-sizing: border-box;
         }
-        
+
         .content {
-            padding-top: 70px;
-            padding: 70px 20px 20px;
+            padding-top: calc(70px + env(safe-area-inset-top, 0));
+            padding: calc(70px + env(safe-area-inset-top, 0)) 20px 20px;
             min-height: 100vh;
             box-sizing: border-box;
         }
@@ -173,18 +174,44 @@
         let monitorInterval;
         let initialViewportHeight = window.innerHeight;
         
+        function getSafeAreaTop() {
+            // 尝试使用CSS env()函数获取
+            const testElement = document.createElement('div');
+            testElement.style.paddingTop = 'env(safe-area-inset-top)';
+            document.body.appendChild(testElement);
+            const computedPadding = window.getComputedStyle(testElement).paddingTop;
+            document.body.removeChild(testElement);
+
+            if (computedPadding && computedPadding !== '0px') {
+                return parseInt(computedPadding);
+            }
+
+            // 回退方案
+            const userAgent = navigator.userAgent;
+            if (/iPhone/.test(userAgent)) {
+                return window.screen.height >= 812 ? 44 : 20;
+            } else if (/iPad/.test(userAgent)) {
+                return 20;
+            } else if (/Android/.test(userAgent)) {
+                return 24;
+            }
+            return 0;
+        }
+
         function updateViewportInfo() {
+            const safeAreaTop = getSafeAreaTop();
             const info = {
                 '屏幕尺寸': `${screen.width} x ${screen.height}`,
                 '视口尺寸': `${window.innerWidth} x ${window.innerHeight}`,
                 '设备像素比': window.devicePixelRatio,
                 '用户代理': navigator.userAgent.includes('Mobile') ? '移动设备' : '桌面设备',
+                '状态栏高度': `${safeAreaTop}px`,
                 '初始高度': initialViewportHeight,
                 '当前高度': window.innerHeight,
                 '高度差': initialViewportHeight - window.innerHeight
             };
-            
-            document.getElementById('viewport-info').innerHTML = 
+
+            document.getElementById('viewport-info').innerHTML =
                 Object.entries(info).map(([key, value]) => `${key}: ${value}`).join('<br>');
         }
         
