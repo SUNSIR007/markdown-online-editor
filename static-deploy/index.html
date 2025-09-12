@@ -988,6 +988,34 @@
                 font-size: 13px !important;
             }
 
+            /* 移动端隐藏Blogs和Gallery按钮，只显示Essays */
+            .type-buttons .el-button[data-type="blog"],
+            .type-buttons .el-button[data-type="gallery"] {
+                display: none !important;
+            }
+
+            /* 移动端优化：由于只有Essays按钮，调整布局 */
+            .content-type-selector {
+                justify-content: center !important;
+            }
+
+            .type-buttons {
+                justify-content: center;
+                flex: 1;
+            }
+
+            /* 移动端Essays按钮样式优化 */
+            .type-buttons .el-button[data-type="essay"] {
+                flex: 1;
+                max-width: 120px;
+                justify-content: center;
+            }
+
+            /* 移动端编辑器高度优化 */
+            .editor-container {
+                height: calc(100vh - 120px) !important;
+            }
+
             .github-config-button,
             .theme-toggle-button {
                 width: 36px !important;
@@ -1001,7 +1029,7 @@
 
         @media (max-width: 480px) {
             .editor-container {
-                height: calc(100vh - 160px);
+                height: calc(100vh - 140px) !important;
                 margin: 8px auto;
                 border-radius: 6px;
                 border-width: 1px;
@@ -1020,6 +1048,11 @@
             .type-buttons .el-button {
                 padding: 6px 10px !important;
                 font-size: 12px !important;
+            }
+
+            /* 超小屏幕Essays按钮优化 */
+            .type-buttons .el-button[data-type="essay"] {
+                max-width: 100px;
             }
 
             .github-config-button,
@@ -1295,10 +1328,13 @@
                         :key="type"
                         :type="currentType === type ? 'primary' : 'default'"
                         @click="selectType(type)"
-                        size="small">
+                        size="small"
+                        :data-type="type">
                         <i :class="getTypeIcon(type)"></i>
                         {{ label }}
                     </el-button>
+                </div>
+                <div class="action-buttons">
                     <button class="github-config-button" @click="configureGitHub" :title="isGitHubConfigured ? 'GitHub已配置' : '配置GitHub'">
                         <i class="el-icon-setting"></i>
                     </button>
@@ -1308,8 +1344,6 @@
                     <button v-if="isPWAMode && !isImageServiceConfigured" class="github-config-button quick-config-button" @click="showQuickConfig" title="PWA快速配置" style="margin-left: 5px;">
                         <i class="el-icon-magic-stick"></i>
                     </button>
-                </div>
-                <div class="action-buttons">
                     <div class="theme-dropdown">
                         <button class="theme-toggle-button" @click="toggleThemeMenu" title="切换主题">
                             <i class="el-icon-brush"></i>
@@ -1927,6 +1961,25 @@
                 initVditor() {
                     const editorMode = 'ir';
                     const vditorTheme = this.currentTheme === 'paper' ? 'classic' : 'dark';
+
+                    // 根据设备类型设置不同的工具栏
+                    const isMobile = this.isMobileDevice();
+                    const toolbar = isMobile ? [
+                        // 移动端简化工具栏：只保留基本的撰写功能
+                        'bold', 'italic', '|',
+                        'list', 'ordered-list', '|',
+                        'undo', 'redo'
+                    ] : [
+                        // 桌面端完整工具栏
+                        'emoji', 'headings', 'bold', 'italic', 'strike', 'link', '|',
+                        'list', 'ordered-list', 'check', 'outdent', 'indent', '|',
+                        'quote', 'line', 'code', 'inline-code', 'insert-before', 'insert-after', '|',
+                        'upload', 'table', '|',
+                        'undo', 'redo', '|',
+                        'edit-mode', 'content-theme', 'code-theme', '|',
+                        'outline', 'preview', 'fullscreen'
+                    ];
+
                     this.vditor = new Vditor('vditor', {
                         height: '100%',
                         mode: editorMode,
@@ -1935,15 +1988,7 @@
                             theme: { current: vditorTheme },
                             actions: []
                         },
-                        toolbar: [
-                            'emoji', 'headings', 'bold', 'italic', 'strike', 'link', '|',
-                            'list', 'ordered-list', 'check', 'outdent', 'indent', '|',
-                            'quote', 'line', 'code', 'inline-code', 'insert-before', 'insert-after', '|',
-                            'upload', 'table', '|',
-                            'undo', 'redo', '|',
-                            'edit-mode', 'content-theme', 'code-theme', '|',
-                            'outline', 'preview', 'fullscreen'
-                        ],
+                        toolbar: toolbar,
                         upload: {
                             accept: 'image/*',
                             multiple: true,
