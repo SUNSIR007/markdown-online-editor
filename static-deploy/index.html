@@ -1074,19 +1074,45 @@
                 order: -1; /* 将配置按钮移到左边 */
             }
 
-            /* 移动端全屏编辑器设计 */
+            /* 移动端全屏编辑器设计 - 修复键盘弹出时的滑动问题 */
             .editor-container {
-                height: calc(100vh - 70px) !important; /* 减去头部高度 */
+                height: calc(100vh - 70px) !important; /* fallback for older browsers */
+                height: calc(100dvh - 70px) !important; /* 使用dvh避免键盘影响 */
                 margin: 0 !important;
                 border-radius: 0 !important;
                 border: none !important;
                 box-shadow: none !important;
                 max-width: 100% !important;
+                position: relative !important;
             }
 
             .editor-container:hover {
                 transform: none !important;
                 box-shadow: none !important;
+            }
+
+            /* 修复iOS Safari键盘弹出问题 */
+            .header {
+                position: fixed !important;
+                top: 0 !important;
+                left: 0 !important;
+                right: 0 !important;
+                z-index: 1000 !important;
+            }
+
+            /* 为固定头部腾出空间 */
+            body {
+                padding-top: 70px !important;
+            }
+
+            /* 键盘弹出时的特殊处理 */
+            body.keyboard-open .header {
+                transform: translateY(0) !important;
+                position: fixed !important;
+            }
+
+            body.keyboard-open .editor-container {
+                height: calc(var(--vh, 1vh) * 100 - 70px) !important;
             }
 
             .github-config-button,
@@ -1110,14 +1136,28 @@
                 padding: 0 8px;
             }
 
-            /* 超小屏幕全屏编辑器 */
+            /* 超小屏幕全屏编辑器 - 修复键盘弹出问题 */
             .editor-container {
-                height: calc(100vh - 60px) !important;
+                height: calc(100vh - 60px) !important; /* fallback for older browsers */
+                height: calc(100dvh - 60px) !important;
                 margin: 0 !important;
                 border-radius: 0 !important;
                 border: none !important;
                 box-shadow: none !important;
                 max-width: 100% !important;
+            }
+
+            /* 超小屏幕头部固定 */
+            .header {
+                position: fixed !important;
+                top: 0 !important;
+                left: 0 !important;
+                right: 0 !important;
+            }
+
+            /* 为固定头部腾出空间 */
+            body {
+                padding-top: 60px !important;
             }
 
             /* 超小屏幕编辑器内边距调整 - 最大化写作空间 */
@@ -1979,7 +2019,37 @@
                         this.currentTheme = 'dark';
                         this.applyTheme('dark');
                         localStorage.setItem('selected-theme', 'dark');
+
+                        // 修复移动端键盘弹出问题
+                        this.setupMobileKeyboardFix();
                     }
+                },
+
+                // 修复移动端键盘弹出时的布局问题
+                setupMobileKeyboardFix() {
+                    // 监听视口变化
+                    const initialViewportHeight = window.innerHeight;
+
+                    window.addEventListener('resize', () => {
+                        const currentHeight = window.innerHeight;
+                        const heightDiff = initialViewportHeight - currentHeight;
+
+                        // 如果高度减少超过150px，认为是键盘弹出
+                        if (heightDiff > 150) {
+                            document.body.classList.add('keyboard-open');
+                        } else {
+                            document.body.classList.remove('keyboard-open');
+                        }
+                    });
+
+                    // 防止iOS Safari地址栏影响
+                    const setViewportHeight = () => {
+                        const vh = window.innerHeight * 0.01;
+                        document.documentElement.style.setProperty('--vh', `${vh}px`);
+                    };
+
+                    setViewportHeight();
+                    window.addEventListener('resize', setViewportHeight);
                 },
 
                 initTheme() {
