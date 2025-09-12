@@ -175,6 +175,31 @@
             border-color: #b7791f !important;
         }
 
+        /* 发布按钮样式 */
+        .publish-button {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+            border: none !important;
+            color: white !important;
+            font-weight: 600 !important;
+            padding: 12px 20px !important;
+            border-radius: 12px !important;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3) !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        }
+
+        .publish-button:hover {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4) !important;
+        }
+
+        .publish-button:disabled {
+            background: #9ca3af !important;
+            box-shadow: none !important;
+            transform: none !important;
+            cursor: not-allowed !important;
+        }
+
         /* 发布按钮图标大小 */
         .publish-button .el-icon-upload {
             font-size: 18px !important;
@@ -182,8 +207,7 @@
 
         /* 发布按钮成功动画 */
         .publish-button.success {
-            background-color: #4CAF50 !important;
-            border-color: #4CAF50 !important;
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%) !important;
             animation: successPulse 0.6s ease-out;
         }
 
@@ -204,26 +228,27 @@
 
         /* GitHub配置按钮 */
         .github-config-button {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
             border: none;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 16px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-            background: #24292e;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            background: rgba(255,255,255,0.15);
             color: white;
-            margin-left: 10px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
         }
 
         .github-config-button:hover {
-            transform: scale(1.1);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-            background: #333;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+            background: rgba(255,255,255,0.25);
         }
 
         .github-config-button .el-icon-setting {
@@ -344,34 +369,55 @@
 
         .header {
             border-bottom: none;
-            padding: 15px 25px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            padding: 20px 28px;
+            box-shadow: 0 6px 30px rgba(0,0,0,0.15);
             color: white;
             /* 默认渐变背景，会被主题样式覆盖 */
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
         }
         .content-type-selector {
             display: flex;
             align-items: center;
             justify-content: space-between;
             flex-wrap: wrap;
-            gap: 15px;
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
         }
         .type-buttons {
             display: flex;
-            gap: 12px;
+            gap: 14px;
+            align-items: center;
         }
         .action-buttons {
             display: flex;
-            gap: 12px;
+            gap: 14px;
+            align-items: center;
         }
 
-        /* 美化按钮样式 - 圆形按钮 */
+        /* 美化按钮样式 - 现代化按钮 */
         .el-button {
-            border-radius: 25px !important;
-            font-weight: 500 !important;
-            transition: all 0.3s ease !important;
+            border-radius: 12px !important;
+            font-weight: 600 !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
             padding: 12px 24px !important;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+            backdrop-filter: blur(10px) !important;
+        }
+
+        .el-button:hover {
+            transform: translateY(-2px) !important;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15) !important;
+        }
+
+        .el-button:active {
+            transform: translateY(0) !important;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
         }
 
         .el-button:hover {
@@ -389,12 +435,19 @@
             height: calc(100vh - 130px);
             padding: 0;
             background: #fafafa;
-            margin: 20px auto;
-            border-radius: 12px;
+            margin: 24px auto;
+            border-radius: 16px;
             overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-            border: 2px solid;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08);
+            border: 1px solid rgba(255,255,255,0.2);
             max-width: 1200px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .editor-container:hover {
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15), 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
         }
         .metadata-editor {
             display: flex;
@@ -945,13 +998,23 @@
         /* 响应式设计 */
         @media (max-width: 768px) {
             .header {
-                padding: 12px 15px;
+                padding: 16px 20px;
+            }
+
+            .content-type-selector {
+                max-width: 100%;
+                gap: 16px;
             }
 
             .editor-container {
-                margin: 15px auto;
-                border-radius: 8px;
-                max-width: calc(100% - 30px);
+                margin: 16px auto;
+                border-radius: 12px;
+                max-width: calc(100% - 32px);
+                box-shadow: 0 6px 24px rgba(0,0,0,0.1), 0 2px 6px rgba(0,0,0,0.06);
+            }
+
+            .editor-container:hover {
+                transform: none; /* 移动端禁用hover动画 */
             }
 
             /* 移动端编辑器内边距调整 */
@@ -959,7 +1022,7 @@
             .vditor-wysiwyg .vditor-wysiwyg__main,
             .vditor-sv .vditor-sv__main,
             .vditor-preview {
-                padding: 20px 30px !important;
+                padding: 24px 20px !important;
             }
 
             .content-type-selector {
@@ -967,25 +1030,27 @@
                 flex-direction: row;
                 align-items: center;
                 justify-content: space-between;
-                gap: 8px;
+                gap: 12px;
             }
 
             .type-buttons {
                 display: flex;
-                gap: 8px;
+                gap: 10px;
                 flex-shrink: 0;
             }
 
             .action-buttons {
                 display: flex;
-                gap: 8px;
+                gap: 10px;
                 flex-shrink: 0;
             }
 
-            /* 减小移动端按钮尺寸以适应一行显示 */
+            /* 优化移动端按钮样式 */
             .type-buttons .el-button {
-                padding: 8px 12px !important;
-                font-size: 13px !important;
+                padding: 10px 16px !important;
+                font-size: 14px !important;
+                font-weight: 500 !important;
+                border-radius: 20px !important;
             }
 
             /* 移动端隐藏Blogs和Gallery按钮，只显示Essays */
@@ -997,6 +1062,7 @@
             /* 移动端优化：由于只有Essays按钮，调整布局 */
             .content-type-selector {
                 justify-content: center !important;
+                padding: 0 8px;
             }
 
             .type-buttons {
@@ -1007,13 +1073,22 @@
             /* 移动端Essays按钮样式优化 */
             .type-buttons .el-button[data-type="essay"] {
                 flex: 1;
-                max-width: 120px;
+                max-width: 140px;
                 justify-content: center;
+                background: rgba(255,255,255,0.2) !important;
+                border: 1px solid rgba(255,255,255,0.3) !important;
+                color: white !important;
+                backdrop-filter: blur(10px);
+            }
+
+            .type-buttons .el-button[data-type="essay"]:hover {
+                background: rgba(255,255,255,0.3) !important;
+                transform: translateY(-1px);
             }
 
             /* 移动端编辑器高度优化 */
             .editor-container {
-                height: calc(100vh - 120px) !important;
+                height: calc(100vh - 110px) !important;
             }
 
             .github-config-button,
@@ -1028,12 +1103,20 @@
         }
 
         @media (max-width: 480px) {
+            .header {
+                padding: 14px 16px;
+            }
+
+            .content-type-selector {
+                gap: 12px;
+                padding: 0 4px;
+            }
+
             .editor-container {
-                height: calc(100vh - 140px) !important;
-                margin: 8px auto;
-                border-radius: 6px;
-                border-width: 1px;
-                max-width: calc(100% - 16px);
+                height: calc(100vh - 100px) !important;
+                margin: 12px auto;
+                border-radius: 10px;
+                max-width: calc(100% - 24px);
             }
 
             /* 超小屏幕编辑器内边距调整 */
@@ -1041,37 +1124,35 @@
             .vditor-wysiwyg .vditor-wysiwyg__main,
             .vditor-sv .vditor-sv__main,
             .vditor-preview {
-                padding: 15px 20px !important;
+                padding: 20px 16px !important;
             }
 
-            /* 超小屏幕进一步优化按钮尺寸 */
+            /* 超小屏幕按钮优化 */
             .type-buttons .el-button {
-                padding: 6px 10px !important;
-                font-size: 12px !important;
+                padding: 8px 14px !important;
+                font-size: 13px !important;
             }
 
             /* 超小屏幕Essays按钮优化 */
             .type-buttons .el-button[data-type="essay"] {
-                max-width: 100px;
+                max-width: 120px;
             }
 
             .github-config-button,
             .theme-toggle-button {
-                width: 32px !important;
-                height: 32px !important;
+                width: 36px !important;
+                height: 36px !important;
+                border-radius: 18px !important;
             }
 
             .publish-button {
-                padding: 6px 10px !important;
-            }
-
-            .content-type-selector {
-                gap: 6px;
+                padding: 8px 12px !important;
+                font-size: 13px !important;
             }
 
             .type-buttons,
             .action-buttons {
-                gap: 6px;
+                gap: 8px;
             }
         }
 
@@ -1219,26 +1300,27 @@
 
         /* 主题切换按钮样式 */
         .theme-toggle-button {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
             border: none;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 16px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-            background: #667eea;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            background: rgba(255,255,255,0.15);
             color: white;
-            margin-left: 10px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
         }
 
         .theme-toggle-button:hover {
-            transform: scale(1.1);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-            background: #5a67d8;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+            background: rgba(255,255,255,0.25);
         }
 
         .theme-toggle-button .el-icon-brush {
@@ -1965,9 +2047,10 @@
                     // 根据设备类型设置不同的工具栏
                     const isMobile = this.isMobileDevice();
                     const toolbar = isMobile ? [
-                        // 移动端简化工具栏：只保留基本的撰写功能
+                        // 移动端简化工具栏：保留基本撰写功能和图片上传
                         'bold', 'italic', '|',
                         'list', 'ordered-list', '|',
+                        'upload', '|',
                         'undo', 'redo'
                     ] : [
                         // 桌面端完整工具栏
