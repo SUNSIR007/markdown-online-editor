@@ -998,7 +998,8 @@
         /* 响应式设计 */
         @media (max-width: 768px) {
             .header {
-                padding: 16px 20px;
+                padding: 14px 20px;
+                background: #000000 !important; /* 移动端固定暗黑模式 */
             }
 
             .content-type-selector {
@@ -1017,12 +1018,12 @@
                 transform: none; /* 移动端禁用hover动画 */
             }
 
-            /* 移动端编辑器内边距调整 */
+            /* 移动端编辑器内边距调整 - 全屏体验 */
             .vditor-ir .vditor-ir__main,
             .vditor-wysiwyg .vditor-wysiwyg__main,
             .vditor-sv .vditor-sv__main,
             .vditor-preview {
-                padding: 24px 20px !important;
+                padding: 20px 16px !important;
             }
 
             .content-type-selector {
@@ -1045,6 +1046,11 @@
                 flex-shrink: 0;
             }
 
+            /* 移动端隐藏主题切换按钮，固定暗黑模式 */
+            .theme-dropdown {
+                display: none !important;
+            }
+
             /* 优化移动端按钮样式 */
             .type-buttons .el-button {
                 padding: 10px 16px !important;
@@ -1053,42 +1059,34 @@
                 border-radius: 20px !important;
             }
 
-            /* 移动端隐藏Blogs和Gallery按钮，只显示Essays */
-            .type-buttons .el-button[data-type="blog"],
-            .type-buttons .el-button[data-type="gallery"] {
+            /* 移动端隐藏所有类型选择按钮，默认Essays模式 */
+            .type-buttons {
                 display: none !important;
             }
 
-            /* 移动端优化：由于只有Essays按钮，调整布局 */
+            /* 移动端优化：重新布局，配置按钮在左边，发布按钮在右边 */
             .content-type-selector {
-                justify-content: center !important;
-                padding: 0 8px;
+                justify-content: space-between !important;
+                padding: 0 16px;
             }
 
-            .type-buttons {
-                justify-content: center;
-                flex: 1;
+            .action-buttons {
+                order: -1; /* 将配置按钮移到左边 */
             }
 
-            /* 移动端Essays按钮样式优化 */
-            .type-buttons .el-button[data-type="essay"] {
-                flex: 1;
-                max-width: 140px;
-                justify-content: center;
-                background: rgba(255,255,255,0.2) !important;
-                border: 1px solid rgba(255,255,255,0.3) !important;
-                color: white !important;
-                backdrop-filter: blur(10px);
-            }
-
-            .type-buttons .el-button[data-type="essay"]:hover {
-                background: rgba(255,255,255,0.3) !important;
-                transform: translateY(-1px);
-            }
-
-            /* 移动端编辑器高度优化 */
+            /* 移动端全屏编辑器设计 */
             .editor-container {
-                height: calc(100vh - 110px) !important;
+                height: calc(100vh - 70px) !important; /* 减去头部高度 */
+                margin: 0 !important;
+                border-radius: 0 !important;
+                border: none !important;
+                box-shadow: none !important;
+                max-width: 100% !important;
+            }
+
+            .editor-container:hover {
+                transform: none !important;
+                box-shadow: none !important;
             }
 
             .github-config-button,
@@ -1104,27 +1102,30 @@
 
         @media (max-width: 480px) {
             .header {
-                padding: 14px 16px;
+                padding: 12px 16px;
             }
 
             .content-type-selector {
                 gap: 12px;
-                padding: 0 4px;
+                padding: 0 8px;
             }
 
+            /* 超小屏幕全屏编辑器 */
             .editor-container {
-                height: calc(100vh - 100px) !important;
-                margin: 12px auto;
-                border-radius: 10px;
-                max-width: calc(100% - 24px);
+                height: calc(100vh - 60px) !important;
+                margin: 0 !important;
+                border-radius: 0 !important;
+                border: none !important;
+                box-shadow: none !important;
+                max-width: 100% !important;
             }
 
-            /* 超小屏幕编辑器内边距调整 */
+            /* 超小屏幕编辑器内边距调整 - 最大化写作空间 */
             .vditor-ir .vditor-ir__main,
             .vditor-wysiwyg .vditor-wysiwyg__main,
             .vditor-sv .vditor-sv__main,
             .vditor-preview {
-                padding: 20px 16px !important;
+                padding: 16px 12px !important;
             }
 
             /* 超小屏幕按钮优化 */
@@ -1974,6 +1975,10 @@
                     if (this.isMobileDevice()) {
                         // 设置为Essays模式
                         this.currentType = contentTypes.ESSAY;
+                        // 移动端固定使用暗黑模式
+                        this.currentTheme = 'dark';
+                        this.applyTheme('dark');
+                        localStorage.setItem('selected-theme', 'dark');
                     }
                 },
 
@@ -2047,11 +2052,8 @@
                     // 根据设备类型设置不同的工具栏
                     const isMobile = this.isMobileDevice();
                     const toolbar = isMobile ? [
-                        // 移动端简化工具栏：保留基本撰写功能和图片上传
-                        'bold', 'italic', '|',
-                        'list', 'ordered-list', '|',
-                        'upload', '|',
-                        'undo', 'redo'
+                        // 移动端极简工具栏：只保留图片上传
+                        'upload'
                     ] : [
                         // 桌面端完整工具栏
                         'emoji', 'headings', 'bold', 'italic', 'strike', 'link', '|',
