@@ -1010,26 +1010,27 @@
             border-color: transparent !important;
         }
 
-        /* 移动端响应式设计 - 全新布局策略 */
+        /* 移动端响应式设计 - 简化布局策略 */
         @media (max-width: 768px) {
-            /* 移动端头部固定定位，防止键盘弹出时上移 */
+            /* 移动端头部固定定位 */
             .header {
                 position: fixed !important;
                 top: 0 !important;
                 left: 0 !important;
                 right: 0 !important;
                 width: 100% !important;
-                padding: 0px 16px !important;
-                padding-top: env(safe-area-inset-top, 0) !important;
+                padding: 4px 16px !important;
+                padding-top: calc(4px + env(safe-area-inset-top, 0)) !important;
                 background: #000000 !important;
                 z-index: 9999 !important;
                 box-sizing: border-box !important;
-                height: calc(44px + env(safe-area-inset-top, 0)) !important; /* 固定高度 */
+                height: auto !important;
+                min-height: calc(52px + env(safe-area-inset-top, 0)) !important;
             }
 
-            /* 移动端body布局 - 不使用padding-top */
+            /* 为固定头部预留空间 */
             body {
-                padding-top: 0 !important;
+                padding-top: calc(52px + env(safe-area-inset-top, 0)) !important;
                 margin: 0 !important;
                 margin: 0 !important;
             }
@@ -1121,94 +1122,80 @@
                 min-width: auto !important;
             }
 
-            /* 移动端编辑器容器 - 全屏布局 */
+            /* 移动端编辑器容器 - 简化布局 */
             .editor-container {
-                position: fixed !important;
-                top: calc(44px + env(safe-area-inset-top, 0)) !important; /* 紧贴导航栏 */
-                left: 0 !important;
-                right: 0 !important;
-                bottom: 0 !important;
-                width: 100% !important;
-                height: calc(100vh - 44px - env(safe-area-inset-top, 0)) !important;
                 margin: 0 !important;
                 padding: 0 !important;
                 border-radius: 0 !important;
                 border: none !important;
                 box-shadow: none !important;
                 background: #000000 !important;
-                z-index: 100 !important;
+                height: calc(100vh - 52px - env(safe-area-inset-top, 0)) !important;
+                max-width: 100% !important;
             }
 
             /* 移动端Vditor容器 */
             #vditor {
                 height: 100% !important;
                 width: 100% !important;
-                position: relative !important;
+                background: #000000 !important;
             }
 
-            /* 移动端Vditor工具栏样式 */
+            /* 移动端Vditor工具栏样式 - 极简设计 */
             .vditor-toolbar {
                 display: flex !important;
                 background: #000000 !important;
                 border-bottom: 1px solid #333 !important;
-                padding: 8px !important;
-                position: sticky !important; /* 改回sticky，相对于编辑器容器 */
-                top: 0 !important; /* 相对于编辑器容器顶部 */
+                padding: 12px !important;
+                position: sticky !important;
+                top: 0 !important;
                 left: 0 !important;
                 right: 0 !important;
                 width: 100% !important;
                 z-index: 10 !important;
                 box-sizing: border-box !important;
+                justify-content: center !important; /* 居中显示上传按钮 */
             }
 
-            /* 确保移动端上传按钮显示 */
+            /* 移动端上传按钮样式 - 突出显示 */
             .vditor-toolbar .vditor-toolbar__item[data-type="upload"] {
                 display: flex !important;
                 visibility: visible !important;
                 opacity: 1 !important;
-                background: rgba(255,255,255,0.1) !important;
-                border-radius: 6px !important;
-                padding: 8px !important;
-                margin: 0 4px !important;
+                background: #007AFF !important; /* iOS蓝色 */
+                border-radius: 12px !important;
+                padding: 12px 20px !important;
+                margin: 0 !important;
+                color: white !important;
+                font-weight: 600 !important;
+                box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3) !important;
+            }
+
+            .vditor-toolbar .vditor-toolbar__item[data-type="upload"]:hover {
+                background: #0056CC !important;
+                transform: translateY(-1px) !important;
+                box-shadow: 0 4px 12px rgba(0, 122, 255, 0.4) !important;
             }
 
             .vditor-toolbar .vditor-toolbar__item[data-type="upload"] svg {
                 fill: #fff !important;
-                width: 20px !important;
-                height: 20px !important;
+                width: 24px !important;
+                height: 24px !important;
+                margin-right: 8px !important;
             }
 
-            /* 移动端工具栏按钮通用样式 */
-            .vditor-toolbar .vditor-toolbar__item {
-                display: flex !important;
-                align-items: center !important;
-                justify-content: center !important;
-                min-width: 36px !important;
-                height: 36px !important;
-                background: rgba(255,255,255,0.1) !important;
-                border-radius: 6px !important;
-                margin: 0 2px !important;
-                cursor: pointer !important;
+            /* 隐藏其他工具栏按钮 */
+            .vditor-toolbar .vditor-toolbar__item:not([data-type="upload"]) {
+                display: none !important;
             }
 
-            .vditor-toolbar .vditor-toolbar__item:hover {
-                background: rgba(255,255,255,0.2) !important;
-            }
-
-            .vditor-toolbar .vditor-toolbar__item svg {
-                fill: #fff !important;
-                width: 18px !important;
-                height: 18px !important;
-            }
-
-            /* Vditor内容区域 - 自然布局 */
+            /* Vditor内容区域 - 简化布局 */
             .vditor-content,
             .vditor-ir,
             .vditor-wysiwyg,
             .vditor-sv {
-                height: calc(100% - 52px) !important; /* 减去工具栏高度 */
-                overflow-y: auto !important;
                 background: #000000 !important;
+                height: auto !important;
             }
 
             /* Vditor编辑区域样式 */
@@ -1216,9 +1203,11 @@
             .vditor-wysiwyg .vditor-wysiwyg__main,
             .vditor-sv .vditor-sv__main {
                 padding: 20px 16px !important;
-                min-height: calc(100vh - 120px - env(safe-area-inset-top, 0)) !important;
                 background: #000000 !important;
                 color: #e0e0e0 !important;
+                min-height: calc(100vh - 150px - env(safe-area-inset-top, 0)) !important;
+                font-size: 16px !important; /* 移动端友好的字体大小 */
+                line-height: 1.6 !important;
             }
 
             /* 确保Vditor渲染区域正确 */
@@ -1229,11 +1218,12 @@
                 color: #e0e0e0 !important;
                 border: none !important;
                 outline: none !important;
+                font-size: 16px !important;
             }
 
             /* 移动端光标样式 */
             .vditor-ir .vditor-ir__main pre {
-                caret-color: #fff !important;
+                caret-color: #007AFF !important; /* 蓝色光标 */
             }
 
             /* 移动端编辑器容器已在上面定义，这里删除重复定义 */
@@ -1268,8 +1258,9 @@
                 width: 100% !important;
                 z-index: 9999 !important;
                 transform: none !important;
-                padding-top: env(safe-area-inset-top, 0) !important;
-                height: calc(44px + env(safe-area-inset-top, 0)) !important;
+                padding: 4px 16px !important;
+                padding-top: calc(4px + env(safe-area-inset-top, 0)) !important;
+                min-height: calc(52px + env(safe-area-inset-top, 0)) !important;
             }
         }
 
@@ -1287,9 +1278,9 @@
         @media (max-width: 480px) {
             /* 超小屏幕头部调整 */
             .header {
-                padding: 0px 12px !important;
-                padding-top: env(safe-area-inset-top, 0) !important;
-                height: calc(40px + env(safe-area-inset-top, 0)) !important;
+                padding: 2px 12px !important;
+                padding-top: calc(2px + env(safe-area-inset-top, 0)) !important;
+                min-height: calc(48px + env(safe-area-inset-top, 0)) !important;
             }
 
             .content-type-selector {
@@ -1299,16 +1290,12 @@
 
             /* 超小屏幕编辑器调整 */
             .editor-container {
-                top: calc(40px + env(safe-area-inset-top, 0)) !important;
-                height: calc(100vh - 40px - env(safe-area-inset-top, 0)) !important;
+                height: calc(100vh - 48px - env(safe-area-inset-top, 0)) !important;
             }
 
-            /* 超小屏幕Vditor内容区域调整 */
-            .vditor-content,
-            .vditor-ir,
-            .vditor-wysiwyg,
-            .vditor-sv {
-                height: calc(100% - 48px) !important; /* 为较小的工具栏预留空间 */
+            /* 超小屏幕body调整 */
+            body {
+                padding-top: calc(48px + env(safe-area-inset-top, 0)) !important;
             }
 
             /* 调整body的padding */
@@ -2206,23 +2193,13 @@
                         header.style.width = '100%';
                         header.style.zIndex = '9999';
                         header.style.boxSizing = 'border-box';
-                        header.style.paddingTop = safeAreaTop + 'px';
-                        header.style.height = (44 + safeAreaTop) + 'px';
+                        header.style.padding = '4px 16px';
+                        header.style.paddingTop = (4 + safeAreaTop) + 'px';
+                        header.style.minHeight = (52 + safeAreaTop) + 'px';
                     }
 
-                    // 设置编辑器容器的位置
-                    const editorContainer = document.querySelector('.editor-container');
-                    if (editorContainer) {
-                        editorContainer.style.position = 'fixed';
-                        editorContainer.style.top = (44 + safeAreaTop) + 'px';
-                        editorContainer.style.left = '0';
-                        editorContainer.style.right = '0';
-                        editorContainer.style.bottom = '0';
-                        editorContainer.style.height = `calc(100vh - ${44 + safeAreaTop}px)`;
-                    }
-
-                    // 移动端不需要body的padding-top
-                    document.body.style.paddingTop = '0';
+                    // 设置body的padding-top
+                    document.body.style.paddingTop = (52 + safeAreaTop) + 'px';
                     document.body.style.margin = '0';
 
                     // 监听视口变化
@@ -2365,8 +2342,8 @@
                     // 根据设备类型设置不同的工具栏
                     const isMobile = this.isMobileDevice();
                     const toolbar = isMobile ? [
-                        // 移动端简化工具栏：保留常用功能和图片上传
-                        'bold', 'italic', '|', 'list', 'ordered-list', '|', 'upload', '|', 'undo', 'redo'
+                        // 移动端极简工具栏：只保留图片上传
+                        'upload'
                     ] : [
                         // 桌面端完整工具栏
                         'emoji', 'headings', 'bold', 'italic', 'strike', 'link', '|',
@@ -2408,16 +2385,26 @@
                                 metadataEditor.style.display = 'block';
                             }
 
-                            // 移动端特殊处理：让CSS样式生效
+                            // 移动端特殊处理：优化工具栏显示
                             if (this.isMobileDevice()) {
-                                // 强制应用移动端样式
                                 setTimeout(() => {
-                                    const vditorContainer = document.getElementById('vditor');
-                                    if (vditorContainer) {
-                                        vditorContainer.style.height = '100%';
-                                        vditorContainer.style.width = '100%';
+                                    // 确保只显示上传按钮
+                                    const toolbar = vditorElement.querySelector('.vditor-toolbar');
+                                    if (toolbar) {
+                                        const uploadBtn = toolbar.querySelector('[data-type="upload"]');
+                                        if (uploadBtn) {
+                                            // 为上传按钮添加文字标签
+                                            if (!uploadBtn.querySelector('.upload-text')) {
+                                                const textSpan = document.createElement('span');
+                                                textSpan.className = 'upload-text';
+                                                textSpan.textContent = '上传图片';
+                                                textSpan.style.marginLeft = '8px';
+                                                textSpan.style.fontSize = '14px';
+                                                uploadBtn.appendChild(textSpan);
+                                            }
+                                        }
                                     }
-                                }, 100);
+                                }, 200);
                             }
 
                             // 绑定 input 事件，将编辑器内容同步到 bodyContent
