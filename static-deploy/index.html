@@ -1027,9 +1027,9 @@
                 min-height: calc(44px + env(safe-area-inset-top, 0)) !important; /* 设置最小高度 */
             }
 
-            /* 为固定头部预留空间 */
+            /* 为固定头部和工具栏预留空间 */
             body {
-                padding-top: calc(44px + env(safe-area-inset-top, 0)) !important; /* 减少预留空间 */
+                padding-top: calc(44px + env(safe-area-inset-top, 0)) !important; /* 只为导航栏预留空间 */
                 margin: 0 !important;
             }
 
@@ -1126,9 +1126,13 @@
                 background: #000000 !important;
                 border-bottom: 1px solid #333 !important;
                 padding: 8px !important;
-                position: sticky !important;
-                top: calc(44px + env(safe-area-inset-top, 0)) !important; /* 避免与导航栏重叠 */
-                z-index: 100 !important;
+                position: fixed !important; /* 改为fixed定位 */
+                top: calc(44px + env(safe-area-inset-top, 0)) !important; /* 紧贴导航栏 */
+                left: 0 !important;
+                right: 0 !important;
+                width: 100% !important;
+                z-index: 1000 !important; /* 提高z-index */
+                box-sizing: border-box !important;
             }
 
             /* 确保移动端上传按钮显示 */
@@ -1171,16 +1175,35 @@
                 height: 18px !important;
             }
 
+            /* 确保Vditor内容区域在工具栏下方 */
+            .vditor-content,
+            .vditor-ir,
+            .vditor-wysiwyg,
+            .vditor-sv {
+                margin-top: 52px !important; /* 为工具栏预留空间 */
+                padding-top: 0 !important;
+            }
+
+            /* Vditor编辑区域样式 */
+            .vditor-ir .vditor-ir__main,
+            .vditor-wysiwyg .vditor-wysiwyg__main,
+            .vditor-sv .vditor-sv__main {
+                padding-top: 20px !important;
+                min-height: calc(100vh - 140px - env(safe-area-inset-top, 0)) !important;
+            }
+
             /* 移动端全屏编辑器设计 - 修复键盘弹出时的滑动问题 */
             .editor-container {
                 height: calc(100vh - 44px - env(safe-area-inset-top, 0)) !important; /* 调整高度 */
-                height: calc(100dvh - 56px - env(safe-area-inset-top, 0)) !important; /* 考虑状态栏高度 */
+                height: calc(100dvh - 44px - env(safe-area-inset-top, 0)) !important; /* 移除额外高度 */
                 margin: 0 !important;
+                padding: 0 !important; /* 移除内边距 */
                 border-radius: 0 !important;
                 border: none !important;
                 box-shadow: none !important;
                 max-width: 100% !important;
                 position: relative !important;
+                top: calc(44px + env(safe-area-inset-top, 0)) !important; /* 紧贴导航栏 */
             }
 
             .editor-container:hover {
@@ -1247,11 +1270,20 @@
             .editor-container {
                 height: calc(100vh - 40px - env(safe-area-inset-top, 0)) !important; /* fallback */
                 height: calc(100dvh - 40px - env(safe-area-inset-top, 0)) !important;
+                top: calc(40px + env(safe-area-inset-top, 0)) !important; /* 紧贴导航栏 */
             }
 
             /* 超小屏幕Vditor工具栏调整 */
             .vditor-toolbar {
                 top: calc(40px + env(safe-area-inset-top, 0)) !important;
+            }
+
+            /* 超小屏幕Vditor内容区域调整 */
+            .vditor-content,
+            .vditor-ir,
+            .vditor-wysiwyg,
+            .vditor-sv {
+                margin-top: 48px !important; /* 为较小的工具栏预留空间 */
             }
 
             /* 调整body的padding */
@@ -2338,6 +2370,27 @@
                             if (toolbar && metadataEditor) {
                                 toolbar.insertAdjacentElement('afterend', metadataEditor);
                                 metadataEditor.style.display = 'block';
+                            }
+
+                            // 移动端特殊处理：确保工具栏在正确位置
+                            if (this.isMobileDevice() && toolbar) {
+                                // 确保工具栏在移动端的正确定位
+                                toolbar.style.position = 'fixed';
+                                toolbar.style.top = 'calc(44px + env(safe-area-inset-top, 0))';
+                                toolbar.style.left = '0';
+                                toolbar.style.right = '0';
+                                toolbar.style.width = '100%';
+                                toolbar.style.zIndex = '1000';
+
+                                // 确保编辑区域在工具栏下方
+                                const contentArea = vditorElement.querySelector('.vditor-content') ||
+                                                  vditorElement.querySelector('.vditor-ir') ||
+                                                  vditorElement.querySelector('.vditor-wysiwyg') ||
+                                                  vditorElement.querySelector('.vditor-sv');
+                                if (contentArea) {
+                                    contentArea.style.marginTop = '52px';
+                                    contentArea.style.paddingTop = '0';
+                                }
                             }
 
                             // 绑定 input 事件，将编辑器内容同步到 bodyContent
