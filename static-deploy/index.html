@@ -2569,10 +2569,19 @@
 
                             // 滚动到编辑器位置
                             setTimeout(() => {
-                                editorElement.scrollIntoView({
-                                    behavior: 'smooth',
-                                    block: 'center'
-                                });
+                                if (this.isMobileDevice()) {
+                                    // 键盘出现时强制保持页面顶部，避免工具栏被顶出视图
+                                    try {
+                                        window.scrollTo({ top: 0, behavior: 'auto' });
+                                    } catch (err) {
+                                        window.scrollTo(0, 0);
+                                    }
+                                } else {
+                                    editorElement.scrollIntoView({
+                                        behavior: 'smooth',
+                                        block: 'center'
+                                    });
+                                }
                             }, 200);
                         }
                     } catch (error) {
