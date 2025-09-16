@@ -21,6 +21,10 @@
     <script src="github-service.js"></script>
     <script src="image-service.js"></script>
     <style>
+        :root {
+            --vh: 1vh;
+        }
+
         body {
             margin: 0;
             padding: 0;
@@ -432,7 +436,9 @@
             padding: 0 !important;
         }
         .editor-container {
-            height: calc(100vh - 130px);
+            display: flex;
+            flex-direction: column;
+            height: calc(var(--vh, 1vh) * 100 - 130px);
             padding: 0;
             background: #fafafa;
             margin: 24px auto;
@@ -448,6 +454,17 @@
         .editor-container:hover {
             box-shadow: 0 12px 40px rgba(0,0,0,0.15), 0 4px 12px rgba(0,0,0,0.1);
             transform: translateY(-2px);
+        }
+
+        .editor-container.keyboard-open {
+            height: auto !important;
+            min-height: calc(var(--vh, 1vh) * 100 - 70px);
+            overflow: visible;
+        }
+
+        .editor-container.keyboard-open #vditor,
+        .editor-container.keyboard-open .vditor {
+            height: auto !important;
         }
         .metadata-editor {
             display: flex;
@@ -541,6 +558,8 @@
         }
         #vditor {
             height: 100%;
+            flex: 1 1 auto;
+            min-height: 0;
             border-radius: 0;
             border: none !important;
         }
@@ -1076,7 +1095,7 @@
 
             /* 移动端全屏编辑器设计 */
             .editor-container {
-                height: calc(100vh - 70px) !important; /* 减去头部高度 */
+                height: calc(var(--vh, 1vh) * 100 - 70px) !important; /* 减去头部高度 */
                 margin: 0 !important;
                 border-radius: 0 !important;
                 border: none !important;
@@ -1112,7 +1131,7 @@
 
             /* 超小屏幕全屏编辑器 */
             .editor-container {
-                height: calc(100vh - 60px) !important;
+                height: calc(var(--vh, 1vh) * 100 - 60px) !important;
                 margin: 0 !important;
                 border-radius: 0 !important;
                 border: none !important;
@@ -1952,6 +1971,7 @@
             mounted() {
                 this.initTheme();
                 this.setupMobileDefaults();
+                this.setupViewportFixes();
                 this.initVditor();
                 this.checkGitHubConfig();
                 this.checkImageServiceConfig();
@@ -1980,6 +2000,65 @@
                         this.applyTheme('dark');
                         localStorage.setItem('selected-theme', 'dark');
                     }
+                },
+
+                setupViewportFixes() {
+                    const updateViewportUnit = () => {
+                        const vh = window.innerHeight * 0.01;
+                        document.documentElement.style.setProperty('--vh', `${vh}px`);
+                    };
+
+                    let lastViewportHeight = window.innerHeight;
+                    updateViewportUnit();
+
+                    const handleResize = () => {
+                        const currentHeight = window.innerHeight;
+                        const heightDrop = lastViewportHeight - currentHeight;
+
+                        if (this.isMobileDevice() && heightDrop > 150) {
+                            // 键盘弹出时忽略viewport高度变化，避免布局跳动
+                            return;
+                        }
+
+                        lastViewportHeight = currentHeight;
+                        updateViewportUnit();
+                    };
+
+                    window.addEventListener('resize', handleResize);
+                    window.addEventListener('orientationchange', () => {
+                        setTimeout(() => {
+                            lastViewportHeight = window.innerHeight;
+                            updateViewportUnit();
+                        }, 300);
+                    });
+
+                    if (!this.isMobileDevice()) {
+                        return;
+                    }
+
+                    const editorContainer = document.querySelector('.editor-container');
+                    if (!editorContainer) {
+                        return;
+                    }
+
+                    const toggleKeyboardState = (isOpen) => {
+                        editorContainer.classList.toggle('keyboard-open', isOpen);
+                    };
+
+                    document.addEventListener('focusin', (event) => {
+                        if (event.target.closest('#vditor')) {
+                            toggleKeyboardState(true);
+                        }
+                    });
+
+                    document.addEventListener('focusout', () => {
+                        setTimeout(() => {
+                            const active = document.activeElement;
+                            if (!active || !active.closest || !active.closest('#vditor')) {
+                                toggleKeyboardState(false);
+                            }
+                        }, 0);
+                    });
                 },
 
                 initTheme() {
