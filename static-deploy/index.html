@@ -1730,7 +1730,7 @@
                         token: '',
                         owner: '',
                         repo: '',
-                        branch: 'master',  // 改为默认使用master分支
+                        branch: 'main',  // 默认使用main分支
                         imageDir: 'images'
                     },
                     linkRules: {
@@ -1756,12 +1756,14 @@
                     const saved = localStorage.getItem('image-service-config');
                     if (saved) {
                         const savedConfig = JSON.parse(saved);
-                        // 强制修正分支配置，如果是main则改为master
-                        if (savedConfig.branch === 'main') {
-                            savedConfig.branch = 'master';
-                            localStorage.setItem('image-service-config', JSON.stringify(savedConfig));
-                        }
-                        this.config = { ...this.config, ...savedConfig };
+                        const branch = (savedConfig.branch || '').trim();
+                        const imageDir = (savedConfig.imageDir || '').trim();
+                        this.config = {
+                            ...this.config,
+                            ...savedConfig,
+                            branch: branch || 'main',
+                            imageDir: imageDir || 'images'
+                        };
                     }
 
                     const savedRule = localStorage.getItem('image-service-link-rule');
@@ -1812,7 +1814,11 @@
                     }
 
                     // 保存配置
-                    const configToSave = { ...this.config };
+                    const configToSave = {
+                        ...this.config,
+                        branch: (this.config.branch || '').trim() || 'main',
+                        imageDir: (this.config.imageDir || '').trim()
+                    };
                     localStorage.setItem('image-service-config', JSON.stringify(configToSave));
                     localStorage.setItem('image-service-link-rule', this.selectedLinkRule);
 
@@ -1865,7 +1871,7 @@
                         <el-form-item label="分支名称">
                             <el-input
                                 v-model="config.branch"
-                                placeholder="默认为master">
+                                placeholder="默认为main">
                             </el-input>
                         </el-form-item>
 

@@ -9,7 +9,7 @@ class ImageService {
     this.token = null
     this.owner = null
     this.repo = null
-    this.branch = 'master'  // 改为默认使用master分支
+    this.branch = 'main' // 默认使用main分支
     
     // CDN链接规则配置
     this.linkRules = {
@@ -56,19 +56,21 @@ class ImageService {
     this.token = config.token
     this.owner = config.owner
     this.repo = config.repo
-    // 强制修正分支配置，如果是main则改为master
-    let branch = config.branch || 'master'
-    if (branch === 'main') {
-      branch = 'master'
-    }
-    this.branch = branch
+    const branch = (config.branch || 'main').trim()
+    this.branch = branch || 'main'
 
     // 清理imageDir，确保不以斜杠开头或结尾
     let imageDir = (config.imageDir || 'images').trim()
     this.imageDir = imageDir.replace(/^\/+|\/+$/g, '') || 'images'
 
     // 保存到localStorage
-    localStorage.setItem('image-service-config', JSON.stringify(config))
+    const normalizedConfig = {
+      ...config,
+      branch: this.branch,
+      imageDir: this.imageDir
+    }
+
+    localStorage.setItem('image-service-config', JSON.stringify(normalizedConfig))
   }
 
   /**
