@@ -13,25 +13,25 @@ class ImageService {
     
     // CDN链接规则配置
     this.linkRules = {
-      'GitHub': {
+      github: {
         id: 'github',
         name: 'GitHub',
         rule: 'https://github.com/{owner}/{repo}/raw/{branch}/{path}',
         editable: false
       },
-      'jsDelivr': {
+      jsdelivr: {
         id: 'jsdelivr',
         name: 'jsDelivr',
         rule: 'https://cdn.jsdelivr.net/gh/{owner}/{repo}@{branch}/{path}',
         editable: false
       },
-      'Statically': {
+      statically: {
         id: 'statically',
         name: 'Statically',
         rule: 'https://cdn.statically.io/gh/{owner}/{repo}/{branch}/{path}',
         editable: false
       },
-      'ChinaJsDelivr': {
+      'china-jsdelivr': {
         id: 'china-jsdelivr',
         name: 'China jsDelivr',
         rule: 'https://jsd.cdn.zzko.cn/gh/{owner}/{repo}@{branch}/{path}',
@@ -39,8 +39,31 @@ class ImageService {
       }
     }
     
-    this.selectedLinkRule = 'jsDelivr'
+    this.selectedLinkRule = 'jsdelivr'
     this.imageDir = 'images' // 默认图片目录
+  }
+
+  normalizeRuleKey(ruleId) {
+    if (!ruleId && ruleId !== 0) {
+      return ''
+    }
+    return String(ruleId)
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]/g, '')
+  }
+
+  findRuleKey(ruleId) {
+    if (!ruleId && ruleId !== 0) {
+      return null
+    }
+
+    if (this.linkRules[ruleId]) {
+      return ruleId
+    }
+
+    const target = this.normalizeRuleKey(ruleId)
+    return Object.keys(this.linkRules).find((key) => this.normalizeRuleKey(key) === target) || null
   }
 
   /**
@@ -98,9 +121,10 @@ class ImageService {
    * @param {string} ruleId - 规则ID
    */
   setLinkRule(ruleId) {
-    if (this.linkRules[ruleId]) {
-      this.selectedLinkRule = ruleId
-      localStorage.setItem('image-service-link-rule', ruleId)
+    const matchedKey = this.findRuleKey(ruleId)
+    if (matchedKey) {
+      this.selectedLinkRule = matchedKey
+      localStorage.setItem('image-service-link-rule', matchedKey)
     }
   }
 
@@ -109,8 +133,11 @@ class ImageService {
    */
   getLinkRule() {
     const saved = localStorage.getItem('image-service-link-rule')
-    if (saved && this.linkRules[saved]) {
-      this.selectedLinkRule = saved
+    const matchedKey = this.findRuleKey(saved)
+    if (matchedKey) {
+      this.selectedLinkRule = matchedKey
+    } else if (!this.linkRules[this.selectedLinkRule]) {
+      this.selectedLinkRule = Object.keys(this.linkRules)[0]
     }
     return this.linkRules[this.selectedLinkRule]
   }

@@ -80,10 +80,10 @@
                         <el-col :span="12">
                             <el-form-item label="CDN服务">
                                 <el-select v-model="selectedCdn" placeholder="选择CDN">
-                                    <el-option label="jsDelivr" value="jsDelivr"></el-option>
-                                    <el-option label="Statically" value="Statically"></el-option>
-                                    <el-option label="GitHub" value="GitHub"></el-option>
-                                    <el-option label="China jsDelivr" value="ChinaJsDelivr"></el-option>
+                                    <el-option label="jsDelivr" value="jsdelivr"></el-option>
+                                    <el-option label="Statically" value="statically"></el-option>
+                                    <el-option label="GitHub" value="github"></el-option>
+                                    <el-option label="China jsDelivr" value="china-jsdelivr"></el-option>
                                 </el-select>
                             </el-form-item>
                         </el-col>
@@ -145,7 +145,7 @@
                         branch: 'main',
                         imageDir: 'images'
                     },
-                    selectedCdn: 'jsDelivr',
+                    selectedCdn: 'jsdelivr',
                     isConfigured: false,
                     testing: false,
                     isDragOver: false,
@@ -165,8 +165,16 @@
                         this.config = { ...this.config, ...JSON.parse(saved) };
                     }
                     const savedCdn = localStorage.getItem('image-service-link-rule');
-                    if (savedCdn) {
-                        this.selectedCdn = savedCdn;
+                    if (window.imageService && typeof window.imageService.getLinkRule === 'function') {
+                        const rule = window.imageService.getLinkRule();
+                        if (rule) {
+                            this.selectedCdn = window.imageService.selectedLinkRule;
+                        }
+                    } else if (savedCdn) {
+                        const matched = this.resolveRuleKey(savedCdn);
+                        if (matched) {
+                            this.selectedCdn = matched;
+                        }
                     }
                     this.checkConfig();
                 },
@@ -176,10 +184,29 @@
                         return;
                     }
                     
+                    const matchedRule = this.resolveRuleKey(this.selectedCdn) || 'jsdelivr';
                     window.imageService.setConfig(this.config);
-                    window.imageService.setLinkRule(this.selectedCdn);
+                    window.imageService.setLinkRule(matchedRule);
+                    this.selectedCdn = matchedRule;
                     this.checkConfig();
                     this.$message.success('配置已保存');
+                },
+                resolveRuleKey(value) {
+                    if (value === undefined || value === null) {
+                        return null;
+                    }
+                    const available = ['github', 'jsdelivr', 'statically', 'china-jsdelivr'];
+                    if (available.includes(value)) {
+                        return value;
+                    }
+                    const normalized = this.normalizeRuleKey(value);
+                    return available.find(option => this.normalizeRuleKey(option) === normalized) || null;
+                },
+                normalizeRuleKey(value) {
+                    return String(value || '')
+                        .trim()
+                        .toLowerCase()
+                        .replace(/[^a-z0-9]/g, '');
                 },
                 checkConfig() {
                     this.isConfigured = window.imageService && window.imageService.isConfigured();

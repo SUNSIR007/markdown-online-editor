@@ -1,28 +1,32 @@
 # Repository Guidelines
 
-This guide captures the practical conventions for maintaining and extending the Markdown Online Editor.
+Use this playbook when contributing to the Markdown Online Editor; keep updates tight, traceable, and production-ready.
 
 ## Project Structure & Module Organization
-- `static-deploy/` contains the shipped site: `index.html` bootstraps the editor, `github-service.js` and `image-service.js` wrap GitHub APIs, and `/img/` holds static assets.
-- Root-level docs such as `README.md`, `DEPLOY.md`, and the `static-deploy/*GUIDE.md` files document feature workflows; keep updates alongside related code.
-- There is no build pipeline; assets are served as written, so treat each HTML/JS file as production-ready.
+- `static-deploy/` is the shipped site: `index.html` bootstraps the editor, `github-service.js` and `image-service.js` integrate external APIs, and `/img/` stores static assets.
+- Root-level docs (`README.md`, `DEPLOY.md`, `static-deploy/*GUIDE.md`) describe workflows; update the matching doc whenever you change related behavior.
+- There is no build step. Treat every HTML, CSS, and JS file as production code and avoid unused assets.
 
 ## Build, Test, and Development Commands
-- `npm start` or `npm run serve`: launches `python -m http.server 8080` inside `static-deploy/` for local preview.
-- `python -m http.server 8080` (run within `static-deploy/`): lightweight alternative if Node/NPM are unavailable.
-- `npm run build` inside `static-deploy/`: currently a stub; extend it only if a real build step is introduced.
+- `npm start` / `npm run serve`: runs `python -m http.server 8080` inside `static-deploy/` for local preview.
+- `python -m http.server 8080` (from `static-deploy/`): direct preview when Node/NPM are unavailable.
+- `npm run build` (in `static-deploy/`): placeholder for future automation; extend only when a real pipeline is introduced.
 
 ## Coding Style & Naming Conventions
-- Follow the existing two-space indentation, no-semicolon JavaScript style (`image-service.js`, `github-service.js`). Prefer `const`/`let`, arrow functions for callbacks, and early returns for validation.
-- Keep HTML IDs/classes kebab-cased (`test-mobile.html`) and align in-file CSS with the editor palette.
-- When adding docs or demos, mirror the `test-*.html` naming to signal purpose.
+- JavaScript: two-space indentation, no semicolons, prefer `const`/`let`, arrow callbacks, and early returns (see `static-deploy/github-service.js`).
+- HTML/CSS: keep IDs/classes kebab-cased and align with the editor palette (`static-deploy/test-mobile.html`).
+- Demos and docs follow the `test-*.html` and `*GUIDE.md` naming patterns to signal intent.
 
 ## Testing Guidelines
-- Automated tests are absent; perform manual smoke tests through the demo pages (`test-image-upload.html`, `test-mobile.html`, `test-pwa-config.html`).
-- Before submitting changes, verify GitHub publishing, image uploads, and theme toggles from `index.html` on desktop and mobile widths.
-- Document new manual test steps in the relevant `*GUIDE.md` file when workflows change.
+- No automated suite exists; perform manual smoke tests via `static-deploy/test-image-upload.html`, `test-mobile.html`, and `test-pwa-config.html`.
+- Validate GitHub publishing, image upload, and theme toggles from `index.html` at desktop and mobile widths before submitting.
+- Record new manual steps in the relevant `*GUIDE.md` so others can replay them.
 
 ## Commit & Pull Request Guidelines
-- Keep commit subjects concise (Chinese or English is fine) and describe scope plus version tags when appropriate (see `git log` entries like “优化移动端体验… v11”).
-- Rebase onto main, group related changes, and reference issues in the body when applicable.
-- Pull requests should outline the user-facing impact, list manual test evidence (URLs, screenshots), and note any configuration prerequisites such as required GitHub tokens.
+- Keep commit subjects concise, optionally bilingual, and include scope tags when useful (e.g., “优化移动端体验… v11”).
+- Rebase on main, group related changes, reference issues, and describe user-facing impact in the PR body.
+- Attach manual test evidence (URLs, screenshots) and note required GitHub tokens or configuration secrets.
+
+## Security & Configuration Tips
+- Never commit personal tokens; rely on environment variables and redact secrets from screenshots.
+- Confirm GitHub API scopes before sharing setup steps, and document any required repository permissions alongside feature changes.

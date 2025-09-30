@@ -1537,7 +1537,10 @@
         // 等待页面完全加载后初始化
         document.addEventListener('DOMContentLoaded', function() {
             // 初始化GitHub服务
-            window.githubService = new GitHubService();
+            if (!window.githubService) {
+                window.githubService = new GitHubService();
+                window.githubService.loadConfig();
+            }
 
         // 配置常量
         const contentTypes = {
@@ -1734,12 +1737,12 @@
                         imageDir: 'images'
                     },
                     linkRules: {
-                        'GitHub': 'GitHub原始链接',
-                        'jsDelivr': 'jsDelivr CDN',
-                        'Statically': 'Statically CDN',
-                        'ChinaJsDelivr': '中国jsDelivr CDN'
+                        github: 'GitHub原始链接',
+                        jsdelivr: 'jsDelivr CDN',
+                        statically: 'Statically CDN',
+                        'china-jsdelivr': '中国jsDelivr CDN'
                     },
-                    selectedLinkRule: 'jsDelivr',
+                    selectedLinkRule: 'jsdelivr',
                     testing: false,
                     testResult: null
                 };
@@ -1767,8 +1770,16 @@
                     }
 
                     const savedRule = localStorage.getItem('image-service-link-rule');
-                    if (savedRule) {
-                        this.selectedLinkRule = savedRule;
+                    if (window.imageService && typeof window.imageService.getLinkRule === 'function') {
+                        const rule = window.imageService.getLinkRule();
+                        if (rule) {
+                            this.selectedLinkRule = window.imageService.selectedLinkRule;
+                        }
+                    } else if (savedRule) {
+                        const matchedRule = this.resolveRuleKey(savedRule);
+                        if (matchedRule) {
+                            this.selectedLinkRule = matchedRule;
+                        }
                     }
                 },
                 async testConnection() {
@@ -1820,15 +1831,32 @@
                         imageDir: (this.config.imageDir || '').trim()
                     };
                     localStorage.setItem('image-service-config', JSON.stringify(configToSave));
-                    localStorage.setItem('image-service-link-rule', this.selectedLinkRule);
+                    const matchedRule = this.resolveRuleKey(this.selectedLinkRule) || 'jsdelivr';
+                    localStorage.setItem('image-service-link-rule', matchedRule);
 
                     // 设置CDN规则
                     if (window.imageService) {
-                        window.imageService.setLinkRule(this.selectedLinkRule);
+                        window.imageService.setLinkRule(matchedRule);
                     }
 
                     this.$emit('save', configToSave);
                     this.close();
+                },
+                resolveRuleKey(value) {
+                    if (value === undefined || value === null) {
+                        return null;
+                    }
+                    if (this.linkRules[value]) {
+                        return value;
+                    }
+                    const normalized = this.normalizeRuleKey(value);
+                    return Object.keys(this.linkRules).find(key => this.normalizeRuleKey(key) === normalized) || null;
+                },
+                normalizeRuleKey(value) {
+                    return String(value || '')
+                        .trim()
+                        .toLowerCase()
+                        .replace(/[^a-z0-9]/g, '');
                 },
                 close() {
                     this.$emit('close');
