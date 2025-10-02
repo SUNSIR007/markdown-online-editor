@@ -910,6 +910,46 @@
             border: 1px solid rgba(210, 4, 45, 0.5);
         }
 
+        .github-config-dialog .dialog-footer.is-mobile {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .github-config-dialog .dialog-footer.is-mobile .el-button {
+            width: 100%;
+            margin-left: 0 !important;
+        }
+
+        .github-config-dialog .dialog-footer.is-mobile .el-button + .el-button {
+            margin-left: 0 !important;
+        }
+
+        @media (max-width: 600px) {
+            .github-config-dialog .el-dialog__body {
+                padding: 20px 18px !important;
+            }
+
+            .github-config-dialog .el-form-item__label {
+                white-space: normal;
+                line-height: 1.4;
+                padding-bottom: 4px;
+            }
+
+            .github-config-dialog .token-instructions {
+                font-size: 11px;
+                line-height: 1.4;
+            }
+
+            .github-config-dialog .el-form-item {
+                margin-bottom: 16px;
+            }
+
+            .github-config-dialog .el-dialog__footer {
+                padding: 15px 18px !important;
+            }
+        }
+
         .metadata-info {
             font-size: 12px;
             color: rgba(255, 255, 255, 0.8);
@@ -1611,7 +1651,8 @@
                         repo: ''
                     },
                     testing: false,
-                    testResult: null
+                    testResult: null,
+                    isMobile: window.innerWidth <= 600
                 };
             },
             watch: {
@@ -1621,7 +1662,17 @@
                     }
                 }
             },
+            mounted() {
+                this.updateResponsiveState();
+                window.addEventListener('resize', this.updateResponsiveState);
+            },
+            beforeDestroy() {
+                window.removeEventListener('resize', this.updateResponsiveState);
+            },
             methods: {
+                updateResponsiveState() {
+                    this.isMobile = window.innerWidth <= 600;
+                },
                 loadConfig() {
                     const saved = localStorage.getItem('github-config');
                     if (saved) {
@@ -1682,10 +1733,13 @@
                 <el-dialog
                     title="GitHub Configuration"
                     :visible.sync="visible"
-                    width="550px"
+                    :width="isMobile ? '94vw' : '550px'"
                     @close="close"
                     custom-class="github-config-dialog">
-                    <el-form :model="config" label-width="140px">
+                    <el-form
+                        :model="config"
+                        :label-width="isMobile ? 'auto' : '140px'"
+                        :label-position="isMobile ? 'top' : 'left'">
                         <el-form-item label="Personal Token">
                             <el-input
                                 v-model="config.token"
@@ -1722,7 +1776,7 @@
                         {{ testResult.message }}
                     </div>
 
-                    <div slot="footer" class="dialog-footer">
+                    <div slot="footer" :class="['dialog-footer', { 'is-mobile': isMobile }]">
                         <el-button @click="testConnection" :loading="testing">Test Connection</el-button>
                         <el-button @click="close">Cancel</el-button>
                         <el-button type="primary" @click="save" class="save-button">Save Configuration</el-button>
@@ -1751,7 +1805,8 @@
                     },
                     selectedLinkRule: 'jsdelivr',
                     testing: false,
-                    testResult: null
+                    testResult: null,
+                    isMobile: window.innerWidth <= 600
                 };
             },
             watch: {
@@ -1761,7 +1816,17 @@
                     }
                 }
             },
+            mounted() {
+                this.updateResponsiveState();
+                window.addEventListener('resize', this.updateResponsiveState);
+            },
+            beforeDestroy() {
+                window.removeEventListener('resize', this.updateResponsiveState);
+            },
             methods: {
+                updateResponsiveState() {
+                    this.isMobile = window.innerWidth <= 600;
+                },
                 loadConfig() {
                     const saved = localStorage.getItem('image-service-config');
                     if (saved) {
@@ -1873,10 +1938,13 @@
                 <el-dialog
                     title="图床配置"
                     :visible.sync="visible"
-                    width="600px"
+                    :width="isMobile ? '94vw' : '600px'"
                     @close="close"
-                    custom-class="github-config-dialog">
-                    <el-form :model="config" label-width="120px">
+                    custom-class="github-config-dialog image-config-dialog">
+                    <el-form
+                        :model="config"
+                        :label-width="isMobile ? 'auto' : '120px'"
+                        :label-position="isMobile ? 'top' : 'left'">
                         <el-form-item label="GitHub Token">
                             <el-input
                                 v-model="config.token"
@@ -1933,7 +2001,7 @@
                         {{ testResult.message }}
                     </div>
 
-                    <div slot="footer" class="dialog-footer">
+                    <div slot="footer" :class="['dialog-footer', { 'is-mobile': isMobile }]">
                         <el-button @click="testConnection" :loading="testing">测试连接</el-button>
                         <el-button @click="close">取消</el-button>
                         <el-button type="primary" @click="save" class="save-button">保存配置</el-button>
