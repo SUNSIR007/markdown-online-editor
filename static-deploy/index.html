@@ -1532,7 +1532,7 @@
                     <el-button
                         @click="publish"
                         size="medium"
-                        :disabled="!canPublish"
+                        :disabled="!isGitHubConfigured"
                         class="publish-button"
                         :class="{ 'has-content': hasBodyContent }">
                         发布
@@ -2104,10 +2104,6 @@
 
                 hasBodyContent() {
                     return !!(this.bodyContent && this.bodyContent.trim().length);
-                },
-
-                canPublish() {
-                    return this.hasBodyContent && this.isGitHubConfigured;
                 }
             },
 
