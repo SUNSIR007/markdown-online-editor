@@ -272,6 +272,8 @@
 
         /* 自定义图标样式 */
         .github-config-button img {
+            width: 16px;
+            height: 16px;
             transition: all 0.3s ease;
             /* 将黑色线条转换为白色 */
             filter: invert(1) brightness(0.9);
@@ -1174,12 +1176,33 @@
                 box-shadow: none !important;
             }
 
-            .github-config-button,
+            .github-config-button {
+                width: auto !important;
+                height: auto !important;
+                padding: 6px !important;
+                background: transparent !important;
+                border: none !important;
+                box-shadow: none !important;
+                border-radius: 0 !important;
+                backdrop-filter: none !important;
+                display: inline-flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+            }
+
+            .github-config-button i {
+                font-size: 20px !important;
+            }
+
+            .github-config-button img {
+                width: 20px !important;
+                height: 20px !important;
+            }
+
             .theme-toggle-button {
                 width: 36px !important;
                 height: 36px !important;
             }
-
             .publish-button {
                 padding: 8px 20px !important;
                 border-radius: 999px !important;
@@ -1225,7 +1248,6 @@
                 max-width: 120px;
             }
 
-            .github-config-button,
             .theme-toggle-button {
                 width: 36px !important;
                 height: 36px !important;
@@ -1507,10 +1529,10 @@
                     <button class="github-config-button" @click="configureGitHub" :title="isGitHubConfigured ? 'GitHub已配置' : '配置GitHub'">
                         <i class="el-icon-setting"></i>
                     </button>
-                    <button class="github-config-button" @click="configureImageService" :title="isImageServiceConfigured ? '图床已配置' : '配置图床'" style="margin-left: 5px;">
-                        <img src="./img/icons/pic.png" alt="图床配置" style="width: 16px; height: 16px;">
+                    <button class="github-config-button" @click="configureImageService" :title="isImageServiceConfigured ? '图床已配置' : '配置图床'">
+                        <img src="./img/icons/pic.png" alt="图床配置">
                     </button>
-                    <button v-if="isPWAMode && !isImageServiceConfigured" class="github-config-button quick-config-button" @click="showQuickConfig" title="PWA快速配置" style="margin-left: 5px;">
+                    <button v-if="isPWAMode && !isImageServiceConfigured" class="github-config-button quick-config-button" @click="showQuickConfig" title="PWA快速配置">
                         <i class="el-icon-magic-stick"></i>
                     </button>
                     <div class="theme-dropdown">
