@@ -404,6 +404,11 @@
             display: flex;
             gap: 14px;
             align-items: center;
+            margin-left: auto;
+        }
+
+        .action-buttons .publish-button {
+            margin-left: auto;
         }
 
         /* 美化按钮样式 - 现代化按钮 */
@@ -1093,7 +1098,6 @@
             }
 
             .content-type-selector {
-                /* 保持水平布局，让所有按钮在一行 */
                 flex-direction: row;
                 align-items: center;
                 justify-content: space-between;
@@ -1110,6 +1114,12 @@
                 display: flex;
                 gap: 10px;
                 flex-shrink: 0;
+                width: 100%;
+                flex: 1;
+            }
+
+            .action-buttons .publish-button {
+                margin-left: auto;
             }
 
             /* 移动端隐藏主题切换按钮，固定暗黑模式 */
