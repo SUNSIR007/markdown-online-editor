@@ -183,37 +183,43 @@
 
         /* 发布按钮样式 */
         .publish-button {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+            background: #4b5563 !important;
             border: none !important;
-            color: white !important;
+            color: #e5e7eb !important;
             font-weight: 600 !important;
-            padding: 12px 20px !important;
-            border-radius: 12px !important;
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3) !important;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            padding: 10px 22px !important;
+            border-radius: 999px !important;
+            box-shadow: none !important;
+            transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease !important;
         }
 
-        .publish-button:hover {
-            background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
-            transform: translateY(-2px) !important;
-            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4) !important;
+        .publish-button.has-content {
+            background: #ffffff !important;
+            color: #111827 !important;
+        }
+
+        .publish-button.has-content:hover {
+            background: #f1f5f9 !important;
+            transform: translateY(-1px) !important;
         }
 
         .publish-button:disabled {
-            background: #9ca3af !important;
+            background: #4b5563 !important;
+            color: #9ca3af !important;
             box-shadow: none !important;
             transform: none !important;
             cursor: not-allowed !important;
         }
 
-        /* 发布按钮图标大小 */
-        .publish-button .el-icon-upload {
-            font-size: 18px !important;
+        .publish-button.has-content:disabled {
+            background: #ffffff !important;
+            color: #d1d5db !important;
         }
 
         /* 发布按钮成功动画 */
         .publish-button.success {
-            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%) !important;
+            background: #22c55e !important;
+            color: #ffffff !important;
             animation: successPulse 0.6s ease-out;
         }
 
@@ -1519,7 +1525,13 @@
                             </div>
                         </div>
                     </div>
-                    <el-button @click="publish" size="medium" type="success" icon="el-icon-upload" :disabled="!isGitHubConfigured" class="publish-button">
+                    <el-button
+                        @click="publish"
+                        size="medium"
+                        :disabled="!canPublish"
+                        class="publish-button"
+                        :class="{ 'has-content': hasBodyContent }">
+                        发布
                     </el-button>
                 </div>
             </div>
@@ -2084,6 +2096,14 @@
                     }
                     const fields = this.metadataFields[this.currentType];
                     return fields && fields.length > 0;
+                },
+
+                hasBodyContent() {
+                    return !!(this.bodyContent && this.bodyContent.trim().length);
+                },
+
+                canPublish() {
+                    return this.hasBodyContent && this.isGitHubConfigured;
                 }
             },
 
