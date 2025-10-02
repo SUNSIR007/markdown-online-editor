@@ -76,10 +76,13 @@ class ImageService {
    * @param {string} config.imageDir - 图片目录
    */
   setConfig(config) {
-    this.token = config.token
-    this.owner = config.owner
-    this.repo = config.repo
+    const owner = (config.owner || '').trim()
+    const repo = (config.repo || '').trim()
     const branch = (config.branch || 'main').trim()
+
+    this.token = (config.token || '').trim()
+    this.owner = owner
+    this.repo = repo
     this.branch = branch || 'main'
 
     // 清理imageDir，确保不以斜杠开头或结尾
@@ -89,6 +92,9 @@ class ImageService {
     // 保存到localStorage
     const normalizedConfig = {
       ...config,
+      token: this.token,
+      owner: this.owner,
+      repo: this.repo,
       branch: this.branch,
       imageDir: this.imageDir
     }
@@ -425,6 +431,66 @@ class ImageService {
   }
 
   /**
+   * 将文件路径编码为GitHub API可接受的形式
+   * @param {string} filePath - 原始文件路径
+   */
+  encodeFilePath(filePath) {
+    return filePath
+      .split('/')
+      .map((segment) => encodeURIComponent(segment))
+      .join('/')
+  }
+
+  /**
+   * 规范化分支名称（用于比较）
+   * @param {string} branch - 分支名称
+   */
+  normalizeBranchName(branch) {
+    return (branch || '').trim().toLowerCase()
+  }
+
+  /**
+   * 当分支可能配置错误时，尝试自动回退到仓库默认分支
+   * @param {string} failedBranch - 失败的分支名称
+   */
+  async resolveBranchFallback(failedBranch) {
+    try {
+      const repoInfo = await this.request(`/repos/${this.owner}/${this.repo}`)
+      const defaultBranch = repoInfo?.default_branch
+
+      if (!defaultBranch) {
+        return null
+      }
+
+      const normalizedDefault = this.normalizeBranchName(defaultBranch)
+      const normalizedFailed = this.normalizeBranchName(failedBranch)
+
+      if (normalizedDefault === normalizedFailed) {
+        return null
+      }
+
+      console.warn('检测到分支可能配置错误，自动切换到仓库默认分支:', {
+        failedBranch,
+        defaultBranch
+      })
+
+      // 更新当前配置为默认分支并持久化
+      this.setConfig({
+        token: this.token,
+        owner: this.owner,
+        repo: this.repo,
+        branch: defaultBranch,
+        imageDir: this.imageDir
+      })
+
+      return defaultBranch
+    } catch (fallbackError) {
+      console.warn('尝试回退到默认分支失败:', fallbackError)
+      return null
+    }
+  }
+
+  /**
    * 将文件转换为Base64
    * @param {File} file - 文件对象
    */
@@ -628,6 +694,7 @@ class ImageService {
       // 生成文件名和路径
       const fileName = this.generateFileName(file.name, addHash)
       const filePath = this.generateFilePath(fileName)
+      const encodedFilePath = this.encodeFilePath(filePath)
 
       console.log('Upload details:', {
         originalFileName: file.name,
@@ -647,16 +714,38 @@ class ImageService {
       onProgress({ stage: 'uploading', progress: 90 })
 
       // 上传到GitHub
-      const uploadData = {
-        message: `Upload image: ${fileName}`,
-        content: base64Content,
-        branch: this.branch
+      const attemptUpload = async (targetBranch) => {
+        const uploadData = {
+          message: `Upload image: ${fileName}`,
+          content: base64Content,
+          branch: targetBranch
+        }
+
+        return this.request(`/repos/${this.owner}/${this.repo}/contents/${encodedFilePath}`, {
+          method: 'PUT',
+          body: JSON.stringify(uploadData)
+        })
       }
 
-      const response = await this.request(`/repos/${this.owner}/${this.repo}/contents/${filePath}`, {
-        method: 'PUT',
-        body: JSON.stringify(uploadData)
-      })
+      let response
+      let usedBranch = this.branch
+
+      try {
+        response = await attemptUpload(usedBranch)
+      } catch (requestError) {
+        const isNotFound = typeof requestError.message === 'string' && requestError.message.includes('404')
+        if (isNotFound) {
+          const fallbackBranch = await this.resolveBranchFallback(usedBranch)
+          if (fallbackBranch) {
+            usedBranch = fallbackBranch
+            response = await attemptUpload(fallbackBranch)
+          } else {
+            throw requestError
+          }
+        } else {
+          throw requestError
+        }
+      }
 
       onProgress({ stage: 'generating', progress: 95 })
 
@@ -907,6 +996,13 @@ class ImageService {
       const repoResponse = await this.request(`/repos/${this.owner}/${this.repo}`)
       console.log('Repository response:', repoResponse)
 
+      if (this.branch) {
+        const encodedBranch = encodeURIComponent(this.branch)
+        console.log('Validating branch:', this.branch)
+        await this.request(`/repos/${this.owner}/${this.repo}/branches/${encodedBranch}`)
+        console.log('Branch validation succeeded:', this.branch)
+      }
+
       // 检查权限
       const permissions = repoResponse.permissions || {}
       const hasWriteAccess = permissions.push || permissions.admin
@@ -936,10 +1032,20 @@ class ImageService {
         message: error.message,
         stack: error.stack
       })
+      const errorMessage = error.message || '未知错误'
+
+      if (errorMessage.includes('/branches/')) {
+        return {
+          success: false,
+          message: `连接失败: 分支 ${this.branch} 不存在或无法访问，请确认分支名称`,
+          error: errorMessage
+        }
+      }
+
       return {
         success: false,
-        message: `连接失败: ${error.message}`,
-        error: error.message
+        message: `连接失败: ${errorMessage}`,
+        error: errorMessage
       }
     }
   }
