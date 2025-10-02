@@ -1529,9 +1529,6 @@
                     <button class="github-config-button" @click="configureGitHub" :title="isGitHubConfigured ? 'GitHub已配置' : '配置GitHub'">
                         <i class="el-icon-setting"></i>
                     </button>
-                    <button class="github-config-button" @click="configureImageService" :title="isImageServiceConfigured ? '图床已配置' : '配置图床'">
-                        <img src="./img/icons/pic.png" alt="图床配置">
-                    </button>
                     <button
                         v-if="isMobileView"
                         class="github-config-button mobile-upload-button"
@@ -1600,12 +1597,6 @@
             @close="githubConfigVisible = false"
             @save="handleGitHubConfigSave">
         </github-config>
-
-        <image-service-config
-            :visible="imageConfigVisible"
-            @close="imageConfigVisible = false"
-            @save="handleImageServiceConfigSave">
-        </image-service-config>
 
         <!-- 上传进度提示 -->
         <el-dialog
@@ -1703,161 +1694,22 @@
             return `---\n${frontmatter}\n---\n\n${content}`;
         }
 
-        // GitHub配置组件
+        // GitHub 与图床一体化配置组件
         Vue.component('github-config', {
             props: ['visible'],
             data() {
                 return {
-                    config: {
+                    activeTab: 'github',
+                    githubConfig: {
                         token: '',
                         owner: '',
                         repo: ''
                     },
-                    testing: false,
-                    testResult: null,
-                    isMobile: window.innerWidth <= 600
-                };
-            },
-            watch: {
-                visible(newVal) {
-                    if (newVal) {
-                        this.loadConfig();
-                    }
-                }
-            },
-            mounted() {
-                this.updateResponsiveState();
-                window.addEventListener('resize', this.updateResponsiveState);
-            },
-            beforeDestroy() {
-                window.removeEventListener('resize', this.updateResponsiveState);
-            },
-            methods: {
-                updateResponsiveState() {
-                    this.isMobile = window.innerWidth <= 600;
-                },
-                loadConfig() {
-                    const saved = localStorage.getItem('github-config');
-                    if (saved) {
-                        this.config = JSON.parse(saved);
-                    }
-                },
-                async testConnection() {
-                    if (!this.config.token || !this.config.owner || !this.config.repo) {
-                        this.$message.warning('请填写完整的配置信息');
-                        return;
-                    }
-
-                    this.testing = true;
-                    this.testResult = null;
-
-                    try {
-                        // 临时设置配置进行测试
-                        const tempService = new GitHubService();
-                        tempService.setConfig(this.config);
-
-                        const result = await tempService.testConnection();
-
-                        if (result.success) {
-                            this.testResult = {
-                                success: true,
-                                message: `连接成功！用户: ${result.user}，仓库: ${result.repo}，权限: ${result.permissions}`
-                            };
-                        } else {
-                            this.testResult = {
-                                success: false,
-                                message: result.error
-                            };
-                        }
-                    } catch (error) {
-                        this.testResult = {
-                            success: false,
-                            message: `连接失败: ${error.message}`
-                        };
-                    } finally {
-                        this.testing = false;
-                    }
-                },
-                save() {
-                    if (!this.config.token || !this.config.owner || !this.config.repo) {
-                        this.$message.warning('请填写完整的配置信息');
-                        return;
-                    }
-
-                    localStorage.setItem('github-config', JSON.stringify(this.config));
-                    this.$emit('save', this.config);
-                    this.close();
-                },
-                close() {
-                    this.$emit('close');
-                }
-            },
-            template: `
-                <el-dialog
-                    title="GitHub Configuration"
-                    :visible.sync="visible"
-                    :width="isMobile ? '94vw' : '550px'"
-                    @close="close"
-                    custom-class="github-config-dialog">
-                    <el-form
-                        :model="config"
-                        :label-width="isMobile ? 'auto' : '140px'"
-                        :label-position="isMobile ? 'top' : 'left'">
-                        <el-form-item label="Personal Token">
-                            <el-input
-                                v-model="config.token"
-                                type="password"
-                                placeholder="Enter your GitHub Personal Access Token"
-                                show-password>
-                            </el-input>
-                            <div class="token-instructions">
-                                <strong>How to get a token:</strong><br>
-                                1. GitHub → Settings → Developer settings<br>
-                                2. Personal access tokens → Tokens (classic)<br>
-                                3. Generate new token (classic)<br>
-                                4. Check the <strong>repo</strong> scope → Generate token<br>
-                                5. Copy the token and paste it here.
-                            </div>
-                        </el-form-item>
-
-                        <el-form-item label="Repository Owner">
-                            <el-input
-                                v-model="config.owner"
-                                placeholder="Your GitHub username or organization">
-                            </el-input>
-                        </el-form-item>
-
-                        <el-form-item label="Repository Name">
-                            <el-input
-                                v-model="config.repo"
-                                placeholder="The name of the repository">
-                            </el-input>
-                        </el-form-item>
-                    </el-form>
-
-                    <div v-if="testResult" :class="['test-result', testResult.success ? 'success' : 'error']">
-                        {{ testResult.message }}
-                    </div>
-
-                    <div slot="footer" :class="['dialog-footer', { 'is-mobile': isMobile }]">
-                        <el-button @click="testConnection" :loading="testing">Test Connection</el-button>
-                        <el-button @click="close">Cancel</el-button>
-                        <el-button type="primary" @click="save" class="save-button">Save Configuration</el-button>
-                    </div>
-                </el-dialog>
-            `
-        });
-
-        // 图片服务配置组件
-        Vue.component('image-service-config', {
-            props: ['visible'],
-            data() {
-                return {
-                    config: {
+                    imageConfig: {
                         token: '',
                         owner: '',
                         repo: '',
-                        branch: 'main',  // 默认使用main分支
+                        branch: 'main',
                         imageDir: 'images'
                     },
                     linkRules: {
@@ -1867,8 +1719,10 @@
                         'china-jsdelivr': '中国jsDelivr CDN'
                     },
                     selectedLinkRule: 'jsdelivr',
-                    testing: false,
-                    testResult: null,
+                    githubTesting: false,
+                    githubTestResult: null,
+                    imageTesting: false,
+                    imageTestResult: null,
                     isMobile: window.innerWidth <= 600
                 };
             },
@@ -1891,16 +1745,29 @@
                     this.isMobile = window.innerWidth <= 600;
                 },
                 loadConfig() {
-                    const saved = localStorage.getItem('image-service-config');
-                    if (saved) {
-                        const savedConfig = JSON.parse(saved);
-                        const branch = (savedConfig.branch || '').trim();
-                        const imageDir = (savedConfig.imageDir || '').trim();
-                        this.config = {
-                            ...this.config,
-                            ...savedConfig,
-                            branch: branch || 'main',
-                            imageDir: imageDir || 'images'
+                    const savedGithub = localStorage.getItem('github-config');
+                    if (savedGithub) {
+                        this.githubConfig = {
+                            ...this.githubConfig,
+                            ...JSON.parse(savedGithub)
+                        };
+                    }
+
+                    const savedImage = localStorage.getItem('image-service-config');
+                    if (savedImage) {
+                        const parsed = JSON.parse(savedImage);
+                        this.imageConfig = {
+                            ...this.imageConfig,
+                            ...parsed,
+                            branch: (parsed.branch || '').trim() || 'main',
+                            imageDir: (parsed.imageDir || '').trim() || 'images'
+                        };
+                    } else {
+                        this.imageConfig = {
+                            ...this.imageConfig,
+                            token: this.githubConfig.token || '',
+                            owner: this.githubConfig.owner || '',
+                            repo: this.githubConfig.repo || ''
                         };
                     }
 
@@ -1908,74 +1775,89 @@
                     if (window.imageService && typeof window.imageService.getLinkRule === 'function') {
                         const rule = window.imageService.getLinkRule();
                         if (rule) {
-                            this.selectedLinkRule = window.imageService.selectedLinkRule;
+                            this.selectedLinkRule = this.resolveRuleKey(rule) || 'jsdelivr';
                         }
                     } else if (savedRule) {
-                        const matchedRule = this.resolveRuleKey(savedRule);
-                        if (matchedRule) {
-                            this.selectedLinkRule = matchedRule;
-                        }
+                        this.selectedLinkRule = this.resolveRuleKey(savedRule) || 'jsdelivr';
                     }
+
+                    this.githubTestResult = null;
+                    this.imageTestResult = null;
+                    this.githubTesting = false;
+                    this.imageTesting = false;
+                    this.activeTab = 'github';
                 },
-                async testConnection() {
-                    if (!this.config.token || !this.config.owner || !this.config.repo) {
-                        this.$message.warning('请填写完整的配置信息');
+                async testGithubConnection() {
+                    if (!this.githubConfig.token || !this.githubConfig.owner || !this.githubConfig.repo) {
+                        this.$message.warning('请先填写完整的 GitHub 配置信息');
+                        this.activeTab = 'github';
                         return;
                     }
 
-                    this.testing = true;
-                    this.testResult = null;
+                    this.githubTesting = true;
+                    this.githubTestResult = null;
 
                     try {
-                        // 临时设置配置进行测试
-                        const tempService = new ImageService();
-                        tempService.setConfig(this.config);
+                        const tempService = new GitHubService();
+                        tempService.setConfig(this.githubConfig);
 
                         const result = await tempService.testConnection();
 
                         if (result.success) {
-                            this.testResult = {
+                            this.githubTestResult = {
                                 success: true,
                                 message: `连接成功！用户: ${result.user}，仓库: ${result.repo}，权限: ${result.permissions}`
                             };
                         } else {
-                            this.testResult = {
+                            this.githubTestResult = {
                                 success: false,
                                 message: result.error
                             };
                         }
                     } catch (error) {
-                        this.testResult = {
+                        this.githubTestResult = {
                             success: false,
                             message: `连接失败: ${error.message}`
                         };
                     } finally {
-                        this.testing = false;
+                        this.githubTesting = false;
                     }
                 },
-                save() {
-                    if (!this.config.token || !this.config.owner || !this.config.repo) {
-                        this.$message.warning('请填写完整的配置信息');
+                async testImageConnection() {
+                    if (!this.imageConfig.token || !this.imageConfig.owner || !this.imageConfig.repo) {
+                        this.$message.warning('请先填写完整的图床配置信息');
+                        this.activeTab = 'image';
                         return;
                     }
 
-                    // 保存配置
-                    const configToSave = {
-                        ...this.config,
-                        branch: (this.config.branch || '').trim() || 'main',
-                        imageDir: (this.config.imageDir || '').trim()
-                    };
-                    localStorage.setItem('image-service-config', JSON.stringify(configToSave));
-                    const matchedRule = this.resolveRuleKey(this.selectedLinkRule) || 'jsdelivr';
-                    localStorage.setItem('image-service-link-rule', matchedRule);
+                    this.imageTesting = true;
+                    this.imageTestResult = null;
 
-                    // 设置CDN规则
-                    if (window.imageService) {
-                        window.imageService.setLinkRule(matchedRule);
+                    try {
+                        const tempService = new ImageService();
+                        tempService.setConfig(this.imageConfig);
+
+                        const result = await tempService.testConnection();
+
+                        if (result.success) {
+                            this.imageTestResult = {
+                                success: true,
+                                message: `连接成功！用户: ${result.user}，仓库: ${result.repo}，权限: ${result.permissions}`
+                            };
+                        } else {
+                            this.imageTestResult = {
+                                success: false,
+                                message: result.error
+                            };
+                        }
+                    } catch (error) {
+                        this.imageTestResult = {
+                            success: false,
+                            message: `连接失败: ${error.message}`
+                        };
+                    } finally {
+                        this.imageTesting = false;
                     }
-
-                    this.$emit('save', configToSave);
-                    this.close();
                 },
                 resolveRuleKey(value) {
                     if (value === undefined || value === null) {
@@ -1993,86 +1875,167 @@
                         .toLowerCase()
                         .replace(/[^a-z0-9]/g, '');
                 },
+                save() {
+                    if (!this.githubConfig.token || !this.githubConfig.owner || !this.githubConfig.repo) {
+                        this.$message.warning('请先填写完整的 GitHub 配置信息');
+                        this.activeTab = 'github';
+                        return;
+                    }
+
+                    if (!this.imageConfig.token || !this.imageConfig.owner || !this.imageConfig.repo) {
+                        this.$message.warning('请先填写完整的图床配置信息');
+                        this.activeTab = 'image';
+                        return;
+                    }
+
+                    const normalizedImageConfig = {
+                        ...this.imageConfig,
+                        branch: (this.imageConfig.branch || '').trim() || 'main',
+                        imageDir: (this.imageConfig.imageDir || '').trim() || 'images'
+                    };
+                    const matchedRule = this.resolveRuleKey(this.selectedLinkRule) || 'jsdelivr';
+
+                    localStorage.setItem('github-config', JSON.stringify(this.githubConfig));
+                    localStorage.setItem('image-service-config', JSON.stringify(normalizedImageConfig));
+                    localStorage.setItem('image-service-link-rule', matchedRule);
+
+                    if (window.imageService) {
+                        window.imageService.setConfig(normalizedImageConfig);
+                        if (typeof window.imageService.setLinkRule === 'function') {
+                            window.imageService.setLinkRule(matchedRule);
+                        }
+                    }
+
+                    this.$emit('save', {
+                        github: { ...this.githubConfig },
+                        image: normalizedImageConfig,
+                        linkRule: matchedRule
+                    });
+                    this.close();
+                },
                 close() {
                     this.$emit('close');
                 }
             },
             template: `
                 <el-dialog
-                    title="图床配置"
+                    title="仓库与图床配置"
                     :visible.sync="visible"
-                    :width="isMobile ? '94vw' : '600px'"
+                    :width="isMobile ? '96vw' : '640px'"
                     @close="close"
-                    custom-class="github-config-dialog image-config-dialog">
-                    <el-form
-                        :model="config"
-                        :label-width="isMobile ? 'auto' : '120px'"
-                        :label-position="isMobile ? 'top' : 'left'">
-                        <el-form-item label="GitHub Token">
-                            <el-input
-                                v-model="config.token"
-                                type="password"
-                                placeholder="输入GitHub Personal Access Token"
-                                show-password>
-                            </el-input>
-                            <div class="token-instructions">
-                                <strong>注意：</strong>建议使用专门的图床仓库，与博客仓库分开管理
+                    custom-class="github-config-dialog">
+                    <el-tabs v-model="activeTab" type="card">
+                        <el-tab-pane label="GitHub 仓库" name="github">
+                            <el-form
+                                :model="githubConfig"
+                                :label-width="isMobile ? 'auto' : '140px'"
+                                :label-position="isMobile ? 'top' : 'left'">
+                                <el-form-item label="Personal Token">
+                                    <el-input
+                                        v-model="githubConfig.token"
+                                        type="password"
+                                        placeholder="Enter your GitHub Personal Access Token"
+                                        show-password>
+                                    </el-input>
+                                    <div class="token-instructions">
+                                        <strong>How to get a token:</strong><br>
+                                        1. GitHub → Settings → Developer settings<br>
+                                        2. Personal access tokens → Tokens (classic)<br>
+                                        3. Generate new token (classic)<br>
+                                        4. Check the <strong>repo</strong> scope → Generate token<br>
+                                        5. Copy the token and paste it here.
+                                    </div>
+                                </el-form-item>
+
+                                <el-form-item label="Repository Owner">
+                                    <el-input
+                                        v-model="githubConfig.owner"
+                                        placeholder="Your GitHub username or organization">
+                                    </el-input>
+                                </el-form-item>
+
+                                <el-form-item label="Repository Name">
+                                    <el-input
+                                        v-model="githubConfig.repo"
+                                        placeholder="The name of the repository">
+                                    </el-input>
+                                </el-form-item>
+                            </el-form>
+
+                            <div v-if="githubTestResult" :class="['test-result', githubTestResult.success ? 'success' : 'error']">
+                                {{ githubTestResult.message }}
                             </div>
-                        </el-form-item>
+                        </el-tab-pane>
 
-                        <el-form-item label="仓库所有者">
-                            <el-input
-                                v-model="config.owner"
-                                placeholder="GitHub用户名或组织名">
-                            </el-input>
-                        </el-form-item>
+                        <el-tab-pane label="图床设置" name="image">
+                            <el-form
+                                :model="imageConfig"
+                                :label-width="isMobile ? 'auto' : '140px'"
+                                :label-position="isMobile ? 'top' : 'left'">
+                                <el-form-item label="Personal Token">
+                                    <el-input
+                                        v-model="imageConfig.token"
+                                        type="password"
+                                        placeholder="请输入用于图床的 GitHub Token"
+                                        show-password>
+                                    </el-input>
+                                </el-form-item>
 
-                        <el-form-item label="图床仓库名">
-                            <el-input
-                                v-model="config.repo"
-                                placeholder="专用图床仓库名称">
-                            </el-input>
-                        </el-form-item>
+                                <el-form-item label="Repository Owner">
+                                    <el-input
+                                        v-model="imageConfig.owner"
+                                        placeholder="GitHub 用户名或组织名">
+                                    </el-input>
+                                </el-form-item>
 
-                        <el-form-item label="分支名称">
-                            <el-input
-                                v-model="config.branch"
-                                placeholder="默认为main">
-                            </el-input>
-                        </el-form-item>
+                                <el-form-item label="Repository Name">
+                                    <el-input
+                                        v-model="imageConfig.repo"
+                                        placeholder="存放图片的仓库名">
+                                    </el-input>
+                                </el-form-item>
 
-                        <el-form-item label="图片目录">
-                            <el-input
-                                v-model="config.imageDir"
-                                placeholder="图片存储目录，默认为images">
-                            </el-input>
-                        </el-form-item>
+                                <el-form-item label="Branch">
+                                    <el-input
+                                        v-model="imageConfig.branch"
+                                        placeholder="分支名称，如 main 或 master">
+                                    </el-input>
+                                </el-form-item>
 
-                        <el-form-item label="CDN服务">
-                            <el-select v-model="selectedLinkRule" placeholder="选择CDN服务">
-                                <el-option
-                                    v-for="(label, key) in linkRules"
-                                    :key="key"
-                                    :label="label"
-                                    :value="key">
-                                </el-option>
-                            </el-select>
-                        </el-form-item>
-                    </el-form>
+                                <el-form-item label="图片目录">
+                                    <el-input
+                                        v-model="imageConfig.imageDir"
+                                        placeholder="图片保存目录，如 images 或 uploads">
+                                    </el-input>
+                                </el-form-item>
 
-                    <div v-if="testResult" :class="['test-result', testResult.success ? 'success' : 'error']">
-                        {{ testResult.message }}
-                    </div>
+                                <el-form-item label="链接生成规则">
+                                    <el-select v-model="selectedLinkRule" placeholder="请选择">
+                                        <el-option
+                                            v-for="(label, value) in linkRules"
+                                            :key="value"
+                                            :label="label"
+                                            :value="value">
+                                        </el-option>
+                                    </el-select>
+                                </el-form-item>
+                            </el-form>
+
+                            <div v-if="imageTestResult" :class="['test-result', imageTestResult.success ? 'success' : 'error']">
+                                {{ imageTestResult.message }}
+                            </div>
+                        </el-tab-pane>
+                    </el-tabs>
 
                     <div slot="footer" :class="['dialog-footer', { 'is-mobile': isMobile }]">
-                        <el-button @click="testConnection" :loading="testing">测试连接</el-button>
+                        <el-button @click="testGithubConnection" :loading="githubTesting">测试 GitHub</el-button>
+                        <el-button @click="testImageConnection" :loading="imageTesting">测试图床</el-button>
                         <el-button @click="close">取消</el-button>
                         <el-button type="primary" @click="save" class="save-button">保存配置</el-button>
                     </div>
                 </el-dialog>
             `
         });
-
         // 主Vue实例
         new Vue({
             el: '#app',
@@ -2090,7 +2053,6 @@
                     bodyContent: '',
                     hasUserInteracted: false,
                     // 图片上传相关
-                    imageConfigVisible: false,
                     isImageServiceConfigured: false,
                     uploadingImages: false,
                     uploadProgress: {
@@ -2647,12 +2609,25 @@
                     this.githubConfigVisible = true;
                 },
 
-                handleGitHubConfigSave(config) {
-                    if (window.githubService) {
-                        window.githubService.setConfig(config);
-                        this.checkGitHubConfig();
-                        this.$message.success('GitHub配置已保存');
+                handleGitHubConfigSave(payload) {
+                    const githubConfig = payload?.github || payload;
+                    const imageConfig = payload?.image;
+                    const linkRule = payload?.linkRule;
+
+                    if (githubConfig && window.githubService) {
+                        window.githubService.setConfig(githubConfig);
                     }
+
+                    if (imageConfig && window.imageService) {
+                        window.imageService.setConfig(imageConfig);
+                        if (linkRule && typeof window.imageService.setLinkRule === 'function') {
+                            window.imageService.setLinkRule(linkRule);
+                        }
+                    }
+
+                    this.checkGitHubConfig();
+                    this.checkImageServiceConfig();
+                    this.$message.success('配置已保存');
                 },
 
                 // 电脑端自动聚焦
@@ -2846,8 +2821,8 @@
                             customClass: 'pwa-config-dialog'
                         }
                     ).then(() => {
-                        // 优先配置图片服务
-                        this.imageConfigVisible = true;
+                        // 打开配置对话框
+                        this.githubConfigVisible = true;
                     }).catch(() => {
                         // 用户选择稍后配置，显示提示
                         this.$message({
@@ -3094,20 +3069,6 @@
                             }
                         }
                     });
-                },
-
-                // 配置图片服务
-                configureImageService() {
-                    this.imageConfigVisible = true;
-                },
-
-                // 处理图片服务配置保存
-                handleImageServiceConfigSave(config) {
-                    if (window.imageService) {
-                        window.imageService.setConfig(config);
-                        this.checkImageServiceConfig();
-                        this.$message.success('图床配置已保存');
-                    }
                 },
 
                 // Gallery相关方法
