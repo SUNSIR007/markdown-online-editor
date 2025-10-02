@@ -183,29 +183,28 @@
 
         /* 发布按钮样式 */
         .publish-button {
-            background: #4b5563 !important;
+            background: #f3f4f6 !important;
             border: none !important;
-            color: #e5e7eb !important;
+            color: #111827 !important;
             font-weight: 600 !important;
-            padding: 10px 22px !important;
-            border-radius: 999px !important;
+            padding: 9px 24px !important;
+            border-radius: 20px !important;
             box-shadow: none !important;
             transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease !important;
         }
 
         .publish-button.has-content {
             background: #ffffff !important;
-            color: #111827 !important;
         }
 
-        .publish-button.has-content:hover {
-            background: #f1f5f9 !important;
+        .publish-button.has-content:hover:not(:disabled) {
+            background: #f8fafc !important;
             transform: translateY(-1px) !important;
         }
 
         .publish-button:disabled {
-            background: #4b5563 !important;
-            color: #9ca3af !important;
+            background: #f3f4f6 !important;
+            color: #111827 !important;
             box-shadow: none !important;
             transform: none !important;
             cursor: not-allowed !important;
@@ -213,13 +212,17 @@
 
         .publish-button.has-content:disabled {
             background: #ffffff !important;
-            color: #d1d5db !important;
+        }
+
+        .publish-button:focus {
+            outline: none !important;
+            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3) !important;
         }
 
         /* 发布按钮成功动画 */
         .publish-button.success {
             background: #22c55e !important;
-            color: #ffffff !important;
+            color: #111827 !important;
             animation: successPulse 0.6s ease-out;
         }
 
