@@ -518,26 +518,45 @@ class ImageService {
       const canvas = document.createElement('canvas')
       const ctx = canvas.getContext('2d')
       const img = new Image()
+      const objectUrl = URL.createObjectURL(file)
 
       img.onload = () => {
-        // 计算新尺寸
-        let { width, height } = img
-        if (width > maxWidth) {
-          height = (height * maxWidth) / width
-          width = maxWidth
+        try {
+          let { width, height } = img
+          if (width > maxWidth) {
+            height = (height * maxWidth) / width
+            width = maxWidth
+          }
+
+          canvas.width = width
+          canvas.height = height
+          ctx.drawImage(img, 0, 0, width, height)
+
+          const normalizedType = file.type === 'image/jpg' ? 'image/jpeg' : file.type
+          const qualityCapable = ['image/jpeg', 'image/webp'].includes(normalizedType)
+
+          canvas.toBlob(
+            (blob) => {
+              resolve(blob || file)
+            },
+            normalizedType,
+            qualityCapable ? quality : undefined
+          )
+        } catch (error) {
+          console.warn('图片压缩失败，使用原始文件:', error)
+          resolve(file)
+        } finally {
+          URL.revokeObjectURL(objectUrl)
         }
-
-        canvas.width = width
-        canvas.height = height
-
-        // 绘制压缩后的图片
-        ctx.drawImage(img, 0, 0, width, height)
-
-        // 转换为Blob
-        canvas.toBlob(resolve, file.type, quality)
       }
 
-      img.src = URL.createObjectURL(file)
+      img.onerror = (event) => {
+        console.warn('图片加载失败，使用原始文件:', event)
+        URL.revokeObjectURL(objectUrl)
+        resolve(file)
+      }
+
+      img.src = objectUrl
     })
   }
 
@@ -561,9 +580,34 @@ class ImageService {
       const img = new Image()
       const objectUrl = URL.createObjectURL(file)
 
+      const originalType = (file.type === 'image/jpg' ? 'image/jpeg' : file.type) || 'image/jpeg'
+      const supportedCanvasTypes = ['image/jpeg', 'image/png', 'image/webp']
+
+      if (!supportedCanvasTypes.includes(originalType)) {
+        URL.revokeObjectURL(objectUrl)
+        resolve(file)
+        return
+      }
+
       img.onload = async () => {
         try {
           let { width, height } = img
+
+          const MAX_CANVAS_DIMENSION = 4096
+          const MAX_CANVAS_PIXELS = 16 * 1024 * 1024 // 16MP
+
+          const pixelCount = width * height
+          const dimensionScale = Math.min(
+            1,
+            MAX_CANVAS_DIMENSION / width,
+            MAX_CANVAS_DIMENSION / height,
+            Math.sqrt(MAX_CANVAS_PIXELS / pixelCount)
+          )
+
+          if (dimensionScale < 1) {
+            width = Math.max(1, Math.floor(width * dimensionScale))
+            height = Math.max(1, Math.floor(height * dimensionScale))
+          }
 
           canvas.width = width
           canvas.height = height
@@ -577,12 +621,22 @@ class ImageService {
           onProgress({ stage: 'compressing', progress: 30 })
 
           while (attempts < maxAttempts) {
-            currentBlob = await new Promise(resolve => {
+            currentBlob = await new Promise(resolveBlob => {
               try {
-                canvas.toBlob(resolve, 'image/jpeg', quality)
+                const qualityCapable = ['image/jpeg', 'image/webp'].includes(originalType)
+                canvas.toBlob(
+                  (blob) => {
+                    if (!blob) {
+                      console.warn('canvas.toBlob 返回空，回退原始文件')
+                    }
+                    resolveBlob(blob)
+                  },
+                  originalType,
+                  qualityCapable ? quality : undefined
+                )
               } catch (blobError) {
                 console.warn('canvas.toBlob 失败，使用原始文件:', blobError)
-                resolve(null)
+                resolveBlob(null)
               }
             })
 
@@ -621,7 +675,7 @@ class ImageService {
           onProgress({ stage: 'finalizing', progress: 90 })
 
           const compressedFile = new File([currentBlob], file.name, {
-            type: 'image/jpeg',
+            type: originalType,
             lastModified: Date.now()
           })
 
@@ -629,8 +683,9 @@ class ImageService {
         } catch (error) {
           console.warn('图片压缩出现异常，使用原始文件:', error)
           resolve(file)
+        } finally {
+          URL.revokeObjectURL(objectUrl)
         }
-        URL.revokeObjectURL(objectUrl)
       }
 
       img.onerror = (event) => {
