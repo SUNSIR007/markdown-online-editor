@@ -300,6 +300,14 @@
             color: white !important;
         }
 
+        .vditor-ir .vditor-ir__main,
+        .vditor-wysiwyg .vditor-wysiwyg__main,
+        .vditor-sv .vditor-sv__main,
+        .vditor-preview {
+            font-size: 18px;
+            line-height: 1.75;
+        }
+
         /* 针对 frontmatter 的特殊样式 */
         .vditor-preview hr + pre,
         .vditor-preview hr + pre code {
@@ -1105,7 +1113,9 @@
             .vditor-wysiwyg .vditor-wysiwyg__main,
             .vditor-sv .vditor-sv__main,
             .vditor-preview {
-                padding: 20px 16px !important;
+                padding: 20px 18px !important;
+                font-size: 18px !important;
+                line-height: 1.8 !important;
             }
 
             .content-type-selector {
@@ -1140,8 +1150,8 @@
 
             /* 优化移动端按钮样式 */
             .type-buttons .el-button {
-                padding: 12px 20px !important;
-                font-size: 16px !important;
+                padding: 11px 18px !important;
+                font-size: 15px !important;
                 font-weight: 500 !important;
                 border-radius: 20px !important;
             }
@@ -1179,7 +1189,7 @@
             .github-config-button {
                 width: auto !important;
                 height: auto !important;
-                padding: 10px !important;
+                padding: 8px !important;
                 background: transparent !important;
                 border: none !important;
                 box-shadow: none !important;
@@ -1191,12 +1201,12 @@
             }
 
             .github-config-button i {
-                font-size: 24px !important;
+                font-size: 22px !important;
             }
 
             .github-config-button img {
-                width: 24px !important;
-                height: 24px !important;
+                width: 22px !important;
+                height: 22px !important;
             }
 
             .theme-toggle-button {
@@ -1204,8 +1214,8 @@
                 height: 36px !important;
             }
             .publish-button {
-                padding: 12px 28px !important;
-                font-size: 16px !important;
+                padding: 10px 24px !important;
+                font-size: 15px !important;
                 border-radius: 999px !important;
             }
         }
@@ -1235,13 +1245,15 @@
             .vditor-wysiwyg .vditor-wysiwyg__main,
             .vditor-sv .vditor-sv__main,
             .vditor-preview {
-                padding: 16px 12px !important;
+                padding: 18px 14px !important;
+                font-size: 16px !important;
+                line-height: 1.75 !important;
             }
 
             /* 超小屏幕按钮优化 */
             .type-buttons .el-button {
-                padding: 10px 18px !important;
-                font-size: 15px !important;
+                padding: 9px 16px !important;
+                font-size: 14px !important;
             }
 
             /* 超小屏幕Essays按钮优化 */
@@ -1256,8 +1268,8 @@
             }
 
             .publish-button {
-                padding: 10px 18px !important;
-                font-size: 15px !important;
+                padding: 9px 16px !important;
+                font-size: 14px !important;
             }
 
             .type-buttons,
