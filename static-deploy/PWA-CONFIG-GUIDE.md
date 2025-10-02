@@ -84,6 +84,25 @@ const hasGitHubConfig = localStorage.getItem('github-config');
 2. **权限设置**: 确保Token有足够的权限访问目标仓库
 3. **网络连接**: 图片上传需要稳定的网络连接
 4. **存储隔离**: PWA和浏览器的配置是完全独立的，需要分别配置
+5. **主屏幕图标**: 如需自定义图标，请在 `static-deploy/img/icons/` 下放置素材，并按照下方步骤生成 `apple-touch-icon.png`、`icon-192.png`、`icon-512.png` 与 `icon-512-maskable.png`
+
+### 自定义主屏幕图标
+
+1. 将原始图片（建议 1024×1024 以上）保存到 `static-deploy/img/icons/source.JPG`
+2. 运行 `sips` 或其他图像工具生成需要的尺寸：
+   ```bash
+   sips -z 180 180 static-deploy/img/icons/source.JPG --out static-deploy/img/icons/apple-touch-icon.png
+   sips -z 192 192 static-deploy/img/icons/source.JPG --out static-deploy/img/icons/icon-192.png
+   sips -z 512 512 static-deploy/img/icons/source.JPG --out static-deploy/img/icons/icon-512.png
+   cp static-deploy/img/icons/icon-512.png static-deploy/img/icons/icon-512-maskable.png
+   ```
+3. 在 `index.html` 的 `<head>` 中加入：
+   ```html
+   <link rel="apple-touch-icon" sizes="180x180" href="./img/icons/apple-touch-icon.png">
+   <link rel="manifest" href="./site.webmanifest">
+   ```
+4. 确保 `static-deploy/site.webmanifest` 的 `icons` 数组指向以上文件
+5. 在 iOS Safari 中清除旧的图标缓存（设置 → Safari → 清除历史记录与网站数据），重新“添加到主屏幕”即可看到新图标
 
 ## 测试页面
 
