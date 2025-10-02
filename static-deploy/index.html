@@ -266,7 +266,7 @@
             background: rgba(255,255,255,0.25);
         }
 
-        .github-config-button .el-icon-setting {
+        .github-config-button i {
             font-size: 18px;
         }
 
@@ -1532,6 +1532,21 @@
                     <button class="github-config-button" @click="configureImageService" :title="isImageServiceConfigured ? '图床已配置' : '配置图床'">
                         <img src="./img/icons/pic.png" alt="图床配置">
                     </button>
+                    <button
+                        v-if="isMobileView"
+                        class="github-config-button mobile-upload-button"
+                        @click="triggerMobileImageUpload"
+                        title="上传图片">
+                        <i class="el-icon-picture-outline"></i>
+                    </button>
+                    <input
+                        v-if="isMobileView"
+                        ref="mobileImageInput"
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        style="display: none;"
+                        @change="handleMobileImageChange">
                     <button v-if="isPWAMode && !isImageServiceConfigured" class="github-config-button quick-config-button" @click="showQuickConfig" title="PWA快速配置">
                         <i class="el-icon-magic-stick"></i>
                     </button>
@@ -2070,6 +2085,7 @@
                     contentTypeLabels,
                     isGitHubConfigured: false,
                     isDarkMode: true,
+                    isMobileView: false,
                     metadataFields,
                     bodyContent: '',
                     hasUserInteracted: false,
@@ -2130,6 +2146,7 @@
             },
 
             mounted() {
+                this.isMobileView = this.isMobileDevice();
                 this.initTheme();
                 this.setupMobileDefaults();
                 this.setupViewportFixes();
@@ -2167,6 +2184,7 @@
                     const updateViewportUnit = () => {
                         const vh = window.innerHeight * 0.01;
                         document.documentElement.style.setProperty('--vh', `${vh}px`);
+                        this.isMobileView = this.isMobileDevice();
                     };
 
                     let lastViewportHeight = window.innerHeight;
@@ -2220,6 +2238,36 @@
                             }
                         }, 0);
                     });
+                },
+
+                triggerMobileImageUpload() {
+                    if (!this.isImageServiceConfigured) {
+                        this.$message.warning('请先配置图床服务');
+                        return;
+                    }
+
+                    if (this.uploadingImages) {
+                        this.$message({ message: '正在上传图片，请稍候', type: 'info' });
+                        return;
+                    }
+
+                    const input = this.$refs.mobileImageInput;
+                    if (input) {
+                        input.click();
+                    }
+                },
+
+                async handleMobileImageChange(event) {
+                    const { files } = event.target;
+                    if (!files || !files.length) {
+                        return;
+                    }
+
+                    try {
+                        await this.handleImageUpload(files);
+                    } finally {
+                        event.target.value = '';
+                    }
                 },
 
                 initTheme() {
@@ -2291,10 +2339,8 @@
 
                     // 根据设备类型设置不同的工具栏
                     const isMobile = this.isMobileDevice();
-                    const toolbar = isMobile ? [
-                        // 移动端极简工具栏：只保留图片上传
-                        'upload'
-                    ] : [
+                    // 移动端改由头部操作区提供上传按钮
+                    const toolbar = isMobile ? [] : [
                         // 桌面端完整工具栏
                         'emoji', 'headings', 'bold', 'italic', 'strike', 'link', '|',
                         'list', 'ordered-list', 'check', 'outdent', 'indent', '|',
