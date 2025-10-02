@@ -188,7 +188,7 @@
             color: #111827 !important;
             font-weight: 600 !important;
             padding: 9px 24px !important;
-            border-radius: 20px !important;
+            border-radius: 999px !important;
             box-shadow: none !important;
             transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease !important;
         }
@@ -1039,19 +1039,19 @@
         }
 
         /* 通用按钮样式 */
-        .theme-dark .el-button,
-        .theme-gray .el-button,
-        .theme-forest .el-button,
-        .theme-ocean .el-button {
+        .theme-dark .el-button:not(.publish-button),
+        .theme-gray .el-button:not(.publish-button),
+        .theme-forest .el-button:not(.publish-button),
+        .theme-ocean .el-button:not(.publish-button) {
             background: #333 !important;
             border-color: #555 !important;
             color: #e0e0e0 !important;
         }
 
-        .theme-dark .el-button:hover,
-        .theme-gray .el-button:hover,
-        .theme-forest .el-button:hover,
-        .theme-ocean .el-button:hover {
+        .theme-dark .el-button:not(.publish-button):hover,
+        .theme-gray .el-button:not(.publish-button):hover,
+        .theme-forest .el-button:not(.publish-button):hover,
+        .theme-ocean .el-button:not(.publish-button):hover {
             background: #444 !important;
             border-color: #666 !important;
         }
@@ -1181,7 +1181,8 @@
             }
 
             .publish-button {
-                padding: 8px 12px !important;
+                padding: 8px 20px !important;
+                border-radius: 999px !important;
             }
         }
 
