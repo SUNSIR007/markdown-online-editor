@@ -559,70 +559,87 @@ class ImageService {
       const canvas = document.createElement('canvas')
       const ctx = canvas.getContext('2d')
       const img = new Image()
+      const objectUrl = URL.createObjectURL(file)
 
       img.onload = async () => {
-        let { width, height } = img
+        try {
+          let { width, height } = img
 
-        // 设置canvas尺寸
-        canvas.width = width
-        canvas.height = height
-        ctx.drawImage(img, 0, 0, width, height)
+          canvas.width = width
+          canvas.height = height
+          ctx.drawImage(img, 0, 0, width, height)
 
-        // 渐进式压缩策略
-        let quality = 0.9 // 从高质量开始
-        let currentBlob = null
-        let attempts = 0
-        const maxAttempts = 8
+          let quality = 0.9 // 从高质量开始
+          let currentBlob = null
+          let attempts = 0
+          const maxAttempts = 8
 
-        onProgress({ stage: 'compressing', progress: 30 })
+          onProgress({ stage: 'compressing', progress: 30 })
 
-        while (attempts < maxAttempts) {
-          // 尝试当前质量
-          currentBlob = await new Promise(resolve => {
-            canvas.toBlob(resolve, 'image/jpeg', quality)
-          })
+          while (attempts < maxAttempts) {
+            currentBlob = await new Promise(resolve => {
+              try {
+                canvas.toBlob(resolve, 'image/jpeg', quality)
+              } catch (blobError) {
+                console.warn('canvas.toBlob 失败，使用原始文件:', blobError)
+                resolve(null)
+              }
+            })
 
-          onProgress({
-            stage: 'compressing',
-            progress: 30 + (attempts / maxAttempts) * 50,
-            currentSize: currentBlob.size,
-            targetSize: targetSize,
-            quality: quality
-          })
+            if (!currentBlob) {
+              console.warn('压缩失败，返回原始文件')
+              resolve(file)
+              return
+            }
 
-          // 如果达到目标大小，返回结果
-          if (currentBlob.size <= targetSize) {
-            break
+            onProgress({
+              stage: 'compressing',
+              progress: 30 + (attempts / maxAttempts) * 50,
+              currentSize: currentBlob.size,
+              targetSize: targetSize,
+              quality: quality
+            })
+
+            if (currentBlob.size <= targetSize) {
+              break
+            }
+
+            quality = Math.max(quality - 0.1, 0.1)
+            attempts++
+
+            if (quality < 0.3 && width > 800) {
+              const scale = 0.8
+              width = Math.floor(width * scale)
+              height = Math.floor(height * scale)
+              canvas.width = width
+              canvas.height = height
+              ctx.drawImage(img, 0, 0, width, height)
+              quality = 0.7
+            }
           }
 
-          // 如果还是太大，降低质量
-          quality -= 0.1
-          attempts++
+          onProgress({ stage: 'finalizing', progress: 90 })
 
-          // 如果质量太低，尝试缩小尺寸
-          if (quality < 0.3 && width > 800) {
-            const scale = 0.8
-            width = Math.floor(width * scale)
-            height = Math.floor(height * scale)
-            canvas.width = width
-            canvas.height = height
-            ctx.drawImage(img, 0, 0, width, height)
-            quality = 0.7 // 重置质量
-          }
+          const compressedFile = new File([currentBlob], file.name, {
+            type: 'image/jpeg',
+            lastModified: Date.now()
+          })
+
+          resolve(compressedFile)
+        } catch (error) {
+          console.warn('图片压缩出现异常，使用原始文件:', error)
+          resolve(file)
         }
-
-        onProgress({ stage: 'finalizing', progress: 90 })
-
-        // 创建新的File对象
-        const compressedFile = new File([currentBlob], file.name, {
-          type: 'image/jpeg',
-          lastModified: Date.now()
-        })
-
-        resolve(compressedFile)
+        URL.revokeObjectURL(objectUrl)
       }
 
-      img.src = URL.createObjectURL(file)
+      img.onerror = (event) => {
+        console.warn('图片加载失败，使用原始文件:', event)
+        resolve(file)
+        URL.revokeObjectURL(objectUrl)
+      }
+
+      img.src = objectUrl
     })
   }
 
