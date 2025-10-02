@@ -1386,6 +1386,33 @@
             padding: 8px 16px !important;
         }
 
+        /* 消息提示暗色主题，保持状态栏与背景一致 */
+        .el-message {
+            background: rgba(17, 24, 39, 0.92) !important;
+            color: #f9fafb !important;
+            border: 1px solid rgba(148, 163, 184, 0.25) !important;
+            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.45) !important;
+            backdrop-filter: blur(12px);
+        }
+
+        .el-message__icon,
+        .el-message__content,
+        .el-message__closeBtn {
+            color: inherit !important;
+        }
+
+        .el-message--success {
+            border-color: rgba(34, 197, 94, 0.35) !important;
+        }
+
+        .el-message--warning {
+            border-color: rgba(234, 179, 8, 0.35) !important;
+        }
+
+        .el-message--error {
+            border-color: rgba(248, 113, 113, 0.35) !important;
+        }
+
         /* 快速配置按钮样式 */
         .quick-config-button {
             background: linear-gradient(45deg, #FF6B6B, #4ECDC4) !important;
