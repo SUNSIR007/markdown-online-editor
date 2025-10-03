@@ -1493,11 +1493,7 @@
                         image: normalizedImageConfig,
                         linkRule: matchedRule
                     });
-
-                    // 使用nextTick确保配置已完全应用后再关闭对话框
-                    this.$nextTick(() => {
-                        this.close();
-                    });
+                    this.close();
                 },
                 close() {
                     this.$emit('close');
