@@ -270,13 +270,13 @@
 }
 
 .github-config-dialog .el-dialog {
-    background: #000000 !important;
+    background: linear-gradient(145deg, #1a1a1a 0%, #242424 100%) !important;
     border-radius: 24px !important;
-    border: 1px solid rgba(0, 47, 167, 0.4) !important;
+    border: 1.5px solid rgba(0, 47, 167, 0.5) !important;
     box-shadow:
         0 25px 70px rgba(0, 0, 0, 0.95),
-        0 0 0 1px rgba(255, 255, 255, 0.05),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+        0 0 0 1px rgba(255, 255, 255, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
     overflow: hidden;
     max-height: 85vh;
 }
@@ -601,8 +601,8 @@
 
 /* Element UI 下拉框弹出层样式 */
 .el-select-dropdown {
-    background: #000000 !important;
-    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    background: linear-gradient(145deg, #1a1a1a 0%, #242424 100%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.9) !important;
     border-radius: 14px !important;
     padding: 6px !important;
