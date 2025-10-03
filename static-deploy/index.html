@@ -12,17 +12,14 @@
             background: #000000 !important;
         }
 
-        /* 覆盖所有可能的白色元素 */
-        * {
-            background-color: transparent;
+        /* 在页面完全加载前隐藏内容，防止白色闪现 */
+        #app {
+            visibility: hidden;
         }
 
-        /* 防止Element UI等组件的白色背景闪现 */
-        .el-loading-mask,
-        .el-dialog,
-        .el-message-box,
-        [class*="el-"] {
-            background-color: transparent !important;
+        /* 页面加载完成后显示 */
+        #app.loaded {
+            visibility: visible;
         }
     </style>
 
@@ -1713,6 +1710,11 @@
                 this.checkForEditFile();
                 this.detectPWAMode();
                 this.checkPWAConfigMissing();
+
+                // 页面加载完成，显示内容
+                this.$nextTick(() => {
+                    document.getElementById('app').classList.add('loaded');
+                });
             },
 
             methods: {
