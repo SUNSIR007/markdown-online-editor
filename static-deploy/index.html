@@ -183,6 +183,14 @@
                 <el-button type="primary" @click="mobileErrorDialog.visible = false">关闭</el-button>
             </div>
         </el-dialog>
+
+        <!-- 上传进度条 -->
+        <div id="upload-progress-bar" class="upload-progress-bar"></div>
+
+        <!-- 上传反馈图标（成功/失败） -->
+        <div id="upload-feedback-overlay" class="upload-feedback-overlay">
+            <div id="upload-feedback-icon" class="upload-feedback-icon"></div>
+        </div>
     </div>
 
     <!-- Service Scripts -->

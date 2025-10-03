@@ -236,10 +236,10 @@ new Vue({
             }
 
             const finalContent = window.generateContentWithMetadata(this.currentType, this.metadata, this.bodyContent);
-            const publishButton = document.querySelector('.publish-button');
 
             try {
-                this.$message({ message: '正在发布...', type: 'info' });
+                // 显示进度条
+                this.showUploadProgress();
 
                 const result = await window.githubService.publishContent(
                     this.currentType,
@@ -248,23 +248,78 @@ new Vue({
                 );
 
                 if (result.success) {
-                    if (publishButton) {
-                        publishButton.classList.add('success');
-                        setTimeout(() => {
-                            publishButton.classList.remove('success');
-                        }, 1500);
-                    }
+                    // 完成进度条
+                    this.completeUploadProgress();
+                    // 显示成功对勾
+                    this.showSuccessCheck();
 
-                    this.$message({
-                        message: `发布成功！文件已${result.action === 'add' ? '创建' : '更新'}`,
-                        type: 'success'
-                    });
-
-                    this.selectType(this.currentType);
+                    // 清空内容
+                    setTimeout(() => {
+                        this.selectType(this.currentType);
+                    }, 1500);
                 }
             } catch (error) {
                 console.error('发布失败:', error);
-                this.$message.error(`发布失败: ${error.message}`);
+                // 隐藏进度条
+                this.hideUploadProgress();
+                // 显示失败叉号
+                this.showErrorCross(error.message);
+            }
+        },
+
+        showUploadProgress() {
+            const progressBar = document.getElementById('upload-progress-bar');
+            if (progressBar) {
+                progressBar.style.display = 'block';
+                progressBar.style.width = '0%';
+                // 模拟进度
+                setTimeout(() => {
+                    progressBar.style.width = '30%';
+                }, 100);
+                setTimeout(() => {
+                    progressBar.style.width = '60%';
+                }, 500);
+            }
+        },
+
+        completeUploadProgress() {
+            const progressBar = document.getElementById('upload-progress-bar');
+            if (progressBar) {
+                progressBar.style.width = '100%';
+                setTimeout(() => {
+                    progressBar.style.display = 'none';
+                }, 800);
+            }
+        },
+
+        hideUploadProgress() {
+            const progressBar = document.getElementById('upload-progress-bar');
+            if (progressBar) {
+                progressBar.style.display = 'none';
+            }
+        },
+
+        showSuccessCheck() {
+            const overlay = document.getElementById('upload-feedback-overlay');
+            const icon = document.getElementById('upload-feedback-icon');
+            if (overlay && icon) {
+                icon.innerHTML = '<svg viewBox="0 0 52 52" class="success-icon"><circle class="success-icon-circle" cx="26" cy="26" r="25" fill="none"/><path class="success-icon-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/></svg>';
+                overlay.classList.add('show');
+                setTimeout(() => {
+                    overlay.classList.remove('show');
+                }, 2000);
+            }
+        },
+
+        showErrorCross(message) {
+            const overlay = document.getElementById('upload-feedback-overlay');
+            const icon = document.getElementById('upload-feedback-icon');
+            if (overlay && icon) {
+                icon.innerHTML = '<svg viewBox="0 0 52 52" class="error-icon"><circle class="error-icon-circle" cx="26" cy="26" r="25" fill="none"/><path class="error-icon-cross" fill="none" d="M16 16 36 36 M36 16 16 36"/></svg>';
+                overlay.classList.add('show');
+                setTimeout(() => {
+                    overlay.classList.remove('show');
+                }, 2500);
             }
         },
 
