@@ -23,36 +23,18 @@ class GitHubService {
     this.owner = config.owner
     this.repo = config.repo
 
-    // 使用configManager保存配置（如果可用）
-    if (window.configManager) {
-      window.configManager.setGitHubConfig(config)
-    } else {
-      // 降级到localStorage
-      localStorage.setItem('github-config', JSON.stringify(config))
-    }
+    // 保存到localStorage
+    localStorage.setItem('github-config', JSON.stringify(config))
   }
 
   /**
-   * 从configManager或localStorage加载配置
+   * 从localStorage加载配置
    */
   loadConfig() {
-    let config = null
-
-    // 优先使用configManager
-    if (window.configManager) {
-      config = window.configManager.getGitHubConfig()
-    } else {
-      // 降级到localStorage
-      const saved = localStorage.getItem('github-config')
-      if (saved) {
-        config = JSON.parse(saved)
-      }
-    }
-
-    if (config) {
-      this.token = config.token
-      this.owner = config.owner
-      this.repo = config.repo
+    const saved = localStorage.getItem('github-config')
+    if (saved) {
+      const config = JSON.parse(saved)
+      this.setConfig(config)
       return config
     }
     return null
