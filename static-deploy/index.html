@@ -26,7 +26,35 @@
         .el-loading-mask {
             background-color: rgba(0, 0, 0, 0.8) !important;
         }
+
+        /* PWA状态恢复时强制黑色背景 */
+        body:not(.theme-dark) {
+            background-color: #000000 !important;
+            color: #e0e0e0 !important;
+        }
     </style>
+
+    <!-- 在DOM加载前立即执行的脚本，确保主题正确 -->
+    <script>
+        // 在任何其他脚本执行前，强制设置主题
+        (function() {
+            // 确保body有theme-dark类
+            document.addEventListener('DOMContentLoaded', function() {
+                document.body.classList.add('theme-dark');
+                document.documentElement.style.backgroundColor = '#000000';
+                document.body.style.backgroundColor = '#000000';
+                document.body.style.color = '#e0e0e0';
+            });
+
+            // 如果页面已经加载完成（PWA快速恢复的情况）
+            if (document.readyState !== 'loading') {
+                document.body.classList.add('theme-dark');
+                document.documentElement.style.backgroundColor = '#000000';
+                document.body.style.backgroundColor = '#000000';
+                document.body.style.color = '#e0e0e0';
+            }
+        })();
+    </script>
 
     <title>BlogWriter - GitHub Auto Deploy</title>
     <meta name="version" content="1.2">
@@ -1845,11 +1873,27 @@
                 },
 
                 initTheme() {
+                    // 强制确保主题设置正确，特别是PWA状态恢复时
+                    document.documentElement.style.backgroundColor = '#000000';
+                    document.body.style.backgroundColor = '#000000';
+                    document.body.style.color = '#e0e0e0';
                     document.body.classList.add('theme-dark');
+
+                    // 确保meta theme-color正确
                     const metaThemeColor = document.querySelector('meta[name="theme-color"]');
                     if (metaThemeColor) {
                         metaThemeColor.setAttribute('content', '#000000');
                     }
+
+                    // 强制覆盖可能的白色样式
+                    const style = document.createElement('style');
+                    style.textContent = `
+                        html, body, #app {
+                            background-color: #000000 !important;
+                            background: #000000 !important;
+                        }
+                    `;
+                    document.head.appendChild(style);
                 },
 
                 initVditor() {
