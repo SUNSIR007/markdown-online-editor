@@ -257,15 +257,17 @@
     <script src="js/editor-manager.js"></script>
     <script src="js/image-handler.js"></script>
 
-    <!-- Delay Vue app initialization until CSS is ready -->
+    <!-- 超时时间进一步缩短 -->
     <script>
         // 跟踪CSS加载状态
         let elementUILoaded = false;
         let vditorLoaded = false;
+        let appLoaded = false;
 
         // 检查是否可以初始化Vue应用
         function checkReadyToInitVue() {
-            if (elementUILoaded && vditorLoaded) {
+            if ((elementUILoaded && vditorLoaded) && !appLoaded) {
+                appLoaded = true;
                 // 所有外部CSS加载完成，加载Vue应用
                 const script = document.createElement('script');
                 script.src = 'js/app.js';
@@ -291,15 +293,16 @@
             };
         }
 
-        // 备用：400ms后强制加载（更快的用户体验）
+        // 备用：200ms后强制加载（极速体验）
         setTimeout(() => {
-            if (!elementUILoaded || !vditorLoaded) {
+            if (!appLoaded) {
+                appLoaded = true;
                 console.log('Quick load: initializing Vue app');
                 const script = document.createElement('script');
                 script.src = 'js/app.js';
                 document.head.appendChild(script);
             }
-        }, 400);
+        }, 200);
     </script>
 
     <script>
