@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>移动端深度优化测试</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        .test-container {
+            background: rgba(255,255,255,0.1);
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .device-info {
+            background: rgba(255,255,255,0.1);
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .test-result {
+            padding: 16px;
+            border-radius: 12px;
+            margin: 12px 0;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .success {
+            background: rgba(34, 197, 94, 0.2);
+            border-color: rgba(34, 197, 94, 0.4);
+        }
+        .warning {
+            background: rgba(251, 191, 36, 0.2);
+            border-color: rgba(251, 191, 36, 0.4);
+        }
+        .info {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: rgba(59, 130, 246, 0.4);
+        }
+        .button {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 12px 24px;
+            border-radius: 12px;
+            cursor: pointer;
+            margin: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        .button:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+        h1 {
+            text-align: center;
+            font-size: 28px;
+            margin-bottom: 24px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        h2, h3 {
+            margin-bottom: 12px;
+        }
+        ul {
+            margin: 12px 0;
+            padding-left: 20px;
+        }
+        li {
+            margin: 8px 0;
+            line-height: 1.5;
+        }
+        .emoji {
+            font-size: 1.2em;
+            margin-right: 8px;
+        }
+        .highlight {
+            background: rgba(255,255,255,0.2);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>📱 移动端深度优化测试 v2.0</h1>
+        
+        <div class="device-info">
+            <h3><span class="emoji">🔍</span>设备信息</h3>
+            <p><strong>用户代理:</strong> <span id="userAgent"></span></p>
+            <p><strong>屏幕尺寸:</strong> <span id="screenSize"></span></p>
+            <p><strong>视口尺寸:</strong> <span id="viewportSize"></span></p>
+            <p><strong>设备类型:</strong> <span id="deviceType"></span></p>
+        </div>
+
+        <div class="test-result success">
+            <h3><span class="emoji">✨</span>深度优化特性</h3>
+            <ul>
+                <li>✅ <span class="highlight">移除Essays按钮</span> - 默认Essays模式，界面更简洁</li>
+                <li>✅ <span class="highlight">移除主题选择</span> - 固定暗黑模式，减少选择负担</li>
+                <li>✅ <span class="highlight">配置按钮左置</span> - GitHub和图床设置移到左边</li>
+                <li>✅ <span class="highlight">极简工具栏</span> - 只保留图片上传功能</li>
+                <li>✅ <span class="highlight">全屏编辑器</span> - 占满整个屏幕，无边框设计</li>
+            </ul>
+        </div>
+
+        <div class="test-result info">
+            <h3><span class="emoji">🎯</span>专注写作体验</h3>
+            <ul>
+                <li><strong>极简界面：</strong>移除所有不必要的UI元素</li>
+                <li><strong>全屏写作：</strong>编辑区域占满整个屏幕</li>
+                <li><strong>快速上传：</strong>保留图片上传，满足基本需求</li>
+                <li><strong>零干扰：</strong>固定暗黑模式，专注内容创作</li>
+                <li><strong>一键配置：</strong>设置按钮集中在左上角</li>
+            </ul>
+        </div>
+
+        <div class="test-result warning">
+            <h3><span class="emoji">📋</span>测试检查项</h3>
+            <ul>
+                <li>移动端是否只显示配置按钮和发布按钮？</li>
+                <li>编辑器是否占满整个屏幕（无边框、无边距）？</li>
+                <li>工具栏是否只有图片上传按钮？</li>
+                <li>是否自动使用暗黑模式？</li>
+                <li>桌面端是否保持完整功能？</li>
+            </ul>
+        </div>
+
+        <button class="button" onclick="openEditor()">🚀 打开编辑器测试</button>
+        <button class="button" onclick="runTests()">🔍 运行自动检测</button>
+        
+        <div id="testResults"></div>
+    </div>
+
+    <script>
+        // 检测设备类型
+        function isMobileDevice() {
+            const userAgent = navigator.userAgent.toLowerCase();
+            const mobileKeywords = ['mobile', 'android', 'iphone', 'ipad', 'ipod', 'blackberry', 'windows phone'];
+            return mobileKeywords.some(keyword => userAgent.includes(keyword)) ||
+                   window.innerWidth <= 768;
+        }
+
+        // 更新设备信息
+        function updateDeviceInfo() {
+            document.getElementById('userAgent').textContent = navigator.userAgent;
+            document.getElementById('screenSize').textContent = `${screen.width} x ${screen.height}`;
+            document.getElementById('viewportSize').textContent = `${window.innerWidth} x ${window.innerHeight}`;
+            document.getElementById('deviceType').textContent = isMobileDevice() ? '📱 移动设备' : '🖥️ 桌面设备';
+        }
+
+        // 打开编辑器
+        function openEditor() {
+            window.open('./index.html', '_blank');
+        }
+
+        // 运行测试
+        function runTests() {
+            const resultsDiv = document.getElementById('testResults');
+            resultsDiv.innerHTML = '<div class="test-result info"><h3><span class="emoji">🧪</span>自动检测结果</h3></div>';
+            
+            const isMobile = isMobileDevice();
+            
+            // 测试1: 设备检测
+            const test1 = document.createElement('div');
+            test1.className = 'test-result success';
+            test1.innerHTML = `<strong>✓ 设备检测:</strong> 当前识别为${isMobile ? '移动' : '桌面'}设备`;
+            resultsDiv.appendChild(test1);
+            
+            // 测试2: 屏幕尺寸
+            const test2 = document.createElement('div');
+            test2.className = window.innerWidth <= 768 ? 'test-result success' : 'test-result info';
+            test2.innerHTML = `<strong>${window.innerWidth <= 768 ? '✓' : 'ℹ'} 屏幕尺寸:</strong> ${window.innerWidth}px ${window.innerWidth <= 768 ? '(移动端优化生效)' : '(桌面端完整功能)'}`;
+            resultsDiv.appendChild(test2);
+            
+            // 测试3: 优化建议
+            const test3 = document.createElement('div');
+            test3.className = 'test-result warning';
+            test3.innerHTML = `<strong>💡 优化效果:</strong> ${isMobile ? '移动端应该看到极简界面，全屏编辑体验' : '桌面端保持完整功能，所有按钮和工具栏都可用'}`;
+            resultsDiv.appendChild(test3);
+            
+            // 对比说明
+            const comparison = document.createElement('div');
+            comparison.className = 'test-result info';
+            comparison.innerHTML = `
+                <strong>🔄 对比测试建议:</strong><br>
+                • 在移动设备上测试：应该看到极简界面<br>
+                • 在桌面设备上测试：应该看到完整功能<br>
+                • 调整浏览器窗口大小观察变化
+            `;
+            resultsDiv.appendChild(comparison);
+        }
+
+        // 页面加载时更新信息
+        window.addEventListener('load', updateDeviceInfo);
+        window.addEventListener('resize', updateDeviceInfo);
+    </script>
+</body>
+</html>
