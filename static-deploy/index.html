@@ -132,15 +132,12 @@
         }
     </style>
 
-    <!-- External Libraries - 优化加载性能 -->
+    <!-- External Libraries - 简化加载逻辑 -->
     <script src="https://unpkg.com/vue@2.6.14/dist/vue.min.js"></script>
     <script src="https://unpkg.com/element-ui@2.15.13/lib/index.js"></script>
-    <link rel="preload" href="https://unpkg.com/element-ui@2.15.13/lib/theme-chalk/index.css" as="style" onload="this.onload=null;this.rel='stylesheet';elementUILoaded=true;checkReadyToInitVue()">
-    <noscript><link rel="stylesheet" href="https://unpkg.com/element-ui@2.15.13/lib/theme-chalk/index.css"></noscript>
-
+    <link rel="stylesheet" href="https://unpkg.com/element-ui@2.15.13/lib/theme-chalk/index.css" id="element-ui-css">
     <script src="https://cdn.jsdelivr.net/npm/vditor@3.9.4/dist/index.min.js"></script>
-    <link rel="preload" href="https://cdn.jsdelivr.net/npm/vditor@3.9.4/dist/index.css" as="style" onload="this.onload=null;this.rel='stylesheet';vditorLoaded=true;checkReadyToInitVue()">
-    <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vditor@3.9.4/dist/index.css"></noscript>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vditor@3.9.4/dist/index.css" id="vditor-css">
 
     <!-- 覆盖外部库的白色样式 - 必须在外部CSS之后 -->
     <style>
@@ -301,22 +298,10 @@
     <script src="js/editor-manager.js"></script>
     <script src="js/image-handler.js"></script>
 
-    <!-- Optimized Vue app initialization -->
+    <!-- Simple and reliable Vue app initialization -->
     <script>
-        // 全局变量跟踪CSS加载状态
-        let elementUILoaded = false;
-        let vditorLoaded = false;
-
-        // 检查是否可以初始化Vue应用
-        function checkReadyToInitVue() {
-            if (elementUILoaded && vditorLoaded) {
-                // 所有外部CSS加载完成，立即加载Vue应用
-                loadVueApp();
-            }
-        }
-
         function loadVueApp() {
-            // 移除加载遮罩
+            // 显示应用
             const appElement = document.getElementById('app');
             if (appElement) {
                 appElement.style.visibility = 'visible';
@@ -329,15 +314,32 @@
             document.head.appendChild(script);
         }
 
-        // 如果CSS在500ms内都没加载完，强制初始化（优化用户体验）
-        setTimeout(() => {
-            if (!elementUILoaded || !vditorLoaded) {
-                console.warn('CSS loading timeout, force initializing for better UX');
-                elementUILoaded = true;
-                vditorLoaded = true;
-                loadVueApp();
-            }
-        }, 500);
+        // 等待DOM加载完成和一个短暂延迟后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 检查关键CSS是否已加载
+            const checkCSSLoaded = () => {
+                const elementUILink = document.getElementById('element-ui-css');
+                const vditorLink = document.getElementById('vditor-css');
+
+                // 检查CSS是否已应用（通过计算样式）
+                const testElement = document.createElement('div');
+                testElement.className = 'el-button';
+                document.body.appendChild(testElement);
+                const hasElementUI = window.getComputedStyle(testElement).borderRadius !== '';
+                document.body.removeChild(testElement);
+
+                if (hasElementUI || Date.now() - startTime > 1000) {
+                    // CSS已加载或超时1秒，立即初始化
+                    loadVueApp();
+                } else {
+                    // 继续检查
+                    setTimeout(checkCSSLoaded, 50);
+                }
+            };
+
+            const startTime = Date.now();
+            setTimeout(checkCSSLoaded, 100);
+        });
     </script>
 
     <script>
