@@ -1,60 +1,61 @@
 <!DOCTYPE html>
-<html lang="zh-CN" style="background:#000000;">
+<html lang="zh-CN" style="background:#000000 !important;">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- 关键CSS - 必须在最前面，防止闪白屏 -->
+    <!-- 最优先级CSS - 防止任何白屏 -->
     <style>
-        /* 强制黑色背景，最高优先级 */
-        html, body {
-            background-color: #000000 !important;
+        /* 使用CSS变量和多重保险 */
+        :root {
+            --bg-color: #000000;
+            --text-color: #e0e0e0;
+        }
+
+        /* 最高优先级强制黑色背景 */
+        html {
             background: #000000 !important;
-        }
-
-        /* 防止页面初始化时出现的白色闪现 */
-        body, #app, .header, .content-type-selector {
             background-color: #000000 !important;
         }
 
-        /* 防止Element UI白色组件闪现 */
-        .el-button, .el-input, .el-dialog, .el-message-box {
+        body {
+            background: #000000 !important;
+            background-color: #000000 !important;
+            color: #e0e0e0 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        /* 覆盖所有可能的白色容器 */
+        #app, .header, .content-type-selector, .editor-container {
+            background: #000000 !important;
+            background-color: #000000 !important;
+        }
+
+        /* 强制所有div为黑色或透明 */
+        div {
+            background-color: transparent;
+        }
+
+        /* 防止Element UI白色组件 */
+        .el-button, .el-input, .el-dialog, .el-message-box, .el-loading-mask {
             background-color: transparent !important;
         }
 
-        /* 防止白色遮罩闪现 */
-        .el-loading-mask {
-            background-color: rgba(0, 0, 0, 0.8) !important;
-        }
-
-        /* PWA状态恢复时强制黑色背景 */
-        body:not(.theme-dark) {
+        /* Vditor编辑器强制黑色 */
+        .vditor, .vditor-content, .vditor-toolbar, .vditor-wysiwyg,
+        .vditor-ir, .vditor-sv, .vditor-preview {
+            background: #000000 !important;
             background-color: #000000 !important;
             color: #e0e0e0 !important;
         }
+
+        /* 确保PWA恢复时不会白屏 */
+        body:not(.theme-dark) {
+            background: #000000 !important;
+            color: #e0e0e0 !important;
+        }
     </style>
-
-    <!-- 在DOM加载前立即执行的脚本，确保主题正确 -->
-    <script>
-        // 在任何其他脚本执行前，强制设置主题
-        (function() {
-            // 确保body有theme-dark类
-            document.addEventListener('DOMContentLoaded', function() {
-                document.body.classList.add('theme-dark');
-                document.documentElement.style.backgroundColor = '#000000';
-                document.body.style.backgroundColor = '#000000';
-                document.body.style.color = '#e0e0e0';
-            });
-
-            // 如果页面已经加载完成（PWA快速恢复的情况）
-            if (document.readyState !== 'loading') {
-                document.body.classList.add('theme-dark');
-                document.documentElement.style.backgroundColor = '#000000';
-                document.body.style.backgroundColor = '#000000';
-                document.body.style.color = '#e0e0e0';
-            }
-        })();
-    </script>
 
     <title>BlogWriter - GitHub Auto Deploy</title>
     <meta name="version" content="1.2">
@@ -1763,6 +1764,16 @@
                 this.checkForEditFile();
                 this.detectPWAMode();
                 this.checkPWAConfigMissing();
+
+                // 监听页面可见性变化，防止PWA恢复时白屏
+                this.setupVisibilityHandler();
+            },
+
+            beforeDestroy() {
+                // 清理监听器
+                if (this.visibilityHandler) {
+                    document.removeEventListener('visibilitychange', this.visibilityHandler);
+                }
             },
 
             methods: {
@@ -1894,6 +1905,43 @@
                         }
                     `;
                     document.head.appendChild(style);
+                },
+
+                // 设置页面可见性监听，防止PWA恢复时白屏
+                setupVisibilityHandler() {
+                    this.visibilityHandler = () => {
+                        if (!document.hidden) {
+                            // 页面重新可见时，立即强制黑色背景
+                            document.documentElement.style.backgroundColor = '#000000';
+                            document.body.style.backgroundColor = '#000000';
+                            document.body.style.color = '#e0e0e0';
+                            document.body.classList.add('theme-dark');
+
+                            // 强制覆盖所有可能的白色元素
+                            const app = document.getElementById('app');
+                            if (app) {
+                                app.style.backgroundColor = '#000000';
+                            }
+
+                            // 重新初始化主题
+                            this.$nextTick(() => {
+                                this.initTheme();
+                            });
+                        }
+                    };
+
+                    document.addEventListener('visibilitychange', this.visibilityHandler);
+
+                    // iOS PWA特殊处理 - pageshow事件
+                    window.addEventListener('pageshow', (event) => {
+                        // 从bfcache恢复时强制黑色
+                        if (event.persisted) {
+                            document.documentElement.style.backgroundColor = '#000000';
+                            document.body.style.backgroundColor = '#000000';
+                            document.body.style.color = '#e0e0e0';
+                            document.body.classList.add('theme-dark');
+                        }
+                    });
                 },
 
                 initVditor() {
