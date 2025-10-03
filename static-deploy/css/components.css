@@ -267,15 +267,18 @@
 .github-config-dialog .el-dialog {
     background: linear-gradient(145deg, #0a0e14 0%, #12171f 100%) !important;
     border-radius: 20px !important;
-    border: 1px solid rgba(0, 47, 167, 0.3) !important;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 1px rgba(0, 47, 167, 0.5) !important;
+    border: 2px solid rgba(0, 47, 167, 0.6) !important;
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.9),
+        0 0 0 1px rgba(0, 47, 167, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
     overflow: hidden;
 }
 
 .github-config-dialog .el-dialog__header {
-    background: linear-gradient(135deg, rgba(0, 47, 167, 0.15) 0%, rgba(0, 47, 167, 0.05) 100%) !important;
+    background: linear-gradient(135deg, rgba(0, 47, 167, 0.2) 0%, rgba(0, 47, 167, 0.1) 100%) !important;
     color: #e0e0e0 !important;
-    border-bottom: 1px solid rgba(0, 47, 167, 0.3) !important;
+    border-bottom: 2px solid rgba(0, 47, 167, 0.5) !important;
     border-top-left-radius: 20px;
     border-top-right-radius: 20px;
     padding: 20px 30px !important;
@@ -310,10 +313,10 @@
 
 /* 标签页样式优化 */
 .github-config-dialog .el-tabs__header {
-    background: rgba(0, 47, 167, 0.1) !important;
+    background: rgba(0, 47, 167, 0.15) !important;
     margin: 0 !important;
     padding: 0 30px !important;
-    border-bottom: 1px solid rgba(0, 47, 167, 0.3) !important;
+    border-bottom: 2px solid rgba(0, 47, 167, 0.4) !important;
 }
 
 .github-config-dialog .el-tabs__nav {
@@ -364,7 +367,7 @@
 
 .github-config-dialog .el-input__inner {
     background: rgba(255, 255, 255, 0.05) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.15) !important;
     color: #ffffff !important;
     border-radius: 10px !important;
     height: 42px !important;
@@ -422,8 +425,8 @@
 
 /* 底部按钮区域 */
 .github-config-dialog .el-dialog__footer {
-    background: rgba(0, 47, 167, 0.05) !important;
-    border-top: 1px solid rgba(0, 47, 167, 0.3) !important;
+    background: rgba(0, 47, 167, 0.1) !important;
+    border-top: 2px solid rgba(0, 47, 167, 0.5) !important;
     padding: 20px 30px !important;
     border-bottom-left-radius: 20px;
     border-bottom-right-radius: 20px;
