@@ -131,22 +131,27 @@ class GitHubService {
     const year = now.getFullYear()
     const month = String(now.getMonth() + 1).padStart(2, '0')
     const day = String(now.getDate()).padStart(2, '0')
+    const hour = String(now.getHours()).padStart(2, '0')
+    const minute = String(now.getMinutes()).padStart(2, '0')
+    const second = String(now.getSeconds()).padStart(2, '0')
 
     const datePrefix = `${year}-${month}-${day}`
+    const timestamp = `${hour}${minute}${second}`
 
     let fileName = ''
 
     if (contentType === 'blog') {
-      // Blog: 使用标题作为文件名
-      fileName = (title || metadata.title || 'untitled')
+      // Blog: 标题 + 时间戳
+      const safeTitle = (title || metadata.title || 'untitled')
         .replace(/[^\w\s\u4e00-\u9fa5-]/g, '') // 保留中文、英文、数字、空格、连字符
         .replace(/\s+/g, '-')
         .toLowerCase()
 
+      fileName = `${safeTitle}-${timestamp}`
       return `src/content/posts/${fileName}.md`
 
     } else if (contentType === 'essay') {
-      // Essay: 日期 + 内容前四个字
+      // Essay: 日期 + 内容前四个字 + 时间戳
       // 提取纯文本内容（去除YAML frontmatter和Markdown标记）
       let plainText = content
         .replace(/^---[\s\S]*?---\n*/m, '') // 移除YAML frontmatter
@@ -168,11 +173,11 @@ class GitHubService {
         }
       }
 
-      // 如果内容为空或只有图片，使用日期
+      // 如果内容为空或只有图片，只用日期 + 时间戳
       if (!firstFourChars) {
-        fileName = datePrefix
+        fileName = `${datePrefix}-${timestamp}`
       } else {
-        fileName = `${datePrefix}-${firstFourChars}`
+        fileName = `${datePrefix}-${firstFourChars}-${timestamp}`
       }
 
       return `src/content/essays/${fileName}.md`
@@ -184,7 +189,8 @@ class GitHubService {
         .replace(/\s+/g, '-')
         .toLowerCase()
 
-      return `docs/${datePrefix}-${safeTitle}.md`
+      fileName = `${datePrefix}-${safeTitle}-${timestamp}`
+      return `docs/${fileName}.md`
     }
   }
 
