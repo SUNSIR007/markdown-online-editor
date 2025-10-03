@@ -45,16 +45,6 @@
     background: #000000 !important;
 }
 
-/* 终端风格方块光标 */
-.vditor-ir .vditor-ir__main,
-.vditor-wysiwyg .vditor-wysiwyg__main,
-.vditor-sv .vditor-sv__main,
-.vditor-ir .vditor-ir__main textarea,
-.vditor-sv .vditor-sv__main textarea {
-    caret-shape: block !important;
-    caret-color: #e0e0e0 !important;
-}
-
 /* Vditor Editor Content */
 .vditor-ir .vditor-ir__main,
 .vditor-wysiwyg .vditor-wysiwyg__main,
