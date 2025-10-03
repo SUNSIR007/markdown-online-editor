@@ -15,13 +15,13 @@
     <link rel="icon" type="image/png" href="./img/icons/write.png">
     <link rel="apple-touch-icon" sizes="180x180" href="./img/icons/apple-touch-icon.png">
     <link rel="manifest" href="./site.webmanifest">
-    <script src="https://unpkg.com/vue@2.6.14/dist/vue.js" defer></script>
-    <script src="https://unpkg.com/element-ui@2.15.13/lib/index.js" defer></script>
+    <script src="https://unpkg.com/vue@2.6.14/dist/vue.js"></script>
+    <script src="https://unpkg.com/element-ui@2.15.13/lib/index.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/element-ui@2.15.13/lib/theme-chalk/index.css">
-    <script src="https://cdn.jsdelivr.net/npm/vditor@3.9.4/dist/index.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/vditor@3.9.4/dist/index.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vditor@3.9.4/dist/index.css">
-    <script src="github-service.js" defer></script>
-    <script src="image-service.js" defer></script>
+    <script src="github-service.js"></script>
+    <script src="image-service.js"></script>
     <style>
         :root {
             --vh: 1vh;
@@ -1708,6 +1708,7 @@
 
                 // 页面加载完成后移除预加载遮罩层
                 this.$nextTick(() => {
+                    // 等待Vditor编辑器初始化完成后再移除遮罩
                     setTimeout(() => {
                         const overlay = document.getElementById('preload-overlay');
                         if (overlay) {
@@ -1716,7 +1717,7 @@
                                 overlay.remove();
                             }, 300);
                         }
-                    }, 100);
+                    }, 500);
                 });
             },
 
