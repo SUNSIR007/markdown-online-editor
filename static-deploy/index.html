@@ -1385,6 +1385,62 @@
                     this.isMobile = window.innerWidth <= 600;
                 },
                 loadConfig() {
+                    // 降级处理：如果configManager不存在，使用localStorage
+                    if (!window.configManager) {
+                        console.warn('configManager not loaded in github-config component, using localStorage fallback');
+
+                        const savedGithub = localStorage.getItem('github-config');
+                        if (savedGithub) {
+                            try {
+                                this.githubConfig = {
+                                    ...this.githubConfig,
+                                    ...JSON.parse(savedGithub)
+                                };
+                            } catch (e) {
+                                console.error('Error parsing github config:', e);
+                            }
+                        }
+
+                        const savedImage = localStorage.getItem('image-service-config');
+                        if (savedImage) {
+                            try {
+                                const parsed = JSON.parse(savedImage);
+                                this.imageConfig = {
+                                    ...this.imageConfig,
+                                    ...parsed,
+                                    branch: (parsed.branch || '').trim() || 'main',
+                                    imageDir: (parsed.imageDir || '').trim() || 'images'
+                                };
+                            } catch (e) {
+                                console.error('Error parsing image config:', e);
+                            }
+                        } else {
+                            this.imageConfig = {
+                                ...this.imageConfig,
+                                token: this.githubConfig.token || '',
+                                owner: this.githubConfig.owner || '',
+                                repo: this.githubConfig.repo || ''
+                            };
+                        }
+
+                        const savedRule = localStorage.getItem('image-service-link-rule');
+                        if (window.imageService && typeof window.imageService.getLinkRule === 'function') {
+                            const rule = window.imageService.getLinkRule();
+                            if (rule) {
+                                this.selectedLinkRule = this.resolveRuleKey(rule) || 'jsdelivr';
+                            }
+                        } else if (savedRule) {
+                            this.selectedLinkRule = this.resolveRuleKey(savedRule) || 'jsdelivr';
+                        }
+
+                        this.githubTestResult = null;
+                        this.imageTestResult = null;
+                        this.githubTesting = false;
+                        this.imageTesting = false;
+                        this.activeTab = 'github';
+                        return;
+                    }
+
                     // 使用configManager加载配置
                     const savedGithub = window.configManager.getGitHubConfig();
                     if (savedGithub) {
@@ -1952,8 +2008,19 @@
                 checkGitHubConfig() {
                     // 检查configManager是否存在
                     if (!window.configManager) {
-                        console.warn('configManager not loaded yet');
-                        this.isGitHubConfigured = false;
+                        console.warn('configManager not loaded, using localStorage fallback');
+                        // 降级：直接使用localStorage
+                        const config = localStorage.getItem('github-config');
+                        this.isGitHubConfigured = !!config;
+                        if (config && window.githubService) {
+                            try {
+                                const parsedConfig = JSON.parse(config);
+                                window.githubService.setConfig(parsedConfig);
+                            } catch (e) {
+                                console.error('Error parsing config:', e);
+                                this.isGitHubConfigured = false;
+                            }
+                        }
                         return;
                     }
 
