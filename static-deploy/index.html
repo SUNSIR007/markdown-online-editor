@@ -17,8 +17,10 @@
     <link rel="apple-touch-startup-image" href="./img/icons/apple-touch-icon.png">
 
     <!-- 预加载关键资源以加快加载速度 -->
-    <link rel="preconnect" href="https://unpkg.com">
-    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="preconnect" href="https://unpkg.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="dns-prefetch" href="https://unpkg.com">
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
 
     <link rel="icon" type="image/png" href="./img/icons/write.png">
     <link rel="apple-touch-icon" sizes="180x180" href="./img/icons/apple-touch-icon.png">
@@ -116,11 +118,11 @@
         }
     </style>
 
-    <!-- External Libraries -->
-    <script src="https://unpkg.com/vue@2.6.14/dist/vue.min.js"></script>
-    <script src="https://unpkg.com/element-ui@2.15.13/lib/index.js"></script>
+    <!-- External Libraries - 使用defer异步加载 -->
+    <script defer src="https://unpkg.com/vue@2.6.14/dist/vue.min.js"></script>
+    <script defer src="https://unpkg.com/element-ui@2.15.13/lib/index.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/element-ui@2.15.13/lib/theme-chalk/index.css">
-    <script src="https://cdn.jsdelivr.net/npm/vditor@3.9.4/dist/index.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/vditor@3.9.4/dist/index.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vditor@3.9.4/dist/index.css">
 
     <!-- CSS Modules -->
@@ -289,15 +291,15 @@
             };
         }
 
-        // 备用：800ms后强制加载（平衡速度和稳定性）
+        // 备用：400ms后强制加载（更快的用户体验）
         setTimeout(() => {
             if (!elementUILoaded || !vditorLoaded) {
-                console.warn('CSS loading timeout, force initializing Vue app');
+                console.log('Quick load: initializing Vue app');
                 const script = document.createElement('script');
                 script.src = 'js/app.js';
                 document.head.appendChild(script);
             }
-        }, 800);
+        }, 400);
     </script>
 
     <script>
