@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图片上传功能测试</title>
+    <script src="https://unpkg.com/vue@2.6.14/dist/vue.js"></script>
+    <script src="https://unpkg.com/element-ui@2.15.13/lib/index.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui@2.15.13/lib/theme-chalk/index.css">
+    <script src="image-service.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .upload-area {
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+        }
+        .upload-area.drag-over {
+            border-color: #409EFF;
+            background-color: #f0f9ff;
+        }
+        .config-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 8px;
+        }
+        .result-area {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f0f0f0;
+            border-radius: 5px;
+            min-height: 100px;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="test-container">
+            <h1>图片上传功能测试</h1>
+            
+            <!-- 配置区域 -->
+            <div class="config-section">
+                <h3>图床配置</h3>
+                <el-form :model="config" label-width="120px">
+                    <el-row :gutter="20">
+                        <el-col :span="12">
+                            <el-form-item label="GitHub Token">
+                                <el-input v-model="config.token" type="password" placeholder="输入GitHub Token"></el-input>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="12">
+                            <el-form-item label="仓库所有者">
+                                <el-input v-model="config.owner" placeholder="GitHub用户名"></el-input>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                    <el-row :gutter="20">
+                        <el-col :span="12">
+                            <el-form-item label="仓库名称">
+                                <el-input v-model="config.repo" placeholder="图床仓库名"></el-input>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="12">
+                            <el-form-item label="CDN服务">
+                                <el-select v-model="selectedCdn" placeholder="选择CDN">
+                                    <el-option label="jsDelivr" value="jsdelivr"></el-option>
+                                    <el-option label="Statically" value="statically"></el-option>
+                                    <el-option label="GitHub" value="github"></el-option>
+                                    <el-option label="China jsDelivr" value="china-jsdelivr"></el-option>
+                                </el-select>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                    <el-form-item>
+                        <el-button type="primary" @click="saveConfig">保存配置</el-button>
+                        <el-button @click="testConnection" :loading="testing">测试连接</el-button>
+                        <span v-if="isConfigured" style="color: green; margin-left: 10px;">✓ 已配置</span>
+                    </el-form-item>
+                </el-form>
+            </div>
+
+            <!-- 上传区域 -->
+            <div class="upload-area" 
+                 :class="{ 'drag-over': isDragOver }"
+                 @dragover.prevent="isDragOver = true"
+                 @dragleave.prevent="isDragOver = false"
+                 @drop.prevent="handleDrop">
+                <p>拖拽图片到此处或点击选择文件</p>
+                <el-button type="primary" @click="selectFiles">选择图片</el-button>
+                <input ref="fileInput" type="file" multiple accept="image/*" style="display: none;" @change="handleFileSelect">
+            </div>
+
+            <!-- 上传进度 -->
+            <div v-if="uploading">
+                <h4>上传进度</h4>
+                <el-progress :percentage="uploadProgress" :show-text="true"></el-progress>
+                <p>{{ uploadStatus }}</p>
+            </div>
+
+            <!-- 结果显示 -->
+            <div class="result-area">
+                <h4>上传结果</h4>
+                <div v-if="results.length === 0">暂无上传记录</div>
+                <div v-for="(result, index) in results" :key="index" style="margin-bottom: 10px;">
+                    <div v-if="result.success" style="color: green;">
+                        ✓ {{ result.fileName }} - 
+                        <a :href="result.url" target="_blank">{{ result.url }}</a>
+                        <el-button size="mini" @click="copyToClipboard(result.url)">复制链接</el-button>
+                        <el-button size="mini" @click="copyMarkdown(result.fileName, result.url)">复制Markdown</el-button>
+                    </div>
+                    <div v-else style="color: red;">
+                        ✗ {{ result.fileName }} - {{ result.error }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        new Vue({
+            el: '#app',
+            data() {
+                return {
+                    config: {
+                        token: '',
+                        owner: '',
+                        repo: '',
+                        branch: 'main',
+                        imageDir: 'images'
+                    },
+                    selectedCdn: 'jsdelivr',
+                    isConfigured: false,
+                    testing: false,
+                    isDragOver: false,
+                    uploading: false,
+                    uploadProgress: 0,
+                    uploadStatus: '',
+                    results: []
+                };
+            },
+            mounted() {
+                this.loadConfig();
+            },
+            methods: {
+                loadConfig() {
+                    const saved = localStorage.getItem('image-service-config');
+                    if (saved) {
+                        this.config = { ...this.config, ...JSON.parse(saved) };
+                    }
+                    const savedCdn = localStorage.getItem('image-service-link-rule');
+                    if (window.imageService && typeof window.imageService.getLinkRule === 'function') {
+                        const rule = window.imageService.getLinkRule();
+                        if (rule) {
+                            this.selectedCdn = window.imageService.selectedLinkRule;
+                        }
+                    } else if (savedCdn) {
+                        const matched = this.resolveRuleKey(savedCdn);
+                        if (matched) {
+                            this.selectedCdn = matched;
+                        }
+                    }
+                    this.checkConfig();
+                },
+                saveConfig() {
+                    if (!this.config.token || !this.config.owner || !this.config.repo) {
+                        this.$message.warning('请填写完整的配置信息');
+                        return;
+                    }
+                    
+                    const matchedRule = this.resolveRuleKey(this.selectedCdn) || 'jsdelivr';
+                    window.imageService.setConfig(this.config);
+                    window.imageService.setLinkRule(matchedRule);
+                    this.selectedCdn = matchedRule;
+                    this.checkConfig();
+                    this.$message.success('配置已保存');
+                },
+                resolveRuleKey(value) {
+                    if (value === undefined || value === null) {
+                        return null;
+                    }
+                    const available = ['github', 'jsdelivr', 'statically', 'china-jsdelivr'];
+                    if (available.includes(value)) {
+                        return value;
+                    }
+                    const normalized = this.normalizeRuleKey(value);
+                    return available.find(option => this.normalizeRuleKey(option) === normalized) || null;
+                },
+                normalizeRuleKey(value) {
+                    return String(value || '')
+                        .trim()
+                        .toLowerCase()
+                        .replace(/[^a-z0-9]/g, '');
+                },
+                checkConfig() {
+                    this.isConfigured = window.imageService && window.imageService.isConfigured();
+                },
+                async testConnection() {
+                    if (!this.isConfigured) {
+                        this.$message.warning('请先保存配置');
+                        return;
+                    }
+                    
+                    this.testing = true;
+                    try {
+                        const result = await window.imageService.testConnection();
+                        if (result.success) {
+                            this.$message.success('连接测试成功！');
+                        } else {
+                            this.$message.error('连接测试失败：' + result.error);
+                        }
+                    } catch (error) {
+                        this.$message.error('连接测试失败：' + error.message);
+                    } finally {
+                        this.testing = false;
+                    }
+                },
+                selectFiles() {
+                    this.$refs.fileInput.click();
+                },
+                handleFileSelect(event) {
+                    const files = Array.from(event.target.files);
+                    this.uploadFiles(files);
+                },
+                handleDrop(event) {
+                    this.isDragOver = false;
+                    const files = Array.from(event.dataTransfer.files).filter(file => 
+                        file.type.startsWith('image/')
+                    );
+                    if (files.length > 0) {
+                        this.uploadFiles(files);
+                    }
+                },
+                async uploadFiles(files) {
+                    if (!this.isConfigured) {
+                        this.$message.warning('请先配置图床服务');
+                        return;
+                    }
+
+                    this.uploading = true;
+                    this.uploadProgress = 0;
+                    this.uploadStatus = '准备上传...';
+
+                    try {
+                        const results = await window.imageService.uploadImages(files, {
+                            compress: true,
+                            quality: 0.8,
+                            addHash: true,
+                            onProgress: (progress) => {
+                                this.uploadProgress = Math.round((progress.current / progress.total) * 100);
+                                this.uploadStatus = `正在上传第 ${progress.current}/${progress.total} 张图片: ${progress.fileName}`;
+                            }
+                        });
+
+                        this.results = [...results, ...this.results];
+                        const successCount = results.filter(r => r.success).length;
+                        this.$message.success(`上传完成！成功 ${successCount}/${results.length} 张图片`);
+
+                    } catch (error) {
+                        this.$message.error('上传失败：' + error.message);
+                    } finally {
+                        this.uploading = false;
+                    }
+                },
+                copyToClipboard(text) {
+                    navigator.clipboard.writeText(text).then(() => {
+                        this.$message.success('链接已复制到剪贴板');
+                    });
+                },
+                copyMarkdown(fileName, url) {
+                    const markdown = `![${fileName}](${url})`;
+                    navigator.clipboard.writeText(markdown).then(() => {
+                        this.$message.success('Markdown格式已复制到剪贴板');
+                    });
+                }
+            }
+        });
+    </script>
+</body>
+</html>
