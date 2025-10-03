@@ -453,6 +453,8 @@ new Vue({
         insertTextToEditor(text) {
             if (this.vditor) {
                 this.vditor.insertValue(text);
+                // 更新bodyContent以触发按钮状态变化
+                this.bodyContent = this.vditor.getValue();
             }
         },
 
