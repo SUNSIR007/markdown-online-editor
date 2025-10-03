@@ -194,11 +194,13 @@ Vue.component('github-config', {
             }
 
             const normalizedImageConfig = {
-                ...this.imageConfig,
-                branch: (this.imageConfig.branch || '').trim() || 'main',
-                imageDir: (this.imageConfig.imageDir || '').trim() || 'images'
+                token: this.imageConfig.token,
+                owner: this.imageConfig.owner,
+                repo: this.imageConfig.repo,
+                branch: 'master',  // 固定使用 master
+                imageDir: 'images'  // 固定使用 images
             };
-            const matchedRule = this.resolveRuleKey(this.selectedLinkRule) || 'jsdelivr';
+            const matchedRule = 'jsdelivr';  // 固定使用 jsDelivr CDN
 
             localStorage.setItem('github-config', JSON.stringify(this.githubConfig));
             localStorage.setItem('image-service-config', JSON.stringify(normalizedImageConfig));
@@ -290,31 +292,6 @@ Vue.component('github-config', {
                                 v-model="imageConfig.repo"
                                 placeholder="存放图片的仓库名">
                             </el-input>
-                        </el-form-item>
-
-                        <el-form-item label="Branch">
-                            <el-input
-                                v-model="imageConfig.branch"
-                                placeholder="分支名称，如 main 或 master">
-                            </el-input>
-                        </el-form-item>
-
-                        <el-form-item label="图片目录">
-                            <el-input
-                                v-model="imageConfig.imageDir"
-                                placeholder="图片保存目录，如 images 或 uploads">
-                            </el-input>
-                        </el-form-item>
-
-                        <el-form-item label="链接生成规则">
-                            <el-select v-model="selectedLinkRule" placeholder="请选择">
-                                <el-option
-                                    v-for="(label, value) in linkRules"
-                                    :key="value"
-                                    :label="label"
-                                    :value="value">
-                                </el-option>
-                            </el-select>
                         </el-form-item>
                     </el-form>
 
