@@ -4,6 +4,53 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <!-- 🔥 关键修复：立即执行的主题初始化脚本 - 必须在任何渲染之前 -->
+    <script>
+        // 立即执行，不等待任何事件
+        (function() {
+            // 强制设置黑色背景，防止iOS PWA白屏
+            document.documentElement.style.cssText = 'background-color: #000000 !important; background: #000000 !important;';
+            document.documentElement.style.backgroundColor = '#000000';
+
+            // 创建并立即应用样式
+            const styleElement = document.createElement('style');
+            styleElement.id = 'emergency-dark-theme';
+            styleElement.textContent = `
+                html, body {
+                    background-color: #000000 !important;
+                    background: #000000 !important;
+                    color: #e0e0e0 !important;
+                }
+                #app, .header, .content-type-selector, .editor-container {
+                    background-color: #000000 !important;
+                }
+            `;
+
+            // 使用 insertBefore 确保样式立即生效
+            const firstChild = document.head.firstChild;
+            if (firstChild) {
+                document.head.insertBefore(styleElement, firstChild);
+            } else {
+                document.head.appendChild(styleElement);
+            }
+
+            // 监听body的创建，立即设置黑色
+            if (!document.body) {
+                const observer = new MutationObserver(function(mutations) {
+                    if (document.body) {
+                        document.body.style.cssText = 'background-color: #000000 !important; color: #e0e0e0 !important; margin: 0 !important; padding: 0 !important;';
+                        document.body.classList.add('theme-dark');
+                        observer.disconnect();
+                    }
+                });
+                observer.observe(document.documentElement, { childList: true, subtree: true });
+            } else {
+                document.body.style.cssText = 'background-color: #000000 !important; color: #e0e0e0 !important; margin: 0 !important; padding: 0 !important;';
+                document.body.classList.add('theme-dark');
+            }
+        })();
+    </script>
+
     <!-- 最优先级CSS - 防止任何白屏 -->
     <style>
         /* 使用CSS变量和多重保险 */
