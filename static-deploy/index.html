@@ -1661,6 +1661,7 @@
                         size: 0,
                         file: null
                     },
+                    editingFile: null
                 };
             },
 
@@ -1684,10 +1685,10 @@
                 this.setupMobileDefaults();
                 this.setupViewportFixes();
                 this.initVditor();
+                this.selectType(this.currentType);
                 this.checkGitHubConfig();
                 this.checkImageServiceConfig();
                 this.checkForEditFile();
-                this.selectType(this.currentType);
                 this.detectPWAMode();
                 this.checkPWAConfigMissing();
             },
@@ -1909,9 +1910,19 @@
                                 this.currentType = contentTypes.ESSAY;
                             }
                             
-                            this.metadata = metadata;
+                            const normalizedMetadata = { ...metadata };
+                            if (Array.isArray(normalizedMetadata.categories)) {
+                                normalizedMetadata.categories = normalizedMetadata.categories.join(', ');
+                            }
+                            this.metadata = normalizedMetadata;
                             this.bodyContent = content;
-                            this.vditor.setValue(content);
+                            if (this.vditor) {
+                                this.vditor.setValue(content);
+                            }
+                            this.editingFile = {
+                                path: filePath,
+                                sha: fileData.sha || null
+                            };
                             this.$message.success('文件加载成功');
                         }
                     } catch (error) {
@@ -1932,7 +1943,10 @@
                     this.currentType = type;
                     this.resetMetadata(type);
                     this.bodyContent = '';
-                    this.vditor.setValue('');
+                    if (this.vditor) {
+                        this.vditor.setValue('');
+                    }
+                    this.editingFile = null;
 
                     // Gallery模式重置预览
                     if (type === contentTypes.GALLERY) {
@@ -2087,10 +2101,17 @@
                     try {
                         this.$message({ message: '正在发布...', type: 'info' });
 
+                        const wasEditing = !!this.editingFile;
+                        const publishOptions = this.editingFile ? {
+                            path: this.editingFile.path,
+                            sha: this.editingFile.sha
+                        } : undefined;
+
                         const result = await window.githubService.publishContent(
                             this.currentType,
                             this.metadata,
-                            finalContent
+                            finalContent,
+                            publishOptions
                         );
 
                         if (result.success) {
@@ -2109,7 +2130,19 @@
                                 type: 'success'
                             });
 
-                            this.selectType(this.currentType); // 重置
+                            if (result.sha) {
+                                this.editingFile = {
+                                    path: result.filePath,
+                                    sha: result.sha
+                                };
+                            } else {
+                                this.editingFile = null;
+                            }
+
+                            if (!wasEditing && result.action === 'add') {
+                                this.editingFile = null;
+                                this.selectType(this.currentType); // 重置
+                            }
                         }
                     } catch (error) {
                         console.error('发布失败:', error);
@@ -2490,11 +2523,6 @@
                     if (this.vditor) {
                         this.vditor.insertValue(text);
                     }
-                },
-
-                // 检测是否为移动设备
-                isMobileDevice() {
-                    return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
                 },
 
                 // 显示移动端错误详情

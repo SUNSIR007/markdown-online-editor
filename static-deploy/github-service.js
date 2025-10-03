@@ -158,30 +158,41 @@ class GitHubService {
    * @param {Object} metadata - 元数据
    * @param {string} content - 内容
    */
-  async publishContent(contentType, metadata, content) {
+  async publishContent(contentType, metadata, content, options = {}) {
     if (!this.isConfigured()) {
       throw new Error('GitHub not configured')
     }
 
+    const { path: overridePath, sha: overrideSha } = options || {}
+
     // 生成文件路径
-    const filePath = this.generateFilePath(contentType, metadata, metadata.title)
+    const filePath = overridePath || this.generateFilePath(contentType, metadata, metadata.title)
+
+    let existingFile = null
+    let targetSha = overrideSha || null
 
     // 检查文件是否已存在
-    const existingFile = await this.getFile(filePath)
+    if (!overridePath || !overrideSha) {
+      existingFile = await this.getFile(filePath)
+      if (!targetSha && existingFile?.sha) {
+        targetSha = existingFile.sha
+      }
+    }
 
     // 生成提交消息
-    const action = existingFile ? 'Update' : 'Add'
+    const action = targetSha ? 'Update' : 'Add'
     const title = metadata.title || 'Untitled'
     const message = `${action} ${contentType}: ${title}`
 
     // 创建或更新文件
-    const result = await this.createOrUpdateFile(filePath, content, message, existingFile?.sha)
+    const result = await this.createOrUpdateFile(filePath, content, message, targetSha)
 
     return {
       success: true,
       filePath,
       url: result.content.html_url,
       action: action.toLowerCase(),
+      sha: result.content?.sha || null,
     }
   }
 
