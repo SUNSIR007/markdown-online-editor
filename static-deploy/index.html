@@ -1775,8 +1775,18 @@
                 },
 
                 triggerMobileImageUpload() {
+                    // 先重新检查配置状态
+                    this.checkImageServiceConfig();
+
+                    console.log('触发移动端上传，配置状态:', {
+                        isImageServiceConfigured: this.isImageServiceConfigured,
+                        imageServiceExists: !!window.imageService,
+                        imageServiceConfigured: window.imageService ? window.imageService.isConfigured() : false
+                    });
+
                     if (!this.isImageServiceConfigured) {
                         this.$message.warning('请先配置图床服务');
+                        this.configureGitHub(); // 直接打开配置对话框
                         return;
                     }
 
@@ -2174,9 +2184,20 @@
                         }
                     }
 
-                    this.checkGitHubConfig();
-                    this.checkImageServiceConfig();
-                    this.$message.success('配置已保存');
+                    // 使用nextTick确保配置完全生效后再检查
+                    this.$nextTick(() => {
+                        this.checkGitHubConfig();
+                        this.checkImageServiceConfig();
+
+                        // 打印调试信息
+                        console.log('配置更新后状态:', {
+                            isImageServiceConfigured: this.isImageServiceConfigured,
+                            imageServiceExists: !!window.imageService,
+                            imageServiceConfigured: window.imageService ? window.imageService.isConfigured() : false
+                        });
+
+                        this.$message.success('配置已保存');
+                    });
                 },
 
                 // 电脑端自动聚焦
@@ -2437,8 +2458,19 @@
 
                 // 处理图片上传
                 async handleImageUpload(files) {
+                    // 先重新检查配置状态
+                    this.checkImageServiceConfig();
+
+                    console.log('处理图片上传，配置状态:', {
+                        isImageServiceConfigured: this.isImageServiceConfigured,
+                        imageServiceExists: !!window.imageService,
+                        imageServiceConfigured: window.imageService ? window.imageService.isConfigured() : false,
+                        filesCount: files ? files.length : 0
+                    });
+
                     if (!this.isImageServiceConfigured) {
                         this.$message.warning('请先配置图床服务');
+                        this.configureGitHub(); // 直接打开配置对话框
                         return Promise.reject('图床未配置');
                     }
 
