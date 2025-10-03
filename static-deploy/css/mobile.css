@@ -1,0 +1,294 @@
+/* 移动端响应式样式 - Mobile Responsive Styles */
+
+@media (max-width: 768px) {
+    .header {
+        padding: 14px 20px 8px;
+        background: #000000 !important;
+    }
+
+    .content-type-selector {
+        max-width: 100%;
+        gap: 16px;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        justify-content: space-between !important;
+        padding: 0 16px;
+    }
+
+    .editor-container {
+        margin: 16px auto;
+        border-radius: 12px;
+        max-width: calc(100% - 32px);
+        box-shadow: 0 6px 24px rgba(0,0,0,0.1), 0 2px 6px rgba(0,0,0,0.06);
+        height: calc(var(--vh, 1vh) * 100 - 70px) !important;
+        margin: 0 !important;
+        border-radius: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
+        max-width: 100% !important;
+    }
+
+    .editor-container:hover {
+        transform: none !important;
+        box-shadow: none !important;
+    }
+
+    /* 移动端编辑器内边距调整 */
+    .vditor-ir .vditor-ir__main,
+    .vditor-wysiwyg .vditor-wysiwyg__main,
+    .vditor-sv .vditor-sv__main,
+    .vditor-preview {
+        padding: 20px 18px !important;
+        font-size: 20px !important;
+        line-height: 1.75 !important;
+    }
+
+    .vditor-ir .vditor-ir__main textarea,
+    .vditor-sv .vditor-sv__main textarea,
+    .vditor-wysiwyg .vditor-wysiwyg__main,
+    .vditor-ir .vditor-reset,
+    .vditor-wysiwyg .vditor-reset,
+    .vditor-preview .vditor-reset {
+        font-size: 20px !important;
+        line-height: 1.75 !important;
+    }
+
+    .type-buttons {
+        display: flex;
+        gap: 10px;
+        flex-shrink: 0;
+        display: none !important;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 10px;
+        flex-shrink: 0;
+        width: 100%;
+        flex: 1;
+        align-items: center;
+        order: -1;
+    }
+
+    .action-buttons .publish-button {
+        margin-left: auto;
+    }
+
+    /* 优化移动端按钮样式 */
+    .type-buttons .el-button {
+        padding: 11px 18px !important;
+        font-size: 15px !important;
+        font-weight: 500 !important;
+        border-radius: 20px !important;
+    }
+
+    .github-config-button {
+        width: auto !important;
+        height: auto !important;
+        padding: 8px !important;
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        backdrop-filter: none !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        position: relative !important;
+        top: -6px !important;
+    }
+
+    .github-config-button i {
+        font-size: 22px !important;
+    }
+
+    .github-config-button img {
+        width: 22px !important;
+        height: 22px !important;
+    }
+
+    .publish-button {
+        padding: 8px 18px !important;
+        font-size: 20px !important;
+        border-radius: 999px !important;
+        min-height: 44px !important;
+        min-width: 96px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        position: relative !important;
+        top: -6px !important;
+    }
+
+    /* Dialog */
+    body {
+        font-size: 17px !important;
+    }
+
+    .header {
+        font-size: 18px !important;
+    }
+
+    .el-dialog {
+        width: 90% !important;
+        max-width: 400px !important;
+        margin: 0 auto !important;
+        top: 15vh !important;
+        transform: none !important;
+    }
+
+    .el-dialog__header {
+        padding: 15px 20px 10px !important;
+    }
+
+    .el-dialog__body {
+        padding: 10px 20px 20px !important;
+        max-height: 60vh !important;
+        overflow-y: auto !important;
+    }
+
+    .el-dialog__footer {
+        padding: 10px 20px 15px !important;
+    }
+
+    .github-config-dialog .el-dialog__body {
+        padding: 20px 18px !important;
+    }
+
+    .github-config-dialog .el-form-item__label {
+        white-space: normal;
+        line-height: 1.4;
+        padding-bottom: 4px;
+    }
+
+    .github-config-dialog .token-instructions {
+        font-size: 11px;
+        line-height: 1.4;
+    }
+
+    .github-config-dialog .el-form-item {
+        margin-bottom: 16px;
+    }
+
+    .github-config-dialog .el-dialog__footer {
+        padding: 15px 18px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .header {
+        padding: 12px 16px 6px;
+    }
+
+    .content-type-selector {
+        gap: 12px;
+        padding: 0 8px;
+    }
+
+    /* 超小屏幕全屏编辑器 */
+    .editor-container {
+        height: calc(var(--vh, 1vh) * 100 - 60px) !important;
+        margin: 0 !important;
+        border-radius: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
+        max-width: 100% !important;
+    }
+
+    /* 超小屏幕编辑器内边距调整 */
+    .vditor-ir .vditor-ir__main,
+    .vditor-wysiwyg .vditor-wysiwyg__main,
+    .vditor-sv .vditor-sv__main,
+    .vditor-preview {
+        padding: 18px 14px !important;
+        font-size: 20px !important;
+        line-height: 1.75 !important;
+    }
+
+    .vditor-ir .vditor-ir__main textarea,
+    .vditor-sv .vditor-sv__main textarea,
+    .vditor-wysiwyg .vditor-wysiwyg__main,
+    .vditor-ir .vditor-reset,
+    .vditor-wysiwyg .vditor-reset,
+    .vditor-preview .vditor-reset {
+        font-size: 20px !important;
+        line-height: 1.75 !important;
+    }
+
+    /* 超小屏幕按钮优化 */
+    .type-buttons .el-button {
+        padding: 9px 16px !important;
+        font-size: 14px !important;
+    }
+
+    .type-buttons .el-button[data-type="essay"] {
+        max-width: 120px;
+    }
+
+    .publish-button {
+        padding: 9px 16px !important;
+        font-size: 14px !important;
+    }
+
+    .type-buttons,
+    .action-buttons {
+        gap: 8px;
+    }
+
+    .el-dialog {
+        width: 95% !important;
+        max-width: 350px !important;
+        top: 10vh !important;
+    }
+
+    .el-dialog__header {
+        padding: 12px 15px 8px !important;
+    }
+
+    .el-dialog__body {
+        padding: 8px 15px 15px !important;
+        max-height: 65vh !important;
+        font-size: 14px !important;
+    }
+
+    .el-dialog__footer {
+        padding: 8px 15px 12px !important;
+    }
+
+    /* 移动端表单元素优化 */
+    .el-input__inner {
+        font-size: 16px !important;
+    }
+
+    .el-button {
+        padding: 8px 15px !important;
+        font-size: 14px !important;
+    }
+}
+
+@media (max-width: 600px) {
+    .github-config-dialog .el-dialog__body {
+        padding: 20px 18px !important;
+    }
+
+    .github-config-dialog .el-form-item__label {
+        white-space: normal;
+        line-height: 1.4;
+        padding-bottom: 4px;
+    }
+
+    .github-config-dialog .token-instructions {
+        font-size: 11px;
+        line-height: 1.4;
+    }
+
+    .github-config-dialog .el-form-item {
+        margin-bottom: 16px;
+    }
+
+    .github-config-dialog .el-dialog__footer {
+        padding: 15px 18px !important;
+    }
+}

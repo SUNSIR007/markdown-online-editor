@@ -1,0 +1,502 @@
+/* 组件样式 - Component Styles */
+
+/* Header */
+.header {
+    background: #000000 !important;
+    border-bottom-color: #888;
+    border-bottom: none;
+    padding: 20px 28px;
+    box-shadow: 0 6px 30px rgba(0,0,0,0.15);
+    color: white;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+/* Content Type Selector */
+.content-type-selector {
+    background: #000000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.type-buttons {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 14px;
+    align-items: flex-end;
+    margin-left: auto;
+}
+
+.action-buttons .publish-button {
+    margin-left: auto;
+}
+
+/* Button Styles */
+.content-type-selector .el-button--primary,
+.el-button--primary {
+    background: #002FA7 !important;
+    border-color: #002FA7 !important;
+    color: white !important;
+}
+
+.content-type-selector .el-button--primary:hover,
+.el-button--primary:hover {
+    background: #0033B8 !important;
+    border-color: #0033B8 !important;
+    color: white !important;
+}
+
+.content-type-selector .el-button.el-button--primary {
+    background-color: #002FA7 !important;
+    border-color: #002FA7 !important;
+}
+
+.content-type-selector .el-button.el-button--primary:hover {
+    background-color: #0033B8 !important;
+    border-color: #0033B8 !important;
+}
+
+.el-button {
+    border-radius: 12px !important;
+    font-weight: 600 !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    padding: 12px 24px !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+    backdrop-filter: blur(10px) !important;
+}
+
+.el-button:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15) !important;
+}
+
+.el-button:active {
+    transform: translateY(0) !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+}
+
+.el-button.is-circle {
+    border-radius: 50% !important;
+    width: 40px !important;
+    height: 40px !important;
+    padding: 0 !important;
+}
+
+.el-button:not(.publish-button) {
+    background: #333 !important;
+    border-color: #555 !important;
+    color: #e0e0e0 !important;
+}
+
+.el-button:not(.publish-button):hover {
+    background: #444 !important;
+    border-color: #666 !important;
+}
+
+.el-button--primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    border-color: transparent !important;
+}
+
+/* Publish Button */
+.publish-button {
+    background: #9ca3af !important;
+    border: none !important;
+    color: #111827 !important;
+    font-weight: 600 !important;
+    padding: 9px 24px !important;
+    border-radius: 999px !important;
+    box-shadow: none !important;
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease !important;
+    position: relative;
+    top: -8px;
+}
+
+.publish-button.has-content {
+    background: #ffffff !important;
+}
+
+.publish-button.has-content:hover:not(:disabled) {
+    background: #f8fafc !important;
+    transform: translateY(-1px) !important;
+}
+
+.publish-button:disabled {
+    background: #9ca3af !important;
+    color: #111827 !important;
+    box-shadow: none !important;
+    transform: none !important;
+    cursor: not-allowed !important;
+}
+
+.publish-button.has-content:disabled {
+    background: #ffffff !important;
+}
+
+.publish-button:focus {
+    outline: none !important;
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3) !important;
+}
+
+.publish-button.success {
+    background: #22c55e !important;
+    color: #111827 !important;
+    animation: successPulse 0.6s ease-out;
+}
+
+@keyframes successPulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+    }
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 4px 16px rgba(76, 175, 80, 0.6);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+    }
+}
+
+/* GitHub Config Button */
+.github-config-button {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    background: rgba(255,255,255,0.15);
+    color: white;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+.github-config-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+    background: rgba(255,255,255,0.25);
+}
+
+.github-config-button i {
+    font-size: 18px;
+}
+
+.github-config-button img {
+    width: 16px;
+    height: 16px;
+    transition: all 0.3s ease;
+    filter: invert(1) brightness(0.9);
+}
+
+.github-config-button:hover img {
+    filter: invert(1) brightness(1.1) drop-shadow(0 0 3px rgba(255,255,255,0.3));
+    transform: scale(1.05);
+}
+
+/* Metadata Editor */
+.metadata-editor {
+    display: flex;
+    gap: 15px;
+    padding: 10px 15px;
+    border-bottom: 1px solid #30363d;
+    position: sticky;
+    top: 41px;
+    z-index: 2;
+    background-color: #000000;
+    border-bottom-color: #30363d;
+}
+
+.metadata-editor .el-input {
+    flex: 1;
+}
+
+.metadata-editor .el-input[placeholder="文章标题"] {
+    flex: 2;
+}
+
+.metadata-editor .el-input__inner {
+    height: 32px;
+    line-height: 32px;
+}
+
+.el-input__inner {
+    background-color: #1a1a1a !important;
+    border-color: #555 !important;
+    color: #e0e0e0 !important;
+}
+
+.el-input__inner:hover, .el-input__inner:focus {
+    border-color: #002FA7 !important;
+}
+
+.metadata-info {
+    font-size: 12px;
+    color: rgba(224, 224, 224, 0.8);
+    margin-left: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 4px 8px;
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+}
+
+/* Dialog Styles */
+.el-dialog, .el-dialog__wrapper {
+    background: transparent !important;
+}
+
+.github-config-dialog .el-dialog {
+    background: #161b22 !important;
+    border-radius: 24px !important;
+    border: 1px solid #30363d !important;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5) !important;
+    overflow: hidden;
+}
+
+.github-config-dialog .el-dialog__header {
+    background: #161b22 !important;
+    color: #c9d1d9 !important;
+    border-bottom: 1px solid #30363d !important;
+    border-top-left-radius: 24px;
+    border-top-right-radius: 24px;
+}
+
+.github-config-dialog .el-dialog__title {
+    font-size: 18px !important;
+    font-weight: 600;
+    color: #e0e0e0 !important;
+}
+
+.github-config-dialog .el-dialog__body {
+    background: #0d1117 !important;
+    color: #c9d1d9 !important;
+    padding: 25px 30px !important;
+}
+
+.github-config-dialog .el-form-item__label {
+    color: #c9d1d9 !important;
+    white-space: nowrap;
+}
+
+.github-config-dialog .el-input__inner {
+    background: #010409 !important;
+    border: 1px solid #30363d !important;
+    color: #c9d1d9 !important;
+    border-radius: 20px !important;
+}
+
+.github-config-dialog .el-input__inner:focus {
+    border-color: #002FA7 !important;
+    box-shadow: 0 0 0 3px rgba(0, 47, 167, 0.3) !important;
+}
+
+.github-config-dialog .token-instructions {
+    font-size: 12px;
+    color: #8b949e;
+    margin-top: 8px;
+    line-height: 1.6;
+    background: #161b22;
+    padding: 10px;
+    border-radius: 6px;
+}
+
+.github-config-dialog .el-dialog__footer {
+    background: #161b22 !important;
+    border-top: 1px solid #30363d !important;
+    padding: 15px 30px !important;
+    border-bottom-left-radius: 24px;
+    border-bottom-right-radius: 24px;
+}
+
+.github-config-dialog .test-result {
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 6px;
+    font-weight: 500;
+}
+
+.github-config-dialog .test-result.success {
+    background-color: rgba(34, 139, 34, 0.2);
+    color: #3fb950;
+    border: 1px solid rgba(34, 139, 34, 0.5);
+}
+
+.github-config-dialog .test-result.error {
+    background-color: rgba(210, 4, 45, 0.2);
+    color: #f85149;
+    border: 1px solid rgba(210, 4, 45, 0.5);
+}
+
+.github-config-dialog .dialog-footer.is-mobile {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.github-config-dialog .dialog-footer.is-mobile .el-button {
+    width: 100%;
+    margin-left: 0 !important;
+}
+
+.github-config-dialog .dialog-footer.is-mobile .el-button + .el-button {
+    margin-left: 0 !important;
+}
+
+/* Save Button Klein Blue */
+.save-button,
+.el-dialog .save-button,
+.el-dialog__footer .save-button,
+.el-dialog .el-button.save-button,
+.el-dialog__footer .el-button.save-button,
+button.save-button,
+.el-button--primary.save-button {
+    background: #002FA7 !important;
+    background-color: #002FA7 !important;
+    border-color: #002FA7 !important;
+    color: white !important;
+    box-shadow: none !important;
+}
+
+.save-button:hover,
+.el-dialog .save-button:hover,
+.el-dialog__footer .save-button:hover,
+.el-dialog .el-button.save-button:hover,
+.el-dialog__footer .el-button.save-button:hover,
+button.save-button:hover,
+.el-button--primary.save-button:hover {
+    background: #0033B8 !important;
+    background-color: #0033B8 !important;
+    border-color: #0033B8 !important;
+    color: white !important;
+    box-shadow: none !important;
+}
+
+.save-button:focus,
+.save-button:active,
+.el-dialog .save-button:focus,
+.el-dialog .save-button:active,
+.el-dialog__footer .save-button:focus,
+.el-dialog__footer .save-button:active,
+.el-dialog .el-button.save-button:focus,
+.el-dialog .el-button.save-button:active,
+.el-dialog__footer .el-button.save-button:focus,
+.el-dialog__footer .el-button.save-button:active,
+button.save-button:focus,
+button.save-button:active,
+.el-button--primary.save-button:focus,
+.el-button--primary.save-button:active {
+    background: #002FA7 !important;
+    background-color: #002FA7 !important;
+    border-color: #002FA7 !important;
+    color: white !important;
+    box-shadow: none !important;
+}
+
+/* Message Styles */
+.el-message {
+    background: rgba(17, 24, 39, 0.92) !important;
+    color: #f9fafb !important;
+    border: 1px solid rgba(148, 163, 184, 0.25) !important;
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.45) !important;
+    backdrop-filter: blur(12px);
+}
+
+.el-message__icon,
+.el-message__content,
+.el-message__closeBtn {
+    color: inherit !important;
+}
+
+.el-message--success {
+    border-color: rgba(34, 197, 94, 0.35) !important;
+}
+
+.el-message--warning {
+    border-color: rgba(234, 179, 8, 0.35) !important;
+}
+
+.el-message--error {
+    border-color: rgba(248, 113, 113, 0.35) !important;
+}
+
+/* Upload Progress */
+.upload-progress {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 15px;
+    border-radius: 5px;
+    z-index: 2000;
+    min-width: 300px;
+}
+
+.upload-progress .progress-item {
+    margin-bottom: 10px;
+}
+
+.upload-progress .progress-item:last-child {
+    margin-bottom: 0;
+}
+
+/* PWA Config Dialog */
+.pwa-config-dialog .el-message-box {
+    width: 90% !important;
+    max-width: 400px !important;
+}
+
+.pwa-config-dialog .el-message-box__message {
+    font-size: 14px !important;
+    line-height: 1.6 !important;
+    color: #606266 !important;
+}
+
+.pwa-config-dialog .el-message-box__btns {
+    padding: 15px 20px 20px !important;
+}
+
+.pwa-config-dialog .el-button {
+    font-size: 14px !important;
+    padding: 8px 16px !important;
+}
+
+/* Quick Config Button */
+.quick-config-button {
+    background: linear-gradient(45deg, #FF6B6B, #4ECDC4) !important;
+    border: none !important;
+    animation: quickConfigPulse 2s infinite;
+}
+
+.quick-config-button:hover {
+    background: linear-gradient(45deg, #FF5252, #26C6DA) !important;
+    transform: scale(1.05);
+}
+
+@keyframes quickConfigPulse {
+    0%, 100% {
+        box-shadow: 0 0 5px rgba(255, 107, 107, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 15px rgba(78, 205, 196, 0.7);
+    }
+}

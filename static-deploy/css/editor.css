@@ -1,0 +1,201 @@
+/* 编辑器样式 - Editor Styles */
+
+.editor-container {
+    display: flex;
+    flex-direction: column;
+    height: calc(var(--vh, 1vh) * 100 - 130px);
+    padding: 0;
+    background: #fafafa;
+    margin: 24px auto;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08);
+    border: 1px solid rgba(255,255,255,0.2);
+    max-width: 1200px;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    background: #000000 !important;
+    border-color: #333333 !important;
+    box-shadow: 0 4px 20px rgba(255,255,255,0.05);
+}
+
+.editor-container:hover {
+    box-shadow: 0 12px 40px rgba(0,0,0,0.15), 0 4px 12px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
+}
+
+.editor-container.keyboard-open {
+    height: auto !important;
+    min-height: calc(var(--vh, 1vh) * 100 - 70px);
+    overflow: visible;
+}
+
+.editor-container.keyboard-open #vditor,
+.editor-container.keyboard-open .vditor {
+    height: auto !important;
+}
+
+#vditor {
+    height: 100%;
+    flex: 1 1 auto;
+    min-height: 0;
+    border-radius: 0;
+    border: none !important;
+}
+
+#vditor,
+.vditor {
+    background: #000000 !important;
+}
+
+/* Vditor Editor Content */
+.vditor-ir .vditor-ir__main,
+.vditor-wysiwyg .vditor-wysiwyg__main,
+.vditor-sv .vditor-sv__main {
+    padding: 30px 60px !important;
+    max-width: none !important;
+    font-size: 18px;
+    line-height: 1.75;
+}
+
+.vditor-preview {
+    padding: 30px 60px !important;
+    max-width: none !important;
+    font-size: 18px;
+    line-height: 1.75;
+}
+
+.vditor-ir .vditor-ir__main textarea {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.vditor-sv .vditor-sv__main textarea,
+.vditor-wysiwyg .vditor-wysiwyg__main {
+    font-size: 16px !important;
+    line-height: 1.6 !important;
+}
+
+/* Vditor Toolbar */
+.vditor-toolbar {
+    background: #000000 !important;
+    border-bottom-color: #888 !important;
+}
+
+.vditor-content,
+.vditor-wysiwyg,
+.vditor-wysiwyg .vditor-wysiwyg__main {
+    background: #000000 !important;
+    color: #e0e0e0 !important;
+}
+
+.vditor-wysiwyg__main,
+.vditor-wysiwyg__main .vditor-wysiwyg__main,
+.vditor-wysiwyg .vditor-wysiwyg__main .vditor-wysiwyg__main,
+.vditor-wysiwyg__main > div,
+.vditor-wysiwyg__main .vditor-wysiwyg__main > div,
+.vditor-wysiwyg__main[contenteditable="true"],
+.vditor-ir,
+.vditor-ir .vditor-ir__main,
+.vditor-ir .vditor-ir__main textarea {
+    background: #000000 !important;
+    background-color: #000000 !important;
+    color: #e0e0e0 !important;
+}
+
+.vditor-preview,
+.vditor-preview .vditor-reset,
+.vditor-sv,
+.vditor-sv .vditor-sv__main,
+.vditor-sv .vditor-sv__preview,
+.vditor-sv .vditor-sv__preview .vditor-reset {
+    background: #000000 !important;
+    color: #e0e0e0 !important;
+}
+
+.vditor-wysiwyg *,
+.vditor-ir * {
+    background-color: transparent !important;
+}
+
+/* Hide Preview Toolbar Options */
+.vditor-preview__action,
+.vditor-preview__action--current,
+.vditor-preview__action[data-type="desktop"],
+.vditor-preview__action[data-type="tablet"],
+.vditor-preview__action[data-type="mobile"],
+.vditor-preview__action[data-type="mp-wechat"],
+.vditor-preview__action[data-type="zhihu"] {
+    display: none !important;
+}
+
+.vditor-preview__toolbar {
+    display: none !important;
+}
+
+/* YAML Frontmatter Styles */
+.vditor-preview .language-yaml,
+.vditor-preview pre[data-lang="yaml"],
+.vditor-preview code.language-yaml {
+    background: #002FA7 !important;
+    color: white !important;
+    border: 1px solid #0033B8 !important;
+}
+
+.vditor-ir pre.vditor-ir__marker--pre code,
+.vditor-wysiwyg pre code {
+    background: #002FA7 !important;
+    color: white !important;
+}
+
+.vditor-preview hr + pre,
+.vditor-preview hr + pre code {
+    background: #002FA7 !important;
+    color: white !important;
+    border: 2px solid #0033B8 !important;
+    border-radius: 6px !important;
+}
+
+.vditor-preview pre,
+.vditor-preview pre code,
+.vditor-preview .hljs,
+.vditor-preview .hljs-attr,
+.vditor-preview .hljs-string,
+.vditor-preview .hljs-literal {
+    background: #002FA7 !important;
+    color: white !important;
+}
+
+.vditor-preview .hljs-attr {
+    color: #FFD700 !important;
+}
+
+.vditor-preview .hljs-string {
+    color: #90EE90 !important;
+}
+
+.vditor-preview .hljs-literal {
+    color: #FFA500 !important;
+}
+
+/* Drag Over Effect */
+.drag-over {
+    border: 2px dashed #002FA7 !important;
+    background-color: rgba(0, 47, 167, 0.1) !important;
+    position: relative;
+}
+
+.drag-over::after {
+    content: '拖拽图片到此处上传';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 47, 167, 0.9);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    z-index: 1000;
+    pointer-events: none;
+}
