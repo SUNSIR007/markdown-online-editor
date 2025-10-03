@@ -80,7 +80,10 @@ const hasGitHubConfig = localStorage.getItem('github-config');
 
 ### 防止 iOS 恢复时的白屏闪现
 
-iOS 会在应用进入后台时截取当前界面的截图，并在下次启动时短暂显示。如果截到的是亮色画面，就会造成“闪白屏”。我们在 `static-deploy/index.html` 中新增了 `#pwa-black-overlay` 覆盖层，并在 `setupVisibilityHandler` 中于 `visibilitychange/pagehide` 时激活它，让截图始终保持纯黑背景；页面重新可见后再延迟移除该覆盖层，避免用户察觉。
+iOS 会在应用进入后台时截取当前界面的截图，并在下次启动时短暂显示。如果截到的是亮色画面，就会造成“闪白屏”。我们在 `static-deploy/index.html` 中做了两项防护：
+
+1. 新增 `#pwa-black-overlay` 覆盖层，并在 `visibilitychange/pagehide` 时立即启用，确保被截取的画面永远是纯黑背景，再在页面恢复稳定后延迟移除。
+2. 在进入后台前调用 `dismissKeyboard()` 主动失焦正在编辑的区域，迫使 iOS 收起默认浅色键盘，避免键盘截图成为“白屏”来源。
 
 ## 注意事项
 
