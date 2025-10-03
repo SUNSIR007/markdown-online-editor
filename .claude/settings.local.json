@@ -5,7 +5,8 @@
       "Bash(rm:*)",
       "Bash(ls:*)",
       "Bash(git add:*)",
-      "Bash(open:*)"
+      "Bash(open:*)",
+      "Bash(echo:*)"
     ],
     "deny": [],
     "ask": []

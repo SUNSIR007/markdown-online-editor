@@ -1950,10 +1950,21 @@
                 },
 
                 checkGitHubConfig() {
+                    // 检查configManager是否存在
+                    if (!window.configManager) {
+                        console.warn('configManager not loaded yet');
+                        this.isGitHubConfigured = false;
+                        return;
+                    }
+
                     // 使用configManager检查配置
                     this.isGitHubConfigured = window.configManager.hasGitHubConfig();
+
+                    console.log('checkGitHubConfig: isConfigured =', this.isGitHubConfigured);
+
                     if (this.isGitHubConfigured && window.githubService) {
                         const config = window.configManager.getGitHubConfig();
+                        console.log('Loading config to githubService:', config);
                         window.githubService.setConfig(config);
                     }
                 },
@@ -2228,15 +2239,19 @@
                 },
 
                 handleGitHubConfigSave(payload) {
+                    console.log('handleGitHubConfigSave called with:', payload);
+
                     const githubConfig = payload?.github || payload;
                     const imageConfig = payload?.image;
                     const linkRule = payload?.linkRule;
 
                     if (githubConfig && window.githubService) {
+                        console.log('Setting GitHub config:', githubConfig);
                         window.githubService.setConfig(githubConfig);
                     }
 
                     if (imageConfig && window.imageService) {
+                        console.log('Setting image config:', imageConfig);
                         window.imageService.setConfig(imageConfig);
                         if (linkRule && typeof window.imageService.setLinkRule === 'function') {
                             window.imageService.setLinkRule(linkRule);
@@ -2245,14 +2260,16 @@
 
                     // 使用nextTick确保配置完全生效后再检查
                     this.$nextTick(() => {
+                        console.log('Checking configs after save...');
                         this.checkGitHubConfig();
                         this.checkImageServiceConfig();
 
                         // 打印调试信息
                         console.log('配置更新后状态:', {
+                            isGitHubConfigured: this.isGitHubConfigured,
                             isImageServiceConfigured: this.isImageServiceConfigured,
-                            imageServiceExists: !!window.imageService,
-                            imageServiceConfigured: window.imageService ? window.imageService.isConfigured() : false
+                            githubService: window.githubService ? window.githubService.isConfigured() : false,
+                            imageService: window.imageService ? window.imageService.isConfigured() : false
                         });
 
                         this.$message.success('配置已保存');
@@ -2411,7 +2428,14 @@
 
                 // 检查图片服务配置
                 checkImageServiceConfig() {
-                    this.isImageServiceConfigured = window.imageService && window.imageService.isConfigured();
+                    if (!window.imageService) {
+                        console.warn('imageService not loaded yet');
+                        this.isImageServiceConfigured = false;
+                        return;
+                    }
+
+                    this.isImageServiceConfigured = window.imageService.isConfigured();
+                    console.log('checkImageServiceConfig: isConfigured =', this.isImageServiceConfigured);
                 },
 
                 // 检测PWA模式
