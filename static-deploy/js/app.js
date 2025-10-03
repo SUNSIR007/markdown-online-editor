@@ -3,6 +3,9 @@
 new Vue({
     el: '#app',
     data() {
+        // 立即检测移动端，在Vue初始化时就设置好
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || window.innerWidth <= 768;
+
         return {
             vditor: null,
             currentType: window.AppConfig.contentTypes.ESSAY,
@@ -11,7 +14,7 @@ new Vue({
             contentTypeLabels: window.AppConfig.contentTypeLabels,
             isGitHubConfigured: false,
             isDarkMode: true,
-            isMobileView: false,
+            isMobileView: isMobile, // 初始化时就设置好
             metadataFields: window.AppConfig.metadataFields,
             bodyContent: '',
             hasUserInteracted: false,

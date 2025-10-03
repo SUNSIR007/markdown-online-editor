@@ -28,9 +28,46 @@
     <link rel="stylesheet" href="css/components.css">
     <link rel="stylesheet" href="css/editor.css">
     <link rel="stylesheet" href="css/mobile.css">
+
+    <style>
+        /* 防止页面加载时的样式闪烁 */
+        [v-cloak] {
+            display: none !important;
+        }
+
+        /* 移动端初始样式 - 在 Vue 加载前就生效 */
+        @media (max-width: 768px) {
+            .type-buttons {
+                display: none !important;
+            }
+
+            .publish-button {
+                padding: 8px 18px !important;
+                font-size: 20px !important;
+                border-radius: 999px !important;
+                min-height: 44px !important;
+                min-width: 96px !important;
+                position: relative !important;
+                top: -6px !important;
+            }
+
+            .github-config-button {
+                width: auto !important;
+                height: auto !important;
+                padding: 8px !important;
+                background: transparent !important;
+                border: none !important;
+                box-shadow: none !important;
+                border-radius: 0 !important;
+                backdrop-filter: none !important;
+                position: relative !important;
+                top: -6px !important;
+            }
+        }
+    </style>
 </head>
 <body>
-    <div id="app">
+    <div id="app" v-cloak>
         <div class="header">
             <div class="content-type-selector">
                 <div class="type-buttons">
