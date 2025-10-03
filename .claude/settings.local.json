@@ -4,7 +4,10 @@
       "Bash(git commit:*)",
       "Bash(cssLoaded=true)",
       "Bash(git revert:*)",
-      "Bash(awk:*)"
+      "Bash(awk:*)",
+      "Bash(curl:*)",
+      "Bash(git add:*)",
+      "Bash(git push:*)"
     ],
     "deny": [],
     "ask": []
