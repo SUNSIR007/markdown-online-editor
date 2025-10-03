@@ -26,25 +26,6 @@
             padding: 0 !important;
         }
 
-        #pwa-black-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: #000000 !important;
-            pointer-events: none;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.2s ease;
-            z-index: 2147483647;
-        }
-
-        #pwa-black-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
         /* 覆盖所有可能的白色容器 */
         #app, .header, .content-type-selector, .editor-container {
             background: #000000 !important;
@@ -1200,7 +1181,6 @@
     </style>
 </head>
 <body class="theme-dark" style="background:#000000;color:#e0e0e0;">
-    <div id="pwa-black-overlay"></div>
     <div id="app">
         <div class="header">
             <div class="content-type-selector">
@@ -1793,15 +1773,6 @@
                 // 清理监听器
                 if (this.visibilityHandler) {
                     document.removeEventListener('visibilitychange', this.visibilityHandler);
-                    this.visibilityHandler = null;
-                }
-                if (this.pageShowHandler) {
-                    window.removeEventListener('pageshow', this.pageShowHandler);
-                    this.pageShowHandler = null;
-                }
-                if (this.pageHideHandler) {
-                    window.removeEventListener('pagehide', this.pageHideHandler);
-                    this.pageHideHandler = null;
                 }
             },
 
@@ -1938,92 +1909,39 @@
 
                 // 设置页面可见性监听，防止PWA恢复时白屏
                 setupVisibilityHandler() {
-                    const overlay = document.getElementById('pwa-black-overlay');
-                    let overlayArmed = false;
-
-                    const ensureDarkPalette = () => {
-                        document.documentElement.style.backgroundColor = '#000000';
-                        document.body.style.backgroundColor = '#000000';
-                        document.body.style.color = '#e0e0e0';
-                        document.body.classList.add('theme-dark');
-
-                        const app = document.getElementById('app');
-                        if (app) {
-                            app.style.backgroundColor = '#000000';
-                        }
-                    };
-
-                    const showOverlay = () => {
-                        if (overlay) {
-                            overlay.classList.add('active');
-                        }
-                    };
-
-                    const hideOverlay = () => {
-                        if (overlay) {
-                            overlay.classList.remove('active');
-                        }
-                    };
-
-                    const hideOverlayWithDelay = () => {
-                        setTimeout(() => {
-                            hideOverlay();
-                            overlayArmed = false;
-                        }, 180);
-                    };
-
                     this.visibilityHandler = () => {
-                        if (document.hidden) {
-                            overlayArmed = true;
-                            showOverlay();
-                            ensureDarkPalette();
-                            return;
+                        if (!document.hidden) {
+                            // 页面重新可见时，立即强制黑色背景
+                            document.documentElement.style.backgroundColor = '#000000';
+                            document.body.style.backgroundColor = '#000000';
+                            document.body.style.color = '#e0e0e0';
+                            document.body.classList.add('theme-dark');
+
+                            // 强制覆盖所有可能的白色元素
+                            const app = document.getElementById('app');
+                            if (app) {
+                                app.style.backgroundColor = '#000000';
+                            }
+
+                            // 重新初始化主题
+                            this.$nextTick(() => {
+                                this.initTheme();
+                            });
                         }
-
-                        if (!overlayArmed) {
-                            ensureDarkPalette();
-                            this.$nextTick(() => this.initTheme());
-                            return;
-                        }
-
-                        showOverlay();
-                        ensureDarkPalette();
-
-                        this.$nextTick(() => {
-                            this.initTheme();
-                            hideOverlayWithDelay();
-                        });
                     };
 
                     document.addEventListener('visibilitychange', this.visibilityHandler);
 
-                    this.pageHideHandler = () => {
-                        overlayArmed = true;
-                        showOverlay();
-                        ensureDarkPalette();
-                    };
-
-                    this.pageShowHandler = (event) => {
-                        if (!overlayArmed && !event.persisted) {
-                            ensureDarkPalette();
-                            this.$nextTick(() => this.initTheme());
-                            return;
-                        }
-
-                        showOverlay();
-                        ensureDarkPalette();
-
+                    // iOS PWA特殊处理 - pageshow事件
+                    window.addEventListener('pageshow', (event) => {
+                        // 从bfcache恢复时强制黑色
                         if (event.persisted) {
-                            this.initTheme();
-                        } else {
-                            this.$nextTick(() => this.initTheme());
+                            document.documentElement.style.backgroundColor = '#000000';
+                            document.body.style.backgroundColor = '#000000';
+                            document.body.style.color = '#e0e0e0';
+                            document.body.classList.add('theme-dark');
                         }
-
-                        hideOverlayWithDelay();
-                    };
-
-                    window.addEventListener('pagehide', this.pageHideHandler);
-                    window.addEventListener('pageshow', this.pageShowHandler);
+                    });
                 },
 
                 initVditor() {
