@@ -1275,15 +1275,7 @@
     </div>
 
     <script>
-        // 等待页面完全加载后初始化
-        document.addEventListener('DOMContentLoaded', function() {
-            // 初始化GitHub服务
-            if (!window.githubService) {
-                window.githubService = new GitHubService();
-                window.githubService.loadConfig();
-            }
-
-        // 配置常量
+        // 配置常量 - 定义在全局作用域
         const contentTypes = {
             GENERAL: 'general',
             BLOG: 'blog',
@@ -1311,7 +1303,7 @@
             ]
         };
 
-        // 模板生成函数
+        // 模板生成函数 - 定义在全局作用域
         function generateContentWithMetadata(contentType, metadata, content) {
             if (contentType === contentTypes.GENERAL) {
                 return content;
@@ -1333,6 +1325,14 @@
 
             return `---\n${frontmatter}\n---\n\n${content}`;
         }
+
+        // 等待页面完全加载后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 初始化GitHub服务
+            if (!window.githubService) {
+                window.githubService = new GitHubService();
+                window.githubService.loadConfig();
+            }
 
         // GitHub 与图床一体化配置组件
         Vue.component('github-config', {
