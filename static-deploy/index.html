@@ -119,6 +119,33 @@
     <script src="https://cdn.jsdelivr.net/npm/vditor@3.9.4/dist/index.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vditor@3.9.4/dist/index.css">
 
+    <!-- 覆盖外部库的白色样式 - 必须在外部CSS之后 -->
+    <style>
+        /* 覆盖 Element UI 的白色背景 */
+        .el-dialog {
+            background: #000000 !important;
+        }
+        .el-menu,
+        .el-dropdown-menu,
+        .el-autocomplete-suggestion,
+        .el-pager li {
+            background: #000000 !important;
+            background-color: #000000 !important;
+        }
+
+        /* 覆盖 Vditor 的白色背景 */
+        .vditor,
+        .vditor-toolbar,
+        .vditor-content,
+        .vditor-wysiwyg,
+        .vditor-ir,
+        .vditor-sv,
+        .vditor-preview {
+            background: #000000 !important;
+            background-color: #000000 !important;
+        }
+    </style>
+
     <!-- CSS Modules -->
     <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/components.css">
