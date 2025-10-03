@@ -124,31 +124,67 @@ class GitHubService {
    * @param {string} contentType - 内容类型
    * @param {Object} metadata - 元数据
    * @param {string} title - 标题
+   * @param {string} content - 内容（用于提取前四个字）
    */
-  generateFilePath(contentType, metadata, title) {
+  generateFilePath(contentType, metadata, title, content = '') {
     const now = new Date()
     const year = now.getFullYear()
     const month = String(now.getMonth() + 1).padStart(2, '0')
     const day = String(now.getDate()).padStart(2, '0')
-    const hour = String(now.getHours()).padStart(2, '0')
-    const minute = String(now.getMinutes()).padStart(2, '0')
-    const second = String(now.getSeconds()).padStart(2, '0')
 
-    // 生成文件名（移除特殊字符）
-    const fileName = (title || metadata.title || 'untitled')
-      .replace(/[^\w\s-]/g, '')
-      .replace(/\s+/g, '-')
-      .toLowerCase()
+    const datePrefix = `${year}-${month}-${day}`
 
-    // 添加时间戳避免同一天的文件覆盖
-    const timestamp = `${hour}${minute}${second}`
+    let fileName = ''
 
     if (contentType === 'blog') {
-      return `src/content/posts/${year}-${month}-${day}-${timestamp}-${fileName}.md`
+      // Blog: 使用标题作为文件名
+      fileName = (title || metadata.title || 'untitled')
+        .replace(/[^\w\s\u4e00-\u9fa5-]/g, '') // 保留中文、英文、数字、空格、连字符
+        .replace(/\s+/g, '-')
+        .toLowerCase()
+
+      return `src/content/posts/${fileName}.md`
+
     } else if (contentType === 'essay') {
-      return `src/content/essays/${year}-${month}-${day}-${timestamp}-${fileName}.md`
+      // Essay: 日期 + 内容前四个字
+      // 提取纯文本内容（去除YAML frontmatter和Markdown标记）
+      let plainText = content
+        .replace(/^---[\s\S]*?---\n*/m, '') // 移除YAML frontmatter
+        .replace(/!\[.*?\]\(.*?\)/g, '') // 移除图片
+        .replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1') // 移除链接保留文字
+        .replace(/[#*`_~\->/]/g, '') // 移除Markdown标记
+        .replace(/\s+/g, '') // 移除所有空白
+        .trim()
+
+      // 获取前四个字符（中文或英文）
+      let firstFourChars = ''
+      let charCount = 0
+      for (let i = 0; i < plainText.length && charCount < 4; i++) {
+        const char = plainText[i]
+        // 只计算中文字符或英文字母
+        if (/[\u4e00-\u9fa5a-zA-Z]/.test(char)) {
+          firstFourChars += char
+          charCount++
+        }
+      }
+
+      // 如果内容为空或只有图片，使用日期
+      if (!firstFourChars) {
+        fileName = datePrefix
+      } else {
+        fileName = `${datePrefix}-${firstFourChars}`
+      }
+
+      return `src/content/essays/${fileName}.md`
+
     } else {
-      return `docs/${fileName}-${timestamp}.md`
+      // 其他类型
+      const safeTitle = (title || metadata.title || 'untitled')
+        .replace(/[^\w\s\u4e00-\u9fa5-]/g, '')
+        .replace(/\s+/g, '-')
+        .toLowerCase()
+
+      return `docs/${datePrefix}-${safeTitle}.md`
     }
   }
 
@@ -163,8 +199,8 @@ class GitHubService {
       throw new Error('GitHub not configured')
     }
 
-    // 生成文件路径
-    const filePath = this.generateFilePath(contentType, metadata, metadata.title)
+    // 生成文件路径（传递完整内容用于提取前四个字）
+    const filePath = this.generateFilePath(contentType, metadata, metadata.title, content)
 
     // 检查文件是否已存在
     const existingFile = await this.getFile(filePath)
