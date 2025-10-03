@@ -4,8 +4,7 @@
       "Bash(awk:*)",
       "Bash(rm:*)",
       "Bash(ls:*)",
-      "Bash(git add:*)",
-      "Bash(open:*)"
+      "Bash(git add:*)"
     ],
     "deny": [],
     "ask": []

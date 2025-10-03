@@ -89,7 +89,7 @@ class ImageService {
     let imageDir = (config.imageDir || 'images').trim()
     this.imageDir = imageDir.replace(/^\/+|\/+$/g, '') || 'images'
 
-    // 规范化配置
+    // 保存到localStorage
     const normalizedConfig = {
       ...config,
       token: this.token,
@@ -99,38 +99,17 @@ class ImageService {
       imageDir: this.imageDir
     }
 
-    // 使用configManager保存配置（如果可用）
-    if (window.configManager) {
-      window.configManager.setImageServiceConfig(normalizedConfig)
-    } else {
-      // 降级到localStorage
-      localStorage.setItem('image-service-config', JSON.stringify(normalizedConfig))
-    }
+    localStorage.setItem('image-service-config', JSON.stringify(normalizedConfig))
   }
 
   /**
-   * 从configManager或localStorage加载配置
+   * 从localStorage加载配置
    */
   loadConfig() {
-    let config = null
-
-    // 优先使用configManager
-    if (window.configManager) {
-      config = window.configManager.getImageServiceConfig()
-    } else {
-      // 降级到localStorage
-      const saved = localStorage.getItem('image-service-config')
-      if (saved) {
-        config = JSON.parse(saved)
-      }
-    }
-
-    if (config) {
-      this.token = (config.token || '').trim()
-      this.owner = (config.owner || '').trim()
-      this.repo = (config.repo || '').trim()
-      this.branch = (config.branch || 'main').trim()
-      this.imageDir = (config.imageDir || 'images').trim().replace(/^\/+|\/+$/g, '') || 'images'
+    const saved = localStorage.getItem('image-service-config')
+    if (saved) {
+      const config = JSON.parse(saved)
+      this.setConfig(config)
       return config
     }
     return null
@@ -151,12 +130,7 @@ class ImageService {
     const matchedKey = this.findRuleKey(ruleId)
     if (matchedKey) {
       this.selectedLinkRule = matchedKey
-      // 使用configManager保存（如果可用）
-      if (window.configManager) {
-        window.configManager.setLinkRule(matchedKey)
-      } else {
-        localStorage.setItem('image-service-link-rule', matchedKey)
-      }
+      localStorage.setItem('image-service-link-rule', matchedKey)
     }
   }
 
@@ -164,15 +138,7 @@ class ImageService {
    * 获取当前CDN链接规则
    */
   getLinkRule() {
-    let saved = null
-
-    // 优先使用configManager
-    if (window.configManager) {
-      saved = window.configManager.getLinkRule()
-    } else {
-      saved = localStorage.getItem('image-service-link-rule')
-    }
-
+    const saved = localStorage.getItem('image-service-link-rule')
     const matchedKey = this.findRuleKey(saved)
     if (matchedKey) {
       this.selectedLinkRule = matchedKey
