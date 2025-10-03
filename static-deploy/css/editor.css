@@ -5,18 +5,15 @@
     flex-direction: column;
     height: calc(var(--vh, 1vh) * 100 - 130px);
     padding: 0;
-    background: #fafafa;
+    background: #000000 !important;
     margin: 24px auto;
     border-radius: 16px;
     overflow: hidden;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08);
-    border: 1px solid rgba(255,255,255,0.2);
+    box-shadow: 0 4px 20px rgba(255,255,255,0.05);
+    border: 1px solid #333333 !important;
     max-width: 1200px;
     backdrop-filter: blur(10px);
     transition: all 0.3s ease;
-    background: #000000 !important;
-    border-color: #333333 !important;
-    box-shadow: 0 4px 20px rgba(255,255,255,0.05);
 }
 
 .editor-container:hover {
