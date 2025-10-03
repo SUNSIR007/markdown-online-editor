@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" style="background:#000000;">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,30 +15,16 @@
     <link rel="icon" type="image/png" href="./img/icons/write.png">
     <link rel="apple-touch-icon" sizes="180x180" href="./img/icons/apple-touch-icon.png">
     <link rel="manifest" href="./site.webmanifest">
-    <script src="https://unpkg.com/vue@2.6.14/dist/vue.js" defer></script>
-    <script src="https://unpkg.com/element-ui@2.15.13/lib/index.js" defer></script>
+    <script src="https://unpkg.com/vue@2.6.14/dist/vue.js"></script>
+    <script src="https://unpkg.com/element-ui@2.15.13/lib/index.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/element-ui@2.15.13/lib/theme-chalk/index.css">
-    <script src="https://cdn.jsdelivr.net/npm/vditor@3.9.4/dist/index.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/vditor@3.9.4/dist/index.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vditor@3.9.4/dist/index.css">
-    <script src="github-service.js" defer></script>
-    <script src="image-service.js" defer></script>
+    <script src="github-service.js"></script>
+    <script src="image-service.js"></script>
     <style>
         :root {
             --vh: 1vh;
-        }
-
-        #preload-overlay {
-            position: fixed;
-            inset: 0;
-            background: #000000;
-            z-index: 2000;
-            pointer-events: none;
-            opacity: 1;
-        }
-
-        #preload-overlay.fade-out {
-            opacity: 0;
-            transition: opacity 0.3s ease;
         }
 
         html {
@@ -49,6 +35,7 @@
             margin: 0;
             padding: 0;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            transition: all 0.3s ease;
             background: #000000;
             color: #e0e0e0;
         }
@@ -1120,8 +1107,7 @@
 
     </style>
 </head>
-<body class="theme-dark" style="background:#000000;color:#e0e0e0;">
-    <div id="preload-overlay"></div>
+<body class="theme-dark">
     <div id="app">
         <div class="header">
             <div class="content-type-selector">
@@ -1705,19 +1691,6 @@
                 this.checkForEditFile();
                 this.detectPWAMode();
                 this.checkPWAConfigMissing();
-
-                // 页面加载完成后移除预加载遮罩层
-                this.$nextTick(() => {
-                    setTimeout(() => {
-                        const overlay = document.getElementById('preload-overlay');
-                        if (overlay) {
-                            overlay.classList.add('fade-out');
-                            setTimeout(() => {
-                                overlay.remove();
-                            }, 300);
-                        }
-                    }, 100);
-                });
             },
 
             methods: {
