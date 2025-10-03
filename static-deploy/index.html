@@ -474,8 +474,7 @@
             flex-direction: column;
             height: calc(var(--vh, 1vh) * 100 - 130px);
             padding: 0;
-            background: #000000;
-            color: #e0e0e0;
+            background: #fafafa;
             margin: 24px auto;
             border-radius: 16px;
             overflow: hidden;
@@ -591,15 +590,12 @@
         .theme-ocean .el-input__inner:hover, .theme-ocean .el-input__inner:focus {
             border-color: #4299e1 !important;
         }
-        #vditor,
-        #vditor .vditor {
+        #vditor {
             height: 100%;
             flex: 1 1 auto;
             min-height: 0;
             border-radius: 0;
             border: none !important;
-            background: #000000;
-            color: #e0e0e0;
         }
 
         /* 编辑器内容区域内边距 */
@@ -2306,18 +2302,10 @@
 
                 // 应用主题
                 applyTheme(themeId) {
-                    const themeClasses = ['theme-dark', 'theme-gray', 'theme-paper', 'theme-forest', 'theme-ocean'];
-                    const targetClass = `theme-${themeId}`;
-
-                    if (!document.body.classList.contains(targetClass)) {
-                        document.body.classList.add(targetClass);
-                    }
-
-                    themeClasses.forEach(themeClass => {
-                        if (themeClass !== targetClass) {
-                            document.body.classList.remove(themeClass);
-                        }
-                    });
+                    // 移除所有主题类
+                    document.body.classList.remove('theme-dark', 'theme-gray', 'theme-paper', 'theme-forest', 'theme-ocean');
+                    // 添加新主题类
+                    document.body.classList.add(`theme-${themeId}`);
 
                     // 更新meta标签颜色
                     const themeColors = {
