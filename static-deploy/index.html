@@ -12,17 +12,19 @@
             background: #000000 !important;
         }
 
-        /* 覆盖所有可能的白色元素 */
-        * {
-            background-color: transparent;
+        /* 防止页面初始化时出现的白色闪现 */
+        body, #app, .header, .content-type-selector {
+            background-color: #000000 !important;
         }
 
-        /* 防止Element UI等组件的白色背景闪现 */
-        .el-loading-mask,
-        .el-dialog,
-        .el-message-box,
-        [class*="el-"] {
+        /* 防止Element UI白色组件闪现 */
+        .el-button, .el-input, .el-dialog, .el-message-box {
             background-color: transparent !important;
+        }
+
+        /* 防止白色遮罩闪现 */
+        .el-loading-mask {
+            background-color: rgba(0, 0, 0, 0.8) !important;
         }
     </style>
 
@@ -43,6 +45,26 @@
     <link rel="stylesheet" href="https://unpkg.com/element-ui@2.15.13/lib/theme-chalk/index.css">
     <script src="https://cdn.jsdelivr.net/npm/vditor@3.9.4/dist/index.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vditor@3.9.4/dist/index.css">
+
+    <!-- 强制覆盖外部CSS的白色背景 -->
+    <style>
+        /* 确保覆盖Element UI和Vditor的默认样式 */
+        html, body, #app {
+            background-color: #000000 !important;
+            background: #000000 !important;
+        }
+
+        /* 覆盖可能的白色容器 */
+        .vditor-content, .vditor-ir, .vditor-sv, .vditor-wysiwyg {
+            background-color: transparent !important;
+        }
+
+        /* 确保Element UI组件不显示白色 */
+        .el-button:not(.el-button--primary), .el-input__inner {
+            background-color: rgba(255, 255, 255, 0.1) !important;
+        }
+    </style>
+
     <script src="github-service.js"></script>
     <script src="image-service.js"></script>
     <style>
