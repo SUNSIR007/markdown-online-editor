@@ -265,87 +265,234 @@
 }
 
 .github-config-dialog .el-dialog {
-    background: #161b22 !important;
-    border-radius: 24px !important;
-    border: 1px solid #30363d !important;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.5) !important;
+    background: linear-gradient(145deg, #0a0e14 0%, #12171f 100%) !important;
+    border-radius: 20px !important;
+    border: 1px solid rgba(0, 47, 167, 0.3) !important;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 1px rgba(0, 47, 167, 0.5) !important;
     overflow: hidden;
 }
 
 .github-config-dialog .el-dialog__header {
-    background: #161b22 !important;
-    color: #c9d1d9 !important;
-    border-bottom: 1px solid #30363d !important;
-    border-top-left-radius: 24px;
-    border-top-right-radius: 24px;
+    background: linear-gradient(135deg, rgba(0, 47, 167, 0.15) 0%, rgba(0, 47, 167, 0.05) 100%) !important;
+    color: #e0e0e0 !important;
+    border-bottom: 1px solid rgba(0, 47, 167, 0.3) !important;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    padding: 20px 30px !important;
 }
 
 .github-config-dialog .el-dialog__title {
-    font-size: 18px !important;
-    font-weight: 600;
-    color: #e0e0e0 !important;
+    font-size: 20px !important;
+    font-weight: 600 !important;
+    color: #ffffff !important;
+    letter-spacing: 0.5px;
+}
+
+.github-config-dialog .el-dialog__headerbtn {
+    top: 20px !important;
+    right: 20px !important;
+}
+
+.github-config-dialog .el-dialog__close {
+    color: #8b949e !important;
+    font-size: 20px !important;
+}
+
+.github-config-dialog .el-dialog__close:hover {
+    color: #ffffff !important;
 }
 
 .github-config-dialog .el-dialog__body {
-    background: #0d1117 !important;
+    background: transparent !important;
     color: #c9d1d9 !important;
-    padding: 25px 30px !important;
+    padding: 0 !important;
+}
+
+/* 标签页样式优化 */
+.github-config-dialog .el-tabs__header {
+    background: rgba(0, 47, 167, 0.1) !important;
+    margin: 0 !important;
+    padding: 0 30px !important;
+    border-bottom: 1px solid rgba(0, 47, 167, 0.3) !important;
+}
+
+.github-config-dialog .el-tabs__nav {
+    border: none !important;
+}
+
+.github-config-dialog .el-tabs__item {
+    background: transparent !important;
+    border: none !important;
+    color: #8b949e !important;
+    font-weight: 500 !important;
+    padding: 0 20px !important;
+    height: 48px !important;
+    line-height: 48px !important;
+    transition: all 0.3s ease !important;
+}
+
+.github-config-dialog .el-tabs__item:hover {
+    color: #ffffff !important;
+}
+
+.github-config-dialog .el-tabs__item.is-active {
+    color: #ffffff !important;
+    background: linear-gradient(180deg, rgba(0, 47, 167, 0.2) 0%, transparent 100%) !important;
+    border-bottom: 2px solid #002FA7 !important;
+}
+
+.github-config-dialog .el-tabs__active-bar {
+    background-color: #002FA7 !important;
+    height: 2px !important;
+}
+
+.github-config-dialog .el-tabs__content {
+    padding: 30px !important;
+}
+
+/* 表单样式优化 */
+.github-config-dialog .el-form-item {
+    margin-bottom: 24px !important;
 }
 
 .github-config-dialog .el-form-item__label {
-    color: #c9d1d9 !important;
+    color: #e0e0e0 !important;
     white-space: nowrap;
+    font-weight: 500 !important;
+    font-size: 14px !important;
 }
 
 .github-config-dialog .el-input__inner {
-    background: #010409 !important;
-    border: 1px solid #30363d !important;
-    color: #c9d1d9 !important;
-    border-radius: 20px !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: #ffffff !important;
+    border-radius: 10px !important;
+    height: 42px !important;
+    line-height: 42px !important;
+    font-size: 14px !important;
+    transition: all 0.3s ease !important;
+}
+
+.github-config-dialog .el-input__inner::placeholder {
+    color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.github-config-dialog .el-input__inner:hover {
+    border-color: rgba(0, 47, 167, 0.5) !important;
+    background: rgba(255, 255, 255, 0.08) !important;
 }
 
 .github-config-dialog .el-input__inner:focus {
     border-color: #002FA7 !important;
-    box-shadow: 0 0 0 3px rgba(0, 47, 167, 0.3) !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    box-shadow: 0 0 0 3px rgba(0, 47, 167, 0.2) !important;
 }
 
+/* 下拉选择框样式 */
+.github-config-dialog .el-select {
+    width: 100% !important;
+}
+
+.github-config-dialog .el-select .el-input__inner {
+    cursor: pointer !important;
+}
+
+.github-config-dialog .el-select .el-input__icon {
+    color: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* 提示信息样式优化 */
 .github-config-dialog .token-instructions {
     font-size: 12px;
     color: #8b949e;
-    margin-top: 8px;
-    line-height: 1.6;
-    background: #161b22;
-    padding: 10px;
-    border-radius: 6px;
+    margin-top: 10px;
+    line-height: 1.8;
+    background: rgba(0, 47, 167, 0.1);
+    padding: 14px 16px;
+    border-radius: 10px;
+    border-left: 3px solid #002FA7;
 }
 
+.github-config-dialog .token-instructions strong {
+    color: #ffffff;
+    display: block;
+    margin-bottom: 6px;
+    font-size: 13px;
+}
+
+/* 底部按钮区域 */
 .github-config-dialog .el-dialog__footer {
-    background: #161b22 !important;
-    border-top: 1px solid #30363d !important;
-    padding: 15px 30px !important;
-    border-bottom-left-radius: 24px;
-    border-bottom-right-radius: 24px;
+    background: rgba(0, 47, 167, 0.05) !important;
+    border-top: 1px solid rgba(0, 47, 167, 0.3) !important;
+    padding: 20px 30px !important;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
 }
 
+.github-config-dialog .dialog-footer {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+}
+
+.github-config-dialog .el-button {
+    border-radius: 10px !important;
+    padding: 10px 24px !important;
+    font-weight: 500 !important;
+    font-size: 14px !important;
+    transition: all 0.3s ease !important;
+}
+
+.github-config-dialog .el-button--default {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: #e0e0e0 !important;
+}
+
+.github-config-dialog .el-button--default:hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+    transform: translateY(-1px);
+}
+
+.github-config-dialog .el-button--primary.save-button {
+    background: linear-gradient(135deg, #002FA7 0%, #0039C7 100%) !important;
+    border: none !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(0, 47, 167, 0.4) !important;
+}
+
+.github-config-dialog .el-button--primary.save-button:hover {
+    background: linear-gradient(135deg, #0033B8 0%, #0041E0 100%) !important;
+    box-shadow: 0 6px 16px rgba(0, 47, 167, 0.5) !important;
+    transform: translateY(-1px);
+}
+
+/* 测试结果样式优化 */
 .github-config-dialog .test-result {
-    margin-top: 15px;
-    padding: 10px;
-    border-radius: 6px;
+    margin-top: 16px;
+    padding: 14px 16px;
+    border-radius: 10px;
     font-weight: 500;
+    font-size: 13px;
+    line-height: 1.6;
 }
 
 .github-config-dialog .test-result.success {
-    background-color: rgba(34, 139, 34, 0.2);
-    color: #3fb950;
-    border: 1px solid rgba(34, 139, 34, 0.5);
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.15) 0%, rgba(34, 197, 94, 0.05) 100%);
+    color: #4ade80;
+    border: 1px solid rgba(34, 197, 94, 0.3);
+    border-left: 3px solid #22c55e;
 }
 
 .github-config-dialog .test-result.error {
-    background-color: rgba(210, 4, 45, 0.2);
-    color: #f85149;
-    border: 1px solid rgba(210, 4, 45, 0.5);
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(239, 68, 68, 0.05) 100%);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-left: 3px solid #ef4444;
 }
 
+/* 移动端适配 */
 .github-config-dialog .dialog-footer.is-mobile {
     display: flex;
     flex-direction: column;
@@ -354,11 +501,48 @@
 
 .github-config-dialog .dialog-footer.is-mobile .el-button {
     width: 100%;
-    margin-left: 0 !important;
+    margin: 0 !important;
 }
 
-.github-config-dialog .dialog-footer.is-mobile .el-button + .el-button {
-    margin-left: 0 !important;
+/* Element UI 下拉框弹出层样式 */
+.el-select-dropdown {
+    background: linear-gradient(145deg, #0a0e14 0%, #12171f 100%) !important;
+    border: 1px solid rgba(0, 47, 167, 0.3) !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8) !important;
+    border-radius: 10px !important;
+}
+
+.el-select-dropdown__item {
+    background: transparent !important;
+    color: #c9d1d9 !important;
+    font-size: 14px !important;
+    padding: 10px 16px !important;
+    transition: all 0.2s ease !important;
+}
+
+.el-select-dropdown__item:hover {
+    background: rgba(0, 47, 167, 0.2) !important;
+    color: #ffffff !important;
+}
+
+.el-select-dropdown__item.selected {
+    background: rgba(0, 47, 167, 0.3) !important;
+    color: #ffffff !important;
+    font-weight: 500 !important;
+}
+
+.el-select-dropdown__item.selected::after {
+    content: '✓';
+    position: absolute;
+    right: 16px;
+    color: #002FA7;
+    font-weight: bold;
+}
+
+/* Element UI 遮罩层样式 */
+.v-modal {
+    background: rgba(0, 0, 0, 0.7) !important;
+    backdrop-filter: blur(4px) !important;
 }
 
 /* Save Button Klein Blue */
