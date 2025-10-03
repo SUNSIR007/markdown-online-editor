@@ -291,21 +291,29 @@
     <script src="github-service.js"></script>
     <script src="image-service.js"></script>
 
-    <!-- Application Scripts -->
+    <!-- Application Scripts - Load but don't execute immediately -->
     <script src="js/config.js"></script>
     <script src="js/github-config-component.js"></script>
     <script src="js/mobile-utils.js"></script>
     <script src="js/editor-manager.js"></script>
     <script src="js/image-handler.js"></script>
-    <script src="js/app.js"></script>
 
+    <!-- 直接加载Vue应用 - 最简单可靠的方法 -->
     <script>
-        // 简单显示应用
+        // 立即显示应用并加载Vue
         document.addEventListener('DOMContentLoaded', function() {
-            const appElement = document.getElementById('app');
-            if (appElement) {
-                appElement.style.visibility = 'visible';
-            }
+            // 短暂延迟后显示应用
+            setTimeout(() => {
+                const appElement = document.getElementById('app');
+                if (appElement) {
+                    appElement.style.visibility = 'visible';
+                }
+
+                // 加载Vue应用
+                const script = document.createElement('script');
+                script.src = 'js/app.js';
+                document.head.appendChild(script);
+            }, 200); // 200ms延迟确保CSS加载
         });
     </script>
 
