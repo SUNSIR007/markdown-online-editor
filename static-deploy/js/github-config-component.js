@@ -302,8 +302,8 @@ Vue.component('github-config', {
             </el-tabs>
 
             <div slot="footer" :class="['dialog-footer', { 'is-mobile': isMobile }]">
-                <el-button @click="testGithubConnection" :loading="githubTesting">测试 GitHub</el-button>
-                <el-button @click="testImageConnection" :loading="imageTesting">测试图床</el-button>
+                <el-button v-if="activeTab === 'github'" @click="testGithubConnection" :loading="githubTesting">测试 GitHub</el-button>
+                <el-button v-if="activeTab === 'image'" @click="testImageConnection" :loading="imageTesting">测试图床</el-button>
                 <el-button @click="close">取消</el-button>
                 <el-button type="primary" @click="save" class="save-button">保存配置</el-button>
             </div>
