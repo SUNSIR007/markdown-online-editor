@@ -27,20 +27,6 @@
             --vh: 1vh;
         }
 
-        #preload-overlay {
-            position: fixed;
-            inset: 0;
-            background: #000000;
-            z-index: 2000;
-            pointer-events: none;
-            opacity: 1;
-        }
-
-        #preload-overlay.fade-out {
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
         html {
             background: #000000;
         }
@@ -1121,7 +1107,6 @@
     </style>
 </head>
 <body class="theme-dark" style="background:#000000;color:#e0e0e0;">
-    <div id="preload-overlay"></div>
     <div id="app">
         <div class="header">
             <div class="content-type-selector">
@@ -1705,20 +1690,6 @@
                 this.checkForEditFile();
                 this.detectPWAMode();
                 this.checkPWAConfigMissing();
-
-                // 页面加载完成后移除预加载遮罩层
-                this.$nextTick(() => {
-                    // 等待Vditor编辑器初始化完成后再移除遮罩
-                    setTimeout(() => {
-                        const overlay = document.getElementById('preload-overlay');
-                        if (overlay) {
-                            overlay.classList.add('fade-out');
-                            setTimeout(() => {
-                                overlay.remove();
-                            }, 300);
-                        }
-                    }, 500);
-                });
             },
 
             methods: {
