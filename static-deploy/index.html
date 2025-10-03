@@ -20,67 +20,125 @@
     <link rel="stylesheet" href="https://unpkg.com/element-ui@2.15.13/lib/theme-chalk/index.css">
     <script src="https://cdn.jsdelivr.net/npm/vditor@3.9.4/dist/index.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vditor@3.9.4/dist/index.css">
+    <script src="config-manager.js"></script>
     <script src="github-service.js"></script>
     <script src="image-service.js"></script>
     <style>
         :root {
             --vh: 1vh;
+
+            /* 颜色变量 */
+            --color-bg-dark: #000000;
+            --color-bg-dark-secondary: #161b22;
+            --color-bg-dark-tertiary: #0d1117;
+            --color-bg-input: #1a1a1a;
+
+            --color-text-light: #e0e0e0;
+            --color-text-secondary: #c9d1d9;
+            --color-text-muted: #8b949e;
+
+            --color-border-dark: #30363d;
+            --color-border-light: #555;
+            --color-border-lighter: #888;
+
+            --color-klein-blue: #002FA7;
+            --color-klein-blue-hover: #0033B8;
+
+            --color-purple-start: #667eea;
+            --color-purple-end: #764ba2;
+
+            --color-success: #22c55e;
+            --color-error: #f85149;
+            --color-warning: #eab308;
+
+            --color-white: #ffffff;
+            --color-white-alpha-10: rgba(255, 255, 255, 0.1);
+            --color-white-alpha-15: rgba(255, 255, 255, 0.15);
+            --color-white-alpha-20: rgba(255, 255, 255, 0.2);
+            --color-white-alpha-25: rgba(255, 255, 255, 0.25);
+            --color-white-alpha-80: rgba(255, 255, 255, 0.8);
+
+            /* 间距变量 */
+            --spacing-xs: 8px;
+            --spacing-sm: 12px;
+            --spacing-md: 20px;
+            --spacing-lg: 30px;
+            --spacing-xl: 60px;
+
+            /* 圆角变量 */
+            --radius-sm: 6px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+            --radius-xxl: 24px;
+            --radius-full: 999px;
+
+            /* 阴影变量 */
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.15);
+            --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08);
+            --shadow-button: 0 4px 12px rgba(0, 0, 0, 0.15);
+
+            /* 过渡变量 */
+            --transition-fast: 0.2s ease;
+            --transition-normal: 0.3s ease;
+            --transition-slow: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         html {
-            background: #000000;
+            background: var(--color-bg-dark);
         }
 
         body {
             margin: 0;
             padding: 0;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            transition: all 0.3s ease;
-            background: #000000;
-            color: #e0e0e0;
+            transition: all var(--transition-normal);
+            background: var(--color-bg-dark);
+            color: var(--color-text-light);
         }
 
         /* 主题系统 */
 
         /* 暗夜模式样式 */
         .theme-dark {
-            background: #000000 !important;
-            color: #e0e0e0;
+            background: var(--color-bg-dark) !important;
+            color: var(--color-text-light);
         }
 
         .theme-dark .header {
-            background: #000000 !important;
-            border-bottom-color: #888;
+            background: var(--color-bg-dark) !important;
+            border-bottom-color: var(--color-border-lighter);
         }
 
         .theme-dark .content-type-selector {
-            background: #000000;
+            background: var(--color-bg-dark);
         }
 
         /* 主要按钮样式 */
         .theme-dark .content-type-selector .el-button--primary,
         .theme-dark .el-button--primary {
-            background: #002FA7 !important;
-            border-color: #002FA7 !important;
-            color: white !important;
+            background: var(--color-klein-blue) !important;
+            border-color: var(--color-klein-blue) !important;
+            color: var(--color-white) !important;
         }
 
         .theme-dark .content-type-selector .el-button--primary:hover,
         .theme-dark .el-button--primary:hover {
-            background: #0033B8 !important;
-            border-color: #0033B8 !important;
-            color: white !important;
+            background: var(--color-klein-blue-hover) !important;
+            border-color: var(--color-klein-blue-hover) !important;
+            color: var(--color-white) !important;
         }
 
         /* 强制覆盖Element UI的默认样式 */
         .theme-dark .content-type-selector .el-button.el-button--primary {
-            background-color: #002FA7 !important;
-            border-color: #002FA7 !important;
+            background-color: var(--color-klein-blue) !important;
+            border-color: var(--color-klein-blue) !important;
         }
 
         .theme-dark .content-type-selector .el-button.el-button--primary:hover {
-            background-color: #0033B8 !important;
-            border-color: #0033B8 !important;
+            background-color: var(--color-klein-blue-hover) !important;
+            border-color: var(--color-klein-blue-hover) !important;
         }
 
         /* 发布按钮样式 */
@@ -90,15 +148,15 @@
             color: #111827 !important;
             font-weight: 600 !important;
             padding: 9px 24px !important;
-            border-radius: 999px !important;
+            border-radius: var(--radius-full) !important;
             box-shadow: none !important;
-            transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease !important;
+            transition: background-color var(--transition-fast), color var(--transition-fast), transform var(--transition-fast) !important;
             position: relative;
             top: -8px;
         }
 
         .publish-button.has-content {
-            background: #ffffff !important;
+            background: var(--color-white) !important;
         }
 
         .publish-button.has-content:hover:not(:disabled) {
@@ -115,17 +173,17 @@
         }
 
         .publish-button.has-content:disabled {
-            background: #ffffff !important;
+            background: var(--color-white) !important;
         }
 
         .publish-button:focus {
             outline: none !important;
-            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3) !important;
+            box-shadow: 0 0 0 2px var(--color-white-alpha-25) !important;
         }
 
         /* 发布按钮成功动画 */
         .publish-button.success {
-            background: #22c55e !important;
+            background: var(--color-success) !important;
             color: #111827 !important;
             animation: successPulse 0.6s ease-out;
         }
@@ -149,25 +207,25 @@
         .github-config-button {
             width: 44px;
             height: 44px;
-            border-radius: 12px;
+            border-radius: var(--radius-md);
             border: none;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all var(--transition-slow);
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 16px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            background: rgba(255,255,255,0.15);
-            color: white;
+            background: var(--color-white-alpha-15);
+            color: var(--color-white);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.2);
+            border: 1px solid var(--color-white-alpha-20);
         }
 
         .github-config-button:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(0,0,0,0.2);
-            background: rgba(255,255,255,0.25);
+            background: var(--color-white-alpha-25);
         }
 
         .github-config-button i {
@@ -247,13 +305,13 @@
 
         /* 编辑器容器主题样式 */
         .theme-dark .editor-container {
-            background: #000000 !important;
+            background: var(--color-bg-dark) !important;
             border-color: #333333 !important;
-            box-shadow: 0 4px 20px rgba(255,255,255,0.05);
+            box-shadow: 0 4px 20px var(--color-white-alpha-10);
         }
         .theme-dark #vditor,
         .theme-dark .vditor {
-            background: #000000 !important;
+            background: var(--color-bg-dark) !important;
         }
 
 
@@ -297,27 +355,27 @@
 
         /* 美化按钮样式 - 现代化按钮 */
         .el-button {
-            border-radius: 12px !important;
+            border-radius: var(--radius-md) !important;
             font-weight: 600 !important;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-            padding: 12px 24px !important;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+            transition: all var(--transition-slow) !important;
+            padding: var(--spacing-sm) 24px !important;
+            box-shadow: var(--shadow-sm) !important;
             backdrop-filter: blur(10px) !important;
         }
 
         .el-button:hover {
             transform: translateY(-2px) !important;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.15) !important;
+            box-shadow: var(--shadow-md) !important;
         }
 
         .el-button:active {
             transform: translateY(0) !important;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+            box-shadow: var(--shadow-sm) !important;
         }
 
         .el-button:hover {
             transform: translateY(-1px) !important;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+            box-shadow: var(--shadow-button) !important;
         }
 
         .el-button.is-circle {
@@ -331,16 +389,16 @@
             flex-direction: column;
             height: calc(var(--vh, 1vh) * 100 - 130px);
             padding: 0;
-            background: #000000;
-            color: #e0e0e0;
+            background: var(--color-bg-dark);
+            color: var(--color-text-light);
             margin: 24px auto;
-            border-radius: 16px;
+            border-radius: var(--radius-lg);
             overflow: hidden;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08);
-            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--color-white-alpha-20);
             max-width: 1200px;
             backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
+            transition: all var(--transition-normal);
         }
 
         .editor-container:hover {
@@ -370,8 +428,8 @@
 
         /* 元数据编辑器主题样式 */
         .theme-dark .metadata-editor {
-            background-color: #000000;
-            border-bottom-color: #30363d;
+            background-color: var(--color-bg-dark);
+            border-bottom-color: var(--color-border-dark);
         }
 
 
@@ -387,13 +445,13 @@
         }
         /* 输入框主题样式 */
         .theme-dark .el-input__inner {
-            background-color: #1a1a1a !important;
-            border-color: #555 !important;
-            color: #e0e0e0 !important;
+            background-color: var(--color-bg-input) !important;
+            border-color: var(--color-border-light) !important;
+            color: var(--color-text-light) !important;
         }
         .theme-dark .el-input__inner:hover,
         .theme-dark .el-input__inner:focus {
-            border-color: #002FA7 !important;
+            border-color: var(--color-klein-blue) !important;
         }
 
 
@@ -404,8 +462,8 @@
             min-height: 0;
             border-radius: 0;
             border: none !important;
-            background: #000000;
-            color: #e0e0e0;
+            background: var(--color-bg-dark);
+            color: var(--color-text-light);
         }
 
         /* 编辑器内容区域内边距 */
@@ -1327,22 +1385,22 @@
                     this.isMobile = window.innerWidth <= 600;
                 },
                 loadConfig() {
-                    const savedGithub = localStorage.getItem('github-config');
+                    // 使用configManager加载配置
+                    const savedGithub = window.configManager.getGitHubConfig();
                     if (savedGithub) {
                         this.githubConfig = {
                             ...this.githubConfig,
-                            ...JSON.parse(savedGithub)
+                            ...savedGithub
                         };
                     }
 
-                    const savedImage = localStorage.getItem('image-service-config');
+                    const savedImage = window.configManager.getImageServiceConfig();
                     if (savedImage) {
-                        const parsed = JSON.parse(savedImage);
                         this.imageConfig = {
                             ...this.imageConfig,
-                            ...parsed,
-                            branch: (parsed.branch || '').trim() || 'main',
-                            imageDir: (parsed.imageDir || '').trim() || 'images'
+                            ...savedImage,
+                            branch: (savedImage.branch || '').trim() || 'main',
+                            imageDir: (savedImage.imageDir || '').trim() || 'images'
                         };
                     } else {
                         this.imageConfig = {
@@ -1353,7 +1411,7 @@
                         };
                     }
 
-                    const savedRule = localStorage.getItem('image-service-link-rule');
+                    const savedRule = window.configManager.getLinkRule();
                     if (window.imageService && typeof window.imageService.getLinkRule === 'function') {
                         const rule = window.imageService.getLinkRule();
                         if (rule) {
@@ -1477,9 +1535,10 @@
                     };
                     const matchedRule = this.resolveRuleKey(this.selectedLinkRule) || 'jsdelivr';
 
-                    localStorage.setItem('github-config', JSON.stringify(this.githubConfig));
-                    localStorage.setItem('image-service-config', JSON.stringify(normalizedImageConfig));
-                    localStorage.setItem('image-service-link-rule', matchedRule);
+                    // 使用configManager保存配置
+                    window.configManager.setGitHubConfig(this.githubConfig);
+                    window.configManager.setImageServiceConfig(normalizedImageConfig);
+                    window.configManager.setLinkRule(matchedRule);
 
                     if (window.imageService) {
                         window.imageService.setConfig(normalizedImageConfig);
@@ -1891,11 +1950,11 @@
                 },
 
                 checkGitHubConfig() {
-                    const config = localStorage.getItem('github-config');
-                    this.isGitHubConfigured = !!config;
-                    if (config && window.githubService) {
-                        const parsedConfig = JSON.parse(config);
-                        window.githubService.setConfig(parsedConfig);
+                    // 使用configManager检查配置
+                    this.isGitHubConfigured = window.configManager.hasGitHubConfig();
+                    if (this.isGitHubConfigured && window.githubService) {
+                        const config = window.configManager.getGitHubConfig();
+                        window.githubService.setConfig(config);
                     }
                 },
 
@@ -2363,15 +2422,16 @@
 
                 // 检查PWA模式下配置缺失的情况
                 checkPWAConfigMissing() {
-                    // 检测是否为PWA模式（保存到主屏幕）
+                    // 检测是否为PWA模式(保存到主屏幕)
                     const isPWA = window.navigator.standalone === true ||
                                   window.matchMedia('(display-mode: standalone)').matches;
 
                     if (isPWA) {
                         // 延迟检查，确保所有组件都已初始化
                         setTimeout(() => {
-                            const hasImageConfig = localStorage.getItem('image-service-config');
-                            const hasGitHubConfig = localStorage.getItem('github-config');
+                            // 使用configManager检查配置
+                            const hasImageConfig = window.configManager.hasImageServiceConfig();
+                            const hasGitHubConfig = window.configManager.hasGitHubConfig();
 
                             if (!hasImageConfig || !hasGitHubConfig) {
                                 this.showPWAConfigDialog();
@@ -2435,10 +2495,10 @@
                         repo: 'markdown-online-editor'
                     };
 
-                    // 保存配置
-                    localStorage.setItem('image-service-config', JSON.stringify(imageConfig));
-                    localStorage.setItem('github-config', JSON.stringify(githubConfig));
-                    localStorage.setItem('image-service-link-rule', 'jsdelivr');
+                    // 使用configManager保存配置
+                    window.configManager.setImageServiceConfig(imageConfig);
+                    window.configManager.setGitHubConfig(githubConfig);
+                    window.configManager.setLinkRule('jsdelivr');
 
                     // 应用配置
                     if (window.imageService) {
