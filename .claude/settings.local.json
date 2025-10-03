@@ -1,11 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "Bash(rm:*)",
-      "Bash(git add:*)",
-      "Bash(git commit -m \"$(cat <<''EOF''\n重构：删除测试页面，简化为单一暗夜模式\n\n- 删除所有测试和调试页面（test-*.html, debug-*.html, demo等）\n- 删除 README1.md 和 THEME_GUIDE.md\n- 移除完整的主题系统，只保留暗夜模式\n- 简化 CSS：删除 800+ 行主题相关代码\n- 简化 JavaScript：移除主题切换逻辑\n- 暗夜模式样式直接应用到元素，无需类名切换\n- 代码量减少约 884 行\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
-      "Bash(git push:*)",
-      "Bash(curl:*)"
+      "Bash(git commit:*)",
+      "Bash(cssLoaded=true)",
+      "Bash(git revert:*)",
+      "Bash(awk:*)"
     ],
     "deny": [],
     "ask": []
