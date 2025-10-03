@@ -36,7 +36,7 @@
             pointer-events: none;
             opacity: 0;
             visibility: hidden;
-            transition: opacity 0s linear;
+            transition: opacity 0.2s ease;
             z-index: 2147483647;
         }
 
@@ -1953,27 +1953,6 @@
                         }
                     };
 
-                    const dismissKeyboard = () => {
-                        try {
-                            const active = document.activeElement;
-                            if (active && typeof active.blur === 'function') {
-                                active.blur();
-                            }
-
-                            const editorElement = this.vditor?.vditor?.ir?.element;
-                            if (editorElement && typeof editorElement.blur === 'function') {
-                                editorElement.blur();
-                            }
-
-                            const editorContainer = document.querySelector('.editor-container');
-                            if (editorContainer) {
-                                editorContainer.classList.remove('keyboard-open');
-                            }
-                        } catch (error) {
-                            console.warn('dismissKeyboard failed', error);
-                        }
-                    };
-
                     const showOverlay = () => {
                         if (overlay) {
                             overlay.classList.add('active');
@@ -1996,7 +1975,6 @@
                     this.visibilityHandler = () => {
                         if (document.hidden) {
                             overlayArmed = true;
-                            dismissKeyboard();
                             showOverlay();
                             ensureDarkPalette();
                             return;
@@ -2021,7 +1999,6 @@
 
                     this.pageHideHandler = () => {
                         overlayArmed = true;
-                        dismissKeyboard();
                         showOverlay();
                         ensureDarkPalette();
                     };
