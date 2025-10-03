@@ -78,10 +78,6 @@ const hasImageConfig = localStorage.getItem('image-service-config');
 const hasGitHubConfig = localStorage.getItem('github-config');
 ```
 
-### 防止 iOS 恢复时的白屏闪现
-
-iOS 会在应用进入后台时截取当前界面的截图，并在下次启动时短暂显示。如果截到的是亮色画面，就会造成“闪白屏”。我们在 `static-deploy/index.html` 中新增了 `#pwa-black-overlay` 覆盖层，并在 `setupVisibilityHandler` 中于 `visibilitychange/pagehide` 时激活它，让截图始终保持纯黑背景；页面重新可见后再延迟移除该覆盖层，避免用户察觉。
-
 ## 注意事项
 
 1. **Token安全**: 请妥善保管你的GitHub Personal Access Token
