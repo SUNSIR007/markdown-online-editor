@@ -395,21 +395,34 @@ class ImageService {
   generateFileName(originalName, addHash = true) {
     const now = new Date()
     const timestamp = now.getTime()
-    
+
     // 提取文件扩展名
     const lastDotIndex = originalName.lastIndexOf('.')
     const name = lastDotIndex > 0 ? originalName.substring(0, lastDotIndex) : originalName
-    const ext = lastDotIndex > 0 ? originalName.substring(lastDotIndex) : ''
-    
-    // 清理文件名，移除特殊字符
-    const cleanName = name.replace(/[^a-zA-Z0-9\u4e00-\u9fa5]/g, '-')
-    
+    const ext = lastDotIndex > 0 ? originalName.substring(lastDotIndex).toLowerCase() : '.jpg'
+
+    // 清理文件名，只保留字母和数字（移除中文和特殊字符，避免编码问题）
+    let cleanName = name.replace(/[^a-zA-Z0-9]/g, '-')
+
+    // 如果清理后文件名为空或只有连字符，使用默认名称
+    if (!cleanName || /^-+$/.test(cleanName)) {
+      cleanName = 'image'
+    }
+
+    // 移除多余的连字符
+    cleanName = cleanName.replace(/-+/g, '-').replace(/^-|-$/g, '')
+
+    // 限制文件名长度（避免过长）
+    if (cleanName.length > 50) {
+      cleanName = cleanName.substring(0, 50)
+    }
+
     if (addHash) {
       // 生成简单的哈希值
       const hash = timestamp.toString(36) + Math.random().toString(36).substr(2, 5)
       return `${cleanName}-${hash}${ext}`
     }
-    
+
     return `${cleanName}-${timestamp}${ext}`
   }
 
@@ -435,10 +448,9 @@ class ImageService {
    * @param {string} filePath - 原始文件路径
    */
   encodeFilePath(filePath) {
+    // 不对路径进行编码，因为我们已经确保文件名只包含安全字符
+    // GitHub API接受未编码的路径，只要路径中的字符是安全的
     return filePath
-      .split('/')
-      .map((segment) => encodeURIComponent(segment))
-      .join('/')
   }
 
   /**
@@ -749,6 +761,15 @@ class ImageService {
           branch: targetBranch
         }
 
+        console.log('准备上传到GitHub:', {
+          endpoint: `/repos/${this.owner}/${this.repo}/contents/${encodedFilePath}`,
+          fileName,
+          filePath,
+          encodedFilePath,
+          branch: targetBranch,
+          contentLength: base64Content.length
+        })
+
         return this.request(`/repos/${this.owner}/${this.repo}/contents/${encodedFilePath}`, {
           method: 'PUT',
           body: JSON.stringify(uploadData)
@@ -816,6 +837,10 @@ class ImageService {
         errorMessage = 'GitHub Token无效或已过期，请重新配置'
       } else if (error.message.includes('403')) {
         errorMessage = '权限不足，请确保Token有repo权限'
+      } else if (error.message.includes('index is not in the allowed range')) {
+        errorMessage = '文件路径格式错误。请尝试使用纯英文文件名，或联系管理员检查仓库配置'
+      } else if (error.message.includes('422')) {
+        errorMessage = '请求参数错误，可能是文件已存在、路径无效或文件过大'
       }
 
       throw new Error(`图片上传失败: ${errorMessage}`)
