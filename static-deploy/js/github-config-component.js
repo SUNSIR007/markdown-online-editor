@@ -242,14 +242,6 @@ Vue.component('github-config', {
                                 placeholder="Enter your GitHub Personal Access Token"
                                 show-password>
                             </el-input>
-                            <div class="token-instructions">
-                                <strong>How to get a token:</strong><br>
-                                1. GitHub → Settings → Developer settings<br>
-                                2. Personal access tokens → Tokens (classic)<br>
-                                3. Generate new token (classic)<br>
-                                4. Check the <strong>repo</strong> scope → Generate token<br>
-                                5. Copy the token and paste it here.
-                            </div>
                         </el-form-item>
 
                         <el-form-item label="Repository Owner">
