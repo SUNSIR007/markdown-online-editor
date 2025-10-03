@@ -9,8 +9,12 @@
     <!-- 移动设备状态栏样式 -->
     <meta name="theme-color" content="#000000">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="BlogWriter">
     <meta name="msapplication-navbutton-color" content="#000000">
+
+    <!-- iOS Splash Screen - 防止白屏 -->
+    <link rel="apple-touch-startup-image" href="./img/icons/apple-touch-icon.png">
 
     <link rel="icon" type="image/png" href="./img/icons/write.png">
     <link rel="apple-touch-icon" sizes="180x180" href="./img/icons/apple-touch-icon.png">
@@ -18,20 +22,63 @@
 
     <style>
         /* 关键样式 - 防止白屏闪烁，必须放在最前面 */
+        /* 使用极高优先级和多层覆盖，确保在任何情况下都生效 */
         html {
             background-color: #000000 !important;
+            background: #000000 !important;
+        }
+
+        html::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #000000 !important;
+            z-index: -1;
         }
 
         body {
             margin: 0;
             padding: 0;
             background-color: #000000 !important;
+            background: #000000 !important;
             color: #e0e0e0;
+            min-height: 100vh;
+            min-height: -webkit-fill-available;
+        }
+
+        /* 覆盖所有可能的白色背景 */
+        #app, .el-dialog__wrapper, .v-modal {
+            background-color: transparent !important;
         }
 
         /* 防止页面加载时的样式闪烁 */
         [v-cloak] {
             display: none !important;
+        }
+
+        /* 加载占位符 - 在Vue渲染前显示 */
+        #app::before {
+            content: '';
+            display: block;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #000000;
+            z-index: 9999;
+            pointer-events: none;
+            animation: fadeOut 0.3s ease 0.5s forwards;
+        }
+
+        @keyframes fadeOut {
+            to {
+                opacity: 0;
+                visibility: hidden;
+            }
         }
 
         /* 移动端初始样式 - 在 Vue 加载前就生效 */
