@@ -28,3 +28,5 @@
 ## Security & Configuration Tips
 - Never commit personal access tokens; rely on environment variables and redact secrets in captures.
 - Confirm required GitHub API scopes before sharing setup instructions, and document repository permissions whenever you ship feature changes that depend on them.
+
+- 每次修改完成后，自动帮我提交到远程仓库
