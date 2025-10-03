@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Test ConfigManager</title>
+</head>
+<body>
+    <h1>ConfigManager Test</h1>
+    <div id="output"></div>
+
+    <script src="config-manager.js"></script>
+    <script src="github-service.js"></script>
+    <script src="image-service.js"></script>
+    
+    <script>
+        const output = document.getElementById('output');
+        
+        function log(msg) {
+            output.innerHTML += msg + '<br>';
+            console.log(msg);
+        }
+        
+        log('1. ConfigManager加载: ' + (window.configManager ? '✓' : '✗'));
+        
+        if (window.configManager) {
+            const testConfig = {
+                token: 'test-token-123',
+                owner: 'test-owner',
+                repo: 'test-repo'
+            };
+            
+            window.configManager.setGitHubConfig(testConfig);
+            log('2. 设置GitHub配置: ✓');
+            
+            const saved = window.configManager.getGitHubConfig();
+            log('3. 读取配置: ' + (saved && saved.token === 'test-token-123' ? '✓' : '✗'));
+            log('4. hasGitHubConfig: ' + (window.configManager.hasGitHubConfig() ? '✓' : '✗'));
+        }
+        
+        log('5. GitHubService存在: ' + (window.githubService ? '✓' : '✗'));
+        if (window.githubService) {
+            window.githubService.loadConfig();
+            log('6. GitHubService配置加载: ' + (window.githubService.isConfigured() ? '✓' : '✗'));
+        }
+        
+        log('测试完成！');
+    </script>
+</body>
+</html>
