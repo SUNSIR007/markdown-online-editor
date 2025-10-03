@@ -27,6 +27,20 @@
             --vh: 1vh;
         }
 
+        #preload-overlay {
+            position: fixed;
+            inset: 0;
+            background: #000000;
+            z-index: 2000;
+            pointer-events: none;
+            opacity: 1;
+        }
+
+        #preload-overlay.fade-out {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
         html {
             background: #000000;
         }
@@ -1081,32 +1095,13 @@
         }
 
         /* 快速配置按钮样式 */
-        .quick-config-button {
-            background: linear-gradient(45deg, #FF6B6B, #4ECDC4) !important;
-            border: none !important;
-            animation: quickConfigPulse 2s infinite;
-        }
-
-        .quick-config-button:hover {
-            background: linear-gradient(45deg, #FF5252, #26C6DA) !important;
-            transform: scale(1.05);
-        }
-
-        @keyframes quickConfigPulse {
-            0%, 100% {
-                box-shadow: 0 0 5px rgba(255, 107, 107, 0.5);
-            }
-            50% {
-                box-shadow: 0 0 15px rgba(78, 205, 196, 0.7);
-            }
-        }
-
 
 
 
     </style>
 </head>
 <body class="theme-dark" style="background:#000000;color:#e0e0e0;">
+    <div id="preload-overlay"></div>
     <div id="app">
         <div class="header">
             <div class="content-type-selector">
@@ -1141,9 +1136,6 @@
                         multiple
                         style="display: none;"
                         @change="handleMobileImageChange">
-                    <button v-if="isPWAMode && !isImageServiceConfigured" class="github-config-button quick-config-button" @click="showQuickConfig" title="PWA快速配置">
-                        <i class="el-icon-magic-stick"></i>
-                    </button>
                     <el-button
                         @click="publish"
                         size="medium"
@@ -1690,6 +1682,18 @@
                 this.checkForEditFile();
                 this.detectPWAMode();
                 this.checkPWAConfigMissing();
+
+                this.$nextTick(() => {
+                    const overlay = document.getElementById('preload-overlay');
+                    if (overlay) {
+                        overlay.classList.add('fade-out');
+                        setTimeout(() => {
+                            if (overlay.parentNode) {
+                                overlay.parentNode.removeChild(overlay);
+                            }
+                        }, 350);
+                    }
+                });
             },
 
             methods: {
@@ -2375,59 +2379,6 @@
                             duration: 5000
                         });
                     });
-                },
-
-                // 快速配置功能（用于PWA模式）
-                showQuickConfig() {
-                    this.$prompt('请输入GitHub Token:', '快速配置', {
-                        confirmButtonText: '确定',
-                        cancelButtonText: '取消',
-                        inputType: 'password',
-                        inputPlaceholder: '请输入您的GitHub Personal Access Token'
-                    }).then(({ value }) => {
-                        if (value) {
-                            this.applyQuickConfig(value);
-                        }
-                    }).catch(() => {
-                        this.$message.info('已取消配置');
-                    });
-                },
-
-                applyQuickConfig(token) {
-                    // 使用预设的配置信息
-                    const imageConfig = {
-                        token: token,
-                        owner: 'SUNSIR007',
-                        repo: 'picx-images-hosting',
-                        branch: 'master',
-                        imageDir: 'images'
-                    };
-
-                    const githubConfig = {
-                        token: token,
-                        owner: 'SUNSIR007',
-                        repo: 'markdown-online-editor'
-                    };
-
-                    // 保存配置
-                    localStorage.setItem('image-service-config', JSON.stringify(imageConfig));
-                    localStorage.setItem('github-config', JSON.stringify(githubConfig));
-                    localStorage.setItem('image-service-link-rule', 'jsdelivr');
-
-                    // 应用配置
-                    if (window.imageService) {
-                        window.imageService.setConfig(imageConfig);
-                        window.imageService.setLinkRule('jsdelivr');
-                    }
-                    if (window.githubService) {
-                        window.githubService.setConfig(githubConfig);
-                    }
-
-                    // 更新状态
-                    this.checkGitHubConfig();
-                    this.checkImageServiceConfig();
-
-                    this.$message.success('快速配置完成！');
                 },
 
                 // 处理图片上传
