@@ -508,12 +508,65 @@ class ImageService {
   }
 
   /**
+   * 压缩图片
+   * @param {File} file - 图片文件
+   * @param {number} quality - 压缩质量 (0-1)
+   * @param {number} maxWidth - 最大宽度
+   */
+  compressImage(file, quality = 0.8, maxWidth = 1920) {
+    return new Promise((resolve) => {
+      const canvas = document.createElement('canvas')
+      const ctx = canvas.getContext('2d')
+      const img = new Image()
+      const objectUrl = URL.createObjectURL(file)
+
+      img.onload = () => {
+        try {
+          let { width, height } = img
+          if (width > maxWidth) {
+            height = (height * maxWidth) / width
+            width = maxWidth
+          }
+
+          canvas.width = width
+          canvas.height = height
+          ctx.drawImage(img, 0, 0, width, height)
+
+          const normalizedType = file.type === 'image/jpg' ? 'image/jpeg' : file.type
+          const qualityCapable = ['image/jpeg', 'image/webp'].includes(normalizedType)
+
+          canvas.toBlob(
+            (blob) => {
+              resolve(blob || file)
+            },
+            normalizedType,
+            qualityCapable ? quality : undefined
+          )
+        } catch (error) {
+          console.warn('图片压缩失败，使用原始文件:', error)
+          resolve(file)
+        } finally {
+          URL.revokeObjectURL(objectUrl)
+        }
+      }
+
+      img.onerror = (event) => {
+        console.warn('图片加载失败，使用原始文件:', event)
+        URL.revokeObjectURL(objectUrl)
+        resolve(file)
+      }
+
+      img.src = objectUrl
+    })
+  }
+
+  /**
    * 智能压缩图片到指定大小以内
    * @param {File} file - 图片文件
    * @param {number} targetSize - 目标大小（字节）
    * @param {Function} onProgress - 进度回调
    */
-  async compressToSize(file, targetSize = 10 * 1024 * 1024, onProgress = () => {}, preferredQuality = 0.9) {
+  async compressToSize(file, targetSize = 10 * 1024 * 1024, onProgress = () => {}) {
     // 如果文件已经小于目标大小，直接返回
     if (file.size <= targetSize) {
       return file
@@ -560,10 +613,7 @@ class ImageService {
           canvas.height = height
           ctx.drawImage(img, 0, 0, width, height)
 
-          const normalizedPreferred = Number.isFinite(preferredQuality)
-            ? Math.min(0.95, Math.max(preferredQuality, 0.1))
-            : 0.9
-          let quality = normalizedPreferred // 从指定质量开始
+          let quality = 0.9 // 从高质量开始
           let currentBlob = null
           let attempts = 0
           const maxAttempts = 8
@@ -699,10 +749,6 @@ class ImageService {
       onProgress = () => {}
     } = options
 
-    const preferredQuality = Number.isFinite(quality)
-      ? Math.min(0.95, Math.max(quality, 0.1))
-      : 0.8
-
     try {
       onProgress({ stage: 'preparing', progress: 10 })
 
@@ -710,14 +756,12 @@ class ImageService {
       let processedFile = file
       const targetSize = 10 * 1024 * 1024 // 10MB
 
-      const shouldCompress = compress && file.size > targetSize
-
-      if (shouldCompress) {
-        // 超过10MB且允许压缩，使用智能压缩到目标大小以内
+      if (file.size > targetSize) {
+        // 超过10MB，使用智能压缩到10MB以内
         onProgress({ stage: 'compressing', progress: 20 })
-        processedFile = await this.compressToSize(file, targetSize, onProgress, preferredQuality)
+        processedFile = await this.compressToSize(file, targetSize, onProgress)
       }
-      // 10MB以下的图片或显式关闭压缩时保持原始文件
+      // 10MB以下的图片完全无损上传，不进行任何压缩
 
       // 生成文件名和路径
       const fileName = this.generateFileName(file.name, addHash)
