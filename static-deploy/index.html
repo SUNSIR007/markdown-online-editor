@@ -211,28 +211,48 @@
             :close-on-press-escape="false"
             :show-close="false"
             custom-class="upload-progress-dialog">
-            <div class="upload-progress-card">
-                <div class="upload-progress-header">
-                    <div class="upload-progress-badge">
-                        <span class="upload-progress-pulse"></span>
+            <div :class="['upload-progress-card', 'is-' + (uploadProgress.status || 'idle')]">
+                <template v-if="uploadProgress.status === 'progress'">
+                    <div class="upload-progress-header">
+                        <div class="upload-progress-badge">
+                            <span class="upload-progress-pulse"></span>
+                        </div>
+                        <div class="upload-progress-meta">
+                            <span class="upload-progress-label">图片上传中</span>
+                            <span class="upload-progress-count">第 {{ uploadProgress.current }} / {{ uploadProgress.total }} 张</span>
+                        </div>
+                        <div class="upload-progress-percentage">{{ Math.round(uploadProgress.progress || 0) }}%</div>
                     </div>
-                    <div class="upload-progress-meta">
-                        <span class="upload-progress-label">图片上传中</span>
-                        <span class="upload-progress-count">第 {{ uploadProgress.current }} / {{ uploadProgress.total }} 张</span>
+                    <div class="upload-progress-body">
+                        <p class="upload-progress-filename" v-if="uploadProgress.fileName">{{ uploadProgress.fileName }}</p>
+                        <p class="upload-progress-stage">{{ getStageText(uploadProgress.stage) }}</p>
+                        <div class="upload-progress-stats" v-if="uploadProgress.stage === 'compressing' && uploadProgress.currentSize > 0">
+                            <span>质量 {{ Math.round(uploadProgress.quality * 100) }}%</span>
+                            <span>{{ formatFileSize(uploadProgress.currentSize) }} → {{ formatFileSize(uploadProgress.targetSize) }}</span>
+                        </div>
                     </div>
-                    <div class="upload-progress-percentage">{{ Math.round(uploadProgress.progress || 0) }}%</div>
-                </div>
-                <div class="upload-progress-body">
-                    <p class="upload-progress-filename" v-if="uploadProgress.fileName">{{ uploadProgress.fileName }}</p>
-                    <p class="upload-progress-stage">{{ getStageText(uploadProgress.stage) }}</p>
-                    <div class="upload-progress-stats" v-if="uploadProgress.stage === 'compressing' && uploadProgress.currentSize > 0">
-                        <span>质量 {{ Math.round(uploadProgress.quality * 100) }}%</span>
-                        <span>{{ formatFileSize(uploadProgress.currentSize) }} → {{ formatFileSize(uploadProgress.targetSize) }}</span>
+                    <div class="upload-progress-meter">
+                        <span class="upload-progress-meter__fill" :style="{ width: (uploadProgress.progress || 0) + '%' }"></span>
                     </div>
-                </div>
-                <div class="upload-progress-meter">
-                    <span class="upload-progress-meter__fill" :style="{ width: (uploadProgress.progress || 0) + '%' }"></span>
-                </div>
+                </template>
+                <template v-else>
+                    <div class="upload-progress-result">
+                        <div :class="['upload-progress-status-icon', 'is-' + uploadProgress.status]">
+                            <svg v-if="uploadProgress.status === 'success'" viewBox="0 0 52 52" class="upload-progress-icon"><circle cx="26" cy="26" r="25" fill="none"></circle><path d="M16 27l7 7 14-16" fill="none"></path></svg>
+                            <svg v-else viewBox="0 0 52 52" class="upload-progress-icon"><circle cx="26" cy="26" r="25" fill="none"></circle><path d="M18 18 34 34 M34 18 18 34" fill="none"></path></svg>
+                        </div>
+                        <div class="upload-progress-result-text">
+                            <p class="upload-progress-result-title">{{ uploadProgress.status === 'success' ? '上传成功' : '上传失败' }}</p>
+                            <p class="upload-progress-result-summary" v-if="uploadProgress.summary">{{ uploadProgress.summary }}</p>
+                            <ul class="upload-progress-messages" v-if="uploadProgress.messages && uploadProgress.messages.length">
+                                <li v-for="(item, index) in uploadProgress.messages" :key="index" :class="['is-' + (item.type || uploadProgress.status)]">{{ item.text }}</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="upload-progress-actions">
+                        <el-button size="small" @click="closeUploadProgress">我知道了</el-button>
+                    </div>
+                </template>
             </div>
         </el-dialog>
 

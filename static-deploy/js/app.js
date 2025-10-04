@@ -22,6 +22,7 @@ new Vue({
             uploadingImages: false,
             uploadProgress: {
                 visible: false,
+                status: 'idle',
                 current: 0,
                 total: 0,
                 fileName: '',
@@ -29,8 +30,11 @@ new Vue({
                 progress: 0,
                 currentSize: 0,
                 targetSize: 0,
-                quality: 0
+                quality: 0,
+                summary: '',
+                messages: []
             },
+            uploadProgressTimer: null,
             mobileErrorDialog: {
                 visible: false,
                 content: ''
@@ -501,6 +505,34 @@ new Vue({
                 size: 0,
                 file: null
             };
+        },
+
+        closeUploadProgress() {
+            if (this.uploadProgressTimer) {
+                clearTimeout(this.uploadProgressTimer);
+                this.uploadProgressTimer = null;
+            }
+            this.uploadProgress.visible = false;
+            this.uploadProgress.status = 'idle';
+            this.uploadProgress.current = 0;
+            this.uploadProgress.total = 0;
+            this.uploadProgress.fileName = '';
+            this.uploadProgress.stage = '';
+            this.uploadProgress.progress = 0;
+            this.uploadProgress.currentSize = 0;
+            this.uploadProgress.targetSize = 0;
+            this.uploadProgress.quality = 0;
+            this.uploadProgress.summary = '';
+            this.uploadProgress.messages = [];
+        },
+
+        scheduleUploadProgressClose(delay = 2400) {
+            if (this.uploadProgressTimer) {
+                clearTimeout(this.uploadProgressTimer);
+            }
+            this.uploadProgressTimer = setTimeout(() => {
+                this.closeUploadProgress();
+            }, delay);
         },
 
         getStageText(stage) {

@@ -9,8 +9,23 @@ window.handleImageUpload = async function(vm, files) {
 
     const fileArray = Array.from(files);
     vm.uploadingImages = true;
+
+    if (typeof vm.closeUploadProgress === 'function') {
+        vm.closeUploadProgress();
+    }
+
     vm.uploadProgress.visible = true;
+    vm.uploadProgress.status = 'progress';
     vm.uploadProgress.total = fileArray.length;
+    vm.uploadProgress.current = 0;
+    vm.uploadProgress.fileName = '';
+    vm.uploadProgress.stage = 'preparing';
+    vm.uploadProgress.progress = 0;
+    vm.uploadProgress.currentSize = 0;
+    vm.uploadProgress.targetSize = 0;
+    vm.uploadProgress.quality = 0;
+    vm.uploadProgress.summary = '';
+    vm.uploadProgress.messages = [];
 
     const vditorElement = document.getElementById('vditor');
     if (vditorElement) {
@@ -49,36 +64,60 @@ window.handleImageUpload = async function(vm, files) {
                 if (result.success) {
                     const imageMarkdown = `![${result.fileName}](${result.url})\n`;
                     vm.insertTextToEditor(imageMarkdown);
-                    vm.$message.success(`图片 ${result.fileName} 上传成功`);
-                } else {
-                    vm.$message.error(`图片 ${result.fileName} 上传失败: ${result.error}`);
-                    if (window.isMobileDevice()) {
-                        console.error('移动端上传失败详情:', result);
-                    }
+                } else if (window.isMobileDevice()) {
+                    console.error('移动端上传失败详情:', result);
                 }
+
+                vm.uploadProgress.messages.push({
+                    type: result.success ? 'success' : 'error',
+                    text: result.success
+                        ? `图片 ${result.fileName} 上传成功`
+                        : `图片 ${result.fileName} 上传失败${result.error ? `：${result.error}` : ''}`
+                });
             }
         });
 
         const successCount = results.filter(r => r.success).length;
         const failCount = results.length - successCount;
 
-        if (successCount > 0) {
-            vm.$message.success(`成功上传 ${successCount} 张图片${failCount > 0 ? `，${failCount} 张失败` : ''}`);
+        vm.uploadProgress.progress = 100;
+        vm.uploadProgress.stage = 'completed';
+
+        if (failCount === 0) {
+            vm.uploadProgress.status = 'success';
+            vm.uploadProgress.summary = `成功上传 ${successCount || 1} 张图片`;
+
+            if (typeof vm.scheduleUploadProgressClose === 'function') {
+                vm.scheduleUploadProgressClose();
+            }
+        } else {
+            vm.uploadProgress.status = 'error';
+            vm.uploadProgress.summary = failCount === results.length
+                ? '上传失败，未成功上传任何图片'
+                : `上传完成，但成功 ${successCount} 张，失败 ${failCount} 张`;
         }
 
         return Promise.resolve(results);
 
     } catch (error) {
         console.error('图片上传错误:', error);
+        vm.uploadProgress.status = 'error';
+        vm.uploadProgress.stage = 'error';
+        vm.uploadProgress.summary = '上传失败';
+        vm.uploadProgress.messages = [
+            {
+                type: 'error',
+                text: error && error.message ? `原因：${error.message}` : '发生未知错误'
+            }
+        ];
+        vm.uploadProgress.visible = true;
+
         if (window.isMobileDevice()) {
             vm.showMobileError(error, '图片上传');
-        } else {
-            vm.$message.error(`图片上传失败: ${error.message}`);
         }
         return Promise.reject(error);
     } finally {
         vm.uploadingImages = false;
-        vm.uploadProgress.visible = false;
     }
 };
 
