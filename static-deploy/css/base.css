@@ -2,6 +2,7 @@
 
 :root {
     --vh: 1vh;
+    --header-height: 120px;
 }
 
 body {
@@ -26,5 +27,13 @@ body {
     min-height: 0;
     display: flex;
     flex-direction: column;
+    padding-top: var(--header-height);
 }
 
+
+
+@media (max-width: 768px) {
+    :root {
+        --header-height: 92px;
+    }
+}

@@ -23,8 +23,15 @@ window.setupViewportFixes = function(vm) {
         vm.isMobileView = window.isMobileDevice();
     };
 
+    const updateHeaderHeight = () => {
+        const header = document.querySelector('.header');
+        if (!header) return;
+        document.documentElement.style.setProperty('--header-height', `${header.offsetHeight}px`);
+    };
+
     let lastViewportHeight = window.innerHeight;
     updateViewportUnit();
+    updateHeaderHeight();
 
     const handleResize = () => {
         const currentHeight = window.innerHeight;
@@ -37,6 +44,7 @@ window.setupViewportFixes = function(vm) {
 
         lastViewportHeight = currentHeight;
         updateViewportUnit();
+        updateHeaderHeight();
     };
 
     window.addEventListener('resize', handleResize);
@@ -44,6 +52,7 @@ window.setupViewportFixes = function(vm) {
         setTimeout(() => {
             lastViewportHeight = window.innerHeight;
             updateViewportUnit();
+            updateHeaderHeight();
         }, 300);
     });
 
@@ -58,6 +67,7 @@ window.setupViewportFixes = function(vm) {
 
     const toggleKeyboardState = (isOpen) => {
         editorContainer.classList.toggle('keyboard-open', isOpen);
+        updateHeaderHeight();
     };
 
     document.addEventListener('focusin', (event) => {
