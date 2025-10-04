@@ -95,6 +95,10 @@ window.handleImageUpload = async function(vm, files) {
             vm.uploadProgress.summary = failCount === results.length
                 ? '上传失败，未成功上传任何图片'
                 : `上传完成，但成功 ${successCount} 张，失败 ${failCount} 张`;
+
+            if (typeof vm.scheduleUploadProgressClose === 'function') {
+                vm.scheduleUploadProgressClose(3200);
+            }
         }
 
         return Promise.resolve(results);
@@ -111,6 +115,10 @@ window.handleImageUpload = async function(vm, files) {
             }
         ];
         vm.uploadProgress.visible = true;
+
+        if (typeof vm.scheduleUploadProgressClose === 'function') {
+            vm.scheduleUploadProgressClose(3600);
+        }
 
         if (window.isMobileDevice()) {
             vm.showMobileError(error, '图片上传');
