@@ -4,11 +4,9 @@
     .header {
         padding: 14px 20px 8px;
         background: #000000 !important;
-        position: fixed !important;
+        position: sticky !important;
         top: 0 !important;
-        left: 0 !important;
-        right: 0 !important;
-        z-index: 1000 !important;
+        z-index: 100 !important;
     }
 
     .content-type-selector {
@@ -29,7 +27,6 @@
         box-shadow: 0 6px 24px rgba(0,0,0,0.1), 0 2px 6px rgba(0,0,0,0.06);
         height: calc(var(--vh, 1vh) * 100 - 70px) !important;
         margin: 0 !important;
-        margin-top: 56px !important;
         border-radius: 0 !important;
         border: none !important;
         box-shadow: none !important;
@@ -189,11 +186,9 @@
 @media (max-width: 480px) {
     .header {
         padding: 12px 16px 6px;
-        position: fixed !important;
+        position: sticky !important;
         top: 0 !important;
-        left: 0 !important;
-        right: 0 !important;
-        z-index: 1000 !important;
+        z-index: 100 !important;
         background: #000000 !important;
     }
 
@@ -206,7 +201,6 @@
     .editor-container {
         height: calc(var(--vh, 1vh) * 100 - 60px) !important;
         margin: 0 !important;
-        margin-top: 50px !important;
         border-radius: 0 !important;
         border: none !important;
         box-shadow: none !important;
