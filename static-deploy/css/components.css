@@ -270,17 +270,15 @@
     -webkit-backdrop-filter: none !important;
 }
 
-.github-config-dialog .el-dialog,
-.github-config-dialog > .el-dialog,
-.el-dialog__wrapper .github-config-dialog .el-dialog {
+.github-config-dialog,
+.el-dialog__wrapper .github-config-dialog {
     background: linear-gradient(145deg, #1a1a1a 0%, #242424 100%) !important;
     border-radius: 16px !important;
-    /* 强制蓝色描边 */
-    border: 3px solid #002FA7 !important;
+    border: 3px solid #1a73ff !important;
     box-shadow:
         0 20px 50px rgba(0, 0, 0, 0.9),
-        0 0 0 1px rgba(0, 47, 167, 0.5),
-        0 0 30px rgba(0, 47, 167, 0.6) !important;
+        0 0 0 1px rgba(26, 115, 255, 0.5),
+        0 0 32px rgba(26, 115, 255, 0.45) !important;
     overflow: hidden;
     max-height: 85vh;
     max-width: 600px !important;
@@ -288,7 +286,7 @@
 
 /* 移动端极致紧凑 */
 @media (max-width: 768px) {
-    .github-config-dialog .el-dialog {
+    .github-config-dialog {
         max-width: 95vw !important;
         max-height: 90vh !important;
         margin: 5vh auto !important;
