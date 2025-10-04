@@ -259,7 +259,7 @@
     backdrop-filter: blur(10px);
 }
 
-/* Dialog Styles - 紧凑设计 */
+/* Dialog Styles - 现代化紧凑设计 */
 .el-dialog, .el-dialog__wrapper {
     background: transparent !important;
 }
@@ -272,16 +272,36 @@
 
 .github-config-dialog,
 .el-dialog__wrapper .github-config-dialog {
-    background: linear-gradient(145deg, #1a1a1a 0%, #242424 100%) !important;
-    border-radius: 16px !important;
-    border: 3px solid #002fa7 !important;
+    background: linear-gradient(145deg, #0f0f0f 0%, #1a1a1a 50%, #141414 100%) !important;
+    border-radius: 24px !important;
+    border: 2px solid transparent !important;
+    background-clip: padding-box !important;
     box-shadow:
-        0 20px 50px rgba(0, 0, 0, 0.9),
-        0 0 0 1px rgba(0, 47, 167, 0.55),
-        0 0 34px rgba(0, 47, 167, 0.5) !important;
+        0 32px 80px rgba(0, 0, 0, 0.9),
+        0 0 0 1px rgba(255, 255, 255, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        0 8px 32px rgba(0, 47, 167, 0.25) !important;
     overflow: hidden;
     max-height: 85vh;
     max-width: 600px !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'SF Pro Display', 'Roboto', system-ui, sans-serif !important;
+}
+
+/* 增加玻璃态效果边框 */
+.github-config-dialog::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    padding: 2px;
+    background: linear-gradient(135deg, rgba(0, 47, 167, 0.6) 0%, rgba(0, 102, 255, 0.4) 25%, rgba(255, 255, 255, 0.1) 50%, rgba(0, 47, 167, 0.4) 75%, rgba(0, 47, 167, 0.6) 100%);
+    border-radius: 24px;
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    pointer-events: none;
 }
 
 /* 移动端极致紧凑 */
@@ -363,34 +383,45 @@
     background: transparent !important;
     color: #ffffff !important;
     border-bottom: none !important;
-    padding: 20px 20px 12px !important;
+    padding: 24px 24px 16px !important;
+    position: relative;
 }
 
 .github-config-dialog .el-dialog__title {
-    font-size: 18px !important;
-    font-weight: 600 !important;
+    font-size: 20px !important;
+    font-weight: 700 !important;
     color: #ffffff !important;
-    letter-spacing: -0.3px;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', system-ui, sans-serif !important;
 }
 
 .github-config-dialog .el-dialog__headerbtn {
-    top: 20px !important;
-    right: 20px !important;
-    width: 32px !important;
-    height: 32px !important;
-    background: rgba(255, 255, 255, 0.05) !important;
-    border-radius: 8px !important;
-    transition: all 0.2s ease !important;
+    top: 24px !important;
+    right: 24px !important;
+    width: 36px !important;
+    height: 36px !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+    border-radius: 12px !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    backdrop-filter: blur(8px) !important;
 }
 
 .github-config-dialog .el-dialog__headerbtn:hover {
-    background: rgba(255, 255, 255, 0.1) !important;
-    transform: rotate(90deg);
+    background: rgba(255, 255, 255, 0.15) !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .github-config-dialog .el-dialog__close {
     color: #ffffff !important;
-    font-size: 16px !important;
+    font-size: 18px !important;
+    font-weight: 600 !important;
 }
 
 .github-config-dialog .el-dialog__body {
@@ -401,53 +432,74 @@
     max-height: calc(85vh - 140px);
 }
 
-/* 标签页紧凑设计 */
+/* 标签页现代化设计 */
 .github-config-dialog .el-tabs__header {
     background: transparent !important;
-    margin: 0 0 16px 0 !important;
-    padding: 0 20px !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+    margin: 0 0 20px 0 !important;
+    padding: 0 24px !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+    position: relative;
 }
 
 .github-config-dialog .el-tabs__nav {
     border: none !important;
     display: flex;
-    gap: 4px;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.04);
+    padding: 4px;
+    border-radius: 16px;
+    backdrop-filter: blur(8px);
 }
 
 .github-config-dialog .el-tabs__item {
     background: transparent !important;
     border: none !important;
-    color: rgba(255, 255, 255, 0.5) !important;
-    font-weight: 500 !important;
-    padding: 0 16px !important;
-    height: 36px !important;
-    line-height: 36px !important;
-    transition: all 0.2s ease !important;
-    border-radius: 8px 8px 0 0 !important;
-    font-size: 14px !important;
+    color: rgba(255, 255, 255, 0.6) !important;
+    font-weight: 600 !important;
+    padding: 0 20px !important;
+    height: 42px !important;
+    line-height: 42px !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    border-radius: 12px !important;
+    font-size: 15px !important;
+    letter-spacing: -0.2px;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', system-ui, sans-serif !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.github-config-dialog .el-tabs__item::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
 
 .github-config-dialog .el-tabs__item:hover {
-    color: rgba(255, 255, 255, 0.8) !important;
-    background: rgba(255, 255, 255, 0.03) !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+    background: rgba(255, 255, 255, 0.06) !important;
+    transform: translateY(-1px);
+}
+
+.github-config-dialog .el-tabs__item:hover::before {
+    opacity: 1;
 }
 
 .github-config-dialog .el-tabs__item.is-active {
     color: #ffffff !important;
-    background: transparent !important;
-    position: relative;
+    background: linear-gradient(135deg, rgba(0, 47, 167, 0.6) 0%, rgba(0, 102, 255, 0.4) 100%) !important;
+    box-shadow:
+        0 4px 16px rgba(0, 47, 167, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(0, 47, 167, 0.4) !important;
+    font-weight: 700 !important;
 }
 
-.github-config-dialog .el-tabs__item.is-active::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 16px;
-    right: 16px;
-    height: 2px;
-    background: linear-gradient(90deg, #002FA7 0%, #0066FF 100%);
-    border-radius: 2px 2px 0 0;
+.github-config-dialog .el-tabs__item.is-active::before {
+    opacity: 0;
 }
 
 .github-config-dialog .el-tabs__active-bar {
@@ -455,30 +507,32 @@
 }
 
 .github-config-dialog .el-tabs__content {
-    padding: 0 20px 20px !important;
+    padding: 0 24px 24px !important;
 }
 
-/* 表单紧凑设计 */
+/* 表单现代化设计 */
 .github-config-dialog .el-form {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 24px;
 }
 
 .github-config-dialog .el-form-item {
     margin-bottom: 0 !important;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 12px;
 }
 
 .github-config-dialog .el-form-item__label {
-    color: rgba(255, 255, 255, 0.9) !important;
-    font-weight: 500 !important;
-    font-size: 13px !important;
+    color: #f8fafc !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
     padding: 0 !important;
     line-height: 1.4 !important;
     text-align: left !important;
+    letter-spacing: -0.1px;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', system-ui, sans-serif !important;
 }
 
 .github-config-dialog .el-form-item__content {
@@ -487,45 +541,144 @@
 }
 
 .github-config-dialog .el-input__inner {
-    background: rgba(255, 255, 255, 0.04) !important;
-    border: 1.5px solid rgba(255, 255, 255, 0.12) !important;
+    background: rgba(255, 255, 255, 0.06) !important;
+    border: 2px solid rgba(255, 255, 255, 0.1) !important;
     color: #ffffff !important;
-    border-radius: 10px !important;
-    height: 40px !important;
-    line-height: 40px !important;
-    font-size: 14px !important;
-    padding: 0 14px !important;
-    transition: all 0.2s ease !important;
+    border-radius: 16px !important;
+    height: 48px !important;
+    line-height: 48px !important;
+    font-size: 15px !important;
+    padding: 0 18px !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', system-ui, sans-serif !important;
+    font-weight: 500 !important;
+    backdrop-filter: blur(8px) !important;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        0 1px 3px rgba(0, 0, 0, 0.1) !important;
 }
 
 .github-config-dialog .el-input__inner::placeholder {
-    color: rgba(255, 255, 255, 0.25) !important;
-    font-size: 13px !important;
+    color: rgba(255, 255, 255, 0.3) !important;
+    font-size: 14px !important;
+    font-weight: 400 !important;
 }
 
 .github-config-dialog .el-input__inner:hover {
-    border-color: rgba(0, 47, 167, 0.4) !important;
-    background: rgba(255, 255, 255, 0.06) !important;
+    border-color: rgba(0, 47, 167, 0.5) !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        0 4px 12px rgba(0, 47, 167, 0.15) !important;
+    transform: translateY(-1px);
 }
 
 .github-config-dialog .el-input__inner:focus {
-    border-color: #002FA7 !important;
-    background: rgba(255, 255, 255, 0.08) !important;
-    box-shadow: 0 0 0 3px rgba(0, 47, 167, 0.1) !important;
+    border-color: rgba(0, 47, 167, 0.8) !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.15),
+        0 0 0 4px rgba(0, 47, 167, 0.15),
+        0 8px 24px rgba(0, 47, 167, 0.2) !important;
+    transform: translateY(-2px);
 }
 
-/* 密码显示按钮 */
+/* 现代化密码显示按钮 */
 .github-config-dialog .el-input__suffix {
-    right: 12px !important;
+    right: 16px !important;
+    display: flex;
+    align-items: center;
 }
 
 .github-config-dialog .el-input__icon {
-    color: rgba(255, 255, 255, 0.4) !important;
-    transition: color 0.2s ease !important;
+    color: rgba(255, 255, 255, 0.5) !important;
+    transition: all 0.3s ease !important;
+    font-size: 18px !important;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(4px);
 }
 
 .github-config-dialog .el-input__icon:hover {
-    color: rgba(255, 255, 255, 0.7) !important;
+    color: rgba(255, 255, 255, 0.8) !important;
+    background: rgba(255, 255, 255, 0.08);
+    transform: scale(1.05);
+}
+
+/* 现代化按钮设计 */
+.github-config-dialog .el-button {
+    border-radius: 16px !important;
+    padding: 12px 24px !important;
+    font-weight: 700 !important;
+    font-size: 15px !important;
+    height: 48px !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    border: none !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', system-ui, sans-serif !important;
+    letter-spacing: -0.2px;
+    position: relative;
+    overflow: hidden;
+}
+
+.github-config-dialog .el-button::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.github-config-dialog .el-button:hover::before {
+    opacity: 1;
+}
+
+.github-config-dialog .el-button--default {
+    background: rgba(255, 255, 255, 0.08) !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+    border: 2px solid rgba(255, 255, 255, 0.1) !important;
+    backdrop-filter: blur(8px) !important;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        0 2px 8px rgba(0, 0, 0, 0.1) !important;
+}
+
+.github-config-dialog .el-button--default:hover {
+    background: rgba(255, 255, 255, 0.12) !important;
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+    transform: translateY(-2px);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.15),
+        0 8px 24px rgba(0, 0, 0, 0.15) !important;
+}
+
+.github-config-dialog .el-button--primary.save-button {
+    background: linear-gradient(135deg, #002FA7 0%, #0052CC 70%, #0066FF 100%) !important;
+    color: #ffffff !important;
+    border: 2px solid rgba(0, 47, 167, 0.4) !important;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.2),
+        0 8px 24px rgba(0, 47, 167, 0.4) !important;
+    backdrop-filter: blur(8px) !important;
+}
+
+.github-config-dialog .el-button--primary.save-button:hover {
+    background: linear-gradient(135deg, #0039C7 0%, #0066FF 70%, #007AFF 100%) !important;
+    border-color: rgba(0, 102, 255, 0.6) !important;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.25),
+        0 12px 32px rgba(0, 47, 167, 0.5) !important;
+    transform: translateY(-3px);
+}
+
+.github-config-dialog .el-button--primary.save-button:active {
+    transform: translateY(-1px);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.2),
+        0 4px 16px rgba(0, 47, 167, 0.4) !important;
 }
 
 /* 下拉选择框 */
@@ -562,16 +715,18 @@
     font-weight: 600;
 }
 
-/* 底部按钮区域 */
+/* 底部按钮区域现代化 */
 .github-config-dialog .el-dialog__footer {
-    background: transparent !important;
-    border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
-    padding: 24px 32px !important;
+    background: rgba(255, 255, 255, 0.02) !important;
+    border-top: 2px solid rgba(255, 255, 255, 0.06) !important;
+    padding: 28px 32px !important;
+    backdrop-filter: blur(12px) !important;
+    border-radius: 0 0 24px 24px !important;
 }
 
 .github-config-dialog .dialog-footer {
     display: flex;
-    gap: 12px;
+    gap: 16px;
     justify-content: flex-end;
 }
 
@@ -612,58 +767,69 @@
     transform: translateY(0);
 }
 
-/* 测试结果紧凑样式 */
+/* 现代化测试结果样式 */
 .github-config-dialog .test-result {
-    margin-top: 12px;
-    padding: 12px 14px;
-    border-radius: 10px;
-    font-weight: 500;
-    font-size: 13px;
+    margin-top: 16px;
+    padding: 16px 18px;
+    border-radius: 16px;
+    font-weight: 600;
+    font-size: 14px;
     line-height: 1.5;
     display: flex;
     align-items: flex-start;
-    gap: 10px;
+    gap: 12px;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', system-ui, sans-serif !important;
+    backdrop-filter: blur(8px);
+    border: 2px solid transparent;
+    position: relative;
+    overflow: hidden;
 }
 
 .github-config-dialog .test-result::before {
     content: '';
-    width: 20px;
-    height: 20px;
+    width: 24px;
+    height: 24px;
     flex-shrink: 0;
     background-size: contain;
-    margin-top: 2px;
+    margin-top: 1px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 14px;
 }
 
 .github-config-dialog .test-result.success {
-    background: rgba(34, 197, 94, 0.12);
-    color: #4ade80;
-    border: 1px solid rgba(34, 197, 94, 0.25);
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.15) 0%, rgba(34, 197, 94, 0.08) 100%);
+    color: #86efac;
+    border-color: rgba(34, 197, 94, 0.3);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        0 4px 16px rgba(34, 197, 94, 0.15);
 }
 
 .github-config-dialog .test-result.success::before {
     content: '✓';
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
-    font-weight: bold;
-    color: #4ade80;
+    color: #22c55e;
+    background: rgba(34, 197, 94, 0.2);
+    border: 2px solid rgba(34, 197, 94, 0.4);
 }
 
 .github-config-dialog .test-result.error {
-    background: rgba(239, 68, 68, 0.12);
-    color: #f87171;
-    border: 1px solid rgba(239, 68, 68, 0.25);
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(239, 68, 68, 0.08) 100%);
+    color: #fca5a5;
+    border-color: rgba(239, 68, 68, 0.3);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        0 4px 16px rgba(239, 68, 68, 0.15);
 }
 
 .github-config-dialog .test-result.error::before {
     content: '✕';
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
-    font-weight: bold;
-    color: #f87171;
+    color: #ef4444;
+    background: rgba(239, 68, 68, 0.2);
+    border: 2px solid rgba(239, 68, 68, 0.4);
 }
 
 /* 移动端适配 */
