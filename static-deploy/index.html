@@ -307,7 +307,7 @@
             };
         }
 
-        // 备用：100ms后强制加载（极速体验）
+        // 备用：200ms后强制加载（极速体验）
         setTimeout(() => {
             if (!appLoaded) {
                 appLoaded = true;
@@ -316,7 +316,7 @@
                 script.src = 'js/app.js';
                 document.head.appendChild(script);
             }
-        }, 100);
+        }, 200);
     </script>
 
     <script>
