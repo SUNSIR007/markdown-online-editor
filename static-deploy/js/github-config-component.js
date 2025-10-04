@@ -197,10 +197,10 @@ Vue.component('github-config', {
                 token: this.imageConfig.token,
                 owner: this.imageConfig.owner,
                 repo: this.imageConfig.repo,
-                branch: (this.imageConfig.branch || '').trim() || 'master',  // 使用用户配置的分支或默认 master
-                imageDir: (this.imageConfig.imageDir || '').trim() || 'images'  // 使用用户配置的目录或默认 images
+                branch: 'master',  // 固定使用 master
+                imageDir: 'images'  // 固定使用 images
             };
-            const matchedRule = this.selectedLinkRule || 'jsdelivr';  // 使用用户选择的CDN或默认 jsDelivr
+            const matchedRule = 'jsdelivr';  // 固定使用 jsDelivr CDN
 
             localStorage.setItem('github-config', JSON.stringify(this.githubConfig));
             localStorage.setItem('image-service-config', JSON.stringify(normalizedImageConfig));
@@ -293,32 +293,7 @@ Vue.component('github-config', {
                                 placeholder="存放图片的仓库名">
                             </el-input>
                         </el-form-item>
-
-                        <el-form-item label="Branch Name">
-                            <el-input
-                                v-model="imageConfig.branch"
-                                placeholder="分支名称 (默认: master)">
-                            </el-input>
-                        </el-form-item>
-
-                        <el-form-item label="Image Directory">
-                            <el-input
-                                v-model="imageConfig.imageDir"
-                                placeholder="图片目录 (默认: images)">
-                            </el-input>
-                        </el-form-item>
                     </el-form>
-
-                    <el-form-item label="CDN链接规则">
-                        <el-select v-model="selectedLinkRule" placeholder="选择CDN服务">
-                            <el-option
-                                v-for="(label, rule) in linkRules"
-                                :key="rule"
-                                :label="label"
-                                :value="rule">
-                            </el-option>
-                        </el-select>
-                    </el-form-item>
 
                     <div v-if="imageTestResult" :class="['test-result', imageTestResult.success ? 'success' : 'error']">
                         {{ imageTestResult.message }}
