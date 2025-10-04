@@ -2,9 +2,8 @@
 
 @media (max-width: 768px) {
     .header {
-        padding: calc(12px + env(safe-area-inset-top)) 16px 12px;
-        background: rgba(0, 0, 0, 0.95) !important;
-        min-height: var(--header-height);
+        padding: 14px 20px 8px;
+        background: #000000 !important;
     }
 
     .content-type-selector {

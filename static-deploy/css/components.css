@@ -2,22 +2,17 @@
 
 /* Header */
 .header {
-    background: rgba(0, 0, 0, 0.92) !important;
+    background: #000000 !important;
     border-bottom-color: #888;
     border-bottom: none;
-    padding: calc(16px + env(safe-area-inset-top)) 28px 16px;
-    min-height: var(--header-height);
+    padding: 20px 28px;
     box-shadow: 0 6px 30px rgba(0,0,0,0.15);
     color: white;
-    position: fixed;
+    position: sticky;
     top: 0;
-    left: 0;
-    right: 0;
-    width: 100%;
-    z-index: 1100;
-    backdrop-filter: blur(14px);
+    z-index: 1000;
+    backdrop-filter: blur(10px);
     border-bottom: 1px solid rgba(255,255,255,0.1);
-    box-sizing: border-box;
 }
 
 /* Content Type Selector */
@@ -30,7 +25,6 @@
     gap: 20px;
     max-width: 1200px;
     margin: 0 auto;
-    height: 100%;
 }
 
 .type-buttons {
