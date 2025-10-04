@@ -68,6 +68,15 @@ window.setupViewportFixes = function(vm) {
     const toggleKeyboardState = (isOpen) => {
         editorContainer.classList.toggle('keyboard-open', isOpen);
         updateHeaderHeight();
+        if (isOpen) {
+            requestAnimationFrame(() => {
+                if (typeof window.scrollTo === 'function') {
+                    window.scrollTo({ top: 0, behavior: 'auto' });
+                } else {
+                    window.scrollTo(0, 0);
+                }
+            });
+        }
     };
 
     document.addEventListener('focusin', (event) => {
