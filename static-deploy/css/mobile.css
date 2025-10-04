@@ -272,25 +272,56 @@
 
 @media (max-width: 600px) {
     .github-config-dialog .el-dialog__body {
-        padding: 20px 18px !important;
+        padding: 20px 16px !important;
     }
 
-    .github-config-dialog .el-form-item__label {
+    .github-config-dialog .config-pane {
+        padding: 18px 14px !important;
+        border-radius: 14px !important;
+        gap: 16px !important;
+    }
+
+    .github-config-dialog .config-pane__intro {
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 12px !important;
+        padding: 12px 14px !important;
+    }
+
+    .github-config-dialog .config-pane__intro i {
+        width: 36px;
+        height: 36px;
+        font-size: 18px;
+        border-radius: 10px;
+    }
+
+    .github-config-dialog .config-pane__intro span {
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+    .github-config-dialog .config-form {
+        gap: 12px !important;
+    }
+
+    .github-config-dialog .config-field {
+        padding: 14px !important;
+        border-radius: 12px !important;
+    }
+
+    .github-config-dialog .config-field .el-form-item__label {
         white-space: normal;
         line-height: 1.4;
-        padding-bottom: 4px;
+        padding-bottom: 2px;
+        letter-spacing: 0.04em;
     }
 
     .github-config-dialog .token-instructions {
         font-size: 11px;
-        line-height: 1.4;
-    }
-
-    .github-config-dialog .el-form-item {
-        margin-bottom: 16px;
+        line-height: 1.5;
     }
 
     .github-config-dialog .el-dialog__footer {
-        padding: 15px 18px !important;
+        padding: 14px 16px !important;
     }
 }
