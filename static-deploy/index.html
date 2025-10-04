@@ -204,21 +204,35 @@
 
         <!-- 上传进度提示 -->
         <el-dialog
-            title="图片上传中"
+            title=""
             :visible.sync="uploadProgress.visible"
-            width="400px"
+            width="420px"
             :close-on-click-modal="false"
             :close-on-press-escape="false"
-            :show-close="false">
-            <div style="text-align: center;">
-                <p>正在上传第 {{ uploadProgress.current }} / {{ uploadProgress.total }} 张图片</p>
-                <p>{{ uploadProgress.fileName }}</p>
-                <p>{{ getStageText(uploadProgress.stage) }}</p>
-                <div v-if="uploadProgress.stage === 'compressing' && uploadProgress.currentSize > 0" style="font-size: 12px; color: #666; margin: 5px 0;">
-                    <p>压缩质量: {{ Math.round(uploadProgress.quality * 100) }}%</p>
-                    <p>当前大小: {{ formatFileSize(uploadProgress.currentSize) }} / 目标: {{ formatFileSize(uploadProgress.targetSize) }}</p>
+            :show-close="false"
+            custom-class="upload-progress-dialog">
+            <div class="upload-progress-card">
+                <div class="upload-progress-header">
+                    <div class="upload-progress-badge">
+                        <span class="upload-progress-pulse"></span>
+                    </div>
+                    <div class="upload-progress-meta">
+                        <span class="upload-progress-label">图片上传中</span>
+                        <span class="upload-progress-count">第 {{ uploadProgress.current }} / {{ uploadProgress.total }} 张</span>
+                    </div>
+                    <div class="upload-progress-percentage">{{ Math.round(uploadProgress.progress || 0) }}%</div>
                 </div>
-                <el-progress :percentage="uploadProgress.progress" :show-text="false"></el-progress>
+                <div class="upload-progress-body">
+                    <p class="upload-progress-filename" v-if="uploadProgress.fileName">{{ uploadProgress.fileName }}</p>
+                    <p class="upload-progress-stage">{{ getStageText(uploadProgress.stage) }}</p>
+                    <div class="upload-progress-stats" v-if="uploadProgress.stage === 'compressing' && uploadProgress.currentSize > 0">
+                        <span>质量 {{ Math.round(uploadProgress.quality * 100) }}%</span>
+                        <span>{{ formatFileSize(uploadProgress.currentSize) }} → {{ formatFileSize(uploadProgress.targetSize) }}</span>
+                    </div>
+                </div>
+                <div class="upload-progress-meter">
+                    <span class="upload-progress-meter__fill" :style="{ width: (uploadProgress.progress || 0) + '%' }"></span>
+                </div>
             </div>
         </el-dialog>
 
