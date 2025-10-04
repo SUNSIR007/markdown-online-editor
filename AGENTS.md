@@ -1,32 +1,19 @@
 # Repository Guidelines
 
 ## Project Structure & Module Organization
-- `static-deploy/` hosts the live editor: `index.html` bootstraps UI logic, `github-service.js` wraps GitHub REST calls, `image-service.js` manages uploads, and `img/` stores shared icons.
-- Root documentation (`README.md`, `DEPLOY.md`, `static-deploy/*GUIDE.md`) records workflows; mirror any behavior change in the matching guide before merging.
-- Treat every HTML, CSS, and JS file as production code—no build pipeline exists—so prune unused assets and keep imports relative.
+The live editor ships directly from `static-deploy/`, where `index.html` wires UI events, `github-service.js` wraps GitHub REST interactions, `image-service.js` handles upload flows, and the `img/` directory stores shared icons. Root documentation (`README.md`, `DEPLOY.md`, and `static-deploy/*GUIDE.md`) captures workflows; whenever you change behavior, mirror the updates in the matching guide. Remove unused HTML, CSS, JS, or assets because we have no bundler or dead-code pruning, and keep all imports relative to avoid broken references in the static host.
 
 ## Build, Test, and Development Commands
-- `npm start` / `npm run serve`: launch `python -m http.server 8080` from `static-deploy/` for a full local preview.
-- `python -m http.server 8080`: lightweight fallback when Node.js is unavailable.
-- `npm run build`: placeholder; only modify alongside a real automation pipeline.
+Run `npm start` or `npm run serve` from the repository root to spawn `python -m http.server 8080` under `static-deploy/` for a full preview. If Node.js is unavailable, start `python -m http.server 8080` manually inside `static-deploy/`. `npm run build` is a placeholder; touch it only when you introduce a real automation pipeline and document the change in `DEPLOY.md`.
 
 ## Coding Style & Naming Conventions
-- JavaScript: two-space indentation, no semicolons, prefer `const`/`let`, arrow callbacks, and early returns (see `static-deploy/github-service.js`).
-- HTML/CSS: kebab-case classes, reuse palette tokens from `static-deploy/test-mobile.html`, align inline buttons horizontally.
-- Name demos `test-*.html` and guides `*GUIDE.md`; align filenames with feature scope for discoverability.
+Use two-space indentation in JavaScript, omit semicolons, prefer `const`/`let`, lean on arrow functions, and return early for guard clauses—`static-deploy/github-service.js` is the reference. Keep HTML and CSS class names in kebab-case, reuse palette tokens defined in `static-deploy/test-mobile.html`, and align inline buttons horizontally. Name demos `test-*.html` and guides `*GUIDE.md` so features remain discoverable.
 
 ## Testing Guidelines
-- No automated suite; run manual smoke checks via `static-deploy/test-image-upload.html`, `test-mobile.html`, and `test-pwa-config.html` before raising a PR.
-- Validate GitHub publishing, image upload flows, theme toggles, and offline prompts; note edge cases you probe.
-- Append any new manual steps or prerequisites to the relevant guide so the team can replay them.
+There is no automated suite. Before opening a pull request, manually exercise `static-deploy/test-image-upload.html`, `test-mobile.html`, and `test-pwa-config.html`. Validate GitHub publishing, image upload edge cases, theme toggles, and offline prompts; record noteworthy scenarios in the relevant guide to preserve historical knowledge.
 
 ## Commit & Pull Request Guidelines
-- Write concise commit subjects, optionally bilingual, and include scope tags when useful (e.g., `优化移动端体验 v11`).
-- Rebase on `main`, group related changes, link issues, and describe user-visible impact in the PR body with screenshots or short clips when possible.
-- Attach manual test evidence (URLs, screenshots), mention required GitHub tokens, and flag reviewer prerequisites (permissions, feature flags).
+Keep commit subjects concise—bilingual titles with optional scope tags such as `优化移动端体验 v11` are welcome. Rebase onto `main`, group related changes, and ensure the PR description links issues, explains user-visible impact, and shares screenshots or short clips. Attach manual test results, list required GitHub token scopes, and flag any reviewer prerequisites such as repository permissions.
 
 ## Security & Configuration Tips
-- Never commit personal access tokens; rely on environment variables and redact secrets in captures.
-- Confirm required GitHub API scopes before sharing setup instructions, and document repository permissions whenever you ship feature changes that depend on them.
-
-- 每次修改完成后，自动帮我提交到远程仓库
+Never commit personal access tokens. Prefer environment variables for secrets, redact them in captures, and confirm GitHub API scopes before instructing others. When a feature depends on specific repository roles, document the required permissions alongside the change so downstream teams can reproduce the setup.
