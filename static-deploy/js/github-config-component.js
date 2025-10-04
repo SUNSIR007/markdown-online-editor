@@ -233,43 +233,33 @@ Vue.component('github-config', {
             custom-class="github-config-dialog">
             <el-tabs v-model="activeTab" type="card">
                 <el-tab-pane label="GitHub 仓库" name="github">
-                    <div class="config-pane">
-                        <div class="config-pane__intro">
-                            <i class="el-icon-link"></i>
-                            <div>
-                                <strong>连接到你的 GitHub 仓库</strong>
-                                <span>保存后即可直接推送内容草稿并检测权限</span>
-                            </div>
-                        </div>
-                        <el-form
-                            class="config-form"
-                            :model="githubConfig"
-                            :label-width="isMobile ? 'auto' : '140px'"
-                            :label-position="isMobile ? 'top' : 'left'">
-                            <el-form-item class="config-field token-field" label="Personal Token">
-                                <el-input
-                                    v-model="githubConfig.token"
-                                    type="password"
-                                    placeholder="Enter your GitHub Personal Access Token"
-                                    show-password>
-                                </el-input>
-                            </el-form-item>
+                    <el-form
+                        :model="githubConfig"
+                        :label-width="isMobile ? 'auto' : '140px'"
+                        :label-position="isMobile ? 'top' : 'left'">
+                        <el-form-item label="Personal Token">
+                            <el-input
+                                v-model="githubConfig.token"
+                                type="password"
+                                placeholder="Enter your GitHub Personal Access Token"
+                                show-password>
+                            </el-input>
+                        </el-form-item>
 
-                            <el-form-item class="config-field owner-field" label="Repository Owner">
-                                <el-input
-                                    v-model="githubConfig.owner"
-                                    placeholder="Your GitHub username or organization">
-                                </el-input>
-                            </el-form-item>
+                        <el-form-item label="Repository Owner">
+                            <el-input
+                                v-model="githubConfig.owner"
+                                placeholder="Your GitHub username or organization">
+                            </el-input>
+                        </el-form-item>
 
-                            <el-form-item class="config-field repo-field" label="Repository Name">
-                                <el-input
-                                    v-model="githubConfig.repo"
-                                    placeholder="The name of the repository">
-                                </el-input>
-                            </el-form-item>
-                        </el-form>
-                    </div>
+                        <el-form-item label="Repository Name">
+                            <el-input
+                                v-model="githubConfig.repo"
+                                placeholder="The name of the repository">
+                            </el-input>
+                        </el-form-item>
+                    </el-form>
 
                     <div v-if="githubTestResult" :class="['test-result', githubTestResult.success ? 'success' : 'error']">
                         {{ githubTestResult.message }}
@@ -277,43 +267,33 @@ Vue.component('github-config', {
                 </el-tab-pane>
 
                 <el-tab-pane label="图床设置" name="image">
-                    <div class="config-pane">
-                        <div class="config-pane__intro">
-                            <i class="el-icon-picture-outline"></i>
-                            <div>
-                                <strong>配置图床上传</strong>
-                                <span>使用独立仓库管理图片资源并生成 CDN 链接</span>
-                            </div>
-                        </div>
-                        <el-form
-                            class="config-form"
-                            :model="imageConfig"
-                            :label-width="isMobile ? 'auto' : '140px'"
-                            :label-position="isMobile ? 'top' : 'left'">
-                            <el-form-item class="config-field token-field" label="Personal Token">
-                                <el-input
-                                    v-model="imageConfig.token"
-                                    type="password"
-                                    placeholder="请输入用于图床的 GitHub Token"
-                                    show-password>
-                                </el-input>
-                            </el-form-item>
+                    <el-form
+                        :model="imageConfig"
+                        :label-width="isMobile ? 'auto' : '140px'"
+                        :label-position="isMobile ? 'top' : 'left'">
+                        <el-form-item label="Personal Token">
+                            <el-input
+                                v-model="imageConfig.token"
+                                type="password"
+                                placeholder="请输入用于图床的 GitHub Token"
+                                show-password>
+                            </el-input>
+                        </el-form-item>
 
-                            <el-form-item class="config-field owner-field" label="Repository Owner">
-                                <el-input
-                                    v-model="imageConfig.owner"
-                                    placeholder="GitHub 用户名或组织名">
-                                </el-input>
-                            </el-form-item>
+                        <el-form-item label="Repository Owner">
+                            <el-input
+                                v-model="imageConfig.owner"
+                                placeholder="GitHub 用户名或组织名">
+                            </el-input>
+                        </el-form-item>
 
-                            <el-form-item class="config-field repo-field" label="Repository Name">
-                                <el-input
-                                    v-model="imageConfig.repo"
-                                    placeholder="存放图片的仓库名">
-                                </el-input>
-                            </el-form-item>
-                        </el-form>
-                    </div>
+                        <el-form-item label="Repository Name">
+                            <el-input
+                                v-model="imageConfig.repo"
+                                placeholder="存放图片的仓库名">
+                            </el-input>
+                        </el-form-item>
+                    </el-form>
 
                     <div v-if="imageTestResult" :class="['test-result', imageTestResult.success ? 'success' : 'error']">
                         {{ imageTestResult.message }}
