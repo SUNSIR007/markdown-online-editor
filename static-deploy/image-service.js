@@ -400,22 +400,30 @@ class ImageService {
   generateFileName(originalName, addHash = true) {
     const now = new Date()
     const timestamp = now.getTime()
-    
+
     // 提取文件扩展名
     const lastDotIndex = originalName.lastIndexOf('.')
     const name = lastDotIndex > 0 ? originalName.substring(0, lastDotIndex) : originalName
     const ext = lastDotIndex > 0 ? originalName.substring(lastDotIndex) : ''
-    
-    // 清理文件名，移除特殊字符
-    const cleanName = name.replace(/[^a-zA-Z0-9\u4e00-\u9fa5]/g, '-')
-    
+
+    // 安全清理文件名，防止路径遍历攻击和特殊字符
+    const cleanName = name
+      .replace(/[^a-zA-Z0-9\u4e00-\u9fa5]/g, '-') // 只保留字母、数字、中文
+      .replace(/^\.+|\.+$/g, '') // 移除开头和结尾的点
+      .replace(/\-{2,}/g, '-') // 合并多个连字符
+      .replace(/^-+|-+$/g, '') // 移除开头和结尾的连字符
+      .substring(0, 50) // 限制长度
+
+    // 确保文件名不为空
+    const safeName = cleanName || 'image'
+
     if (addHash) {
       // 生成简单的哈希值
       const hash = timestamp.toString(36) + Math.random().toString(36).substr(2, 5)
-      return `${cleanName}-${hash}${ext}`
+      return `${safeName}-${hash}${ext}`
     }
-    
-    return `${cleanName}-${timestamp}${ext}`
+
+    return `${safeName}-${timestamp}${ext}`
   }
 
   /**
@@ -523,45 +531,65 @@ class ImageService {
       const canvas = document.createElement('canvas')
       const ctx = canvas.getContext('2d')
       const img = new Image()
-      const objectUrl = URL.createObjectURL(file)
+      let objectUrl = null
 
-      img.onload = () => {
-        try {
-          let { width, height } = img
-          if (width > maxWidth) {
-            height = (height * maxWidth) / width
-            width = maxWidth
-          }
-
-          canvas.width = width
-          canvas.height = height
-          ctx.drawImage(img, 0, 0, width, height)
-
-          const normalizedType = file.type === 'image/jpg' ? 'image/jpeg' : file.type
-          const qualityCapable = ['image/jpeg', 'image/webp'].includes(normalizedType)
-
-          canvas.toBlob(
-            (blob) => {
-              resolve(blob || file)
-            },
-            normalizedType,
-            qualityCapable ? quality : undefined
-          )
-        } catch (error) {
-          console.warn('图片压缩失败，使用原始文件:', error)
-          resolve(file)
-        } finally {
+      // 清理函数
+      const cleanup = () => {
+        if (objectUrl) {
           URL.revokeObjectURL(objectUrl)
+          objectUrl = null
         }
+        // 清理canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
+        canvas.width = 0
+        canvas.height = 0
       }
 
-      img.onerror = (event) => {
-        console.warn('图片加载失败，使用原始文件:', event)
-        URL.revokeObjectURL(objectUrl)
+      try {
+        objectUrl = URL.createObjectURL(file)
+
+        img.onload = () => {
+          try {
+            let { width, height } = img
+            if (width > maxWidth) {
+              height = (height * maxWidth) / width
+              width = maxWidth
+            }
+
+            canvas.width = width
+            canvas.height = height
+            ctx.drawImage(img, 0, 0, width, height)
+
+            const normalizedType = file.type === 'image/jpg' ? 'image/jpeg' : file.type
+            const qualityCapable = ['image/jpeg', 'image/webp'].includes(normalizedType)
+
+            canvas.toBlob(
+              (blob) => {
+                cleanup()
+                resolve(blob || file)
+              },
+              normalizedType,
+              qualityCapable ? quality : undefined
+            )
+          } catch (error) {
+            console.warn('图片压缩失败，使用原始文件:', error)
+            cleanup()
+            resolve(file)
+          }
+        }
+
+        img.onerror = (event) => {
+          console.warn('图片加载失败，使用原始文件:', event)
+          cleanup()
+          resolve(file)
+        }
+
+        img.src = objectUrl
+      } catch (error) {
+        console.warn('创建ObjectURL失败，使用原始文件:', error)
+        cleanup()
         resolve(file)
       }
-
-      img.src = objectUrl
     })
   }
 
@@ -583,123 +611,145 @@ class ImageService {
       const canvas = document.createElement('canvas')
       const ctx = canvas.getContext('2d')
       const img = new Image()
-      const objectUrl = URL.createObjectURL(file)
+      let objectUrl = null
+
+      // 清理函数
+      const cleanup = () => {
+        if (objectUrl) {
+          URL.revokeObjectURL(objectUrl)
+          objectUrl = null
+        }
+        // 清理canvas
+        if (canvas) {
+          ctx.clearRect(0, 0, canvas.width, canvas.height)
+          canvas.width = 0
+          canvas.height = 0
+        }
+      }
 
       const originalType = (file.type === 'image/jpg' ? 'image/jpeg' : file.type) || 'image/jpeg'
       const supportedCanvasTypes = ['image/jpeg', 'image/png', 'image/webp']
 
       if (!supportedCanvasTypes.includes(originalType)) {
-        URL.revokeObjectURL(objectUrl)
         resolve(file)
         return
       }
 
-      img.onload = async () => {
-        try {
-          let { width, height } = img
+      try {
+        objectUrl = URL.createObjectURL(file)
 
-          const MAX_CANVAS_DIMENSION = 4096
-          const MAX_CANVAS_PIXELS = 16 * 1024 * 1024 // 16MP
+        img.onload = async () => {
+          try {
+            let { width, height } = img
 
-          const pixelCount = width * height
-          const dimensionScale = Math.min(
-            1,
-            MAX_CANVAS_DIMENSION / width,
-            MAX_CANVAS_DIMENSION / height,
-            Math.sqrt(MAX_CANVAS_PIXELS / pixelCount)
-          )
+            const MAX_CANVAS_DIMENSION = 4096
+            const MAX_CANVAS_PIXELS = 16 * 1024 * 1024 // 16MP
 
-          if (dimensionScale < 1) {
-            width = Math.max(1, Math.floor(width * dimensionScale))
-            height = Math.max(1, Math.floor(height * dimensionScale))
-          }
+            const pixelCount = width * height
+            const dimensionScale = Math.min(
+              1,
+              MAX_CANVAS_DIMENSION / width,
+              MAX_CANVAS_DIMENSION / height,
+              Math.sqrt(MAX_CANVAS_PIXELS / pixelCount)
+            )
 
-          canvas.width = width
-          canvas.height = height
-          ctx.drawImage(img, 0, 0, width, height)
+            if (dimensionScale < 1) {
+              width = Math.max(1, Math.floor(width * dimensionScale))
+              height = Math.max(1, Math.floor(height * dimensionScale))
+            }
 
-          let quality = 0.9 // 从高质量开始
-          let currentBlob = null
-          let attempts = 0
-          const maxAttempts = 8
+            canvas.width = width
+            canvas.height = height
+            ctx.drawImage(img, 0, 0, width, height)
 
-          onProgress({ stage: 'compressing', progress: 30 })
+            let quality = 0.9 // 从高质量开始
+            let currentBlob = null
+            let attempts = 0
+            const maxAttempts = 8
 
-          while (attempts < maxAttempts) {
-            currentBlob = await new Promise(resolveBlob => {
-              try {
-                const qualityCapable = ['image/jpeg', 'image/webp'].includes(originalType)
-                canvas.toBlob(
-                  (blob) => {
-                    if (!blob) {
-                      console.warn('canvas.toBlob 返回空，回退原始文件')
-                    }
-                    resolveBlob(blob)
-                  },
-                  originalType,
-                  qualityCapable ? quality : undefined
-                )
-              } catch (blobError) {
-                console.warn('canvas.toBlob 失败，使用原始文件:', blobError)
-                resolveBlob(null)
+            onProgress({ stage: 'compressing', progress: 30 })
+
+            while (attempts < maxAttempts) {
+              currentBlob = await new Promise(resolveBlob => {
+                try {
+                  const qualityCapable = ['image/jpeg', 'image/webp'].includes(originalType)
+                  canvas.toBlob(
+                    (blob) => {
+                      if (!blob) {
+                        console.warn('canvas.toBlob 返回空，回退原始文件')
+                      }
+                      resolveBlob(blob)
+                    },
+                    originalType,
+                    qualityCapable ? quality : undefined
+                  )
+                } catch (blobError) {
+                  console.warn('canvas.toBlob 失败，使用原始文件:', blobError)
+                  resolveBlob(null)
+                }
+              })
+
+              if (!currentBlob) {
+                console.warn('压缩失败，返回原始文件')
+                cleanup()
+                resolve(file)
+                return
               }
+
+              onProgress({
+                stage: 'compressing',
+                progress: 30 + (attempts / maxAttempts) * 50,
+                currentSize: currentBlob.size,
+                targetSize: targetSize,
+                quality: quality
+              })
+
+              if (currentBlob.size <= targetSize) {
+                break
+              }
+
+              quality = Math.max(quality - 0.1, 0.1)
+              attempts++
+
+              if (quality < 0.3 && width > 800) {
+                const scale = 0.8
+                width = Math.floor(width * scale)
+                height = Math.floor(height * scale)
+                canvas.width = width
+                canvas.height = height
+                ctx.drawImage(img, 0, 0, width, height)
+                quality = 0.7
+              }
+            }
+
+            onProgress({ stage: 'finalizing', progress: 90 })
+
+            const compressedFile = new File([currentBlob], file.name, {
+              type: originalType,
+              lastModified: Date.now()
             })
 
-            if (!currentBlob) {
-              console.warn('压缩失败，返回原始文件')
-              resolve(file)
-              return
-            }
-
-            onProgress({
-              stage: 'compressing',
-              progress: 30 + (attempts / maxAttempts) * 50,
-              currentSize: currentBlob.size,
-              targetSize: targetSize,
-              quality: quality
-            })
-
-            if (currentBlob.size <= targetSize) {
-              break
-            }
-
-            quality = Math.max(quality - 0.1, 0.1)
-            attempts++
-
-            if (quality < 0.3 && width > 800) {
-              const scale = 0.8
-              width = Math.floor(width * scale)
-              height = Math.floor(height * scale)
-              canvas.width = width
-              canvas.height = height
-              ctx.drawImage(img, 0, 0, width, height)
-              quality = 0.7
-            }
+            cleanup()
+            resolve(compressedFile)
+          } catch (error) {
+            console.warn('图片压缩出现异常，使用原始文件:', error)
+            cleanup()
+            resolve(file)
           }
-
-          onProgress({ stage: 'finalizing', progress: 90 })
-
-          const compressedFile = new File([currentBlob], file.name, {
-            type: originalType,
-            lastModified: Date.now()
-          })
-
-          resolve(compressedFile)
-        } catch (error) {
-          console.warn('图片压缩出现异常，使用原始文件:', error)
-          resolve(file)
-        } finally {
-          URL.revokeObjectURL(objectUrl)
         }
-      }
 
-      img.onerror = (event) => {
-        console.warn('图片加载失败，使用原始文件:', event)
+        img.onerror = (event) => {
+          console.warn('图片加载失败，使用原始文件:', event)
+          cleanup()
+          resolve(file)
+        }
+
+        img.src = objectUrl
+      } catch (error) {
+        console.warn('创建ObjectURL失败，使用原始文件:', error)
+        cleanup()
         resolve(file)
-        URL.revokeObjectURL(objectUrl)
       }
-
-      img.src = objectUrl
     })
   }
 

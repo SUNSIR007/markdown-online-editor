@@ -76,11 +76,15 @@ window.setupViewportFixes = function(vm) {
     });
 };
 
-// 移动端自动聚焦
+// 移动端自动聚焦 - 减少聚焦频率，避免干扰用户
 window.setupMobileAutoFocus = function(vm) {
     if (!window.isMobileDevice()) return;
 
+    let focusAttempted = false;
+
     const attemptFocus = (attempt = 1) => {
+        if (focusAttempted && attempt > 1) return; // 避免重复聚焦
+
         vm.focusEditor();
 
         setTimeout(() => {
@@ -88,20 +92,29 @@ window.setupMobileAutoFocus = function(vm) {
             const isEditorFocused = document.activeElement === editorElement ||
                                   editorElement?.contains(document.activeElement);
 
-            if (!isEditorFocused && attempt < 5) {
+            if (!isEditorFocused && attempt < 3 && !focusAttempted) { // 减少重试次数
                 attemptFocus(attempt + 1);
+            } else {
+                focusAttempted = true;
             }
         }, 300);
     };
 
-    setTimeout(() => attemptFocus(), 100);
-    setTimeout(() => attemptFocus(), 500);
-    setTimeout(() => attemptFocus(), 1000);
+    // 只在页面加载后尝试一次聚焦
+    setTimeout(() => {
+        if (!focusAttempted) {
+            attemptFocus();
+        }
+    }, 500);
 };
 
-// 桌面端自动聚焦
+// 桌面端自动聚焦 - 减少重试次数
 window.setupDesktopAutoFocus = function(vm) {
+    let focusAttempted = false;
+
     const attemptFocus = (attempt = 1) => {
+        if (focusAttempted && attempt > 1) return;
+
         vm.focusEditor();
 
         setTimeout(() => {
@@ -109,13 +122,18 @@ window.setupDesktopAutoFocus = function(vm) {
             const isEditorFocused = document.activeElement === editorElement ||
                                   editorElement?.contains(document.activeElement);
 
-            if (!isEditorFocused && attempt < 5) {
+            if (!isEditorFocused && attempt < 3 && !focusAttempted) {
                 attemptFocus(attempt + 1);
+            } else {
+                focusAttempted = true;
             }
         }, 300);
     };
 
-    setTimeout(() => attemptFocus(), 100);
-    setTimeout(() => attemptFocus(), 500);
-    setTimeout(() => attemptFocus(), 1000);
+    // 桌面端也只尝试一次初始聚焦
+    setTimeout(() => {
+        if (!focusAttempted) {
+            attemptFocus();
+        }
+    }, 200);
 };

@@ -32,6 +32,7 @@ window.handleImageUpload = async function(vm, files) {
     vm.uploadProgress.summary = '';
     vm.uploadProgress.messages = [];
 
+    // 缓存DOM元素
     const vditorElement = document.getElementById('vditor');
     if (vditorElement) {
         vditorElement.classList.remove('drag-over');

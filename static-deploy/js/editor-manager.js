@@ -1,5 +1,37 @@
 // 编辑器管理 - Editor Manager
 
+// 缓存常用的DOM元素
+let editorElementCache = {
+    vditorElement: null,
+    metadataWrapper: null,
+    lastUpdated: 0
+};
+
+// 获取缓存的编辑器元素
+function getCachedEditorElement() {
+    const now = Date.now();
+    // 缓存1秒内有效
+    if (editorElementCache.vditorElement && (now - editorElementCache.lastUpdated) < 1000) {
+        return editorElementCache.vditorElement;
+    }
+
+    editorElementCache.vditorElement = document.getElementById('vditor');
+    editorElementCache.lastUpdated = now;
+    return editorElementCache.vditorElement;
+}
+
+// 获取缓存的元数据包装器
+function getCachedMetadataWrapper() {
+    const now = Date.now();
+    if (editorElementCache.metadataWrapper && (now - editorElementCache.lastUpdated) < 1000) {
+        return editorElementCache.metadataWrapper;
+    }
+
+    editorElementCache.metadataWrapper = document.getElementById('metadata-editor-wrapper');
+    editorElementCache.lastUpdated = now;
+    return editorElementCache.metadataWrapper;
+}
+
 // 初始化 Vditor 编辑器
 window.initVditor = function(vm) {
     const editorMode = 'ir';
@@ -36,19 +68,24 @@ window.initVditor = function(vm) {
         },
         cache: { enable: false },
         after: function() {
-            // 将元数据编辑器移动到工具栏下方
-            const vditorElement = document.getElementById('vditor');
-            const toolbar = vditorElement.querySelector('.vditor-toolbar');
-            const metadataEditor = document.getElementById('metadata-editor-wrapper');
-            if (toolbar && metadataEditor) {
-                toolbar.insertAdjacentElement('afterend', metadataEditor);
-                metadataEditor.style.display = 'block';
+            // 使用缓存的DOM元素
+            const vditorElement = getCachedEditorElement();
+            const metadataEditor = getCachedMetadataWrapper();
+
+            if (vditorElement && metadataEditor) {
+                const toolbar = vditorElement.querySelector('.vditor-toolbar');
+                if (toolbar) {
+                    toolbar.insertAdjacentElement('afterend', metadataEditor);
+                    metadataEditor.style.display = 'block';
+                }
             }
 
             // 绑定 input 事件
-            vm.vditor.vditor.element.addEventListener('input', () => {
-                vm.bodyContent = vm.vditor.getValue();
-            });
+            if (vm.vditor && vm.vditor.vditor && vm.vditor.vditor.element) {
+                vm.vditor.vditor.element.addEventListener('input', () => {
+                    vm.bodyContent = vm.vditor.getValue();
+                });
+            }
 
             // 设置拖拽和粘贴支持
             window.setupImageDragAndPaste(vm);
@@ -143,7 +180,7 @@ window.focusEditor = function(vm) {
 
 // 设置图片拖拽和粘贴支持
 window.setupImageDragAndPaste = function(vm) {
-    const vditorElement = document.getElementById('vditor');
+    const vditorElement = getCachedEditorElement();
     if (!vditorElement) return;
 
     vditorElement.addEventListener('dragover', (e) => {
