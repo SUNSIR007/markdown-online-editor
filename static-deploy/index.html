@@ -118,18 +118,18 @@
         }
     </style>
 
-    <!-- External Libraries -->
-    <script src="https://unpkg.com/vue@2.6.14/dist/vue.min.js"></script>
-    <script src="https://unpkg.com/element-ui@2.15.13/lib/index.js"></script>
+    <!-- CSS 优先加载 - 阻塞渲染以防止白屏闪烁 -->
     <link rel="stylesheet" href="https://unpkg.com/element-ui@2.15.13/lib/theme-chalk/index.css">
-    <script src="https://cdn.jsdelivr.net/npm/vditor@3.9.4/dist/index.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vditor@3.9.4/dist/index.css">
-
-    <!-- CSS Modules -->
     <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/components.css">
     <link rel="stylesheet" href="css/editor.css">
     <link rel="stylesheet" href="css/mobile.css">
+
+    <!-- External Libraries - JS 在 CSS 之后加载 -->
+    <script src="https://unpkg.com/vue@2.6.14/dist/vue.min.js"></script>
+    <script src="https://unpkg.com/element-ui@2.15.13/lib/index.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vditor@3.9.4/dist/index.min.js"></script>
 </head>
 <body>
     <div id="app" v-cloak>
@@ -257,57 +257,15 @@
     <script src="js/editor-manager.js"></script>
     <script src="js/image-handler.js"></script>
 
-    <!-- 超时时间进一步缩短 -->
+    <!-- Vue 应用初始化 - 使用 DOMContentLoaded 确保所有资源加载完成 -->
     <script>
-        // 跟踪CSS加载状态
-        let elementUILoaded = false;
-        let vditorLoaded = false;
-        let appLoaded = false;
-
-        // 检查是否可以初始化Vue应用
-        function checkReadyToInitVue() {
-            if ((elementUILoaded && vditorLoaded) && !appLoaded) {
-                appLoaded = true;
-                // 所有外部CSS加载完成，加载Vue应用
-                const script = document.createElement('script');
-                script.src = 'js/app.js';
-                document.head.appendChild(script);
-            }
-        }
-
-        // 监听CSS加载事件
-        const elementUILink = document.querySelector('link[href*="element-ui"]');
-        const vditorLink = document.querySelector('link[href*="vditor"]');
-
-        if (elementUILink) {
-            elementUILink.onload = () => {
-                elementUILoaded = true;
-                checkReadyToInitVue();
-            };
-        }
-
-        if (vditorLink) {
-            vditorLink.onload = () => {
-                vditorLoaded = true;
-                checkReadyToInitVue();
-            };
-        }
-
-        // 备用：200ms后强制加载（极速体验）
-        setTimeout(() => {
-            if (!appLoaded) {
-                appLoaded = true;
-                console.log('Quick load: initializing Vue app');
-                const script = document.createElement('script');
-                script.src = 'js/app.js';
-                document.head.appendChild(script);
-            }
-        }, 200);
-    </script>
-
-    <script>
-        // 等待页面完全加载后初始化
+        // 等待DOM和所有资源（包括CSS）完全加载
         document.addEventListener('DOMContentLoaded', function() {
+            // 初始化 Vue 应用
+            const script = document.createElement('script');
+            script.src = 'js/app.js';
+            document.head.appendChild(script);
+
             // 初始化GitHub服务
             if (!window.githubService) {
                 window.githubService = new GitHubService();
