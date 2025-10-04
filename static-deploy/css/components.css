@@ -274,7 +274,7 @@
 .el-dialog__wrapper .github-config-dialog {
     background: linear-gradient(145deg, #0f0f0f 0%, #1a1a1a 50%, #141414 100%) !important;
     border-radius: 24px !important;
-    border: 2px solid transparent !important;
+    border: 2px solid #002FA7 !important;
     background-clip: padding-box !important;
     box-shadow:
         0 32px 80px rgba(0, 0, 0, 0.9),
@@ -289,19 +289,9 @@
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'SF Pro Display', 'Roboto', system-ui, sans-serif !important;
 }
 
-/* 增加玻璃态效果边框 */
+/* 移除玻璃态效果边框 */
 .github-config-dialog::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    padding: 2px;
-    background: linear-gradient(135deg, rgba(0, 47, 167, 0.6) 0%, rgba(0, 102, 255, 0.4) 25%, rgba(255, 255, 255, 0.1) 50%, rgba(0, 47, 167, 0.4) 75%, rgba(0, 47, 167, 0.6) 100%);
-    border-radius: 24px;
-    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    mask-composite: exclude;
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    pointer-events: none;
+    display: none;
 }
 
 /* 移动端极致紧凑 */
@@ -432,7 +422,7 @@
     max-height: calc(85vh - 140px);
 }
 
-/* 标签页现代化设计 - 统一背景样式 */
+/* 标签页现代化设计 - 统一圆角弧度 */
 .github-config-dialog .el-tabs__header {
     background: transparent !important;
     margin: 0 0 20px 0 !important;
@@ -447,7 +437,7 @@
     gap: 8px;
     background: rgba(255, 255, 255, 0.04);
     padding: 4px;
-    border-radius: 16px;
+    border-radius: 12px;
     backdrop-filter: blur(8px);
     width: 100%;
 }
@@ -461,7 +451,7 @@
     height: 42px !important;
     line-height: 42px !important;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-    border-radius: 12px !important;
+    border-radius: 8px !important;
     font-size: 15px !important;
     letter-spacing: -0.2px;
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', system-ui, sans-serif !important;
@@ -591,35 +581,33 @@
     transform: translateY(-2px);
 }
 
-/* 现代化密码显示按钮 - 修复重叠问题 */
+/* 简洁密码显示按钮 - 仅显示眼睛图标 */
 .github-config-dialog .el-input__suffix {
     right: 18px !important;
     display: flex;
     align-items: center;
-    width: 32px !important;
+    width: auto !important;
     justify-content: center;
 }
 
 .github-config-dialog .el-input__icon {
-    color: rgba(255, 255, 255, 0.5) !important;
-    transition: all 0.3s ease !important;
-    font-size: 16px !important;
+    color: rgba(255, 255, 255, 0.6) !important;
+    transition: color 0.3s ease !important;
+    font-size: 20px !important;
     cursor: pointer;
-    padding: 8px;
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.04);
-    backdrop-filter: blur(4px);
-    width: 32px !important;
-    height: 32px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    backdrop-filter: none !important;
+    width: auto !important;
+    height: auto !important;
+    display: inline-block !important;
 }
 
 .github-config-dialog .el-input__icon:hover {
-    color: rgba(255, 255, 255, 0.8) !important;
-    background: rgba(255, 255, 255, 0.08);
-    transform: scale(1.05);
+    color: rgba(255, 255, 255, 0.9) !important;
+    background: transparent !important;
+    transform: none !important;
 }
 
 /* 现代化按钮设计 */
