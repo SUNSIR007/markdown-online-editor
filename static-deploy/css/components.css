@@ -432,7 +432,7 @@
     max-height: calc(85vh - 140px);
 }
 
-/* 标签页现代化设计 */
+/* 标签页现代化设计 - 统一背景样式 */
 .github-config-dialog .el-tabs__header {
     background: transparent !important;
     margin: 0 0 20px 0 !important;
@@ -449,6 +449,7 @@
     padding: 4px;
     border-radius: 16px;
     backdrop-filter: blur(8px);
+    width: 100%;
 }
 
 .github-config-dialog .el-tabs__item {
@@ -466,6 +467,8 @@
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', system-ui, sans-serif !important;
     position: relative;
     overflow: hidden;
+    flex: 1;
+    text-align: center;
 }
 
 .github-config-dialog .el-tabs__item::before {
@@ -489,7 +492,7 @@
 
 .github-config-dialog .el-tabs__item.is-active {
     color: #ffffff !important;
-    background: linear-gradient(135deg, rgba(0, 47, 167, 0.6) 0%, rgba(0, 102, 255, 0.4) 100%) !important;
+    background: #002FA7 !important;
     box-shadow:
         0 4px 16px rgba(0, 47, 167, 0.3),
         inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
@@ -548,7 +551,7 @@
     height: 48px !important;
     line-height: 48px !important;
     font-size: 15px !important;
-    padding: 0 18px !important;
+    padding: 0 56px 0 18px !important;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', system-ui, sans-serif !important;
     font-weight: 500 !important;
@@ -556,6 +559,11 @@
     box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.1),
         0 1px 3px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* 修复密码框的padding */
+.github-config-dialog .el-input--suffix .el-input__inner {
+    padding: 0 56px 0 18px !important;
 }
 
 .github-config-dialog .el-input__inner::placeholder {
@@ -583,22 +591,29 @@
     transform: translateY(-2px);
 }
 
-/* 现代化密码显示按钮 */
+/* 现代化密码显示按钮 - 修复重叠问题 */
 .github-config-dialog .el-input__suffix {
-    right: 16px !important;
+    right: 18px !important;
     display: flex;
     align-items: center;
+    width: 32px !important;
+    justify-content: center;
 }
 
 .github-config-dialog .el-input__icon {
     color: rgba(255, 255, 255, 0.5) !important;
     transition: all 0.3s ease !important;
-    font-size: 18px !important;
+    font-size: 16px !important;
     cursor: pointer;
-    padding: 6px;
+    padding: 8px;
     border-radius: 8px;
     background: rgba(255, 255, 255, 0.04);
     backdrop-filter: blur(4px);
+    width: 32px !important;
+    height: 32px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
 }
 
 .github-config-dialog .el-input__icon:hover {
@@ -656,7 +671,7 @@
 }
 
 .github-config-dialog .el-button--primary.save-button {
-    background: linear-gradient(135deg, #002FA7 0%, #0052CC 70%, #0066FF 100%) !important;
+    background: #002FA7 !important;
     color: #ffffff !important;
     border: 2px solid rgba(0, 47, 167, 0.4) !important;
     box-shadow:
@@ -666,8 +681,8 @@
 }
 
 .github-config-dialog .el-button--primary.save-button:hover {
-    background: linear-gradient(135deg, #0039C7 0%, #0066FF 70%, #007AFF 100%) !important;
-    border-color: rgba(0, 102, 255, 0.6) !important;
+    background: #0033B8 !important;
+    border-color: rgba(0, 51, 184, 0.6) !important;
     box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.25),
         0 12px 32px rgba(0, 47, 167, 0.5) !important;
