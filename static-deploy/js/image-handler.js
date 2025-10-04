@@ -1,3 +1,8 @@
+const imageHandlerDebugLog = (...args) => {
+    if (typeof window === 'undefined' || !window.__BLOGWRITER_DEBUG__) return;
+    console.debug('[ImageHandler]', ...args);
+};
+
 // 图片处理 - Image Handler
 
 // 处理图片上传
@@ -33,7 +38,7 @@ window.handleImageUpload = async function(vm, files) {
     }
 
     if (window.isMobileDevice()) {
-        console.log('移动端上传开始:', {
+        imageHandlerDebugLog('移动端上传开始:', {
             fileCount: fileArray.length,
             files: fileArray.map(f => ({ name: f.name, size: f.size, type: f.type })),
             userAgent: navigator.userAgent,

@@ -3,6 +3,11 @@
  * 基于GitHub API实现图片上传功能，支持多种CDN链接格式
  */
 
+const imageServiceDebugLog = (...args) => {
+  if (typeof window === 'undefined' || !window.__BLOGWRITER_DEBUG__) return
+  console.debug('[ImageService]', ...args)
+}
+
 class ImageService {
   constructor() {
     this.baseURL = 'https://api.github.com'
@@ -214,7 +219,7 @@ class ImageService {
       }
     }
 
-    console.log('GitHub API Request:', {
+    imageServiceDebugLog('GitHub API Request:', {
       url,
       method: options.method || 'GET',
       owner: this.owner,
@@ -247,7 +252,7 @@ class ImageService {
 
       // 移动端和代理环境的特殊处理
       if (isMobile || usingProxy) {
-        console.log(`检测到${isMobile ? '移动端' : ''}${usingProxy ? '代理环境' : ''}，使用特殊请求策略`)
+        imageServiceDebugLog(`检测到${isMobile ? '移动端' : ''}${usingProxy ? '代理环境' : ''}，使用特殊请求策略`)
         // 代理环境下可能需要更长的超时时间
         const timeoutMs = usingProxy ? 60000 : 45000 // 代理环境60秒，移动端45秒
 
@@ -278,17 +283,17 @@ class ImageService {
         let lastError = null
         for (let i = 0; i < requestMethods.length; i++) {
           try {
-            console.log(`尝试请求方法 ${i + 1}/${requestMethods.length}`)
+            imageServiceDebugLog(`尝试请求方法 ${i + 1}/${requestMethods.length}`)
             const fetchPromise = requestMethods[i]()
             const timeoutPromise = new Promise((_, reject) => {
               setTimeout(() => reject(new Error('请求超时')), timeoutMs)
             })
 
             response = await Promise.race([fetchPromise, timeoutPromise])
-            console.log(`请求方法 ${i + 1} 成功`)
+            imageServiceDebugLog(`请求方法 ${i + 1} 成功`)
             break
           } catch (error) {
-            console.log(`请求方法 ${i + 1} 失败:`, error.message)
+            imageServiceDebugLog(`请求方法 ${i + 1} 失败:`, error.message)
             lastError = error
             if (i === requestMethods.length - 1) {
               throw lastError
@@ -768,7 +773,7 @@ class ImageService {
       const filePath = this.generateFilePath(fileName)
       const encodedFilePath = this.encodeFilePath(filePath)
 
-      console.log('Upload details:', {
+      imageServiceDebugLog('Upload details:', {
         originalFileName: file.name,
         generatedFileName: fileName,
         filePath,
@@ -964,7 +969,7 @@ class ImageService {
         results.environment = 'proxy'
       }
     } catch (e) {
-      console.log('代理检测失败:', e.message)
+      imageServiceDebugLog('代理检测失败:', e.message)
     }
 
     // 测试GitHub API
@@ -1047,8 +1052,8 @@ class ImageService {
    */
   async testConnection() {
     try {
-      console.log('Testing GitHub connection...')
-      console.log('Connection test config:', {
+      imageServiceDebugLog('Testing GitHub connection...')
+      imageServiceDebugLog('Connection test config:', {
         owner: this.owner,
         repo: this.repo,
         branch: this.branch,
@@ -1059,20 +1064,20 @@ class ImageService {
       })
 
       // 测试用户信息
-      console.log('Testing user access...')
+      imageServiceDebugLog('Testing user access...')
       const userResponse = await this.request('/user')
-      console.log('User response:', userResponse)
+      imageServiceDebugLog('User response:', userResponse)
 
       // 测试仓库访问权限
-      console.log('Testing repository access...')
+      imageServiceDebugLog('Testing repository access...')
       const repoResponse = await this.request(`/repos/${this.owner}/${this.repo}`)
-      console.log('Repository response:', repoResponse)
+      imageServiceDebugLog('Repository response:', repoResponse)
 
       if (this.branch) {
         const encodedBranch = encodeURIComponent(this.branch)
-        console.log('Validating branch:', this.branch)
+        imageServiceDebugLog('Validating branch:', this.branch)
         await this.request(`/repos/${this.owner}/${this.repo}/branches/${encodedBranch}`)
-        console.log('Branch validation succeeded:', this.branch)
+        imageServiceDebugLog('Branch validation succeeded:', this.branch)
       }
 
       // 检查权限
@@ -1087,7 +1092,7 @@ class ImageService {
         }
       }
 
-      console.log('Connection test successful')
+      imageServiceDebugLog('Connection test successful')
       const message = `用户: ${userResponse.login}，仓库: ${repoResponse.full_name}，权限: ${permissions.admin ? '管理员' : '写入'}`
       return {
         success: true,

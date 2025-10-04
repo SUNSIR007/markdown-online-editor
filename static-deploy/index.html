@@ -21,6 +21,8 @@
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
     <link rel="dns-prefetch" href="https://unpkg.com">
     <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+    <link rel="preconnect" href="https://api.github.com" crossorigin>
+    <link rel="dns-prefetch" href="https://api.github.com">
 
     <link rel="icon" type="image/png" href="./img/icons/write.png">
     <link rel="apple-touch-icon" sizes="180x180" href="./img/icons/apple-touch-icon.png">
@@ -122,14 +124,17 @@
     <link rel="stylesheet" href="https://unpkg.com/element-ui@2.15.13/lib/theme-chalk/index.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vditor@3.9.4/dist/index.css">
     <link rel="stylesheet" href="css/base.css">
-    <link rel="stylesheet" href="css/components.css">
-    <link rel="stylesheet" href="css/editor.css">
-    <link rel="stylesheet" href="css/mobile.css">
+    <link rel="preload" href="css/components.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="css/components.css"></noscript>
+    <link rel="preload" href="css/editor.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="css/editor.css"></noscript>
+    <link rel="preload" href="css/mobile.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="css/mobile.css"></noscript>
 
     <!-- External Libraries - JS 在 CSS 之后加载 -->
-    <script src="https://unpkg.com/vue@2.6.14/dist/vue.min.js"></script>
-    <script src="https://unpkg.com/element-ui@2.15.13/lib/index.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vditor@3.9.4/dist/index.min.js"></script>
+    <script defer src="https://unpkg.com/vue@2.6.14/dist/vue.min.js"></script>
+    <script defer src="https://unpkg.com/element-ui@2.15.13/lib/index.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/vditor@3.9.4/dist/index.min.js"></script>
 </head>
 <body>
     <div id="app" v-cloak>
@@ -278,15 +283,15 @@
     </div>
 
     <!-- Service Scripts -->
-    <script src="github-service.js"></script>
-    <script src="image-service.js"></script>
+    <script defer src="github-service.js"></script>
+    <script defer src="image-service.js"></script>
 
     <!-- Application Scripts - Load but don't execute immediately -->
-    <script src="js/config.js"></script>
-    <script src="js/github-config-component.js"></script>
-    <script src="js/mobile-utils.js"></script>
-    <script src="js/editor-manager.js"></script>
-    <script src="js/image-handler.js"></script>
+    <script defer src="js/config.js"></script>
+    <script defer src="js/github-config-component.js"></script>
+    <script defer src="js/mobile-utils.js"></script>
+    <script defer src="js/editor-manager.js"></script>
+    <script defer src="js/image-handler.js"></script>
 
     <!-- Vue 应用初始化 - 使用 DOMContentLoaded 确保所有资源加载完成 -->
     <script>
