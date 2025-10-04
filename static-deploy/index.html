@@ -22,17 +22,6 @@
     <link rel="dns-prefetch" href="https://unpkg.com">
     <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
 
-    <!-- 预加载关键脚本 -->
-    <link rel="preload" href="https://unpkg.com/vue@2.6.14/dist/vue.min.js" as="script">
-    <link rel="preload" href="https://unpkg.com/element-ui@2.15.13/lib/index.js" as="script">
-    <link rel="preload" href="https://cdn.jsdelivr.net/npm/vditor@3.9.4/dist/index.min.js" as="script">
-
-    <!-- 预加载关键样式 -->
-    <link rel="preload" href="https://unpkg.com/element-ui@2.15.13/lib/theme-chalk/index.css" as="style">
-    <link rel="preload" href="https://cdn.jsdelivr.net/npm/vditor@3.9.4/dist/index.css" as="style">
-    <link rel="preload" href="css/base.css" as="style">
-    <link rel="preload" href="css/components.css" as="style">
-
     <link rel="icon" type="image/png" href="./img/icons/write.png">
     <link rel="apple-touch-icon" sizes="180x180" href="./img/icons/apple-touch-icon.png">
     <link rel="manifest" href="./site.webmanifest">
@@ -136,14 +125,11 @@
     <script src="https://cdn.jsdelivr.net/npm/vditor@3.9.4/dist/index.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vditor@3.9.4/dist/index.css">
 
-    <!-- CSS Modules - 异步加载非关键CSS -->
+    <!-- CSS Modules -->
     <link rel="stylesheet" href="css/base.css">
-    <link rel="preload" href="css/components.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="css/components.css"></noscript>
-    <link rel="preload" href="css/editor.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="css/editor.css"></noscript>
-    <link rel="preload" href="css/mobile.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="css/mobile.css"></noscript>
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/editor.css">
+    <link rel="stylesheet" href="css/mobile.css">
 </head>
 <body>
     <div id="app" v-cloak>
@@ -320,17 +306,6 @@
     </script>
 
     <script>
-        // 注册Service Worker
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', function() {
-                navigator.serviceWorker.register('./sw.js').then(function(registration) {
-                    console.log('ServiceWorker registration successful');
-                }).catch(function(err) {
-                    console.log('ServiceWorker registration failed: ', err);
-                });
-            });
-        }
-
         // 等待页面完全加载后初始化
         document.addEventListener('DOMContentLoaded', function() {
             // 初始化GitHub服务
