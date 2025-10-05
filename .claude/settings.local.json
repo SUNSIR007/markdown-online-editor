@@ -1,21 +1,7 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git commit:*)",
-      "Bash(cssLoaded=true)",
-      "Bash(git revert:*)",
-      "Bash(awk:*)",
-      "Bash(curl:*)",
-      "Bash(git add:*)",
-      "Bash(git push:*)",
-      "Bash(find:*)",
-      "Bash(python3:*)",
-      "Bash(git restore:*)",
-      "WebSearch",
-      "Bash(for f in *.png)",
-      "Bash(do echo \"=== $f ===\")",
-      "Bash(identify \"$f\")",
-      "Bash(done)"
+      "Bash(git rm:*)"
     ],
     "deny": [],
     "ask": []

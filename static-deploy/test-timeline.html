@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-CN" style="background: #000000 !important;">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>渲染时间轴调试</title>
+
+    <!-- PWA配置 -->
+    <meta name="theme-color" content="#000000">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Timeline">
+    <meta name="color-scheme" content="dark">
+
+    <!-- 启动画面 -->
+    <link rel="apple-touch-startup-image" media="(device-width: 402px) and (device-height: 768px) and (-webkit-device-pixel-ratio: 3)" href="./img/splash/iphone-17-pro-portrait.png">
+    <link rel="apple-touch-startup-image" href="./img/splash/iphone-17-pro-portrait.png">
+
+    <script>
+        // 创建超详细的时间轴记录
+        window.timeline = [];
+        function logEvent(name, color) {
+            window.timeline.push({
+                time: performance.now(),
+                name: name,
+                color: color || '#00ff00',
+                timestamp: Date.now()
+            });
+        }
+
+        logEvent('Script开始执行', '#ffff00');
+
+        // 立即设置背景
+        document.documentElement.style.background = '#000000';
+        logEvent('设置html背景', '#00ff00');
+
+        // 监控background-color变化
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.attributeName === 'style') {
+                    const bg = window.getComputedStyle(mutation.target).backgroundColor;
+                    if (bg && bg !== 'rgba(0, 0, 0, 0)' && bg !== 'rgb(0, 0, 0)') {
+                        logEvent('检测到非黑色背景: ' + bg, '#ff0000');
+                    }
+                }
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            logEvent('DOMContentLoaded触发', '#00ffff');
+            observer.observe(document.documentElement, { attributes: true });
+            if (document.body) {
+                observer.observe(document.body, { attributes: true });
+            }
+        });
+
+        window.addEventListener('load', function() {
+            logEvent('window.load触发', '#00ffff');
+
+            setTimeout(function() {
+                displayTimeline();
+            }, 500);
+        });
+
+        function displayTimeline() {
+            const container = document.getElementById('timeline');
+            if (!container) return;
+
+            let html = '<div style="font-family: monospace; font-size: 12px; line-height: 1.6;">';
+            html += '<h2 style="color: #ffff00;">页面渲染时间轴</h2>';
+            html += '<p style="color: #888;">从启动画面到页面显示的完整过程</p><hr>';
+
+            const startTime = window.timeline[0].time;
+            window.timeline.forEach(function(event, index) {
+                const relativeTime = (event.time - startTime).toFixed(2);
+                html += `<div style="color: ${event.color}; margin: 5px 0;">`;
+                html += `[+${relativeTime}ms] ${event.name}`;
+                html += `</div>`;
+            });
+
+            html += '<hr><h3 style="color: #ffff00;">性能指标</h3>';
+
+            // Navigation Timing API
+            if (window.performance && window.performance.timing) {
+                const timing = window.performance.timing;
+                const nav = timing.navigationStart;
+
+                html += `<div>DNS查询: ${timing.domainLookupEnd - timing.domainLookupStart}ms</div>`;
+                html += `<div>TCP连接: ${timing.connectEnd - timing.connectStart}ms</div>`;
+                html += `<div>请求响应: ${timing.responseEnd - timing.requestStart}ms</div>`;
+                html += `<div>DOM解析: ${timing.domComplete - timing.domLoading}ms</div>`;
+                html += `<div>总加载时间: ${timing.loadEventEnd - nav}ms</div>`;
+            }
+
+            // Paint Timing API
+            if (window.performance && window.performance.getEntriesByType) {
+                const paintEntries = window.performance.getEntriesByType('paint');
+                html += '<hr><h3 style="color: #ffff00;">绘制时间</h3>';
+                paintEntries.forEach(function(entry) {
+                    html += `<div style="color: ${entry.name.includes('first') ? '#ff00ff' : '#00ff00'};">`;
+                    html += `${entry.name}: ${entry.startTime.toFixed(2)}ms`;
+                    html += `</div>`;
+                });
+            }
+
+            html += '<hr><p style="color: #ff00ff;">⚠️ 如果在"first-paint"之前有延迟，</p>';
+            html += '<p style="color: #ff00ff;">这就是闪白屏发生的时间点！</p>';
+            html += '</div>';
+
+            container.innerHTML = html;
+        }
+
+        logEvent('Script执行完成', '#ffff00');
+    </script>
+
+    <style>
+        html, body {
+            background: #000000 !important;
+            color: #00ff00 !important;
+            margin: 0;
+            padding: 20px;
+            font-family: monospace;
+        }
+        * {
+            background-color: transparent;
+        }
+        #timeline {
+            background: #111 !important;
+            padding: 15px;
+            border: 1px solid #333;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="timeline">
+        <h1>正在收集时间轴数据...</h1>
+    </div>
+
+    <script>
+        logEvent('body开始执行', '#00ff00');
+    </script>
+</body>
+</html>
