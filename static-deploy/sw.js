@@ -1,4 +1,4 @@
-const CACHE_NAME = 'markdown-editor-cache-v2';
+const CACHE_NAME = 'markdown-editor-cache-v1';
 const INDEX_HTML_URL = new URL('./index.html', self.location.href).href;
 
 const APP_SHELL_ASSETS = [
@@ -73,7 +73,7 @@ self.addEventListener('fetch', (event) => {
   const isRemoteAsset = REMOTE_ASSETS.includes(request.url);
 
   if (request.mode === 'navigate') {
-    event.respondWith(cacheFirst(request));
+    event.respondWith(networkFirst(request));
     return;
   }
 
