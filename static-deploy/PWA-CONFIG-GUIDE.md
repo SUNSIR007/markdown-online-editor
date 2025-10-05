@@ -83,6 +83,12 @@ const hasGitHubConfig = localStorage.getItem('github-config');
 - 目前默认不附带额外资源，保持页面体积最小，相关说明可参考 Apple 官方文档
 - 建议在确实需要品牌化启动图时再添加，并同步更新本指南记录尺寸
 
+### Service Worker 预缓存
+- `static-deploy/service-worker.js` 会在安装阶段预缓存编辑器的核心资源
+- `index.html` 在 window `load` 事件后注册 Service Worker，确保 PWA 首帧直接命中本地缓存
+- 更新静态资源后请同步 bump `CACHE_NAME` 以强制客户端拉取最新文件
+- 开发调试时可以在 Safari 的“开发者工具 → Service Workers”面板中注销旧版本以避免缓存干扰
+
 ## 注意事项
 
 1. **Token安全**: 请妥善保管你的GitHub Personal Access Token
