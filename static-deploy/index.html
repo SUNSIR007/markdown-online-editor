@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" style="background-color: #000000 !important; background: #000000 !important;">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -11,6 +11,12 @@
         html, body {
             background-color: #000000 !important;
             background: #000000 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        /* 防止任何白色闪现 */
+        * {
+            -webkit-tap-highlight-color: transparent;
         }
     </style>
 
@@ -23,8 +29,8 @@
 
     <!-- iOS Splash Screen - 深色加载画面 -->
     <!-- iPhone 17 Pro -->
-    <link rel="apple-touch-startup-image" media="(device-width: 402px) and (device-height: 874px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="./img/splash/iphone-pro-portrait.png">
-    <link rel="apple-touch-startup-image" media="(device-width: 874px) and (device-height: 402px) and (-webkit-device-pixel-ratio: 3) and (orientation: landscape)" href="./img/splash/iphone-pro-landscape.png">
+    <link rel="apple-touch-startup-image" media="(device-width: 402px) and (device-height: 874px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="./img/splash/iphone-17-pro-portrait.png">
+    <link rel="apple-touch-startup-image" media="(device-width: 874px) and (device-height: 402px) and (-webkit-device-pixel-ratio: 3) and (orientation: landscape)" href="./img/splash/iphone-17-pro-landscape.png">
 
     <!-- iPhone 14 Pro Max, 15 Pro Max -->
     <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="./img/splash/iphone-plus-portrait.png">
@@ -172,7 +178,7 @@
     <script defer src="https://unpkg.com/element-ui@2.15.13/lib/index.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/vditor@3.9.4/dist/index.min.js"></script>
 </head>
-<body class="app-loading">
+<body class="app-loading" style="background-color: #000000 !important; background: #000000 !important; margin: 0; padding: 0;">
     <div id="app" v-cloak>
         <div class="header">
             <div class="content-type-selector">
