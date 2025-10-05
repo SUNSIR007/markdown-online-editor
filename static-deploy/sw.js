@@ -1,4 +1,4 @@
-const CACHE_NAME = 'markdown-editor-cache-v4';
+const CACHE_NAME = 'markdown-editor-cache-v5';
 const INDEX_HTML_URL = new URL('./index.html', self.location.href).href;
 
 const APP_SHELL_ASSETS = [
@@ -120,9 +120,17 @@ async function cacheFirstWithAntiFlash(request) {
           statusText: response.statusText,
           headers: response.headers
         });
+      } else {
+        // 已经有防闪烁样式，返回原始 HTML
+        return new Response(html, {
+          status: response.status,
+          statusText: response.statusText,
+          headers: response.headers
+        });
       }
     } catch (error) {
       console.warn('[sw] Failed to inject anti-flash style:', error);
+      return response;
     }
   }
 
