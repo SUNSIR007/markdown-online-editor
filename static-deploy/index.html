@@ -119,21 +119,18 @@
     <meta name="supported-color-schemes" content="dark">
 
     <!-- iOS Splash Screen - 深色加载画面 -->
-    <!-- 多重策略确保启动画面匹配 -->
+    <!-- 使用实际检测到的设备参数 -->
 
-    <!-- iPhone 17 Pro - 多种media query变体 -->
-    <!-- 尝试1：完整的media query -->
-    <link rel="apple-touch-startup-image" media="(device-width: 402px) and (device-height: 874px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="./img/splash/iphone-17-pro-portrait.png">
-    <link rel="apple-touch-startup-image" media="(device-width: 874px) and (device-height: 402px) and (-webkit-device-pixel-ratio: 3) and (orientation: landscape)" href="./img/splash/iphone-17-pro-landscape.png">
+    <!-- iPhone 17 Pro - 实际参数: 402x768 @ 3x, 物理分辨率: 1206x2304 -->
+    <!-- 主匹配 - 完整参数 -->
+    <link rel="apple-touch-startup-image" media="(device-width: 402px) and (device-height: 768px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="./img/splash/iphone-17-pro-portrait.png">
+    <link rel="apple-touch-startup-image" media="(device-width: 768px) and (device-height: 402px) and (-webkit-device-pixel-ratio: 3) and (orientation: landscape)" href="./img/splash/iphone-17-pro-landscape.png">
 
-    <!-- 尝试2：不带orientation参数 - 更宽松的匹配 -->
-    <link rel="apple-touch-startup-image" media="(device-width: 402px) and (device-height: 874px) and (-webkit-device-pixel-ratio: 3)" href="./img/splash/iphone-17-pro-portrait.png">
+    <!-- 备用匹配 - 不带orientation -->
+    <link rel="apple-touch-startup-image" media="(device-width: 402px) and (device-height: 768px) and (-webkit-device-pixel-ratio: 3)" href="./img/splash/iphone-17-pro-portrait.png">
 
-    <!-- 尝试3：使用min/max-device-width -->
-    <link rel="apple-touch-startup-image" media="(min-device-width: 402px) and (max-device-width: 402px) and (min-device-height: 874px) and (max-device-height: 874px)" href="./img/splash/iphone-17-pro-portrait.png">
-
-    <!-- 尝试4：只匹配宽度和像素比 -->
-    <link rel="apple-touch-startup-image" media="(width: 402px) and (-webkit-device-pixel-ratio: 3)" href="./img/splash/iphone-17-pro-portrait.png">
+    <!-- 宽松匹配 - 只匹配宽度和像素比 -->
+    <link rel="apple-touch-startup-image" media="(device-width: 402px) and (-webkit-device-pixel-ratio: 3)" href="./img/splash/iphone-17-pro-portrait.png">
 
     <!-- iPhone 14 Pro Max, 15 Pro Max -->
     <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="./img/splash/iphone-plus-portrait.png">
