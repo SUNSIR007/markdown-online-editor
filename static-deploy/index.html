@@ -13,6 +13,40 @@
     <meta name="apple-mobile-web-app-title" content="BlogWriter">
     <meta name="msapplication-navbutton-color" content="#000000">
 
+    <!-- 最优先的防闪烁样式 - 必须在所有资源之前 -->
+    <style>
+        /* 阻止任何白屏闪烁的终极方案 */
+        html, body {
+            background: #000 !important;
+            background-color: #000 !important;
+        }
+
+        /* 确保 body 立即可见且为黑色 */
+        body {
+            margin: 0;
+            padding: 0;
+            opacity: 1 !important;
+            visibility: visible !important;
+        }
+
+        /* 全屏黑色覆盖层 - 在 CSS 和 JS 加载前显示 */
+        #anti-flash-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000 !important;
+            z-index: 999999;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+        }
+
+        #anti-flash-overlay.loaded {
+            opacity: 0;
+        }
+    </style>
+
     <!-- iOS Splash Screen - 防止白屏 -->
     <link rel="apple-touch-startup-image" href="./img/icons/apple-touch-icon.png">
 
@@ -34,17 +68,6 @@
         html {
             background-color: #000000 !important;
             background: #000000 !important;
-        }
-
-        html::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: #000000 !important;
-            z-index: -1;
         }
 
         body {
@@ -137,6 +160,9 @@
     <script defer src="https://cdn.jsdelivr.net/npm/vditor@3.9.4/dist/index.min.js"></script>
 </head>
 <body>
+    <!-- 防闪烁覆盖层 - 必须是 body 的第一个元素 -->
+    <div id="anti-flash-overlay"></div>
+
     <div id="app" v-cloak>
         <div class="header">
             <div class="content-type-selector">
@@ -295,6 +321,17 @@
 
     <!-- Vue 应用初始化 - 使用 DOMContentLoaded 确保所有资源加载完成 -->
     <script>
+        // 移除防闪烁覆盖层
+        window.addEventListener('load', function() {
+            const overlay = document.getElementById('anti-flash-overlay');
+            if (overlay) {
+                overlay.classList.add('loaded');
+                setTimeout(function() {
+                    overlay.remove();
+                }, 300);
+            }
+        });
+
         // 等待DOM和所有资源（包括CSS）完全加载
         document.addEventListener('DOMContentLoaded', function() {
             // 初始化 Vue 应用
