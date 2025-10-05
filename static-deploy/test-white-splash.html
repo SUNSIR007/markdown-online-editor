@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN" style="background: #FFFFFF !important;">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>白色启动画面测试</title>
+
+    <meta name="theme-color" content="#FFFFFF">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="WhiteTest">
+
+    <!-- 白色启动画面 -->
+    <link rel="apple-touch-startup-image" media="(device-width: 402px) and (device-height: 768px) and (-webkit-device-pixel-ratio: 3)" href="./img/splash/white-splash-portrait.png">
+    <link rel="apple-touch-startup-image" href="./img/splash/white-splash-portrait.png">
+
+    <style>
+        html, body {
+            background: #FFFFFF !important;
+            color: #000000 !important;
+            margin: 0;
+            padding: 0;
+            font-family: monospace;
+        }
+        #content {
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="content">
+        <h1>白色启动画面测试</h1>
+        <h2 style="color: #FF0000;">关键测试</h2>
+        <p><strong>如果这个页面打开时没有看到任何闪烁：</strong></p>
+        <ul>
+            <li style="color: #0000FF;">✓ 证明启动画面配置是正确的</li>
+            <li style="color: #0000FF;">✓ 证明问题是启动画面消失后的短暂gap</li>
+            <li style="color: #0000FF;">✓ iOS在gap期间显示系统默认白色</li>
+        </ul>
+        <p><strong>如果仍然看到闪烁：</strong></p>
+        <ul>
+            <li style="color: #FF0000;">✗ 说明启动画面根本没有生效</li>
+            <li style="color: #FF0000;">✗ 需要检查启动画面配置</li>
+        </ul>
+        <hr>
+        <p style="color: #888; font-size: 12px;">
+            这个测试页面使用白色启动画面和白色背景，
+            理论上应该看不到任何颜色变化。
+        </p>
+    </div>
+</body>
+</html>
