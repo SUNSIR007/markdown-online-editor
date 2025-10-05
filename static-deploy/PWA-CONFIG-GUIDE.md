@@ -66,6 +66,20 @@ PWA模式下需要重新配置。这是因为PWA和浏览器使用不同的存�
 
 ## 技术实现
 
+### Service Worker 缓存策略
+我们在 `static-deploy/sw.js` 中注册了 Service Worker，用于预缓存核心静态资源及远程依赖（Vue、Element UI、Vditor）。这样可以保证 PWA 首次加载后即刻复用这些资源，避免 iOS 独立 WebView 无法沿用 Safari 缓存而导致的重复下载延迟。
+
+核心逻辑示例：
+```javascript
+self.addEventListener('fetch', (event) => {
+  if (event.request.method !== 'GET') return;
+  const url = new URL(event.request.url);
+  if (url.origin === self.location.origin || REMOTE_ASSETS.includes(event.request.url)) {
+    event.respondWith(cacheFirst(event.request));
+  }
+});
+```
+
 ### PWA检测代码
 ```javascript
 const isPWA = window.navigator.standalone === true || 
@@ -77,6 +91,12 @@ const isPWA = window.navigator.standalone === true ||
 const hasImageConfig = localStorage.getItem('image-service-config');
 const hasGitHubConfig = localStorage.getItem('github-config');
 ```
+
+### 性能验证
+1. 在 Safari 中访问站点，完成首屏加载后将站点添加到主屏幕；
+2. 首次打开 PWA，加载时间应与浏览器模式接近；
+3. 断开网络再次启动 PWA，核心界面仍可渲染（依赖缓存中的 CDN 资源）；
+4. 如遇旧版本缓存，可在“设置 → Safari”清理历史记录或删除旧 PWA 图标后重新添加。
 
 ## 注意事项
 
