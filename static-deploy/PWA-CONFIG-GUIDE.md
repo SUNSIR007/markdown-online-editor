@@ -80,8 +80,9 @@ const hasGitHubConfig = localStorage.getItem('github-config');
 
 ### 启动图（Splash Screen）
 - 如需定制 iOS 启动画面，可根据机型在 `index.html` 中添加 `apple-touch-startup-image`
-- 目前默认不附带额外资源，保持页面体积最小，相关说明可参考 Apple 官方文档
-- 建议在确实需要品牌化启动图时再添加，并同步更新本指南记录尺寸
+- 当前默认提供深色 Loading 图（`img/splash/iphone-pro-*.png` 与 `iphone-plus-*.png`），覆盖主流 Pro / Max 机型的横竖屏尺寸
+- 若需要其他尺寸或品牌化图形，可在 `img/splash/` 中补充 PNG 并同步更新 `index.html`
+- 相关尺寸说明可参考 Apple 官方文档，推荐保持背景纯黑以防止闪屏
 
 ### Service Worker 预缓存
 - `static-deploy/service-worker.js` 会在安装阶段预缓存编辑器的核心资源
