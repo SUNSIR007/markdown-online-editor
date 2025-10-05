@@ -1,4 +1,4 @@
-const CACHE_NAME = 'markdown-editor-cache-v6';
+const CACHE_NAME = 'markdown-editor-cache-v5';
 const INDEX_HTML_URL = new URL('./index.html', self.location.href).href;
 
 const APP_SHELL_ASSETS = [
@@ -73,7 +73,7 @@ self.addEventListener('fetch', (event) => {
   const isRemoteAsset = REMOTE_ASSETS.includes(request.url);
 
   if (request.mode === 'navigate') {
-    event.respondWith(cacheFirst(request));
+    event.respondWith(cacheFirstWithAntiFlash(request));
     return;
   }
 
@@ -81,6 +81,61 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(cacheFirst(request));
   }
 });
+
+async function cacheFirstWithAntiFlash(request) {
+  const cache = await caches.open(CACHE_NAME);
+  let response = await cache.match(request);
+
+  if (!response) {
+    try {
+      response = await fetch(request);
+      if (response && response.ok) {
+        await cache.put(request, response.clone());
+      }
+    } catch (error) {
+      const fallback = await cache.match(INDEX_HTML_URL);
+      if (fallback) {
+        response = fallback;
+      } else {
+        throw error;
+      }
+    }
+  } else {
+    updateCache(cache, request);
+  }
+
+  // 为 HTML 响应注入防闪烁样式
+  if (response && request.destination === 'document') {
+    try {
+      const html = await response.text();
+
+      // 检查是否已经有防闪烁样式（避免重复注入）
+      if (!html.includes('anti-flash-injected')) {
+        // 在 <head> 标签后立即注入样式
+        const antiFlashStyle = `<style id="anti-flash-injected">html,body{background:#000!important;margin:0;padding:0;opacity:1!important}html::before{content:"";position:fixed;top:0;left:0;width:100%;height:100%;background:#000!important;z-index:999999;pointer-events:none}</style>`;
+        const modifiedHtml = html.replace('<head>', '<head>' + antiFlashStyle);
+
+        return new Response(modifiedHtml, {
+          status: response.status,
+          statusText: response.statusText,
+          headers: response.headers
+        });
+      } else {
+        // 已经有防闪烁样式，返回原始 HTML
+        return new Response(html, {
+          status: response.status,
+          statusText: response.statusText,
+          headers: response.headers
+        });
+      }
+    } catch (error) {
+      console.warn('[sw] Failed to inject anti-flash style:', error);
+      return response;
+    }
+  }
+
+  return response;
+}
 
 async function cacheFirst(request) {
   const cache = await caches.open(CACHE_NAME);
