@@ -14,6 +14,38 @@
     <meta name="msapplication-navbutton-color" content="#000000">
 
     <!-- 最优先的防闪烁样式 - 必须在所有资源之前 -->
+    <script>
+        // 立即执行 - 在任何渲染前注入黑色背景
+        (function() {
+            var style = document.createElement('style');
+            style.innerHTML = 'html,body{background:#000!important;margin:0;padding:0}#emergency-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:#000!important;z-index:999999;pointer-events:none}';
+            document.head.appendChild(style);
+
+            // DOMContentLoaded 时创建覆盖层
+            if (document.body) {
+                createOverlay();
+            } else {
+                document.addEventListener('DOMContentLoaded', createOverlay);
+            }
+
+            function createOverlay() {
+                if (document.getElementById('anti-flash-overlay') || document.getElementById('emergency-overlay')) return;
+                var div = document.createElement('div');
+                div.id = 'emergency-overlay';
+                document.body.insertBefore(div, document.body.firstChild);
+
+                window.addEventListener('load', function() {
+                    setTimeout(function() {
+                        div.style.opacity = '0';
+                        div.style.transition = 'opacity 0.2s';
+                        setTimeout(function() {
+                            div.remove();
+                        }, 200);
+                    }, 100);
+                });
+            }
+        })();
+    </script>
     <style>
         /* 阻止任何白屏闪烁的终极方案 */
         html, body {
@@ -321,15 +353,18 @@
 
     <!-- Vue 应用初始化 - 使用 DOMContentLoaded 确保所有资源加载完成 -->
     <script>
-        // 移除防闪烁覆盖层
+        // 移除防闪烁覆盖层（静态和动态）
         window.addEventListener('load', function() {
-            const overlay = document.getElementById('anti-flash-overlay');
-            if (overlay) {
-                overlay.classList.add('loaded');
-                setTimeout(function() {
-                    overlay.remove();
-                }, 300);
-            }
+            ['anti-flash-overlay', 'emergency-overlay'].forEach(function(id) {
+                var overlay = document.getElementById(id);
+                if (overlay) {
+                    overlay.classList.add('loaded');
+                    overlay.style.opacity = '0';
+                    setTimeout(function() {
+                        overlay.remove();
+                    }, 300);
+                }
+            });
         });
 
         // 等待DOM和所有资源（包括CSS）完全加载
