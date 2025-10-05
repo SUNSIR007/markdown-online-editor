@@ -1,4 +1,4 @@
-const CACHE_NAME = 'markdown-editor-cache-v3';
+const CACHE_NAME = 'markdown-editor-cache-v2';
 const INDEX_HTML_URL = new URL('./index.html', self.location.href).href;
 
 const APP_SHELL_ASSETS = [
