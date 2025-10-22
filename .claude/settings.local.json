@@ -8,14 +8,7 @@
       "Bash(curl:*)",
       "Bash(git add:*)",
       "Bash(git push:*)",
-      "Bash(find:*)",
-      "Bash(python3:*)",
-      "Bash(git restore:*)",
-      "WebSearch",
-      "Bash(for f in *.png)",
-      "Bash(do echo \"=== $f ===\")",
-      "Bash(identify \"$f\")",
-      "Bash(done)"
+      "Bash(find:*)"
     ],
     "deny": [],
     "ask": []
