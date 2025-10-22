@@ -1,12 +1,10 @@
 {
-  "name": "BlogWriter - GitHub Auto Deploy",
-  "short_name": "BlogWriter",
+  "name": "Markdown Online Editor",
+  "short_name": "MarkdownEditor",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#000000",
   "theme_color": "#000000",
-  "orientation": "portrait-primary",
-  "prefer_related_applications": false,
   "icons": [
     {
       "src": "./img/icons/icon-192.png",

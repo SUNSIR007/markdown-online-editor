@@ -6,99 +6,17 @@
     <title>BlogWriter - GitHub Auto Deploy</title>
     <meta name="version" content="1.2">
 
-    <!-- 立即执行的黑色背景脚本 - 最高优先级 -->
-    <script>
-        // 立即设置文档背景色，防止任何白色闪现
-        document.documentElement.style.backgroundColor = '#000000';
-        document.documentElement.style.background = '#000000';
-
-        // 创建一个全屏黑色覆盖层，确保在任何情况下都不会出现白屏
-        const overlay = document.createElement('div');
-        overlay.id = 'anti-flash-overlay';
-        overlay.style.cssText = `
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            right: 0 !important;
-            bottom: 0 !important;
-            width: 100vw !important;
-            height: 100vh !important;
-            background-color: #000000 !important;
-            background: #000000 !important;
-            z-index: 99999 !important;
-            pointer-events: none !important;
-            transition: opacity 0.3s ease !important;
-        `;
-
-        // 等待DOM加载完成后再插入覆盖层
-        if (document.head) {
-            document.head.appendChild(overlay);
-        } else {
-            document.addEventListener('DOMContentLoaded', function() {
-                document.head.appendChild(overlay);
-            });
-        }
-
-        // 在页面完全加载后移除覆盖层
-        window.addEventListener('load', function() {
-            setTimeout(function() {
-                const overlay = document.getElementById('anti-flash-overlay');
-                if (overlay) {
-                    overlay.style.opacity = '0';
-                    setTimeout(function() {
-                        if (overlay.parentNode) {
-                            overlay.parentNode.removeChild(overlay);
-                        }
-                    }, 300);
-                }
-            }, 100); // 短暂延迟确保内容已渲染
-        });
-    </script>
-
-    <!-- 立即应用黑色背景 - 最高优先级CSS -->
+    <!-- 立即应用黑色背景 - 必须在所有内容之前 -->
     <style>
-        /* 最高优先级的防闪白屏样式 */
         html, body {
             background-color: #000000 !important;
             background: #000000 !important;
             margin: 0 !important;
             padding: 0 !important;
         }
-
-        /* 确保所有可能的元素都不会显示白色 */
-        *, *::before, *::after {
-            -webkit-tap-highlight-color: transparent !important;
-            -webkit-touch-callout: none !important;
-            -webkit-user-select: none !important;
-        }
-
-        /* 防止任何可能的白色背景 */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: #000000 !important;
-            z-index: -9999;
-        }
-
-        /* 确保root元素背景 */
-        :root {
-            background-color: #000000 !important;
-            background: #000000 !important;
-            color-scheme: dark;
-        }
-
-        /* 防止加载时的任何白色闪现 */
-        #app {
-            background: transparent !important;
-        }
-
-        /* 隐藏未渲染的Vue内容 */
-        [v-cloak] {
-            display: none !important;
+        /* 防止任何白色闪现 */
+        * {
+            -webkit-tap-highlight-color: transparent;
         }
     </style>
 
@@ -108,15 +26,6 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="BlogWriter">
     <meta name="msapplication-navbutton-color" content="#000000">
-
-    <!-- iOS PWA优化 -->
-    <meta name="apple-touch-fullscreen" content="yes">
-    <meta name="apple-mobile-web-app-orientations" content="portrait">
-    <meta name="format-detection" content="telephone=no">
-
-    <!-- 防止任何白色背景的额外保护 -->
-    <meta name="color-scheme" content="dark">
-    <meta name="supported-color-schemes" content="dark">
 
     <!-- iOS Splash Screen - 深色加载画面 -->
     <!-- iPhone 17 Pro -->
