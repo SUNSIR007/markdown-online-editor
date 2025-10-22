@@ -277,17 +277,6 @@
             visibility: visible;
         }
 
-        @media (min-width: 769px) {
-            #loading-screen {
-                display: none !important;
-            }
-
-            body.app-loading #app::before {
-                opacity: 0 !important;
-                visibility: hidden !important;
-            }
-        }
-
         /* 移动端初始样式 - 在 Vue 加载前就生效 */
         @media (max-width: 768px) {
             .type-buttons {
