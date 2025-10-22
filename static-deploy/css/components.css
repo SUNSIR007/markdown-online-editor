@@ -6,12 +6,12 @@
     border-bottom-color: #888;
     border-bottom: none;
     padding: 20px 28px;
-    padding-top: calc(20px + constant(safe-area-inset-top));
-    padding-top: calc(20px + env(safe-area-inset-top));
     box-shadow: 0 6px 30px rgba(0,0,0,0.15);
     color: white;
     position: sticky;
     top: 0;
+    top: constant(safe-area-inset-top);
+    top: env(safe-area-inset-top);
     z-index: 1000;
     backdrop-filter: blur(10px);
     border-bottom: 1px solid rgba(255,255,255,0.1);
