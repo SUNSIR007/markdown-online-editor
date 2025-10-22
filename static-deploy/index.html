@@ -6,21 +6,99 @@
     <title>BlogWriter - GitHub Auto Deploy</title>
     <meta name="version" content="1.2">
 
+    <!-- 立即执行的黑色背景脚本 - 最高优先级 -->
+    <script>
+        // 立即设置文档背景色，防止任何白色闪现
+        document.documentElement.style.backgroundColor = '#000000';
+        document.documentElement.style.background = '#000000';
+
+        // 创建一个全屏黑色覆盖层，确保在任何情况下都不会出现白屏
+        const overlay = document.createElement('div');
+        overlay.id = 'anti-flash-overlay';
+        overlay.style.cssText = `
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            background-color: #000000 !important;
+            background: #000000 !important;
+            z-index: 99999 !important;
+            pointer-events: none !important;
+            transition: opacity 0.3s ease !important;
+        `;
+
+        // 等待DOM加载完成后再插入覆盖层
+        if (document.head) {
+            document.head.appendChild(overlay);
+        } else {
+            document.addEventListener('DOMContentLoaded', function() {
+                document.head.appendChild(overlay);
+            });
+        }
+
+        // 在页面完全加载后移除覆盖层
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                const overlay = document.getElementById('anti-flash-overlay');
+                if (overlay) {
+                    overlay.style.opacity = '0';
+                    setTimeout(function() {
+                        if (overlay.parentNode) {
+                            overlay.parentNode.removeChild(overlay);
+                        }
+                    }, 300);
+                }
+            }, 100); // 短暂延迟确保内容已渲染
+        });
+    </script>
+
+    <!-- 立即应用黑色背景 - 最高优先级CSS -->
     <style>
+        /* 最高优先级的防闪白屏样式 */
         html, body {
-            background-color: #000000;
-            background: #000000;
-            margin: 0;
-            padding: 0;
+            background-color: #000000 !important;
+            background: #000000 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        /* 确保所有可能的元素都不会显示白色 */
+        *, *::before, *::after {
+            -webkit-tap-highlight-color: transparent !important;
+            -webkit-touch-callout: none !important;
+            -webkit-user-select: none !important;
+        }
+
+        /* 防止任何可能的白色背景 */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #000000 !important;
+            z-index: -9999;
+        }
+
+        /* 确保root元素背景 */
+        :root {
+            background-color: #000000 !important;
+            background: #000000 !important;
             color-scheme: dark;
         }
 
+        /* 防止加载时的任何白色闪现 */
         #app {
-            background: transparent;
+            background: transparent !important;
         }
 
+        /* 隐藏未渲染的Vue内容 */
         [v-cloak] {
-            display: none;
+            display: none !important;
         }
     </style>
 
@@ -39,6 +117,54 @@
     <!-- 防止任何白色背景的额外保护 -->
     <meta name="color-scheme" content="dark">
     <meta name="supported-color-schemes" content="dark">
+
+    <!-- iOS Splash Screen - 深色加载画面 -->
+    <!-- 使用实际检测到的设备参数 -->
+
+    <!-- iPhone 17 Pro - 实际参数: 402x768 @ 3x, 物理分辨率: 1206x2304 -->
+    <!-- 主匹配 - 完整参数 -->
+    <link rel="apple-touch-startup-image" media="(device-width: 402px) and (device-height: 768px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="./img/splash/iphone-17-pro-portrait.png">
+    <link rel="apple-touch-startup-image" media="(device-width: 768px) and (device-height: 402px) and (-webkit-device-pixel-ratio: 3) and (orientation: landscape)" href="./img/splash/iphone-17-pro-landscape.png">
+
+    <!-- 备用匹配 - 不带orientation -->
+    <link rel="apple-touch-startup-image" media="(device-width: 402px) and (device-height: 768px) and (-webkit-device-pixel-ratio: 3)" href="./img/splash/iphone-17-pro-portrait.png">
+
+    <!-- 宽松匹配 - 只匹配宽度和像素比 -->
+    <link rel="apple-touch-startup-image" media="(device-width: 402px) and (-webkit-device-pixel-ratio: 3)" href="./img/splash/iphone-17-pro-portrait.png">
+
+    <!-- iPhone 14 Pro Max, 15 Pro Max -->
+    <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="./img/splash/iphone-plus-portrait.png">
+    <link rel="apple-touch-startup-image" media="(device-width: 932px) and (device-height: 430px) and (-webkit-device-pixel-ratio: 3) and (orientation: landscape)" href="./img/splash/iphone-plus-landscape.png">
+
+    <!-- iPhone 14 Pro, 15 Pro -->
+    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="./img/splash/iphone-pro-portrait.png">
+    <link rel="apple-touch-startup-image" media="(device-width: 852px) and (device-height: 393px) and (-webkit-device-pixel-ratio: 3) and (orientation: landscape)" href="./img/splash/iphone-pro-landscape.png">
+
+    <!-- iPhone 14, 13, 12 -->
+    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="./img/splash/iphone-pro-portrait.png">
+    <link rel="apple-touch-startup-image" media="(device-width: 844px) and (device-height: 390px) and (-webkit-device-pixel-ratio: 3) and (orientation: landscape)" href="./img/splash/iphone-pro-landscape.png">
+
+    <!-- iPhone 11 Pro, XS, X -->
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="./img/splash/iphone-pro-portrait.png">
+    <link rel="apple-touch-startup-image" media="(device-width: 812px) and (device-height: 375px) and (-webkit-device-pixel-ratio: 3) and (orientation: landscape)" href="./img/splash/iphone-pro-landscape.png">
+
+    <!-- iPhone 8 Plus, 7 Plus, 6s Plus, 6 Plus -->
+    <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="./img/splash/iphone-plus-portrait.png">
+    <link rel="apple-touch-startup-image" media="(device-width: 736px) and (device-height: 414px) and (-webkit-device-pixel-ratio: 3) and (orientation: landscape)" href="./img/splash/iphone-plus-landscape.png">
+
+    <!-- iPhone 8, 7, 6s, 6, SE (2nd/3rd gen) -->
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="./img/splash/iphone-pro-portrait.png">
+    <link rel="apple-touch-startup-image" media="(device-width: 667px) and (device-height: 375px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)" href="./img/splash/iphone-pro-landscape.png">
+
+    <!-- 通用fallback - 多层保护 -->
+    <!-- 第一层：使用iPhone 17 Pro的图片作为主fallback -->
+    <link rel="apple-touch-startup-image" href="./img/splash/iphone-17-pro-portrait.png">
+
+    <!-- 第二层：通用黑色图片 -->
+    <link rel="apple-touch-startup-image" href="./img/splash/universal-splash.png">
+
+    <!-- 第三层：1x1纯黑色兜底 -->
+    <link rel="apple-touch-startup-image" href="./img/splash/universal-black.png">
 
     <!-- 预加载关键资源以加快加载速度 -->
     <link rel="preconnect" href="https://unpkg.com" crossorigin>
