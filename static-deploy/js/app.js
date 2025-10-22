@@ -74,12 +74,6 @@ new Vue({
         this.selectType(this.currentType);
         this.detectPWAMode();
         this.checkPWAConfigMissing();
-
-        setTimeout(() => {
-            if (document && document.body && document.body.classList.contains('app-loading')) {
-                document.body.classList.remove('app-loading');
-            }
-        }, 2000);
     },
 
     methods: {

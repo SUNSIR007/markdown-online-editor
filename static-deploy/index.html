@@ -28,9 +28,6 @@
     <link rel="manifest" href="./site.webmanifest">
 
     <style>
-        :root {
-            color-scheme: dark;
-        }
         /* 关键样式 - 防止白屏闪烁，必须放在最前面 */
         /* 使用极高优先级和多层覆盖，确保在任何情况下都生效 */
         html {
@@ -72,6 +69,7 @@
         /* 加载占位符 - 在Vue渲染前显示 */
         #app::before {
             content: '';
+            display: block;
             position: fixed;
             top: 0;
             left: 0;
@@ -80,14 +78,14 @@
             background: #000000;
             z-index: 9999;
             pointer-events: none;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.2s ease;
+            animation: fadeOut 0.3s ease 0.5s forwards;
         }
 
-        body.app-loading #app::before {
-            opacity: 1;
-            visibility: visible;
+        @keyframes fadeOut {
+            to {
+                opacity: 0;
+                visibility: hidden;
+            }
         }
 
         /* 移动端初始样式 - 在 Vue 加载前就生效 */
@@ -134,7 +132,7 @@
     <script defer src="https://unpkg.com/element-ui@2.15.13/lib/index.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/vditor@3.9.4/dist/index.min.js"></script>
 </head>
-<body class="app-loading">
+<body>
     <div id="app" v-cloak>
         <div class="header">
             <div class="content-type-selector">

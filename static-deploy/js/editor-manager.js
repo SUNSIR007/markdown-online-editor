@@ -97,12 +97,6 @@ window.initVditor = function(vm) {
                 } else {
                     window.setupDesktopAutoFocus(vm);
                 }
-
-                requestAnimationFrame(() => {
-                    if (document && document.body) {
-                        document.body.classList.remove('app-loading');
-                    }
-                });
             });
         }
     });
