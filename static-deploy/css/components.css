@@ -117,16 +117,12 @@
     border: none !important;
     color: #111827 !important;
     font-weight: 600 !important;
-    display: inline-flex !important;
-    align-items: center;
-    justify-content: center;
-    height: 44px !important;
-    padding: 0 24px !important;
+    padding: 9px 24px !important;
     border-radius: 999px !important;
     box-shadow: none !important;
     transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease !important;
     position: relative;
-    top: 0;
+    top: -8px;
 }
 
 .publish-button.has-content {
