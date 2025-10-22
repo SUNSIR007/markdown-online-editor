@@ -182,9 +182,8 @@
         :root {
             color-scheme: dark;
         }
-
-        /* 最高优先级：确保页面立即显示黑色背景 */
-        /* 这些样式必须内联，确保不依赖外部CSS加载 */
+        /* 关键样式 - 防止白屏闪烁，必须放在最前面 */
+        /* 使用极高优先级和多层覆盖，确保在任何情况下都生效 */
         html {
             background-color: #000000 !important;
             background: #000000 !important;
@@ -209,47 +208,10 @@
             color: #e0e0e0;
             min-height: 100vh;
             min-height: -webkit-fill-available;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        }
-
-        /* 创建与启动画面一致的加载界面 */
-        #loading-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: #000000;
-            z-index: 99999;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-        }
-
-        #loading-screen .loading-text {
-            color: #888888;
-            font-size: 32px;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            margin-bottom: 30px;
-        }
-
-        #loading-screen .loading-dots {
-            display: flex;
-            gap: 20px;
-        }
-
-        #loading-screen .loading-dot {
-            width: 15px;
-            height: 15px;
-            border: 2px solid #666666;
-            background: transparent;
         }
 
         /* 覆盖所有可能的白色背景 */
         #app, .el-dialog__wrapper, .v-modal {
-            background-color: transparent !important;
-        }
             background-color: transparent !important;
         }
 
@@ -310,23 +272,13 @@
         }
     </style>
 
-    <!-- CSS 优先加载 - 改为异步加载，不阻塞首次绘制 -->
-    <link rel="preload" href="https://unpkg.com/element-ui@2.15.13/lib/theme-chalk/index.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <link rel="preload" href="https://cdn.jsdelivr.net/npm/vditor@3.9.4/dist/index.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <link rel="preload" href="css/base.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <link rel="preload" href="css/components.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <link rel="preload" href="css/editor.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <link rel="preload" href="css/mobile.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-
-    <!-- Fallback for browsers that don't support preload -->
-    <noscript>
-        <link rel="stylesheet" href="https://unpkg.com/element-ui@2.15.13/lib/theme-chalk/index.css">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vditor@3.9.4/dist/index.css">
-        <link rel="stylesheet" href="css/base.css">
-        <link rel="stylesheet" href="css/components.css">
-        <link rel="stylesheet" href="css/editor.css">
-        <link rel="stylesheet" href="css/mobile.css">
-    </noscript>
+    <!-- CSS 优先加载 - 阻塞渲染以防止白屏闪烁 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui@2.15.13/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vditor@3.9.4/dist/index.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/editor.css">
+    <link rel="stylesheet" href="css/mobile.css">
 
     <!-- External Libraries - JS 在 CSS 之后加载 -->
     <script defer src="https://unpkg.com/vue@2.6.14/dist/vue.min.js"></script>
@@ -334,33 +286,6 @@
     <script defer src="https://cdn.jsdelivr.net/npm/vditor@3.9.4/dist/index.min.js"></script>
 </head>
 <body class="app-loading" style="background-color: #000000 !important; background: #000000 !important; margin: 0; padding: 0;">
-    <!-- 加载界面：与启动画面完全一致，消除视觉跳跃 -->
-    <div id="loading-screen">
-        <div class="loading-text">Loading...</div>
-        <div class="loading-dots">
-            <div class="loading-dot"></div>
-            <div class="loading-dot"></div>
-            <div class="loading-dot"></div>
-        </div>
-    </div>
-
-    <script>
-        // 在Vue应用挂载后移除加载屏幕
-        window.addEventListener('load', function() {
-            // 给一点时间让CSS和内容加载完成
-            setTimeout(function() {
-                const loadingScreen = document.getElementById('loading-screen');
-                if (loadingScreen) {
-                    loadingScreen.style.opacity = '0';
-                    loadingScreen.style.transition = 'opacity 0.3s ease';
-                    setTimeout(function() {
-                        loadingScreen.style.display = 'none';
-                    }, 300);
-                }
-            }, 500);
-        });
-    </script>
-
     <div id="app" v-cloak>
         <div class="header">
             <div class="content-type-selector">
