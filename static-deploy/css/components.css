@@ -6,8 +6,6 @@
     border-bottom-color: #888;
     border-bottom: none;
     padding: 20px 28px;
-    padding-top: calc(20px + constant(safe-area-inset-top));
-    padding-top: calc(20px + env(safe-area-inset-top));
     box-shadow: 0 6px 30px rgba(0,0,0,0.15);
     color: white;
     position: sticky;
