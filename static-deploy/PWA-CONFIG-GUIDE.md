@@ -79,9 +79,10 @@ const hasGitHubConfig = localStorage.getItem('github-config');
 ```
 
 ### 启动图（Splash Screen）
-- 如需定制 iOS 启动画面，可根据机型在 `index.html` 中添加 `apple-touch-startup-image`
-- 目前默认不附带额外资源，保持页面体积最小，相关说明可参考 Apple 官方文档
-- 建议在确实需要品牌化启动图时再添加，并同步更新本指南记录尺寸
+- `static-deploy/index.html` 为常见 iPhone 机型声明了多条 `apple-touch-startup-image`
+- 目录 `static-deploy/img/splash/` 中包含逐机型的纯黑 PNG，以及 `generic-portrait.png` / `generic-landscape.png` 两个暗色通用占位
+- 若实际设备尺寸未覆盖，系统会退回到相应方向的通用占位，避免再次闪现白屏
+- 如需自定义画面，可替换对应 PNG 或新增尺寸并同步 `index.html` 的 `media` 条件
 
 ## 注意事项
 
