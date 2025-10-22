@@ -14,7 +14,7 @@ Vue.component('github-config', {
                 token: '',
                 owner: '',
                 repo: '',
-                branch: 'main',
+                branch: 'master',
                 imageDir: 'images'
             },
             linkRules: {
@@ -64,7 +64,7 @@ Vue.component('github-config', {
                 this.imageConfig = {
                     ...this.imageConfig,
                     ...parsed,
-                    branch: (parsed.branch || '').trim() || 'main',
+                    branch: (parsed.branch || '').trim() || 'master',
                     imageDir: (parsed.imageDir || '').trim() || 'images'
                 };
             } else {
