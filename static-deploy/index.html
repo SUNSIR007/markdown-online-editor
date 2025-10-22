@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>BlogWriter - GitHub Auto Deploy</title>
     <meta name="version" content="1.2">
 
@@ -62,31 +62,9 @@
             background-color: transparent !important;
         }
 
-        /* 防止页面加载时的样式闪烁 */
+        /* 防止页面加载时的内容闪烁 - Vue 渲染前隐藏内容 */
         [v-cloak] {
             display: none !important;
-        }
-
-        /* 加载占位符 - 在Vue渲染前显示 */
-        #app::before {
-            content: '';
-            display: block;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: #000000;
-            z-index: 9999;
-            pointer-events: none;
-            animation: fadeOut 0.3s ease 0.5s forwards;
-        }
-
-        @keyframes fadeOut {
-            to {
-                opacity: 0;
-                visibility: hidden;
-            }
         }
 
         /* 移动端初始样式 - 在 Vue 加载前就生效 */
@@ -120,16 +98,13 @@
         }
     </style>
 
-    <!-- CSS 优先加载 - 阻塞渲染以防止白屏闪烁 -->
+    <!-- CSS 优先加载 - 同步加载关键样式以防止闪白屏 -->
     <link rel="stylesheet" href="https://unpkg.com/element-ui@2.15.13/lib/theme-chalk/index.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vditor@3.9.4/dist/index.css">
     <link rel="stylesheet" href="css/base.css">
-    <link rel="preload" href="css/components.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="css/components.css"></noscript>
-    <link rel="preload" href="css/editor.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="css/editor.css"></noscript>
-    <link rel="preload" href="css/mobile.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="css/mobile.css"></noscript>
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/editor.css">
+    <link rel="stylesheet" href="css/mobile.css">
 
     <!-- External Libraries - JS 在 CSS 之后加载 -->
     <script defer src="https://unpkg.com/vue@2.6.14/dist/vue.min.js"></script>
