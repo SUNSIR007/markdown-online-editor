@@ -79,7 +79,7 @@
             background: #000000;
             z-index: 9999;
             pointer-events: none;
-            animation: fadeOut 0.3s ease 0.5s forwards;
+            animation: fadeOut 0.25s ease 0.12s forwards;
         }
 
         @keyframes fadeOut {
@@ -286,28 +286,12 @@
     <script defer src="github-service.js"></script>
     <script defer src="image-service.js"></script>
 
-    <!-- Application Scripts - Load but don't execute immediately -->
+    <!-- Application Scripts -->
     <script defer src="js/config.js"></script>
     <script defer src="js/github-config-component.js"></script>
     <script defer src="js/mobile-utils.js"></script>
     <script defer src="js/editor-manager.js"></script>
     <script defer src="js/image-handler.js"></script>
-
-    <!-- Vue 应用初始化 - 使用 DOMContentLoaded 确保所有资源加载完成 -->
-    <script>
-        // 等待DOM和所有资源（包括CSS）完全加载
-        document.addEventListener('DOMContentLoaded', function() {
-            // 初始化 Vue 应用
-            const script = document.createElement('script');
-            script.src = 'js/app.js';
-            document.head.appendChild(script);
-
-            // 初始化GitHub服务
-            if (!window.githubService) {
-                window.githubService = new GitHubService();
-                window.githubService.loadConfig();
-            }
-        });
-    </script>
+    <script defer src="js/app.js"></script>
 </body>
 </html>

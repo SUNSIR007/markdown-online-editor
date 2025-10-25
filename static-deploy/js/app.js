@@ -67,13 +67,8 @@ new Vue({
         this.isMobileView = window.isMobileDevice();
         window.setupMobileDefaults(this);
         window.setupViewportFixes(this);
-        window.initVditor(this);
-        this.checkGitHubConfig();
-        this.checkImageServiceConfig();
-        this.checkForEditFile();
-        this.selectType(this.currentType);
-        this.detectPWAMode();
-        this.checkPWAConfigMissing();
+        this.initEditorWhenIdle();
+        this.deferNonCriticalInit();
     },
 
     methods: {
@@ -329,6 +324,35 @@ new Vue({
 
         configureGitHub() {
             this.githubConfigVisible = true;
+        },
+
+        initEditorWhenIdle() {
+            const initEditor = () => {
+                window.initVditor(this);
+                this.selectType(this.currentType);
+            };
+
+            if ('requestIdleCallback' in window) {
+                requestIdleCallback(() => initEditor(), { timeout: 600 });
+            } else {
+                setTimeout(initEditor, 50);
+            }
+        },
+
+        deferNonCriticalInit() {
+            const runTasks = () => {
+                this.checkGitHubConfig();
+                this.checkImageServiceConfig();
+                this.checkForEditFile();
+                this.detectPWAMode();
+                this.checkPWAConfigMissing();
+            };
+
+            if ('requestIdleCallback' in window) {
+                requestIdleCallback(() => runTasks(), { timeout: 800 });
+            } else {
+                setTimeout(runTasks, 0);
+            }
         },
 
         handleGitHubConfigSave(payload) {
