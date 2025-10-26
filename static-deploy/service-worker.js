@@ -55,41 +55,62 @@ self.addEventListener('activate', (event) => {
     );
 });
 
+const cacheNavigationResponse = async (cache, requestKey, response) => {
+    if (!response || !response.ok) {
+        return;
+    }
+
+    const normalizedRequest = new Request(requestKey, {
+        headers: { 'Accept': 'text/html' }
+    });
+
+    await cache.put(normalizedRequest, response.clone());
+    await cache.put(NAVIGATION_FALLBACK, response.clone());
+};
+
 const handleNavigationRequest = async (event) => {
     const cache = await caches.open(APP_SHELL_CACHE);
-    const cachedShell = await cache.match(NAVIGATION_FALLBACK);
+    const cachedResponse = await cache.match(event.request, { ignoreSearch: true }) ||
+                           await cache.match(NAVIGATION_FALLBACK);
 
-    const preloadResponsePromise = event.preloadResponse
-        ? event.preloadResponse.then(async (response) => {
-            if (response && response.ok) {
-                await cache.put(NAVIGATION_FALLBACK, response.clone());
-            }
-            return response;
-        })
+    const preloadPromise = event.preloadResponse
+        ? event.preloadResponse.catch(() => null)
         : Promise.resolve(null);
 
-    const networkResponsePromise = fetch(event.request)
-        .then(async (response) => {
-            if (response && response.ok) {
-                await cache.put(NAVIGATION_FALLBACK, response.clone());
-            }
-            return response;
-        })
-        .catch(() => null);
+    const networkPromise = fetch(event.request).catch(() => null);
 
-    const preloadResponse = await preloadResponsePromise;
+    if (cachedResponse) {
+        event.waitUntil((async () => {
+            const preloadResponse = await preloadPromise;
+            if (preloadResponse) {
+                await cacheNavigationResponse(cache, event.request.url, preloadResponse);
+                return;
+            }
+
+            const networkResponse = await networkPromise;
+            if (networkResponse) {
+                await cacheNavigationResponse(cache, event.request.url, networkResponse);
+            }
+        })());
+
+        return cachedResponse;
+    }
+
+    const preloadResponse = await preloadPromise;
     if (preloadResponse) {
+        await cacheNavigationResponse(cache, event.request.url, preloadResponse);
         return preloadResponse;
     }
 
-    if (cachedShell) {
-        event.waitUntil(networkResponsePromise);
-        return cachedShell;
+    const networkResponse = await networkPromise;
+    if (networkResponse) {
+        await cacheNavigationResponse(cache, event.request.url, networkResponse);
+        return networkResponse;
     }
 
-    const networkResponse = await networkResponsePromise;
-    if (networkResponse) {
-        return networkResponse;
+    const fallback = await cache.match(NAVIGATION_FALLBACK);
+    if (fallback) {
+        return fallback;
     }
 
     return new Response('Offline', {
