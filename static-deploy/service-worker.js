@@ -12,8 +12,6 @@ const APP_SHELL = [
     './css/components.css',
     './css/editor.css',
     './css/mobile.css',
-    './css/vendor/element-ui@2.15.13.css',
-    './css/vendor/vditor@3.9.4.css',
     './img/icons/write.png',
     './img/icons/icon-192.png',
     './img/icons/icon-512.png',
