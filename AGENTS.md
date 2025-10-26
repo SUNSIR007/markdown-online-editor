@@ -21,15 +21,5 @@
 ## Commit & Pull Request Guidelines
 提交信息保持简洁，可选中英双语并附作用域标签（示例：`feat: 支持 Astro essays frontmatter`）。在提 PR 前与 `master` 同步、整理相关改动，说明用户可见影响、列出已执行的手动测试、上传关键界面截图或录屏，并标注所需 GitHub Token 权限和仓库角色。涉及部署或配置调整时请同步更新 `DEPLOY.md` 或其他指南并在 PR 中链接，方便审阅。团队需定期 review `CLAUDE.md` notes 以保持 automation docs 一致性。
 
-### 自动提交与推送流程
-为保证协作记录可追溯，所有 AGENT 在完成修改后都必须立即同步到本地与远程：
-
-1. `git add -A`：收集当前所有改动（含新增/删除文件）。
-2. `git commit -m "type(scope): 摘要"`：遵循简洁明了的提交规范，可中英双语，必要时附 `fix`、`feat` 等标签。
-3. `git push origin master`（或当前工作分支）：将最新提交推送到远程仓库，确保多端环境实时一致。
-4. 推送失败时，先 `git pull --rebase` 解决冲突，再重复上述步骤。
-
-如需批量自动化，可调用 `npm run auto-commit`（若不存在请自行添加脚本），其核心也必须执行上述 `add → commit → push` 流程，禁止跳过任何环节。
-
 ## Security & Configuration Tips
 GitHub Token 始终存放于浏览器本地缓存，勿写入仓库或截图。调整图床仓库、CDN 规则或默认分支时，需要更新 `image-service.js` 的 `linkRules`、`branch` 字段并同步 README 与指南说明。发布到外部站点前检查 `site.webmanifest`、`vercel.json`、`js/config.js` 是否满足新需求，避免遗留测试域名或调试配置；引入第三方脚本前确认来源可信并记录版本以便审计，及时清理共享设备上的缓存配置。

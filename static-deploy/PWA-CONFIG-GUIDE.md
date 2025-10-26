@@ -78,22 +78,6 @@ const hasImageConfig = localStorage.getItem('image-service-config');
 const hasGitHubConfig = localStorage.getItem('github-config');
 ```
 
-## 性能优化
-
-### Service Worker 预缓存
-- `service-worker.js` 负责缓存 `index.html`、核心 CSS/JS、图标和 `site.webmanifest`，首次加载后这些资源会直接从本地缓存中读取，消除 PWA 冷启动时的白屏。
-- 导航请求启用 `navigationPreload` 并采用 network-first + 缓存回退策略，断网或弱网都能秒开编辑器。
-
-### CDN 预热
-- 新增 `js/pwa-init.js` 在 Service Worker 就绪后向其发送 `WARMUP_CDN_CACHE` 消息，后台依次抓取 Vue、Element UI、Vditor 的 CSS/JS 并写入 CDN 专用缓存。
-- 预热动作放在 `requestIdleCallback` 中执行，不会阻塞首屏渲染，但可以显著降低再次打开 PWA 时的外链等待时间。
-
-### 自检步骤
-1. 在 `python -m http.server 8080` 启动后访问 `http://localhost:8080/index.html`，等待页面加载完成。
-2. 打开 DevTools → Application → Service Workers，确认 `service-worker.js` 状态为 *activated and is running*。
-3. 在 Network 面板选择 **Offline**，刷新页面应立即看到编辑器（`index.html` 来自 Service Worker 缓存）。
-4. 重新联网，观察首次刷新会触发少量 CDN 请求；再次刷新应命中 Service Worker 缓存（Status = `(memory cache) / service worker`），证明预热已生效。
-
 ## 注意事项
 
 1. **Token安全**: 请妥善保管你的GitHub Personal Access Token
