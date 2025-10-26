@@ -3,9 +3,11 @@ const APP_SHELL_CACHE = `blogwriter-shell-${CACHE_VERSION}`;
 const RUNTIME_CACHE = `blogwriter-runtime-${CACHE_VERSION}`;
 const CDN_CACHE = `blogwriter-cdn-${CACHE_VERSION}`;
 
+const NAVIGATION_FALLBACK = './index.html';
+
 const APP_SHELL = [
     './',
-    './index.html',
+    NAVIGATION_FALLBACK,
     './css/base.css',
     './css/components.css',
     './css/editor.css',
@@ -54,22 +56,46 @@ self.addEventListener('activate', (event) => {
 });
 
 const handleNavigationRequest = async (event) => {
-    try {
-        const preloadResponse = await event.preloadResponse;
-        if (preloadResponse) {
-            return preloadResponse;
-        }
+    const cache = await caches.open(APP_SHELL_CACHE);
+    const cachedShell = await cache.match(NAVIGATION_FALLBACK);
 
-        const networkResponse = await fetch(event.request);
-        return networkResponse;
-    } catch (error) {
-        const cache = await caches.open(APP_SHELL_CACHE);
-        const cachedResponse = await cache.match('./index.html');
-        if (cachedResponse) {
-            return cachedResponse;
-        }
-        throw error;
+    const preloadResponsePromise = event.preloadResponse
+        ? event.preloadResponse.then(async (response) => {
+            if (response && response.ok) {
+                await cache.put(NAVIGATION_FALLBACK, response.clone());
+            }
+            return response;
+        })
+        : Promise.resolve(null);
+
+    const networkResponsePromise = fetch(event.request)
+        .then(async (response) => {
+            if (response && response.ok) {
+                await cache.put(NAVIGATION_FALLBACK, response.clone());
+            }
+            return response;
+        })
+        .catch(() => null);
+
+    const preloadResponse = await preloadResponsePromise;
+    if (preloadResponse) {
+        return preloadResponse;
     }
+
+    if (cachedShell) {
+        event.waitUntil(networkResponsePromise);
+        return cachedShell;
+    }
+
+    const networkResponse = await networkResponsePromise;
+    if (networkResponse) {
+        return networkResponse;
+    }
+
+    return new Response('Offline', {
+        status: 503,
+        headers: { 'Content-Type': 'text/plain' }
+    });
 };
 
 const cacheFirst = async (request, cacheName = APP_SHELL_CACHE) => {
