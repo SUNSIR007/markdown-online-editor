@@ -84,6 +84,7 @@ const hasGitHubConfig = localStorage.getItem('github-config');
 - `service-worker.js` 负责缓存 `index.html`、核心 CSS/JS、图标和 `site.webmanifest`，首次加载后这些资源会直接从本地缓存中读取，消除 PWA 冷启动时的白屏。
 - 导航请求改为真正的「缓存优先 + 后台更新」策略：先立即返回缓存的 `index.html`（忽略查询参数匹配），与此同时在后台并行等待 `navigationPreload` 或常规网络请求并刷新缓存，彻底避免了因等待网络而导致的白屏闪烁。
 - 之前的实现会先 `await event.preloadResponse` 才读取缓存，等同于退化成 network-first，因此会在弱网或 PWA 冷启动时出现白屏；修复后所有导航都能在几毫秒内直接读取缓存。
+- Element UI 与 Vditor 的 CSS 现已本地化到 `css/vendor/` 并纳入 App Shell 预缓存，避免了偶发的远程 CSS 请求阻塞（这些第三方样式未命中浏览器缓存时会短暂以浏览器默认样式渲染，造成按钮/弹窗闪白）。
 
 ### CDN 预热
 - 新增 `js/pwa-init.js` 在 Service Worker 就绪后向其发送 `WARMUP_CDN_CACHE` 消息，后台依次抓取 Vue、Element UI、Vditor 的 CSS/JS 并写入 CDN 专用缓存。
