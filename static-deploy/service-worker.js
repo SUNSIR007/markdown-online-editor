@@ -55,62 +55,41 @@ self.addEventListener('activate', (event) => {
     );
 });
 
-const cacheNavigationResponse = async (cache, requestKey, response) => {
-    if (!response || !response.ok) {
-        return;
-    }
-
-    const normalizedRequest = new Request(requestKey, {
-        headers: { 'Accept': 'text/html' }
-    });
-
-    await cache.put(normalizedRequest, response.clone());
-    await cache.put(NAVIGATION_FALLBACK, response.clone());
-};
-
 const handleNavigationRequest = async (event) => {
     const cache = await caches.open(APP_SHELL_CACHE);
-    const cachedResponse = await cache.match(event.request, { ignoreSearch: true }) ||
-                           await cache.match(NAVIGATION_FALLBACK);
+    const cachedShell = await cache.match(NAVIGATION_FALLBACK);
 
-    const preloadPromise = event.preloadResponse
-        ? event.preloadResponse.catch(() => null)
+    const preloadResponsePromise = event.preloadResponse
+        ? event.preloadResponse.then(async (response) => {
+            if (response && response.ok) {
+                await cache.put(NAVIGATION_FALLBACK, response.clone());
+            }
+            return response;
+        })
         : Promise.resolve(null);
 
-    const networkPromise = fetch(event.request).catch(() => null);
-
-    if (cachedResponse) {
-        event.waitUntil((async () => {
-            const preloadResponse = await preloadPromise;
-            if (preloadResponse) {
-                await cacheNavigationResponse(cache, event.request.url, preloadResponse);
-                return;
+    const networkResponsePromise = fetch(event.request)
+        .then(async (response) => {
+            if (response && response.ok) {
+                await cache.put(NAVIGATION_FALLBACK, response.clone());
             }
+            return response;
+        })
+        .catch(() => null);
 
-            const networkResponse = await networkPromise;
-            if (networkResponse) {
-                await cacheNavigationResponse(cache, event.request.url, networkResponse);
-            }
-        })());
-
-        return cachedResponse;
-    }
-
-    const preloadResponse = await preloadPromise;
+    const preloadResponse = await preloadResponsePromise;
     if (preloadResponse) {
-        await cacheNavigationResponse(cache, event.request.url, preloadResponse);
         return preloadResponse;
     }
 
-    const networkResponse = await networkPromise;
-    if (networkResponse) {
-        await cacheNavigationResponse(cache, event.request.url, networkResponse);
-        return networkResponse;
+    if (cachedShell) {
+        event.waitUntil(networkResponsePromise);
+        return cachedShell;
     }
 
-    const fallback = await cache.match(NAVIGATION_FALLBACK);
-    if (fallback) {
-        return fallback;
+    const networkResponse = await networkResponsePromise;
+    if (networkResponse) {
+        return networkResponse;
     }
 
     return new Response('Offline', {
