@@ -3,11 +3,8 @@
   "short_name": "MarkdownEditor",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#010409",
-  "theme_color": "#010409",
-  "description": "BlogWriter - 极简深色 Markdown & Gallery 编辑器",
-  "scope": "./",
-  "orientation": "portrait",
+  "background_color": "#000000",
+  "theme_color": "#000000",
   "icons": [
     {
       "src": "./img/icons/icon-192.png",
