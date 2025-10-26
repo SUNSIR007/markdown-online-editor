@@ -526,7 +526,7 @@ new Vue({
             this.uploadProgress.messages = [];
         },
 
-        scheduleUploadProgressClose(delay = 900) {
+        scheduleUploadProgressClose(delay = 2400) {
             if (this.uploadProgressTimer) {
                 clearTimeout(this.uploadProgressTimer);
             }
