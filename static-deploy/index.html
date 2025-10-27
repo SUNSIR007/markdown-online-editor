@@ -2,16 +2,34 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>BlogWriter - GitHub Auto Deploy</title>
     <meta name="version" content="1.2">
 
     <!-- 移动设备状态栏样式 -->
     <meta name="theme-color" content="#000000">
+    <meta name="color-scheme" content="dark">
+    <meta name="supported-color-schemes" content="dark">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="BlogWriter">
     <meta name="msapplication-navbutton-color" content="#000000">
+
+    <script>
+        (function enforcePWADarkShell() {
+            const lockTheme = () => {
+                const root = document.documentElement;
+                root.style.backgroundColor = '#000000';
+                root.style.setProperty('color-scheme', 'dark');
+                const themeMeta = document.querySelector('meta[name="theme-color"]');
+                if (themeMeta) {
+                    themeMeta.setAttribute('content', '#000000');
+                }
+            };
+            lockTheme();
+            window.addEventListener('pageshow', lockTheme);
+        })();
+    </script>
 
     <!-- iOS Splash Screen - 防止白屏 -->
     <link rel="apple-touch-startup-image" href="./img/icons/apple-touch-icon.png">
@@ -31,6 +49,14 @@
     <style>
         /* 关键样式 - 防止白屏闪烁，必须放在最前面 */
         /* 使用极高优先级和多层覆盖，确保在任何情况下都生效 */
+        :root {
+            background-color: #000000 !important;
+            background: #000000 !important;
+            color-scheme: dark;
+            --safe-area-top: env(safe-area-inset-top, 0px);
+            --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+        }
+
         html {
             background-color: #000000 !important;
             background: #000000 !important;
@@ -57,9 +83,36 @@
             min-height: -webkit-fill-available;
         }
 
+        body::before,
+        body::after {
+            content: '';
+            position: fixed;
+            left: 0;
+            right: 0;
+            background: #000000;
+            pointer-events: none;
+            z-index: 10000;
+        }
+
+        body::before {
+            top: 0;
+            height: var(--safe-area-top);
+        }
+
+        body::after {
+            bottom: 0;
+            height: var(--safe-area-bottom);
+        }
+
         /* 覆盖所有可能的白色背景 */
         #app, .el-dialog__wrapper, .v-modal {
             background-color: transparent !important;
+        }
+
+        #app {
+            box-sizing: border-box !important;
+            padding-top: var(--safe-area-top);
+            padding-bottom: var(--safe-area-bottom);
         }
 
         /* 防止页面加载时的样式闪烁 */
