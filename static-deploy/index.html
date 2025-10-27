@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" style="background-color: #000000; color: #e0e0e0;">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -8,6 +8,8 @@
 
     <!-- 移动设备状态栏样式 -->
     <meta name="theme-color" content="#000000">
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000000">
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#000000">
     <meta name="color-scheme" content="dark">
     <meta name="supported-color-schemes" content="dark">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -189,7 +191,7 @@
     <script defer src="https://unpkg.com/element-ui@2.15.13/lib/index.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/vditor@3.9.4/dist/index.min.js"></script>
 </head>
-<body>
+<body bgcolor="#000000" style="background-color: #000000; color: #e0e0e0;">
     <div id="app" v-cloak>
         <div class="header">
             <div class="content-type-selector">
