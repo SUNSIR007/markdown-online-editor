@@ -171,9 +171,6 @@
                         multiple
                         style="display: none;"
                         @change="handleMobileImageChange">
-                    <button v-if="isPWAMode && !isImageServiceConfigured" class="github-config-button quick-config-button" @click="showQuickConfig" title="PWA快速配置">
-                        <i class="el-icon-magic-stick"></i>
-                    </button>
                     <el-button
                         @click="publish"
                         size="medium"

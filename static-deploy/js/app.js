@@ -39,7 +39,6 @@ new Vue({
                 visible: false,
                 content: ''
             },
-            isPWAMode: false,
             galleryPreview: {
                 url: null,
                 fileName: '',
@@ -344,8 +343,6 @@ new Vue({
                 this.checkGitHubConfig();
                 this.checkImageServiceConfig();
                 this.checkForEditFile();
-                this.detectPWAMode();
-                this.checkPWAConfigMissing();
             };
 
             if ('requestIdleCallback' in window) {
@@ -382,96 +379,6 @@ new Vue({
 
         checkImageServiceConfig() {
             this.isImageServiceConfigured = window.imageService && window.imageService.isConfigured();
-        },
-
-        detectPWAMode() {
-            this.isPWAMode = window.navigator.standalone === true ||
-                             window.matchMedia('(display-mode: standalone)').matches;
-        },
-
-        checkPWAConfigMissing() {
-            const isPWA = window.navigator.standalone === true ||
-                          window.matchMedia('(display-mode: standalone)').matches;
-
-            if (isPWA) {
-                setTimeout(() => {
-                    const hasImageConfig = localStorage.getItem('image-service-config');
-                    const hasGitHubConfig = localStorage.getItem('github-config');
-
-                    if (!hasImageConfig || !hasGitHubConfig) {
-                        this.showPWAConfigDialog();
-                    }
-                }, 1000);
-            }
-        },
-
-        showPWAConfigDialog() {
-            this.$confirm(
-                'PWA模式下需要重新配置。这是因为PWA和浏览器使用不同的存储空间。是否现在配置？',
-                'PWA配置提醒',
-                {
-                    confirmButtonText: '立即配置',
-                    cancelButtonText: '稍后配置',
-                    type: 'info',
-                    customClass: 'pwa-config-dialog'
-                }
-            ).then(() => {
-                this.githubConfigVisible = true;
-            }).catch(() => {
-                this.$message({
-                    message: '提示：图片上传功能需要先配置GitHub仓库信息',
-                    type: 'warning',
-                    duration: 5000
-                });
-            });
-        },
-
-        showQuickConfig() {
-            this.$prompt('请输入GitHub Token:', '快速配置', {
-                confirmButtonText: '确定',
-                cancelButtonText: '取消',
-                inputType: 'password',
-                inputPlaceholder: '请输入您的GitHub Personal Access Token'
-            }).then(({ value }) => {
-                if (value) {
-                    this.applyQuickConfig(value);
-                }
-            }).catch(() => {
-                this.$message.info('已取消配置');
-            });
-        },
-
-        applyQuickConfig(token) {
-            const imageConfig = {
-                token: token,
-                owner: 'SUNSIR007',
-                repo: 'picx-images-hosting',
-                branch: 'master',
-                imageDir: 'images'
-            };
-
-            const githubConfig = {
-                token: token,
-                owner: 'SUNSIR007',
-                repo: 'markdown-online-editor'
-            };
-
-            localStorage.setItem('image-service-config', JSON.stringify(imageConfig));
-            localStorage.setItem('github-config', JSON.stringify(githubConfig));
-            localStorage.setItem('image-service-link-rule', 'jsdelivr');
-
-            if (window.imageService) {
-                window.imageService.setConfig(imageConfig);
-                window.imageService.setLinkRule('jsdelivr');
-            }
-            if (window.githubService) {
-                window.githubService.setConfig(githubConfig);
-            }
-
-            this.checkGitHubConfig();
-            this.checkImageServiceConfig();
-
-            this.$message.success('快速配置完成！');
         },
 
         handleImageUpload(files) {

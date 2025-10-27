@@ -821,49 +821,6 @@ button.save-button:active,
     margin-bottom: 0;
 }
 
-/* PWA Config Dialog */
-.pwa-config-dialog .el-message-box {
-    width: 90% !important;
-    max-width: 400px !important;
-}
-
-.pwa-config-dialog .el-message-box__message {
-    font-size: 14px !important;
-    line-height: 1.6 !important;
-    color: #606266 !important;
-}
-
-.pwa-config-dialog .el-message-box__btns {
-    padding: 15px 20px 20px !important;
-}
-
-.pwa-config-dialog .el-button {
-    font-size: 14px !important;
-    padding: 8px 16px !important;
-}
-
-/* Quick Config Button */
-.quick-config-button {
-    background: linear-gradient(45deg, #FF6B6B, #4ECDC4) !important;
-    border: none !important;
-    animation: quickConfigPulse 2s infinite;
-}
-
-.quick-config-button:hover {
-    background: linear-gradient(45deg, #FF5252, #26C6DA) !important;
-    transform: scale(1.05);
-}
-
-@keyframes quickConfigPulse {
-    0%, 100% {
-        box-shadow: 0 0 5px rgba(255, 107, 107, 0.5);
-    }
-    50% {
-        box-shadow: 0 0 15px rgba(78, 205, 196, 0.7);
-    }
-}
-
-
 /* Upload Progress Dialog - Modern */
 .el-dialog__wrapper .upload-progress-dialog,
 .upload-progress-dialog {
