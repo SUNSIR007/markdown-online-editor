@@ -8,7 +8,7 @@ const imageHandlerDebugLog = (...args) => {
 // 处理图片上传
 window.handleImageUpload = async function(vm, files) {
     if (!vm.isImageServiceConfigured) {
-        vm.$message.warning('请先配置图床服务');
+        vm.$message.warning('图床配置缺失，请检查部署环境变量');
         return Promise.reject('图床未配置');
     }
 
@@ -138,7 +138,7 @@ window.handleImageUpload = async function(vm, files) {
 // 触发移动端图片上传
 window.triggerMobileImageUpload = function(vm) {
     if (!vm.isImageServiceConfigured) {
-        vm.$message.warning('请先配置图床服务');
+        vm.$message.warning('图床配置缺失，请检查部署环境变量');
         return;
     }
 

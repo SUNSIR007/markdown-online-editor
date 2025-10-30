@@ -59,12 +59,16 @@
 
 ### 构建设置
 - **Framework Preset**: Other
-- **Build Command**: 留空或 `echo "Static site"`
-- **Output Directory**: 留空（使用根目录）
-- **Install Command**: 留空
+- **Build Command**: `npm run build`
+- **Output Directory**: `static-deploy`
+- **Install Command**: `npm install`
 
 ### 环境变量
-无需设置环境变量，所有配置都在客户端完成。
+部署前在 Vercel 项目中添加以下变量（本地调试可放在 `.env.local`）：
+- `MARKDOWN_EDITOR_GITHUB_TOKEN` / `MARKDOWN_EDITOR_GITHUB_OWNER` / `MARKDOWN_EDITOR_GITHUB_REPO`
+- `MARKDOWN_EDITOR_IMAGE_TOKEN`（可选，默认复用 GitHub Token）
+- `MARKDOWN_EDITOR_IMAGE_OWNER`、`MARKDOWN_EDITOR_IMAGE_REPO`、`MARKDOWN_EDITOR_IMAGE_BRANCH`
+- `MARKDOWN_EDITOR_IMAGE_DIR`、`MARKDOWN_EDITOR_IMAGE_LINK_RULE`
 
 ## 🔧 部署后配置
 
@@ -74,9 +78,8 @@
 
 2. **测试功能**
    - 访问部署的 URL
-   - 测试编辑器功能
-   - 配置 GitHub 集成
-   - 测试发布功能
+   - 验证发布与图片上传是否正常
+   - 查看控制台确认未出现环境变量缺失提示
 
 3. **自定义域名（可选）**
    - 在 Vercel 项目设置中添加自定义域名
@@ -115,8 +118,8 @@
 ## 🔒 安全注意事项
 
 1. **GitHub Token 安全**
-   - Token 存储在浏览器 localStorage 中
-   - 不会发送到服务器
+   - Token 仅存在于部署平台的环境变量中，构建时注入运行时配置
+   - 请勿在仓库、日志或截图中泄露 Token
    - 建议使用最小权限的 Token
 
 2. **HTTPS**

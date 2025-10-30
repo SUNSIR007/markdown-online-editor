@@ -20,7 +20,7 @@
    - 自动插入Markdown图片链接
 
 3. **用户界面**
-   - 图片配置面板
+   - 环境变量驱动的零界面配置
    - 上传进度显示
    - 错误处理和用户反馈
    - 响应式设计
@@ -38,15 +38,13 @@
 # your-username/image-hosting
 ```
 
-### 2. 配置图床服务
-1. 打开编辑器页面
-2. 点击图片配置按钮（📷图标）
-3. 填写配置信息：
-   - GitHub Token
-   - 仓库所有者
-   - 图床仓库名
-   - 选择CDN服务
-4. 测试连接并保存
+### 2. 配置环境变量
+- 在 Vercel 控制台或本地 `.env.local` 中设置：
+  - `MARKDOWN_EDITOR_GITHUB_TOKEN` / `MARKDOWN_EDITOR_GITHUB_OWNER` / `MARKDOWN_EDITOR_GITHUB_REPO`
+  - `MARKDOWN_EDITOR_IMAGE_TOKEN`（可选，默认复用 GitHub Token）
+  - `MARKDOWN_EDITOR_IMAGE_OWNER`、`MARKDOWN_EDITOR_IMAGE_REPO`、`MARKDOWN_EDITOR_IMAGE_BRANCH`
+  - `MARKDOWN_EDITOR_IMAGE_DIR`、`MARKDOWN_EDITOR_IMAGE_LINK_RULE`
+- 执行 `npm run build` 生成 `static-deploy/js/runtime-config.js`
 
 ### 3. 开始使用
 - **拖拽**：将图片拖到编辑器
@@ -89,7 +87,7 @@ static-deploy/
 - **进度跟踪**：实时显示上传进度
 
 ### 安全性
-- **Token管理**：本地存储，不会泄露
+- **Token管理**：通过环境变量注入，避免写入仓库或日志
 - **权限检查**：自动验证仓库权限
 - **错误处理**：完善的错误提示和处理
 
@@ -111,10 +109,10 @@ static-deploy/
 
 访问 `test-image-upload.html` 可以独立测试图片上传功能：
 
-1. **配置测试**：验证GitHub连接
-2. **上传测试**：测试各种上传方式
-3. **链接测试**：验证生成的CDN链接
-4. **批量测试**：测试多文件上传
+1. **环境准备**：确认变量已设置并执行 `npm run build`
+2. **上传测试**：尝试拖拽、粘贴、按钮等方式
+3. **链接验证**：检查生成的 CDN 链接是否可访问
+4. **批量测试**：测试多文件上传表现
 
 ## 📊 性能优化
 

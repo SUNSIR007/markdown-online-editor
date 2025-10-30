@@ -159,19 +159,6 @@
                 position: relative !important;
                 top: -6px !important;
             }
-
-            .github-config-button {
-                width: auto !important;
-                height: auto !important;
-                padding: 8px !important;
-                background: transparent !important;
-                border: none !important;
-                box-shadow: none !important;
-                border-radius: 0 !important;
-                backdrop-filter: none !important;
-                position: relative !important;
-                top: -6px !important;
-            }
         }
     </style>
 
@@ -208,12 +195,9 @@
                     </el-button>
                 </div>
                 <div class="action-buttons">
-                    <button class="github-config-button" @click="configureGitHub" :title="isGitHubConfigured ? 'GitHub已配置' : '配置GitHub'">
-                        <i class="el-icon-setting"></i>
-                    </button>
                     <button
                         v-if="isMobileView"
-                        class="github-config-button mobile-upload-button"
+                        class="toolbar-icon-button mobile-upload-button"
                         @click="triggerMobileImageUpload"
                         title="上传图片">
                         <i class="el-icon-picture-outline"></i>
@@ -252,12 +236,6 @@
 
             <div id="vditor"></div>
         </div>
-
-        <github-config
-            :visible="githubConfigVisible"
-            @close="githubConfigVisible = false"
-            @save="handleGitHubConfigSave">
-        </github-config>
 
         <!-- 上传进度提示 -->
         <el-dialog
@@ -335,12 +313,12 @@
     </div>
 
     <!-- Service Scripts -->
+    <script defer src="js/runtime-config.js"></script>
     <script defer src="github-service.js"></script>
     <script defer src="image-service.js"></script>
 
     <!-- Application Scripts -->
     <script defer src="js/config.js"></script>
-    <script defer src="js/github-config-component.js"></script>
     <script defer src="js/mobile-utils.js"></script>
     <script defer src="js/editor-manager.js"></script>
     <script defer src="js/image-handler.js"></script>

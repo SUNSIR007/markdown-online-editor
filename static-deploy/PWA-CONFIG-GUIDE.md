@@ -2,89 +2,50 @@
 
 ## 问题描述
 
-当你在Safari浏览器中使用网站时，图片上传功能正常工作。但是当你将网站"添加到主屏幕"并从主屏幕打开应用时，会出现"图片上传失败：仓库不存在或权限不足，请检查配置"的错误。
+旧版本在 Safari 浏览器与“添加到主屏幕”的 PWA 模式之间切换时，由于使用浏览器 `localStorage` 持久化配置，导致 PWA 模式无法读取到 GitHub 与图床设置，从而出现“图片上传失败：仓库不存在或权限不足，请检查配置”的错误提示。
 
 ## 问题原因
 
-这是iOS的安全机制导致的：
-
-1. **不同的存储空间**: PWA模式（保存到主屏幕）和Safari浏览器使用完全不同的localStorage存储空间
-2. **配置隔离**: 在Safari中保存的配置信息无法在PWA模式下访问
-3. **安全考虑**: 这是为了防止不同应用之间的数据泄露
+iOS 出于安全考虑，会为 Safari 与 PWA 分配完全独立的存储空间，`localStorage`、`IndexedDB` 等数据互不共享。因此，当配置仅保存在浏览器端时，PWA 启动后无法访问这些信息。
 
 ## 解决方案
 
-我们已经实现了以下解决方案：
+当前版本已改为使用 **构建时注入的环境变量** 提供仓库与图床配置，彻底规避了存储隔离问题，无论在 Safari 还是 PWA 模式下都能读取到相同的配置。
 
-### 1. 自动检测PWA模式
-- 应用启动时自动检测是否运行在PWA模式
-- 如果检测到配置缺失，会自动提示用户
+### 1. 环境变量统一配置
+- 在 Vercel 或本地 `.env.local` 中设置以下变量：
+  - `MARKDOWN_EDITOR_GITHUB_TOKEN` / `MARKDOWN_EDITOR_GITHUB_OWNER` / `MARKDOWN_EDITOR_GITHUB_REPO`
+  - `MARKDOWN_EDITOR_IMAGE_TOKEN` / `MARKDOWN_EDITOR_IMAGE_OWNER` / `MARKDOWN_EDITOR_IMAGE_REPO`
+  - 可选：`MARKDOWN_EDITOR_IMAGE_BRANCH`、`MARKDOWN_EDITOR_IMAGE_DIR`、`MARKDOWN_EDITOR_IMAGE_LINK_RULE`
+- 执行 `npm run build`，由 `scripts/generate-runtime-config.js` 生成 `static-deploy/js/runtime-config.js`
 
-### 2. PWA配置提醒对话框
-当在PWA模式下检测到配置缺失时，会显示友好的提醒对话框：
-```
-PWA模式下需要重新配置。这是因为PWA和浏览器使用不同的存储空间。是否现在配置？
-```
+### 2. 运行时只读配置
+- 应用启动时直接读取 `window.RuntimeConfig`，无需本地表单交互
+- 同一份配置同时适用于浏览器与 PWA，避免重复输入与潜在偏差
 
-### 3. 快速配置功能
-- 在PWA模式下且未配置时，工具栏会显示一个彩色的"魔法棒"按钮
-- 点击后只需输入GitHub Token，其他配置会自动填入
-- 使用预设的仓库信息，简化配置过程
-
-### 4. 改进的错误提示
-图片上传失败时会显示更明确的错误信息：
-- PWA模式：`图床未配置，PWA模式下需要重新配置GitHub仓库信息`
-- 浏览器模式：`图床未配置，请先配置GitHub仓库信息`
+### 3. 改进的错误提示
+当检测到环境变量缺失时，界面会提示：
+- PWA 模式：`图床配置缺失，请在部署环境变量中提供图床仓库信息`
+- 浏览器模式：`图床配置缺失，请检查部署环境变量`
 
 ## 使用步骤
 
-### 在PWA模式下首次配置：
+### 部署 / 生产环境
+1. 在部署平台填入上述环境变量
+2. 配置构建命令 `npm run build`，输出目录 `static-deploy`
+3. 发布后即可在浏览器与 PWA 中直接使用上传功能
 
-1. **自动提醒**: 应用启动后会自动检测并显示配置提醒
-2. **快速配置**: 点击工具栏的彩色魔法棒按钮
-3. **输入Token**: 只需输入你的GitHub Personal Access Token
-4. **自动完成**: 其他配置信息会自动填入
-
-### 手动配置：
-
-1. 点击工具栏的图片按钮（相机图标）
-2. 在配置对话框中填入完整信息：
-   - GitHub Token
-   - 仓库所有者
-   - 仓库名称
-   - 分支名称
-   - 图片目录
-
-## 预设配置信息
-
-快速配置使用以下预设信息：
-- **仓库所有者**: SUNSIR007
-- **图片仓库**: picx-images-hosting
-- **分支**: master
-- **图片目录**: images
-- **CDN规则**: jsdelivr
-
-## 技术实现
-
-### PWA检测代码
-```javascript
-const isPWA = window.navigator.standalone === true || 
-              window.matchMedia('(display-mode: standalone)').matches;
-```
-
-### 配置检查
-```javascript
-const hasImageConfig = localStorage.getItem('image-service-config');
-const hasGitHubConfig = localStorage.getItem('github-config');
-```
+### 本地调试
+1. 在根目录创建 `.env.local` 并填入同样的环境变量
+2. 运行 `npm run build && npm start`
+3. 访问 `http://localhost:8080/index.html` 或“添加到主屏幕”进行测试
 
 ## 注意事项
 
-1. **Token安全**: 请妥善保管你的GitHub Personal Access Token
-2. **权限设置**: 确保Token有足够的权限访问目标仓库
-3. **网络连接**: 图片上传需要稳定的网络连接
-4. **存储隔离**: PWA和浏览器的配置是完全独立的，需要分别配置
-5. **主屏幕图标**: 如需自定义图标，请在 `static-deploy/img/icons/` 下放置素材，并按照下方步骤生成 `apple-touch-icon.png`、`icon-192.png`、`icon-512.png` 与 `icon-512-maskable.png`
+1. **Token 安全**：环境变量中包含的 Token 不会写入仓库，但仍需妥善保管
+2. **变量变更**：更新环境变量后请重新执行 `npm run build`
+3. **离线模式**：PWA 离线时暂不可上传，需在联网状态下使用
+4. **主屏幕图标**：如需自定义图标，请按下方步骤生成资源
 
 ### 自定义主屏幕图标
 
@@ -108,20 +69,20 @@ const hasGitHubConfig = localStorage.getItem('github-config');
 
 访问 `/test-pwa-config.html` 可以测试PWA模式检测功能：
 - 查看当前运行模式
-- 检查配置状态
-- 测试配置对话框
-- 清除/设置测试配置
+- 检查环境变量注入结果
+- 验证缺失配置时的提示信息
+- 清除/设置测试数据
 
 ## 常见问题
 
-**Q: 为什么Safari和PWA需要分别配置？**
-A: 这是iOS的安全机制，不同应用使用独立的存储空间，无法共享数据。
+**Q: Safari 和 PWA 还需要分别配置吗？**
+A: 不需要，配置来自统一的环境变量，浏览器与 PWA 会读取同一份 `runtime-config`。
 
-**Q: 快速配置安全吗？**
-A: 是的，配置信息只保存在本地localStorage中，不会发送到其他服务器。
+**Q: 环境变量存储是否安全？**
+A: Token 只存在于部署平台的环境变量中，构建时注入前端，最终文件不会回写到仓库，请勿泄露部署后台权限。
 
-**Q: 可以修改预设的仓库信息吗？**
-A: 可以，你可以使用手动配置功能设置自己的仓库信息。
+**Q: 如何调整仓库或图床配置？**
+A: 修改环境变量后重新部署（或本地执行 `npm run build`），生成的 `runtime-config.js` 会自动更新。
 
-**Q: PWA模式有什么优势？**
-A: PWA模式提供更接近原生应用的体验，包括全屏显示、离线缓存等功能。
+**Q: PWA 模式有什么优势？**
+A: PWA 提供更接近原生的体验，包括全屏显示、独立图标以及有限的离线缓存能力。

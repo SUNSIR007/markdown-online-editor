@@ -39,29 +39,25 @@ dachexiao1
 ### 1. 打开编辑器
 访问 `index.html` 查看主页，然后点击"开始写作"进入编辑器。
 
-### 2. 配置GitHub（可选）
-如果要使用发布功能，需要配置GitHub：
+### 2. 配置部署环境（必需）
+发布与图床功能均依赖构建时注入的环境变量，请在 Vercel 项目或本地 `.env` 文件中设置：
 
-1. 获取GitHub Personal Access Token
-   - 访问 [GitHub Settings > Tokens](https://github.com/settings/tokens)
-   - 创建新token，确保有`repo`权限
+- `MARKDOWN_EDITOR_GITHUB_TOKEN`：GitHub Personal Access Token（至少具备 `repo` 范围）
+- `MARKDOWN_EDITOR_GITHUB_OWNER`：目标仓库的拥有者（用户名或组织名）
+- `MARKDOWN_EDITOR_GITHUB_REPO`：用于发布内容的仓库名
+- `MARKDOWN_EDITOR_IMAGE_TOKEN`（可选）：图床仓库 Token，默认复用 `MARKDOWN_EDITOR_GITHUB_TOKEN`
+- `MARKDOWN_EDITOR_IMAGE_OWNER`（可选）：图床仓库拥有者，默认复用 GitHub 配置
+- `MARKDOWN_EDITOR_IMAGE_REPO`（可选）：图床仓库名，默认与内容仓库一致
+- `MARKDOWN_EDITOR_IMAGE_BRANCH`（可选）：图床分支，默认 `main`
+- `MARKDOWN_EDITOR_IMAGE_DIR`（可选）：图床根目录，默认 `images`
+- `MARKDOWN_EDITOR_IMAGE_LINK_RULE`（可选）：CDN 规则，默认 `jsdelivr`
 
-2. 在编辑器中点击"配置GitHub"
-3. 填写以下信息：
-   - **Personal Token**: 你的GitHub token
-   - **仓库所有者**: GitHub用户名或组织名
-   - **仓库名称**: 目标仓库名称
+完成变量配置后执行 `npm run build` 将其写入 `static-deploy/js/runtime-config.js`，再运行 `npm start` 预览。
 
-4. 点击"测试连接"验证配置
-5. 保存配置
-
-### 3. 配置图床（可选）
-如果要使用图片上传功能：
-
-1. 建议创建专门的图床仓库（与博客仓库分开）
-2. 点击图片配置按钮（📷图标）
-3. 填写图床仓库信息和选择CDN服务
-4. 详细配置说明请参考 [图床功能使用指南](static-deploy/IMAGE_UPLOAD_GUIDE.md)
+### 3. 本地调试（可选）
+- 在根目录创建 `.env.local` 并填充上述变量
+- 运行 `npm run build && npm start`
+- 访问 `http://localhost:8080/index.html` 验证仓库与图床功能
 
 ### 4. 开始写作
 
@@ -128,7 +124,7 @@ description: "随笔描述"
 - **UI组件**: Element UI
 - **编辑器**: Vditor
 - **API集成**: GitHub REST API
-- **存储**: localStorage（配置和缓存）
+- **存储**: localStorage（草稿缓存）
 
 ## 🎨 主题功能
 
@@ -146,16 +142,17 @@ description: "随笔描述"
 
 ## 🔒 安全说明
 
-- GitHub token仅存储在浏览器本地
-- 不会发送到任何第三方服务器
-- 建议使用最小权限的token（仅repo权限）
+- GitHub Token 存放于部署平台的环境变量中，构建时注入前端，不会写入仓库
+- 本地调试可通过 `.env.local` + `npm run build` 生成运行时配置，请避免提交敏感文件
+- 仍建议将 Token 权限限制在 `repo` 所需范围内
 
 ## 🚀 部署到Vercel
 
-1. 将所有文件上传到GitHub仓库
-2. 在Vercel中导入仓库
-3. 设置构建命令为空（静态文件）
-4. 部署完成
+1. 将仓库推送到 GitHub
+2. 在 Vercel 中导入项目
+3. 设置 Environment Variables（同上表）
+4. 配置构建命令：Build Command `npm run build`，Output Directory `static-deploy`
+5. 发起部署，Vercel 会在构建阶段生成 `js/runtime-config.js`
 
 ## 📝 使用示例
 

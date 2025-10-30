@@ -10,7 +10,6 @@ new Vue({
             vditor: null,
             currentType: window.AppConfig.contentTypes.ESSAY,
             metadata: {},
-            githubConfigVisible: false,
             contentTypeLabels: window.AppConfig.contentTypeLabels,
             isGitHubConfigured: false,
             isDarkMode: true,
@@ -72,11 +71,15 @@ new Vue({
 
     methods: {
         checkGitHubConfig() {
-            const config = localStorage.getItem('github-config');
-            this.isGitHubConfigured = !!config;
-            if (config && window.githubService) {
-                const parsedConfig = JSON.parse(config);
-                window.githubService.setConfig(parsedConfig);
+            if (window.githubService && typeof window.githubService.loadConfig === 'function') {
+                window.githubService.loadConfig();
+            }
+            this.isGitHubConfigured = window.githubService ? window.githubService.isConfigured() : false;
+            if (!this.isGitHubConfigured) {
+                console.warn('GitHub 配置缺失，请检查环境变量设置');
+                if (this.$message) {
+                    this.$message.warning('GitHub 配置缺失，请检查部署环境变量');
+                }
             }
         },
 
@@ -90,7 +93,7 @@ new Vue({
 
         async loadFileForEdit(filePath) {
             if (!this.isGitHubConfigured) {
-                this.$message.warning('请先配置GitHub');
+                this.$message.warning('GitHub 配置缺失，请检查部署环境变量');
                 return;
             }
             try {
@@ -213,7 +216,7 @@ new Vue({
 
         async publish() {
             if (!this.isGitHubConfigured) {
-                this.$message.warning('请先配置GitHub');
+                this.$message.warning('GitHub 配置缺失，请检查部署环境变量');
                 return;
             }
 
@@ -321,10 +324,6 @@ new Vue({
             }
         },
 
-        configureGitHub() {
-            this.githubConfigVisible = true;
-        },
-
         initEditorWhenIdle() {
             const initEditor = () => {
                 window.initVditor(this);
@@ -352,33 +351,21 @@ new Vue({
             }
         },
 
-        handleGitHubConfigSave(payload) {
-            const githubConfig = payload?.github || payload;
-            const imageConfig = payload?.image;
-            const linkRule = payload?.linkRule;
-
-            if (githubConfig && window.githubService) {
-                window.githubService.setConfig(githubConfig);
-            }
-
-            if (imageConfig && window.imageService) {
-                window.imageService.setConfig(imageConfig);
-                if (linkRule && typeof window.imageService.setLinkRule === 'function') {
-                    window.imageService.setLinkRule(linkRule);
-                }
-            }
-
-            this.checkGitHubConfig();
-            this.checkImageServiceConfig();
-            this.$message.success('配置已保存');
-        },
-
         focusEditor() {
             window.focusEditor(this);
         },
 
         checkImageServiceConfig() {
-            this.isImageServiceConfigured = window.imageService && window.imageService.isConfigured();
+            if (window.imageService && typeof window.imageService.loadConfig === 'function') {
+                window.imageService.loadConfig();
+            }
+            this.isImageServiceConfigured = window.imageService ? window.imageService.isConfigured() : false;
+            if (!this.isImageServiceConfigured) {
+                console.warn('图床配置缺失，请检查部署环境变量');
+                if (this.$message) {
+                    this.$message.warning('图床配置缺失，请检查部署环境变量');
+                }
+            }
         },
 
         handleImageUpload(files) {

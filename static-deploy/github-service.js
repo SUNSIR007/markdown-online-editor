@@ -9,6 +9,7 @@ class GitHubService {
     this.token = null
     this.owner = null
     this.repo = null
+    this.branch = null
   }
 
   /**
@@ -18,24 +19,23 @@ class GitHubService {
    * @param {string} config.owner - 仓库所有者
    * @param {string} config.repo - 仓库名称
    */
-  setConfig(config) {
-    this.token = config.token
-    this.owner = config.owner
-    this.repo = config.repo
-
-    // 保存到localStorage
-    localStorage.setItem('github-config', JSON.stringify(config))
+  setConfig(config = {}) {
+    if (!config || typeof config !== 'object') {
+      return
+    }
+    this.token = (config.token || '').trim()
+    this.owner = (config.owner || '').trim()
+    this.repo = (config.repo || '').trim()
+    this.branch = (config.branch || '').trim() || null
   }
 
   /**
-   * 从localStorage加载配置
+   * 从运行时配置加载
    */
   loadConfig() {
-    const saved = localStorage.getItem('github-config')
-    if (saved) {
-      const config = JSON.parse(saved)
-      this.setConfig(config)
-      return config
+    if (typeof window !== 'undefined' && window.RuntimeConfig && window.RuntimeConfig.github) {
+      this.setConfig(window.RuntimeConfig.github)
+      return window.RuntimeConfig.github
     }
     return null
   }

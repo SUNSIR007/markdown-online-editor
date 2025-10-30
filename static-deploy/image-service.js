@@ -14,7 +14,7 @@ class ImageService {
     this.token = null
     this.owner = null
     this.repo = null
-    this.branch = 'master' // 默认使用master分支
+    this.branch = 'main' // 默认使用main分支
     
     // CDN链接规则配置
     this.linkRules = {
@@ -80,42 +80,39 @@ class ImageService {
    * @param {string} config.branch - 分支名称
    * @param {string} config.imageDir - 图片目录
    */
-  setConfig(config) {
+  setConfig(config = {}) {
+    if (!config || typeof config !== 'object') {
+      return
+    }
+
     const owner = (config.owner || '').trim()
     const repo = (config.repo || '').trim()
-    const branch = (config.branch || 'master').trim()
+    const branch = (config.branch || 'main').trim()
 
     this.token = (config.token || '').trim()
     this.owner = owner
     this.repo = repo
-    this.branch = branch || 'master'
+    this.branch = branch || 'main'
 
     // 清理imageDir，确保不以斜杠开头或结尾
     let imageDir = (config.imageDir || 'images').trim()
     this.imageDir = imageDir.replace(/^\/+|\/+$/g, '') || 'images'
 
-    // 保存到localStorage
-    const normalizedConfig = {
-      ...config,
-      token: this.token,
-      owner: this.owner,
-      repo: this.repo,
-      branch: this.branch,
-      imageDir: this.imageDir
+    if (config.linkRule) {
+      const matchedRule = this.findRuleKey(config.linkRule)
+      if (matchedRule) {
+        this.selectedLinkRule = matchedRule
+      }
     }
-
-    localStorage.setItem('image-service-config', JSON.stringify(normalizedConfig))
   }
 
   /**
-   * 从localStorage加载配置
+   * 从运行时配置加载
    */
   loadConfig() {
-    const saved = localStorage.getItem('image-service-config')
-    if (saved) {
-      const config = JSON.parse(saved)
-      this.setConfig(config)
-      return config
+    if (typeof window !== 'undefined' && window.RuntimeConfig && window.RuntimeConfig.imageService) {
+      this.setConfig(window.RuntimeConfig.imageService)
+      return window.RuntimeConfig.imageService
     }
     return null
   }
@@ -135,7 +132,6 @@ class ImageService {
     const matchedKey = this.findRuleKey(ruleId)
     if (matchedKey) {
       this.selectedLinkRule = matchedKey
-      localStorage.setItem('image-service-link-rule', matchedKey)
     }
   }
 
@@ -143,11 +139,7 @@ class ImageService {
    * 获取当前CDN链接规则
    */
   getLinkRule() {
-    const saved = localStorage.getItem('image-service-link-rule')
-    const matchedKey = this.findRuleKey(saved)
-    if (matchedKey) {
-      this.selectedLinkRule = matchedKey
-    } else if (!this.linkRules[this.selectedLinkRule]) {
+    if (!this.linkRules[this.selectedLinkRule]) {
       this.selectedLinkRule = Object.keys(this.linkRules)[0]
     }
     return this.linkRules[this.selectedLinkRule]
@@ -788,8 +780,8 @@ class ImageService {
                     window.matchMedia('(display-mode: standalone)').matches;
 
       const errorMsg = isPWA
-        ? '图床未配置，PWA模式下需要重新配置GitHub仓库信息'
-        : '图床未配置，请先配置GitHub仓库信息';
+        ? '图床配置缺失，请在部署环境变量中提供图床仓库信息'
+        : '图床配置缺失，请检查部署环境变量';
 
       throw new Error(errorMsg)
     }

@@ -38,17 +38,17 @@
 4. 选择权限：勾选 `repo` (完整仓库权限)
 5. 点击 "Generate token" 并复制Token
 
-### 3. 配置图床服务
-1. 在编辑器页面点击图片配置按钮（📷图标）
-2. 填写配置信息：
-   - **GitHub Token**：刚才获取的Token
-   - **仓库所有者**：你的GitHub用户名
-   - **图床仓库名**：专用图床仓库名称
-   - **分支名称**：默认为 `main`
-   - **图片目录**：默认为 `images`
-   - **CDN服务**：推荐选择 `jsDelivr`
-3. 点击 "测试连接" 验证配置
-4. 点击 "保存配置"
+### 3. 配置图床服务（部署阶段）
+在部署平台或本地 `.env.local` 中写入以下变量（未显式设置时会自动复用 GitHub 配置）：
+
+- `MARKDOWN_EDITOR_IMAGE_TOKEN`：图床仓库使用的 Token
+- `MARKDOWN_EDITOR_IMAGE_OWNER`：图床仓库拥有者
+- `MARKDOWN_EDITOR_IMAGE_REPO`：图床仓库名
+- `MARKDOWN_EDITOR_IMAGE_BRANCH`：上传目标分支（默认 `main`）
+- `MARKDOWN_EDITOR_IMAGE_DIR`：图片根目录（默认 `images`）
+- `MARKDOWN_EDITOR_IMAGE_LINK_RULE`：CDN 规则标识（默认 `jsdelivr`）
+
+保存变量后执行 `npm run build` 生成更新的 `static-deploy/js/runtime-config.js`。
 
 ## 🎯 使用方法
 
@@ -123,19 +123,20 @@ this.linkRules['CustomCDN'] = {
 ## 🚨 注意事项
 
 1. **仓库分离**：建议使用专门的图床仓库，不要与博客仓库混用
-2. **Token安全**：妥善保管GitHub Token，不要泄露给他人
+2. **Token安全**：通过环境变量注入 Token，避免将 `.env.local` 或生成的 `runtime-config.js`（含敏感值）提交到仓库
 3. **文件大小**：单个文件不超过10MB
 4. **CDN缓存**：jsDelivr等CDN服务有缓存，更新可能需要等待
 5. **网络环境**：国内访问jsDelivr可能较慢，可选择中国jsDelivr
+6. **变量更新**：调整环境变量后需重新执行 `npm run build` 以刷新运行时配置
 
 ## 🧪 测试功能
 
 访问 `test-image-upload.html` 可以测试图片上传功能：
 
-1. 配置图床服务
-2. 测试连接
+1. 确认相关环境变量已设置并执行 `npm run build`
+2. 打开测试页面
 3. 上传图片
-4. 查看结果和链接
+4. 查看返回的链接与调试信息
 
 ## 🔧 故障排除
 
@@ -149,9 +150,9 @@ this.linkRules['CustomCDN'] = {
 - 检查图片文件是否存在
 - 尝试更换CDN服务
 
-### 配置丢失
-- 检查浏览器localStorage
-- 重新配置图床服务
+### 配置缺失
+- 确认部署环境变量填写正确并重新执行 `npm run build`
+- 检查生成的 `static-deploy/js/runtime-config.js` 是否包含最新值（勿提交到仓库）
 
 ## 📞 技术支持
 
