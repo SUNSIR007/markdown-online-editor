@@ -1,12 +1,4 @@
-# Ignore Vue.js project files
+# Ignore only heavy local artifacts
 node_modules/
-src/
-public/
 tests/
 *.config.js
-package.json
-package-lock.json
-yarn.lock
-
-# Keep only static-deploy directory
-!static-deploy/
