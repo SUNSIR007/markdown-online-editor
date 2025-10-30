@@ -10,7 +10,7 @@
     "serve": "cd static-deploy && python -m http.server 8080"
   },
   "engines": {
-    "node": ">=14.0.0"
+    "node": "22.x"
   },
   "keywords": [
     "markdown",
