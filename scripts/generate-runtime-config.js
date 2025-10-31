@@ -1,7 +1,10 @@
 const fs = require('fs');
 const path = require('path');
 
-const runtimeConfigPath = path.join(__dirname, '..', 'static-deploy', 'js', 'runtime-config.js');
+const rootDir = path.join(__dirname, '..');
+const staticDeployDir = path.join(rootDir, 'static-deploy');
+const runtimeConfigPath = path.join(staticDeployDir, 'js', 'runtime-config.js');
+const publicDir = path.join(rootDir, 'public');
 
 const readEnv = (key) => {
     const value = process.env[key];
@@ -53,3 +56,15 @@ fs.mkdirSync(path.dirname(runtimeConfigPath), { recursive: true });
 fs.writeFileSync(runtimeConfigPath, banner, 'utf8');
 
 console.log('Runtime configuration written to', path.relative(process.cwd(), runtimeConfigPath));
+
+try {
+    fs.rmSync(publicDir, { recursive: true, force: true });
+    fs.cpSync(staticDeployDir, publicDir, {
+        recursive: true,
+        filter: (src) => !src.includes(`${path.sep}.git`)
+    });
+    console.log('Static assets copied to', path.relative(process.cwd(), publicDir));
+} catch (copyError) {
+    console.warn('Copy static assets failed:', copyError.message);
+    process.exitCode = 1;
+}
