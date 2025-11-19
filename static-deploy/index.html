@@ -203,7 +203,7 @@
                 <div class="action-buttons">
                     <button v-if="isMobileView" class="toolbar-icon-button mobile-upload-button"
                         @click="triggerMobileImageUpload" title="上传图片">
-                        <i class="el-icon-picture-outline"></i>
+                        <img src="./img/icons/upload-icon.png" alt="上传图片">
                     </button>
                     <input v-if="isMobileView" ref="mobileImageInput" type="file" accept="image/*" multiple
                         style="display: none;" @change="handleMobileImageChange">
