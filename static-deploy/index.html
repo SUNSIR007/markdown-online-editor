@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>BlogWriter - GitHub Auto Deploy</title>
-    <meta name="version" content="1.2">
+    <meta name="version" content="1.3">
 
     <style>
         /* 关键样式 - 防止白屏闪烁，必须放在最前面 */
@@ -210,6 +210,30 @@
 <body bgcolor="#0f172a" style="background-color: #0f172a; color: #f1f5f9;">
     <!-- 加载覆盖层 - 防止启动图消失后的白屏 -->
     <div id="loading-overlay"></div>
+    <script>
+        // 立即确保覆盖层可见
+        (function () {
+            const overlay = document.getElementById('loading-overlay');
+            if (overlay) {
+                overlay.style.display = 'flex';
+                overlay.style.opacity = '1';
+                console.log('[Loading] Overlay activated at:', new Date().toISOString());
+            }
+
+            // 定义全局函数用于隐藏覆盖层
+            window.hideLoadingOverlay = function () {
+                const overlay = document.getElementById('loading-overlay');
+                if (overlay) {
+                    console.log('[Loading] Hiding overlay at:', new Date().toISOString());
+                    overlay.classList.add('hide');
+                    setTimeout(() => {
+                        overlay.remove();
+                        console.log('[Loading] Overlay removed');
+                    }, 300);
+                }
+            };
+        })();
+    </script>
 
     <div id="app" v-cloak>
         <div class="header">
