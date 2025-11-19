@@ -7,48 +7,6 @@
     <title>BlogWriter - GitHub Auto Deploy</title>
     <meta name="version" content="1.2">
 
-    <!-- 移动设备状态栏样式 -->
-    <meta name="theme-color" content="#0f172a">
-    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f172a">
-    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#0f172a">
-    <meta name="color-scheme" content="dark">
-    <meta name="supported-color-schemes" content="dark">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta name="apple-mobile-web-app-title" content="BlogWriter">
-    <meta name="msapplication-navbutton-color" content="#000000">
-
-    <script>
-        (function enforcePWADarkShell() {
-            const lockTheme = () => {
-                const root = document.documentElement;
-                root.style.backgroundColor = '#0f172a';
-                root.style.setProperty('color-scheme', 'dark');
-                const themeMeta = document.querySelector('meta[name="theme-color"]');
-                if (themeMeta) {
-                    themeMeta.setAttribute('content', '#0f172a');
-                }
-            };
-            lockTheme();
-            window.addEventListener('pageshow', lockTheme);
-        })();
-    </script>
-
-    <!-- iOS Splash Screen - 防止白屏 -->
-    <link rel="apple-touch-startup-image" href="./img/icons/apple-touch-icon.png">
-
-    <!-- 预加载关键资源以加快加载速度 -->
-    <link rel="preconnect" href="https://unpkg.com" crossorigin>
-    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-    <link rel="dns-prefetch" href="https://unpkg.com">
-    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
-    <link rel="preconnect" href="https://api.github.com" crossorigin>
-    <link rel="dns-prefetch" href="https://api.github.com">
-
-    <link rel="icon" type="image/png" href="./img/icons/write.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="./img/icons/apple-touch-icon.png">
-    <link rel="manifest" href="./site.webmanifest">
-
     <style>
         /* 关键样式 - 防止白屏闪烁，必须放在最前面 */
         /* 使用极高优先级和多层覆盖，确保在任何情况下都生效 */
@@ -166,9 +124,62 @@
         }
     </style>
 
+    <!-- 移动设备状态栏样式 -->
+    <meta name="theme-color" content="#0f172a">
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f172a">
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#0f172a">
+    <meta name="color-scheme" content="dark">
+    <meta name="supported-color-schemes" content="dark">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="BlogWriter">
+    <meta name="msapplication-navbutton-color" content="#0f172a">
+
+    <script>
+        (function enforcePWADarkShell() {
+            const lockTheme = () => {
+                const root = document.documentElement;
+                root.style.backgroundColor = '#0f172a';
+                root.style.setProperty('color-scheme', 'dark');
+                const themeMeta = document.querySelector('meta[name="theme-color"]');
+                if (themeMeta) {
+                    themeMeta.setAttribute('content', '#0f172a');
+                }
+            };
+            lockTheme();
+            window.addEventListener('pageshow', lockTheme);
+        })();
+    </script>
+
+
+    <!-- iOS Splash Screen - 防止白屏 -->
+    <link rel="apple-touch-startup-image" href="./img/icons/apple-touch-icon.png">
+
+    <!-- 预加载关键资源以加快加载速度 -->
+    <link rel="preconnect" href="https://unpkg.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="dns-prefetch" href="https://unpkg.com">
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+    <link rel="preconnect" href="https://api.github.com" crossorigin>
+    <link rel="dns-prefetch" href="https://api.github.com">
+
+    <link rel="icon" type="image/png" href="./img/icons/write.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="./img/icons/apple-touch-icon.png">
+    <link rel="manifest" href="./site.webmanifest">
+
     <!-- CSS 优先加载 - 阻塞渲染以防止白屏闪烁 -->
-    <link rel="stylesheet" href="https://unpkg.com/element-ui@2.15.13/lib/theme-chalk/index.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vditor@3.9.4/dist/index.css">
+    <link rel="preload" href="https://unpkg.com/element-ui@2.15.13/lib/theme-chalk/index.css" as="style"
+        onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+        <link rel="stylesheet" href="https://unpkg.com/element-ui@2.15.13/lib/theme-chalk/index.css">
+    </noscript>
+
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/vditor@3.9.4/dist/index.css" as="style"
+        onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vditor@3.9.4/dist/index.css">
+    </noscript>
+
     <link rel="stylesheet" href="css/base.css">
     <link rel="preload" href="css/components.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <noscript>
