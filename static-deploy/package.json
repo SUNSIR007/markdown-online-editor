@@ -4,7 +4,7 @@
   "description": "BlogWriter static deployment",
   "main": "index.html",
   "scripts": {
-    "build": "echo 'Static site - no build needed'"
+    "build": "rm -rf public && node ../scripts/generate-runtime-config.js && mv ../public ./public"
   },
   "engines": {
     "node": "22.x"
