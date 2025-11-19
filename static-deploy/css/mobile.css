@@ -2,39 +2,37 @@
 
 @media (max-width: 768px) {
     .header {
-        padding: 14px 20px 8px;
-        background: #000000 !important;
+        padding: 12px 16px;
+        background: rgba(15, 23, 42, 0.85) !important;
+        backdrop-filter: blur(12px) !important;
+        -webkit-backdrop-filter: blur(12px) !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     }
 
     .content-type-selector {
         max-width: 100%;
-        gap: 16px;
+        gap: 12px;
         flex-direction: row;
         align-items: center;
         justify-content: space-between;
-        gap: 12px;
-        justify-content: space-between !important;
-        padding: 0 16px;
+        padding: 0;
     }
 
     .editor-container {
-        margin: 16px auto;
-        border-radius: 12px;
-        max-width: calc(100% - 32px);
-        box-shadow: 0 6px 24px rgba(0,0,0,0.1), 0 2px 6px rgba(0,0,0,0.06);
-        height: calc(var(--vh, 1vh) * 100 - 70px) !important;
-        margin: 0 !important;
-        border-radius: 0 !important;
-        border: none !important;
-        box-shadow: none !important;
-        max-width: 100% !important;
+        margin: 16px 12px !important;
+        border-radius: var(--radius-lg) !important;
+        max-width: calc(100% - 24px) !important;
+        box-shadow: var(--shadow-lg) !important;
+        height: calc(var(--vh, 1vh) * 100 - 80px) !important;
+        border: 1px solid rgba(255, 255, 255, 0.05) !important;
+        background: var(--bg-surface) !important;
         flex: 1 1 auto !important;
         min-height: 0 !important;
     }
 
     .editor-container:hover {
         transform: none !important;
-        box-shadow: none !important;
+        box-shadow: var(--shadow-lg) !important;
     }
 
     /* 移动端编辑器内边距调整 */
@@ -42,9 +40,9 @@
     .vditor-wysiwyg .vditor-wysiwyg__main,
     .vditor-sv .vditor-sv__main,
     .vditor-preview {
-        padding: 20px 18px !important;
-        font-size: 20px !important;
-        line-height: 1.75 !important;
+        padding: 20px 16px !important;
+        font-size: 17px !important;
+        line-height: 1.6 !important;
     }
 
     .vditor-ir .vditor-ir__main textarea,
@@ -53,145 +51,103 @@
     .vditor-ir .vditor-reset,
     .vditor-wysiwyg .vditor-reset,
     .vditor-preview .vditor-reset {
-        font-size: 20px !important;
-        line-height: 1.75 !important;
+        font-size: 17px !important;
+        line-height: 1.6 !important;
     }
 
     .type-buttons {
-        display: flex;
-        gap: 10px;
-        flex-shrink: 0;
         display: none !important;
     }
 
     .action-buttons {
         display: flex;
-        gap: 10px;
-        flex-shrink: 0;
+        gap: 12px;
         width: 100%;
-        flex: 1;
         align-items: center;
-        order: -1;
+        justify-content: flex-end;
     }
 
     .action-buttons .publish-button {
-        margin-left: auto;
+        margin-left: 0;
     }
 
     /* 优化移动端按钮样式 */
-    .type-buttons .el-button {
-        padding: 11px 18px !important;
-        font-size: 15px !important;
-        font-weight: 500 !important;
-        border-radius: 20px !important;
-    }
-
     .toolbar-icon-button {
-        width: auto !important;
-        height: auto !important;
-        padding: 8px !important;
+        width: 40px !important;
+        height: 40px !important;
+        padding: 0 !important;
         background: transparent !important;
         border: none !important;
         box-shadow: none !important;
-        border-radius: 0 !important;
-        backdrop-filter: none !important;
+        border-radius: var(--radius-full) !important;
         display: inline-flex !important;
         align-items: center !important;
         justify-content: center !important;
-        position: relative !important;
-        top: -6px !important;
+    }
+
+    .toolbar-icon-button:active {
+        background: var(--bg-surface-hover) !important;
     }
 
     .toolbar-icon-button i {
-        font-size: 22px !important;
+        font-size: 24px !important;
+        color: var(--text-main) !important;
     }
 
     .toolbar-icon-button img {
-        width: 22px !important;
-        height: 22px !important;
+        width: 24px !important;
+        height: 24px !important;
     }
 
-    .publish-button {
-        padding: 8px 18px !important;
+    .el-button.publish-button {
+        padding: 8px 20px !important;
         font-size: 14px !important;
-        border-radius: 999px !important;
-        min-height: 44px !important;
-        min-width: 96px !important;
+        height: 36px !important;
+        min-width: auto !important;
         display: inline-flex !important;
         align-items: center !important;
         justify-content: center !important;
-        position: relative !important;
-        top: -6px !important;
+        top: 0 !important;
     }
 
     /* Dialog */
     body {
-        font-size: 17px !important;
-    }
-
-    .header {
-        font-size: 18px !important;
+        font-size: 16px !important;
     }
 
     .el-dialog {
         width: 90% !important;
-        max-width: 400px !important;
+        max-width: 360px !important;
         margin: 0 auto !important;
-        top: 15vh !important;
-        transform: none !important;
+        top: 50% !important;
+        transform: translateY(-50%) !important;
+        border-radius: var(--radius-lg) !important;
     }
 
     .el-dialog__header {
-        padding: 15px 20px 10px !important;
+        padding: 16px 20px !important;
     }
 
     .el-dialog__body {
-        padding: 10px 20px 20px !important;
+        padding: 0 20px 20px !important;
         max-height: 60vh !important;
         overflow-y: auto !important;
     }
 
     .el-dialog__footer {
-        padding: 10px 20px 15px !important;
-    }
-
-    .publish-button {
-        padding: 9px 16px !important;
-        font-size: 14px !important;
-    }
-
-    .type-buttons,
-    .action-buttons {
-        gap: 8px;
-    }
-
-    .el-dialog {
-        width: 95% !important;
-        max-width: 350px !important;
-        top: 10vh !important;
-    }
-
-    .el-dialog__header {
-        padding: 12px 15px 8px !important;
-    }
-
-    .el-dialog__body {
-        padding: 8px 15px 15px !important;
-        max-height: 65vh !important;
-        font-size: 14px !important;
-    }
-
-    .el-dialog__footer {
-        padding: 8px 15px 12px !important;
+        padding: 16px 20px !important;
     }
 
     /* 移动端表单元素优化 */
     .el-input__inner {
         font-size: 16px !important;
+        height: 40px !important;
+        line-height: 40px !important;
     }
 
     .el-button {
-        padding: 8px 15px !important;
+        padding: 8px 16px !important;
         font-size: 14px !important;
+        height: 36px !important;
     }
 }
