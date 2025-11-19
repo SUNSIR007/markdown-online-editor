@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" style="background-color: #000000; color: #e0e0e0;">
+<html lang="zh-CN" style="background-color: #0f172a; color: #f1f5f9;">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -7,9 +7,9 @@
     <meta name="version" content="1.2">
 
     <!-- 移动设备状态栏样式 -->
-    <meta name="theme-color" content="#000000">
-    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000000">
-    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#000000">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f172a">
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#0f172a">
     <meta name="color-scheme" content="dark">
     <meta name="supported-color-schemes" content="dark">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -21,11 +21,11 @@
         (function enforcePWADarkShell() {
             const lockTheme = () => {
                 const root = document.documentElement;
-                root.style.backgroundColor = '#000000';
+                root.style.backgroundColor = '#0f172a';
                 root.style.setProperty('color-scheme', 'dark');
                 const themeMeta = document.querySelector('meta[name="theme-color"]');
                 if (themeMeta) {
-                    themeMeta.setAttribute('content', '#000000');
+                    themeMeta.setAttribute('content', '#0f172a');
                 }
             };
             lockTheme();
@@ -52,16 +52,16 @@
         /* 关键样式 - 防止白屏闪烁，必须放在最前面 */
         /* 使用极高优先级和多层覆盖，确保在任何情况下都生效 */
         :root {
-            background-color: #000000 !important;
-            background: #000000 !important;
+            background-color: #0f172a !important;
+            background: #0f172a !important;
             color-scheme: dark;
             --safe-area-top: env(safe-area-inset-top, 0px);
             --safe-area-bottom: env(safe-area-inset-bottom, 0px);
         }
 
         html {
-            background-color: #000000 !important;
-            background: #000000 !important;
+            background-color: #0f172a !important;
+            background: #0f172a !important;
         }
 
         html::before {
@@ -71,16 +71,16 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: #000000 !important;
+            background: #0f172a !important;
             z-index: -1;
         }
 
         body {
             margin: 0;
             padding: 0;
-            background-color: #000000 !important;
-            background: #000000 !important;
-            color: #e0e0e0;
+            background-color: #0f172a !important;
+            background: #0f172a !important;
+            color: #f1f5f9;
             min-height: 100vh;
             min-height: -webkit-fill-available;
         }
@@ -91,7 +91,7 @@
             position: fixed;
             left: 0;
             right: 0;
-            background: #000000;
+            background: #0f172a;
             pointer-events: none;
             z-index: 10000;
         }
@@ -131,7 +131,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: #000000;
+            background: #0f172a;
             z-index: 9999;
             pointer-events: none;
             animation: fadeOut 0.25s ease 0.12s forwards;
@@ -178,7 +178,7 @@
     <script defer src="https://unpkg.com/element-ui@2.15.13/lib/index.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/vditor@3.9.4/dist/index.min.js"></script>
 </head>
-<body bgcolor="#000000" style="background-color: #000000; color: #e0e0e0;">
+<body bgcolor="#0f172a" style="background-color: #0f172a; color: #f1f5f9;">
     <div id="app" v-cloak>
         <div class="header">
             <div class="content-type-selector">

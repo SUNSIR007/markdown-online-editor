@@ -1,5 +1,7 @@
 /* 编辑器样式 - Editor Styles */
 
+/* 编辑器样式 - Editor Styles */
+
 .editor-container {
     display: flex;
     flex-direction: column;
@@ -7,20 +9,20 @@
     min-height: 0;
     height: calc(var(--vh, 1vh) * 100 - 130px);
     padding: 0;
-    background: #000000 !important;
+    background: var(--bg-surface) !important;
     margin: 24px auto;
-    border-radius: 16px;
+    border-radius: var(--radius-lg);
     overflow: hidden;
-    box-shadow: 0 4px 20px rgba(255,255,255,0.05);
-    border: 1px solid #333333 !important;
+    box-shadow: var(--shadow-xl);
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
     max-width: 1200px;
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(12px);
     transition: all 0.3s ease;
 }
 
 .editor-container:hover {
-    box-shadow: 0 12px 40px rgba(0,0,0,0.15), 0 4px 12px rgba(0,0,0,0.1);
-    transform: translateY(-2px);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    border-color: rgba(255, 255, 255, 0.1) !important;
 }
 
 .editor-container.keyboard-open {
@@ -45,7 +47,9 @@
 
 #vditor,
 .vditor {
-    background: #000000 !important;
+    background: var(--bg-surface) !important;
+    --vditor-border-color: var(--border-color);
+    --vditor-toolbar-bg: var(--bg-surface);
 }
 
 /* Vditor Editor Content */
@@ -56,6 +60,7 @@
     max-width: none !important;
     font-size: 18px;
     line-height: 1.75;
+    color: var(--text-main) !important;
 }
 
 .vditor-preview {
@@ -63,6 +68,7 @@
     max-width: none !important;
     font-size: 18px;
     line-height: 1.75;
+    color: var(--text-main) !important;
 }
 
 .vditor-ir .vditor-ir__main textarea {
@@ -78,29 +84,39 @@
 
 /* Vditor Toolbar */
 .vditor-toolbar {
-    background: #000000 !important;
-    border-bottom-color: #888 !important;
+    background: var(--bg-surface) !important;
+    border-bottom: 1px solid var(--border-color) !important;
+    padding-left: 10px !important;
+}
+
+.vditor-toolbar__item {
+    color: var(--text-secondary) !important;
+}
+
+.vditor-toolbar__item:hover {
+    color: var(--text-main) !important;
+    background-color: var(--bg-surface-hover) !important;
 }
 
 .vditor-content,
 .vditor-wysiwyg,
 .vditor-wysiwyg .vditor-wysiwyg__main {
-    background: #000000 !important;
-    color: #e0e0e0 !important;
+    background: var(--bg-surface) !important;
+    color: var(--text-main) !important;
 }
 
 .vditor-wysiwyg__main,
 .vditor-wysiwyg__main .vditor-wysiwyg__main,
 .vditor-wysiwyg .vditor-wysiwyg__main .vditor-wysiwyg__main,
-.vditor-wysiwyg__main > div,
-.vditor-wysiwyg__main .vditor-wysiwyg__main > div,
+.vditor-wysiwyg__main>div,
+.vditor-wysiwyg__main .vditor-wysiwyg__main>div,
 .vditor-wysiwyg__main[contenteditable="true"],
 .vditor-ir,
 .vditor-ir .vditor-ir__main,
 .vditor-ir .vditor-ir__main textarea {
-    background: #000000 !important;
-    background-color: #000000 !important;
-    color: #e0e0e0 !important;
+    background: var(--bg-surface) !important;
+    background-color: var(--bg-surface) !important;
+    color: var(--text-main) !important;
 }
 
 .vditor-preview,
@@ -109,8 +125,8 @@
 .vditor-sv .vditor-sv__main,
 .vditor-sv .vditor-sv__preview,
 .vditor-sv .vditor-sv__preview .vditor-reset {
-    background: #000000 !important;
-    color: #e0e0e0 !important;
+    background: var(--bg-surface) !important;
+    color: var(--text-main) !important;
 }
 
 .vditor-wysiwyg *,
@@ -137,23 +153,24 @@
 .vditor-preview .language-yaml,
 .vditor-preview pre[data-lang="yaml"],
 .vditor-preview code.language-yaml {
-    background: #002FA7 !important;
-    color: white !important;
-    border: 1px solid #0033B8 !important;
+    background: rgba(59, 130, 246, 0.1) !important;
+    color: var(--text-main) !important;
+    border: 1px solid rgba(59, 130, 246, 0.2) !important;
+    border-radius: var(--radius-md) !important;
 }
 
 .vditor-ir pre.vditor-ir__marker--pre code,
 .vditor-wysiwyg pre code {
-    background: #002FA7 !important;
-    color: white !important;
+    background: rgba(59, 130, 246, 0.1) !important;
+    color: var(--text-main) !important;
 }
 
-.vditor-preview hr + pre,
-.vditor-preview hr + pre code {
-    background: #002FA7 !important;
-    color: white !important;
-    border: 2px solid #0033B8 !important;
-    border-radius: 6px !important;
+.vditor-preview hr+pre,
+.vditor-preview hr+pre code {
+    background: rgba(59, 130, 246, 0.1) !important;
+    color: var(--text-main) !important;
+    border: 1px solid rgba(59, 130, 246, 0.2) !important;
+    border-radius: var(--radius-md) !important;
 }
 
 .vditor-preview pre,
@@ -162,26 +179,30 @@
 .vditor-preview .hljs-attr,
 .vditor-preview .hljs-string,
 .vditor-preview .hljs-literal {
-    background: #002FA7 !important;
-    color: white !important;
+    background: var(--bg-body) !important;
+    color: var(--text-main) !important;
+    border-radius: var(--radius-md) !important;
 }
 
 .vditor-preview .hljs-attr {
-    color: #FFD700 !important;
+    color: #60a5fa !important;
+    /* Blue 400 */
 }
 
 .vditor-preview .hljs-string {
-    color: #90EE90 !important;
+    color: #34d399 !important;
+    /* Emerald 400 */
 }
 
 .vditor-preview .hljs-literal {
-    color: #FFA500 !important;
+    color: #f472b6 !important;
+    /* Pink 400 */
 }
 
 /* Drag Over Effect */
 .drag-over {
-    border: 2px dashed #002FA7 !important;
-    background-color: rgba(0, 47, 167, 0.1) !important;
+    border: 2px dashed var(--primary-color) !important;
+    background-color: rgba(59, 130, 246, 0.1) !important;
     position: relative;
 }
 
@@ -191,11 +212,12 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: rgba(0, 47, 167, 0.9);
+    background: var(--primary-color);
     color: white;
     padding: 10px 20px;
-    border-radius: 5px;
+    border-radius: var(--radius-md);
     font-size: 16px;
     z-index: 1000;
     pointer-events: none;
+    box-shadow: var(--shadow-lg);
 }
