@@ -3,8 +3,8 @@
   "short_name": "MarkdownEditor",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#000000",
-  "theme_color": "#000000",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
   "icons": [
     {
       "src": "./img/icons/icon-192.png",
