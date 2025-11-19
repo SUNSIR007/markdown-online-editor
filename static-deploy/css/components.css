@@ -102,21 +102,24 @@
 }
 
 /* Publish Button */
+/* Publish Button */
 .publish-button {
-    background: var(--text-main) !important;
-    color: var(--bg-body) !important;
+    background: linear-gradient(135deg, var(--primary-gradient-start), var(--primary-gradient-end)) !important;
+    color: white !important;
     font-weight: 600 !important;
     padding: 10px 24px !important;
     border-radius: var(--radius-full) !important;
-    box-shadow: var(--shadow-md) !important;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
     position: relative;
     top: 0;
-    /* Reset offset */
+    transition: all 0.3s ease !important;
 }
 
 .publish-button:hover {
-    background: white !important;
-    box-shadow: var(--shadow-lg) !important;
+    box-shadow: 0 8px 20px rgba(59, 130, 246, 0.6) !important;
+    transform: translateY(-1px) !important;
+    filter: brightness(1.1);
 }
 
 .publish-button:disabled {
