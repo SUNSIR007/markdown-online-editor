@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN" style="background-color: #0f172a; color: #f1f5f9;">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -107,7 +108,9 @@
         }
 
         /* 覆盖所有可能的白色背景 */
-        #app, .el-dialog__wrapper, .v-modal {
+        #app,
+        .el-dialog__wrapper,
+        .v-modal {
             background-color: transparent !important;
         }
 
@@ -167,56 +170,47 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vditor@3.9.4/dist/index.css">
     <link rel="stylesheet" href="css/base.css">
     <link rel="preload" href="css/components.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="css/components.css"></noscript>
+    <noscript>
+        <link rel="stylesheet" href="css/components.css">
+    </noscript>
     <link rel="preload" href="css/editor.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="css/editor.css"></noscript>
+    <noscript>
+        <link rel="stylesheet" href="css/editor.css">
+    </noscript>
     <link rel="preload" href="css/mobile.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="css/mobile.css"></noscript>
+    <noscript>
+        <link rel="stylesheet" href="css/mobile.css">
+    </noscript>
 
     <!-- External Libraries - JS 在 CSS 之后加载 -->
     <script defer src="https://unpkg.com/vue@2.6.14/dist/vue.min.js"></script>
     <script defer src="https://unpkg.com/element-ui@2.15.13/lib/index.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/vditor@3.9.4/dist/index.min.js"></script>
 </head>
+
 <body bgcolor="#0f172a" style="background-color: #0f172a; color: #f1f5f9;">
     <div id="app" v-cloak>
         <div class="header">
             <div class="content-type-selector">
                 <div class="type-buttons">
-                    <el-button
-                        v-for="(label, type) in contentTypeLabels"
-                        :key="type"
-                        :type="currentType === type ? 'primary' : 'default'"
-                        @click="selectType(type)"
-                        size="small"
+                    <el-button v-for="(label, type) in contentTypeLabels" :key="type"
+                        :type="currentType === type ? 'primary' : 'default'" @click="selectType(type)" size="small"
                         :data-type="type">
                         <i :class="getTypeIcon(type)"></i>
                         {{ label }}
                     </el-button>
                 </div>
                 <div class="action-buttons">
-                    <button
-                        v-if="isMobileView"
-                        class="toolbar-icon-button mobile-upload-button"
-                        @click="triggerMobileImageUpload"
-                        title="上传图片">
+                    <button v-if="isMobileView" class="toolbar-icon-button mobile-upload-button"
+                        @click="triggerMobileImageUpload" title="上传图片">
                         <i class="el-icon-picture-outline"></i>
                     </button>
-                    <input
-                        v-if="isMobileView"
-                        ref="mobileImageInput"
-                        type="file"
-                        accept="image/*"
-                        multiple
-                        style="display: none;"
-                        @change="handleMobileImageChange">
-                    <el-button
-                        @click="publish"
-                        size="medium"
-                        :disabled="!isGitHubConfigured"
-                        class="publish-button"
-                        :class="{ 'has-content': hasBodyContent }">
-                        发布
+                    <input v-if="isMobileView" ref="mobileImageInput" type="file" accept="image/*" multiple
+                        style="display: none;" @change="handleMobileImageChange">
+                    <el-button @click="publish" size="medium" :disabled="!isGitHubConfigured" class="publish-button"
+                        :class="{ 'has-content': hasBodyContent, 'publishing': isPublishing }">
+                        <i class="el-icon-loading" v-if="isPublishing"></i>
+                        <span v-else>发布</span>
                     </el-button>
                 </div>
             </div>
@@ -226,11 +220,17 @@
             <!-- 元数据编辑器将通过JS移动到Vditor工具栏下方 -->
             <div id="metadata-editor-wrapper" style="display: none;">
                 <div class="metadata-editor"
-                     v-if="currentType !== 'general' && currentType !== 'gallery' && currentType !== 'essay' && hasVisibleFields">
-                    <el-input v-if="metadataFields[currentType].some(f => f.key === 'title')" v-model="metadata.title" placeholder="Title" size="small"></el-input>
-                    <el-input v-if="metadataFields[currentType].some(f => f.key === 'categories')" v-model="metadata.categories" placeholder="Categories (comma-separated)" size="small"></el-input>
-                    <el-input v-if="metadataFields[currentType].some(f => f.key === 'description')" v-model="metadata.description" placeholder="Description" size="small"></el-input>
-                    <el-date-picker v-if="metadataFields[currentType].some(f => f.key === 'date' && f.type === 'date')" v-model="metadata.date" type="date" placeholder="拍摄日期" size="small" format="yyyy-MM-dd" value-format="yyyy-MM-dd"></el-date-picker>
+                    v-if="currentType !== 'general' && currentType !== 'gallery' && currentType !== 'essay' && hasVisibleFields">
+                    <el-input v-if="metadataFields[currentType].some(f => f.key === 'title')" v-model="metadata.title"
+                        placeholder="Title" size="small"></el-input>
+                    <el-input v-if="metadataFields[currentType].some(f => f.key === 'categories')"
+                        v-model="metadata.categories" placeholder="Categories (comma-separated)"
+                        size="small"></el-input>
+                    <el-input v-if="metadataFields[currentType].some(f => f.key === 'description')"
+                        v-model="metadata.description" placeholder="Description" size="small"></el-input>
+                    <el-date-picker v-if="metadataFields[currentType].some(f => f.key === 'date' && f.type === 'date')"
+                        v-model="metadata.date" type="date" placeholder="拍摄日期" size="small" format="yyyy-MM-dd"
+                        value-format="yyyy-MM-dd"></el-date-picker>
                 </div>
             </div>
 
@@ -238,14 +238,8 @@
         </div>
 
         <!-- 上传进度提示 -->
-        <el-dialog
-            title=""
-            :visible.sync="uploadProgress.visible"
-            width="420px"
-            :close-on-click-modal="false"
-            :close-on-press-escape="false"
-            :show-close="false"
-            custom-class="upload-progress-dialog">
+        <el-dialog title="" :visible.sync="uploadProgress.visible" width="420px" :close-on-click-modal="false"
+            :close-on-press-escape="false" :show-close="false" custom-class="upload-progress-dialog">
             <div :class="['upload-progress-card', 'is-' + (uploadProgress.status || 'idle')]">
                 <template v-if="uploadProgress.status === 'progress'">
                     <div class="upload-progress-header">
@@ -254,33 +248,49 @@
                         </div>
                         <div class="upload-progress-meta">
                             <span class="upload-progress-label">图片上传中</span>
-                            <span class="upload-progress-count">第 {{ uploadProgress.current }} / {{ uploadProgress.total }} 张</span>
+                            <span class="upload-progress-count">第 {{ uploadProgress.current }} / {{ uploadProgress.total
+                                }} 张</span>
                         </div>
                         <div class="upload-progress-percentage">{{ Math.round(uploadProgress.progress || 0) }}%</div>
                     </div>
                     <div class="upload-progress-body">
-                        <p class="upload-progress-filename" v-if="uploadProgress.fileName">{{ uploadProgress.fileName }}</p>
+                        <p class="upload-progress-filename" v-if="uploadProgress.fileName">{{ uploadProgress.fileName }}
+                        </p>
                         <p class="upload-progress-stage">{{ getStageText(uploadProgress.stage) }}</p>
-                        <div class="upload-progress-stats" v-if="uploadProgress.stage === 'compressing' && uploadProgress.currentSize > 0">
+                        <div class="upload-progress-stats"
+                            v-if="uploadProgress.stage === 'compressing' && uploadProgress.currentSize > 0">
                             <span>质量 {{ Math.round(uploadProgress.quality * 100) }}%</span>
-                            <span>{{ formatFileSize(uploadProgress.currentSize) }} → {{ formatFileSize(uploadProgress.targetSize) }}</span>
+                            <span>{{ formatFileSize(uploadProgress.currentSize) }} → {{
+                                formatFileSize(uploadProgress.targetSize) }}</span>
                         </div>
                     </div>
                     <div class="upload-progress-meter">
-                        <span class="upload-progress-meter__fill" :style="{ width: (uploadProgress.progress || 0) + '%' }"></span>
+                        <span class="upload-progress-meter__fill"
+                            :style="{ width: (uploadProgress.progress || 0) + '%' }"></span>
                     </div>
                 </template>
                 <template v-else>
                     <div class="upload-progress-result">
                         <div :class="['upload-progress-status-icon', 'is-' + uploadProgress.status]">
-                            <svg v-if="uploadProgress.status === 'success'" viewBox="0 0 52 52" class="upload-progress-icon"><circle cx="26" cy="26" r="25" fill="none"></circle><path d="M16 27l7 7 14-16" fill="none"></path></svg>
-                            <svg v-else viewBox="0 0 52 52" class="upload-progress-icon"><circle cx="26" cy="26" r="25" fill="none"></circle><path d="M18 18 34 34 M34 18 18 34" fill="none"></path></svg>
+                            <svg v-if="uploadProgress.status === 'success'" viewBox="0 0 52 52"
+                                class="upload-progress-icon">
+                                <circle cx="26" cy="26" r="25" fill="none"></circle>
+                                <path d="M16 27l7 7 14-16" fill="none"></path>
+                            </svg>
+                            <svg v-else viewBox="0 0 52 52" class="upload-progress-icon">
+                                <circle cx="26" cy="26" r="25" fill="none"></circle>
+                                <path d="M18 18 34 34 M34 18 18 34" fill="none"></path>
+                            </svg>
                         </div>
                         <div class="upload-progress-result-text">
-                            <p class="upload-progress-result-title">{{ uploadProgress.status === 'success' ? '上传成功' : '上传失败' }}</p>
-                            <p class="upload-progress-result-summary" v-if="uploadProgress.summary">{{ uploadProgress.summary }}</p>
-                            <ul class="upload-progress-messages" v-if="uploadProgress.messages && uploadProgress.messages.length">
-                                <li v-for="(item, index) in uploadProgress.messages" :key="index" :class="['is-' + (item.type || uploadProgress.status)]">{{ item.text }}</li>
+                            <p class="upload-progress-result-title">{{ uploadProgress.status === 'success' ? '上传成功' :
+                                '上传失败' }}</p>
+                            <p class="upload-progress-result-summary" v-if="uploadProgress.summary">{{
+                                uploadProgress.summary }}</p>
+                            <ul class="upload-progress-messages"
+                                v-if="uploadProgress.messages && uploadProgress.messages.length">
+                                <li v-for="(item, index) in uploadProgress.messages" :key="index"
+                                    :class="['is-' + (item.type || uploadProgress.status)]">{{ item.text }}</li>
                             </ul>
                         </div>
                     </div>
@@ -289,12 +299,9 @@
         </el-dialog>
 
         <!-- 移动端错误显示对话框 -->
-        <el-dialog
-            title="错误详情"
-            :visible.sync="mobileErrorDialog.visible"
-            width="90%"
-            :close-on-click-modal="false">
-            <div style="font-family: monospace; font-size: 12px; white-space: pre-wrap; max-height: 400px; overflow-y: auto; background: #f5f5f5; padding: 10px; border-radius: 4px;">
+        <el-dialog title="错误详情" :visible.sync="mobileErrorDialog.visible" width="90%" :close-on-click-modal="false">
+            <div
+                style="font-family: monospace; font-size: 12px; white-space: pre-wrap; max-height: 400px; overflow-y: auto; background: #f5f5f5; padding: 10px; border-radius: 4px;">
                 {{ mobileErrorDialog.content }}
             </div>
             <div slot="footer" class="dialog-footer">
@@ -324,4 +331,5 @@
     <script defer src="js/image-handler.js"></script>
     <script defer src="js/app.js"></script>
 </body>
+
 </html>

@@ -19,6 +19,7 @@ new Vue({
             hasUserInteracted: false,
             isImageServiceConfigured: false,
             uploadingImages: false,
+            isPublishing: false,
             uploadProgress: {
                 visible: false,
                 status: 'idle',
@@ -215,10 +216,10 @@ new Vue({
         },
 
         async publish() {
-            // 点击后立即移除焦点，防止按钮保持高亮
-            if (document.activeElement) {
-                document.activeElement.blur();
-            }
+            if (this.isPublishing) return;
+
+            // 设置发布状态，按钮变亮
+            this.isPublishing = true;
 
             if (!this.isGitHubConfigured) {
                 this.$message.warning('GitHub 配置缺失，请检查部署环境变量');
@@ -266,6 +267,7 @@ new Vue({
                 }
             } catch (error) {
                 console.error('发布失败:', error);
+                this.isPublishing = false;
                 // 隐藏进度条
                 this.hideUploadProgress();
                 // 显示失败叉号
@@ -313,6 +315,11 @@ new Vue({
                 overlay.classList.add('show');
                 setTimeout(() => {
                     overlay.classList.remove('show');
+                    // 动画结束后，恢复按钮状态并移除焦点
+                    this.isPublishing = false;
+                    if (document.activeElement) {
+                        document.activeElement.blur();
+                    }
                 }, 2000);
             }
         },

@@ -128,10 +128,19 @@
     }
 }
 
-/* Active state for touch devices */
-.el-button.publish-button:active {
+/* Active/Publishing state */
+.el-button.publish-button:active,
+.el-button.publish-button.publishing {
     background: rgba(59, 130, 246, 0.2) !important;
+    border-color: var(--primary-color) !important;
+    color: white !important;
+    box-shadow: 0 0 12px rgba(59, 130, 246, 0.3) !important;
     transform: scale(0.98) !important;
+}
+
+.el-button.publish-button.publishing {
+    cursor: wait !important;
+    opacity: 0.9 !important;
 }
 
 .el-button.publish-button:disabled {
