@@ -109,7 +109,7 @@ class GitHubService {
   async createOrUpdateFile(path, content, message, sha = null) {
     const data = {
       message,
-      content: btoa(unescape(encodeURIComponent(content))), // 处理中文字符
+      content: btoa(unescape(encodeURIComponent(content))), // 处理中文字符 (unescape is deprecated but required for btoa with UTF-8)
       ...(sha && { sha }),
     }
 

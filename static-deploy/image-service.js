@@ -648,7 +648,15 @@ class ImageService {
             if (dimensionScale < 1) {
               width = Math.max(1, Math.floor(width * dimensionScale))
               height = Math.max(1, Math.floor(height * dimensionScale))
+            } else {
+              // 即使不缩放，也要确保是整数
+              width = Math.floor(width)
+              height = Math.floor(height)
             }
+
+            // 确保尺寸有效
+            width = Math.max(1, width)
+            height = Math.max(1, height)
 
             canvas.width = width
             canvas.height = height
