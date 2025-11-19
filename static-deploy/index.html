@@ -4,13 +4,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <!-- 移动设备状态栏样式 - 放在最前面以确保立即生效 -->
+    <meta name="theme-color" content="#0f172a">
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f172a">
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#0f172a">
+    <meta name="color-scheme" content="dark">
+    <meta name="supported-color-schemes" content="dark">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="BlogWriter">
+    <meta name="msapplication-navbutton-color" content="#0f172a">
+
     <title>BlogWriter - GitHub Auto Deploy</title>
-    <meta name="version" content="1.3">
+    <meta name="version" content="1.4">
 
     <style>
-        /* 关键样式 - 防止白屏闪烁，必须放在最前面 */
-        /* 使用极高优先级和多层覆盖，确保在任何情况下都生效 */
+        /* 基础样式 - Base Styles (Inlined for performance) */
         :root {
+            --vh: 1vh;
+
+            /* Color Palette - Modern Dark (Slate/Navy) */
+            --bg-body: #0f172a;
+            --bg-surface: #1e293b;
+            --bg-surface-hover: #334155;
+
+            --text-main: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+
+            --primary-color: #3b82f6;
+            --primary-gradient-start: #3b82f6;
+            --primary-gradient-end: #2563eb;
+
+            --border-color: #334155;
+            --border-color-light: #475569;
+
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+
+            --radius-sm: 6px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-full: 9999px;
+
+            /* 关键样式 - 防止白屏闪烁 */
+            /* 使用极高优先级和多层覆盖，确保在任何情况下都生效 */
             background-color: #0f172a !important;
             background: #0f172a !important;
             color: #f1f5f9;
@@ -22,6 +62,7 @@
         html {
             background-color: #0f172a !important;
             background: #0f172a !important;
+            height: 100%;
         }
 
         html::before {
@@ -38,11 +79,17 @@
         body {
             margin: 0;
             padding: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background-color: #0f172a !important;
             background: #0f172a !important;
             color: #f1f5f9;
+            /* var(--text-main) */
             min-height: 100vh;
             min-height: -webkit-fill-available;
+            height: 100%;
+            overflow: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
         body::before,
@@ -74,9 +121,32 @@
         }
 
         #app {
+            height: 100%;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
             box-sizing: border-box !important;
             padding-top: var(--safe-area-top);
             padding-bottom: var(--safe-area-bottom);
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
         }
 
         /* 防止页面加载时的样式闪烁 */
@@ -122,34 +192,6 @@
         }
     </style>
 
-    <!-- 移动设备状态栏样式 -->
-    <meta name="theme-color" content="#0f172a">
-    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f172a">
-    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#0f172a">
-    <meta name="color-scheme" content="dark">
-    <meta name="supported-color-schemes" content="dark">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="BlogWriter">
-    <meta name="msapplication-navbutton-color" content="#0f172a">
-
-    <script>
-        (function enforcePWADarkShell() {
-            const lockTheme = () => {
-                const root = document.documentElement;
-                root.style.backgroundColor = '#0f172a';
-                root.style.setProperty('color-scheme', 'dark');
-                const themeMeta = document.querySelector('meta[name="theme-color"]');
-                if (themeMeta) {
-                    themeMeta.setAttribute('content', '#0f172a');
-                }
-            };
-            lockTheme();
-            window.addEventListener('pageshow', lockTheme);
-        })();
-    </script>
-
-
     <!-- iOS Splash Screen - 防止白屏 -->
     <!-- iPhone 17 Pro, iPhone 17, iPhone 16 Pro - Portrait -->
     <link rel="apple-touch-startup-image"
@@ -174,7 +216,7 @@
     <link rel="apple-touch-icon" sizes="180x180" href="./img/icons/apple-touch-icon.png">
     <link rel="manifest" href="./site.webmanifest">
 
-    <!-- CSS 优先加载 - 阻塞渲染以防止白屏闪烁 -->
+    <!-- CSS Files - base.css 已内联 -->
     <link rel="preload" href="https://unpkg.com/element-ui@2.15.13/lib/theme-chalk/index.css" as="style"
         onload="this.onload=null;this.rel='stylesheet'">
     <noscript>
@@ -219,6 +261,16 @@
                 overlay.style.opacity = '1';
                 console.log('[Loading] Overlay activated at:', new Date().toISOString());
             }
+
+            // 强制深色主题 - 支持 bfcache
+            const enforceDark = () => {
+                document.documentElement.style.backgroundColor = '#0f172a';
+                document.body.style.backgroundColor = '#0f172a';
+                const themeMeta = document.querySelector('meta[name="theme-color"]');
+                if (themeMeta) themeMeta.content = '#0f172a';
+            };
+            enforceDark();
+            window.addEventListener('pageshow', enforceDark);
 
             // 定义全局函数用于隐藏覆盖层
             window.hideLoadingOverlay = function () {
