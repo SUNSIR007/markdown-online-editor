@@ -68,6 +68,20 @@ new Vue({
         window.setupViewportFixes(this);
         this.initEditorWhenIdle();
         this.deferNonCriticalInit();
+
+        // 隐藏加载覆盖层，防止白屏
+        this.$nextTick(() => {
+            setTimeout(() => {
+                const overlay = document.getElementById('loading-overlay');
+                if (overlay) {
+                    overlay.classList.add('hide');
+                    // 过渡完成后彻底移除元素
+                    setTimeout(() => {
+                        overlay.remove();
+                    }, 300);
+                }
+            }, 100);
+        });
     },
 
     methods: {

@@ -84,26 +84,24 @@
             display: none !important;
         }
 
-        /* 加载占位符 - 在Vue渲染前显示 */
-        #app::before {
-            content: '';
-            display: block;
+        /* 加载覆盖层 - 防止白屏，由JS控制隐藏 */
+        #loading-overlay {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
             background: #0f172a;
-            z-index: 9999;
-            pointer-events: none;
-            animation: fadeOut 0.25s ease 0.12s forwards;
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.3s ease;
         }
 
-        @keyframes fadeOut {
-            to {
-                opacity: 0;
-                visibility: hidden;
-            }
+        #loading-overlay.hide {
+            opacity: 0;
+            pointer-events: none;
         }
 
         /* 移动端初始样式 - 在 Vue 加载前就生效 */
@@ -210,6 +208,9 @@
 </head>
 
 <body bgcolor="#0f172a" style="background-color: #0f172a; color: #f1f5f9;">
+    <!-- 加载覆盖层 - 防止启动图消失后的白屏 -->
+    <div id="loading-overlay"></div>
+
     <div id="app" v-cloak>
         <div class="header">
             <div class="content-type-selector">
