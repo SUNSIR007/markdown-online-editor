@@ -118,12 +118,20 @@
     opacity: 1 !important;
 }
 
-.el-button.publish-button:hover {
-    background: rgba(59, 130, 246, 0.15) !important;
-    border-color: var(--primary-color) !important;
-    box-shadow: 0 0 15px rgba(59, 130, 246, 0.25) !important;
-    transform: translateY(-1px) !important;
-    color: white !important;
+@media (hover: hover) {
+    .el-button.publish-button:hover {
+        background: rgba(59, 130, 246, 0.15) !important;
+        border-color: var(--primary-color) !important;
+        box-shadow: 0 0 15px rgba(59, 130, 246, 0.25) !important;
+        transform: translateY(-1px) !important;
+        color: white !important;
+    }
+}
+
+/* Active state for touch devices */
+.el-button.publish-button:active {
+    background: rgba(59, 130, 246, 0.2) !important;
+    transform: scale(0.98) !important;
 }
 
 .el-button.publish-button:disabled {
