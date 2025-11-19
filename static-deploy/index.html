@@ -116,8 +116,28 @@
         /* 覆盖所有可能的白色背景 */
         #app,
         .el-dialog__wrapper,
-        .v-modal {
+        .v-modal,
+        iframe,
+        .vditor,
+        .vditor-content,
+        .vditor-reset,
+        .el-loading-mask,
+        .el-message-box,
+        .el-dialog {
             background-color: transparent !important;
+        }
+
+        /* 强制 iframe 初始背景为深色 */
+        iframe {
+            background: #0f172a !important;
+            color-scheme: dark !important;
+        }
+
+        /* 确保 Vditor 编辑器区域也是深色 */
+        .vditor-ir,
+        .vditor-sv,
+        .vditor-wysiwyg {
+            background-color: #0f172a !important;
         }
 
         #app {
