@@ -203,7 +203,7 @@ new Vue({
                         if (value.startsWith('[') && value.endsWith(']')) {
                             try {
                                 value = JSON.parse(value);
-                            } catch (e) {}
+                            } catch (e) { }
                         }
                     }
 
@@ -215,6 +215,11 @@ new Vue({
         },
 
         async publish() {
+            // 点击后立即移除焦点，防止按钮保持高亮
+            if (document.activeElement) {
+                document.activeElement.blur();
+            }
+
             if (!this.isGitHubConfigured) {
                 this.$message.warning('GitHub 配置缺失，请检查部署环境变量');
                 return;
