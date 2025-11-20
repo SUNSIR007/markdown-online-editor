@@ -1,4 +1,4 @@
-const CACHE_NAME = 'blog-writer-v1';
+const CACHE_NAME = 'blog-writer-v2';
 const ASSETS_TO_CACHE = [
     './',
     './index.html',
