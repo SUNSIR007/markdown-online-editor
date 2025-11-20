@@ -216,6 +216,72 @@
             }
         }
 
+        /* Skeleton UI Styles */
+        .skeleton-header {
+            height: 56px;
+            border-bottom: 1px solid #334155;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            background: #1e293b;
+        }
+
+        .skeleton-type-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .skeleton-button {
+            width: 80px;
+            height: 32px;
+            background: #334155;
+            border-radius: 4px;
+            animation: pulse 1.5s infinite ease-in-out;
+        }
+
+        .skeleton-editor {
+            flex: 1;
+            margin: 20px;
+            background: #1e293b;
+            border-radius: 8px;
+            border: 1px solid #334155;
+            animation: pulse 1.5s infinite ease-in-out;
+            opacity: 0.5;
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 0.6;
+            }
+
+            50% {
+                opacity: 0.4;
+            }
+
+            100% {
+                opacity: 0.6;
+            }
+        }
+
+        /* Mobile Skeleton Overrides */
+        @media (max-width: 768px) {
+            .skeleton-type-buttons {
+                display: none;
+            }
+
+            .skeleton-header {
+                justify-content: flex-end;
+            }
+
+            .skeleton-publish {
+                width: 60px;
+                height: 32px;
+                background: #334155;
+                border-radius: 16px;
+                animation: pulse 1.5s infinite ease-in-out;
+            }
+        }
+
         /* 移动端初始样式 - 在 Vue 加载前就生效 */
         @media (max-width: 768px) {
             .type-buttons {
@@ -285,8 +351,17 @@
 <body bgcolor="#0f172a" style="background-color: #0f172a; color: #f1f5f9;">
     <!-- 加载覆盖层 - 防止启动图消失后的白屏 -->
     <!-- 加载覆盖层 - 防止启动图消失后的白屏 -->
-    <div id="loading-overlay">
-        <div class="loading-spinner"></div>
+    <!-- 加载覆盖层 - Skeleton UI -->
+    <div id="loading-overlay" style="flex-direction: column; align-items: stretch; justify-content: flex-start;">
+        <div class="skeleton-header">
+            <div class="skeleton-type-buttons">
+                <div class="skeleton-button"></div>
+                <div class="skeleton-button"></div>
+                <div class="skeleton-button"></div>
+            </div>
+            <div class="skeleton-publish" style="margin-left: auto;"></div>
+        </div>
+        <div class="skeleton-editor"></div>
     </div>
     <script>
         // 立即确保覆盖层可见
@@ -327,6 +402,18 @@
                     }, 300);
                 }
             };
+            // Register Service Worker
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('./sw.js')
+                        .then(registration => {
+                            console.log('[ServiceWorker] Registered:', registration);
+                        })
+                        .catch(error => {
+                            console.log('[ServiceWorker] Registration failed:', error);
+                        });
+                });
+            }
         })();
     </script>
 
