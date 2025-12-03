@@ -71,10 +71,12 @@
         margin-left: 0;
     }
 
-    /* 优化移动端按钮样式 */
+    /* 优化移动端按钮样式 - 确保触摸目标足够大 */
     .toolbar-icon-button {
-        width: 40px !important;
-        height: 40px !important;
+        width: 44px !important;
+        height: 44px !important;
+        min-width: 44px !important;
+        min-height: 44px !important;
         padding: 0 !important;
         background: transparent !important;
         border: none !important;
@@ -83,32 +85,70 @@
         display: inline-flex !important;
         align-items: center !important;
         justify-content: center !important;
+        touch-action: manipulation !important;
+        -webkit-tap-highlight-color: transparent !important;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        position: relative !important;
     }
 
+    /* 触摸反馈效果 */
     .toolbar-icon-button:active {
         background: var(--bg-surface-hover) !important;
+        transform: scale(0.92) !important;
+    }
+
+    /* 添加触摸波纹效果的容器 */
+    .toolbar-icon-button::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        transform: translate(-50%, -50%) scale(0);
+        transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .toolbar-icon-button:active::before {
+        transform: translate(-50%, -50%) scale(1.5);
+        opacity: 1;
     }
 
     .toolbar-icon-button i {
         font-size: 24px !important;
         color: var(--text-main) !important;
+        pointer-events: none !important;
     }
 
     .toolbar-icon-button img {
         width: 24px !important;
         height: 24px !important;
         filter: invert(1) brightness(1.2);
+        pointer-events: none !important;
     }
 
     .el-button.publish-button {
-        padding: 8px 20px !important;
-        font-size: 14px !important;
-        height: 36px !important;
-        min-width: auto !important;
+        padding: 10px 24px !important;
+        font-size: 15px !important;
+        height: 44px !important;
+        min-width: 100px !important;
+        min-height: 44px !important;
         display: inline-flex !important;
         align-items: center !important;
         justify-content: center !important;
         top: 0 !important;
+        touch-action: manipulation !important;
+        -webkit-tap-highlight-color: transparent !important;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+
+    /* 发布按钮触摸反馈 */
+    .el-button.publish-button:active {
+        transform: scale(0.96) !important;
     }
 
     /* Dialog */

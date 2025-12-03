@@ -232,6 +232,7 @@ new Vue({
 
             if (!this.isGitHubConfigured) {
                 this.$message.warning('GitHub 配置缺失，请检查部署环境变量');
+                this.isPublishing = false;
                 return;
             }
 
@@ -243,11 +244,13 @@ new Vue({
 
             if (!this.bodyContent.trim()) {
                 this.$message.warning('请先编写内容');
+                this.isPublishing = false;
                 return;
             }
 
             if (this.currentType === window.AppConfig.contentTypes.BLOG && !this.metadata.title) {
                 this.$message.warning('请先设置标题');
+                this.isPublishing = false;
                 return;
             }
 
@@ -488,6 +491,7 @@ new Vue({
 
             if (!imageUrlMatch) {
                 this.$message.warning('请先在编辑器中上传图片');
+                this.isPublishing = false;
                 return;
             }
 
@@ -530,6 +534,9 @@ new Vue({
             } catch (error) {
                 console.error('发布失败:', error);
                 this.$message.error(`发布失败: ${error.message}`);
+            } finally {
+                // 确保无论成功还是失败都重置发布状态
+                this.isPublishing = false;
             }
         },
 

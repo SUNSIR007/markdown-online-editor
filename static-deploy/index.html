@@ -150,6 +150,8 @@
             padding-bottom: var(--safe-area-bottom);
             opacity: 0;
             transition: opacity 0.4s ease;
+            will-change: opacity;
+            contain: layout style paint;
         }
 
         #app.loaded {
@@ -459,6 +461,139 @@
             <div id="upload-feedback-icon" class="upload-feedback-icon"></div>
         </div>
     </div>
+
+    <!-- Service Worker Registration -->
+    <script>
+        // 注册 Service Worker 以启用 PWA 功能
+        if ('serviceWorker' in navigator) {
+            let updateWaiting = false;
+            let newWorker = null;
+
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(registration => {
+                        console.log('[PWA] Service Worker 注册成功:', registration.scope);
+
+                        // 检查更新
+                        registration.addEventListener('updatefound', () => {
+                            newWorker = registration.installing;
+                            newWorker.addEventListener('statechange', () => {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    // 新版本可用
+                                    console.log('[PWA] 检测到新版本');
+                                    updateWaiting = true;
+
+                                    // 显示友好的更新提示
+                                    if (window.Vue && window.Vue.prototype.$message) {
+                                        const h = window.Vue.prototype.$createElement;
+                                        window.Vue.prototype.$notify({
+                                            title: '发现新版本',
+                                            message: h('div', [
+                                                h('p', '检测到应用有新版本可用'),
+                                                h('el-button', {
+                                                    props: { type: 'primary', size: 'small' },
+                                                    style: { marginTop: '10px' },
+                                                    on: {
+                                                        click: () => {
+                                                            newWorker.postMessage({ type: 'SKIP_WAITING' });
+                                                            window.location.reload();
+                                                        }
+                                                    }
+                                                }, '立即更新')
+                                            ]),
+                                            duration: 0,
+                                            position: 'bottom-right'
+                                        });
+                                    }
+                                }
+                            });
+                        });
+
+                        // 定期检查更新（每小时）
+                        setInterval(() => {
+                            registration.update();
+                        }, 60 * 60 * 1000);
+                    })
+                    .catch(error => {
+                        console.error('[PWA] Service Worker 注册失败:', error);
+                    });
+
+                // 监听 Service Worker 控制器变化
+                navigator.serviceWorker.addEventListener('controllerchange', () => {
+                    if (updateWaiting) {
+                        console.log('[PWA] Service Worker 已更新，刷新页面');
+                        window.location.reload();
+                    }
+                });
+            });
+
+            // 处理 PWA 安装提示
+            let deferredPrompt;
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                console.log('[PWA] 应用可以安装');
+
+                // 显示安装提示
+                if (window.Vue && window.Vue.prototype.$message) {
+                    const h = window.Vue.prototype.$createElement;
+                    window.Vue.prototype.$notify({
+                        title: '安装应用',
+                        message: h('div', [
+                            h('p', '将此应用安装到您的设备'),
+                            h('el-button', {
+                                props: { type: 'primary', size: 'small' },
+                                style: { marginTop: '10px' },
+                                on: {
+                                    click: async () => {
+                                        if (deferredPrompt) {
+                                            deferredPrompt.prompt();
+                                            const { outcome } = await deferredPrompt.userChoice;
+                                            console.log(`[PWA] 用户选择: ${outcome}`);
+                                            deferredPrompt = null;
+                                        }
+                                    }
+                                }
+                            }, '立即安装')
+                        ]),
+                        duration: 0,
+                        position: 'bottom-left'
+                    });
+                }
+            });
+
+            window.addEventListener('appinstalled', () => {
+                console.log('[PWA] 应用已安装');
+                if (window.Vue && window.Vue.prototype.$message) {
+                    window.Vue.prototype.$message.success('应用安装成功！');
+                }
+                deferredPrompt = null;
+            });
+
+            // 监听在线/离线状态
+            window.addEventListener('online', () => {
+                console.log('[PWA] 网络已恢复');
+                if (window.Vue && window.Vue.prototype.$message) {
+                    window.Vue.prototype.$message({
+                        message: '网络已恢复',
+                        type: 'success',
+                        duration: 2000
+                    });
+                }
+            });
+
+            window.addEventListener('offline', () => {
+                console.log('[PWA] 网络已断开');
+                if (window.Vue && window.Vue.prototype.$message) {
+                    window.Vue.prototype.$message({
+                        message: '您已离线，部分功能可能不可用',
+                        type: 'warning',
+                        duration: 3000
+                    });
+                }
+            });
+        }
+    </script>
 
     <!-- Service Scripts -->
     <script defer src="js/runtime-config.js"></script>
