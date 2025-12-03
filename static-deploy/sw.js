@@ -1,5 +1,5 @@
 // 使用时间戳作为版本号，确保每次部署都会更新缓存
-const CACHE_VERSION = '2025-12-03-14:47';
+const CACHE_VERSION = '2025-12-03-15:50';
 const CACHE_NAME = `blog-writer-${CACHE_VERSION}`;
 
 // 需要缓存的静态资源
@@ -24,6 +24,15 @@ const ASSETS_TO_CACHE = [
     './img/icons/apple-touch-icon.png'  // 修复：添加 Apple 图标
 ];
 
+// CDN 资源 - 核心库，提前缓存以提升加载速度
+const CDN_ASSETS = [
+    'https://unpkg.com/vue@2.6.14/dist/vue.min.js',
+    'https://unpkg.com/element-ui@2.15.13/lib/index.js',
+    'https://unpkg.com/element-ui@2.15.13/lib/theme-chalk/index.css',
+    'https://cdn.jsdelivr.net/npm/vditor@3.9.4/dist/index.min.js',
+    'https://cdn.jsdelivr.net/npm/vditor@3.9.4/dist/index.css'
+];
+
 // Install event - cache critical assets
 self.addEventListener('install', (event) => {
     console.log('[Service Worker] Installing...');
@@ -31,7 +40,19 @@ self.addEventListener('install', (event) => {
         caches.open(CACHE_NAME)
             .then((cache) => {
                 console.log('[Service Worker] Caching app shell and content');
-                return cache.addAll(ASSETS_TO_CACHE);
+                // 先缓存本地资源
+                return cache.addAll(ASSETS_TO_CACHE)
+                    .then(() => {
+                        console.log('[Service Worker] Caching CDN resources');
+                        // 再缓存 CDN 资源（允许部分失败）
+                        return Promise.allSettled(
+                            CDN_ASSETS.map(url =>
+                                cache.add(url).catch(err => {
+                                    console.warn('[Service Worker] Failed to cache CDN resource:', url, err);
+                                })
+                            )
+                        );
+                    });
             })
             .then(() => {
                 console.log('[Service Worker] Skip waiting');
@@ -105,17 +126,42 @@ async function trimCache(cacheName, maxItems) {
 
 // Fetch event - 使用智能缓存策略
 self.addEventListener('fetch', (event) => {
-    // 跨域请求不缓存（如 CDN 资源）
-    if (!event.request.url.startsWith(self.location.origin)) {
-        return;
-    }
+    const { url } = event.request;
 
     // 只处理 GET 请求
     if (event.request.method !== 'GET') {
         return;
     }
 
-    const { url } = event.request;
+    // CDN 资源（Vue、Element UI、Vditor）使用 Cache First + 后台更新
+    const isCDNResource = CDN_ASSETS.some(cdnUrl => url.startsWith(cdnUrl.split('?')[0]));
+    if (isCDNResource) {
+        event.respondWith(
+            caches.match(event.request).then((cachedResponse) => {
+                // 返回缓存，同时在后台更新
+                const fetchPromise = fetch(event.request)
+                    .then((networkResponse) => {
+                        if (networkResponse && networkResponse.status === 200) {
+                            const responseToCache = networkResponse.clone();
+                            caches.open(CACHE_NAME).then((cache) => {
+                                cache.put(event.request, responseToCache);
+                            });
+                        }
+                        return networkResponse;
+                    })
+                    .catch(() => cachedResponse);
+
+                return cachedResponse || fetchPromise;
+            })
+        );
+        return;
+    }
+
+    // 跨域请求（非CDN）不缓存
+    if (!url.startsWith(self.location.origin)) {
+        return;
+    }
+
     const isNavigationRequest = event.request.mode === 'navigate';
     const isStaticAsset = /\.(js|css|html)$/.test(url);
     const isImage = /\.(png|jpg|jpeg|svg|gif|webp|ico)$/.test(url);

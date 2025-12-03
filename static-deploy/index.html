@@ -247,6 +247,11 @@
     <link rel="preconnect" href="https://api.github.com" crossorigin>
     <link rel="dns-prefetch" href="https://api.github.com">
 
+    <!-- 预加载关键 JavaScript 文件 -->
+    <link rel="modulepreload" href="https://unpkg.com/vue@2.6.14/dist/vue.min.js" as="script">
+    <link rel="modulepreload" href="https://unpkg.com/element-ui@2.15.13/lib/index.js" as="script">
+    <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/vditor@3.9.4/dist/index.min.js" as="script">
+
     <link rel="icon" type="image/png" href="./img/icons/write.png">
     <link rel="apple-touch-icon" sizes="180x180" href="./img/icons/apple-touch-icon.png">
     <link rel="manifest" href="./site.webmanifest">
@@ -277,6 +282,17 @@
     <noscript>
         <link rel="stylesheet" href="css/mobile.css">
     </noscript>
+
+    <!-- 优化字体加载 -->
+    <style>
+        @font-face {
+            font-family: 'Inter';
+            font-style: normal;
+            font-weight: 400;
+            font-display: swap;
+            src: local('Inter');
+        }
+    </style>
 
     <!-- External Libraries - JS 在 CSS 之后加载 -->
     <script defer src="https://unpkg.com/vue@2.6.14/dist/vue.min.js"></script>
