@@ -224,10 +224,7 @@ new Vue({
             return { metadata, content: bodyContent };
         },
 
-        /**
-         * 发布内容 - 实际的发布逻辑
-         */
-        async _publishInternal() {
+        async publish() {
             if (this.isPublishing) return;
 
             // 设置发布状态，按钮变亮
