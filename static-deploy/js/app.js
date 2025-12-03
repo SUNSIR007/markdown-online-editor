@@ -66,7 +66,11 @@ new Vue({
         this.isMobileView = window.isMobileDevice();
         window.setupMobileDefaults(this);
         window.setupViewportFixes(this);
-        this.initEditorWhenIdle();
+
+        // 直接初始化编辑器（关键路径），不使用 requestIdleCallback
+        this.initEditor();
+
+        // 延迟非关键任务
         this.deferNonCriticalInit();
 
         // 隐藏加载覆盖层，防止白屏
@@ -348,17 +352,10 @@ new Vue({
             }
         },
 
-        initEditorWhenIdle() {
-            const initEditor = () => {
-                window.initVditor(this);
-                this.selectType(this.currentType);
-            };
-
-            if ('requestIdleCallback' in window) {
-                requestIdleCallback(() => initEditor(), { timeout: 600 });
-            } else {
-                setTimeout(initEditor, 50);
-            }
+        initEditor() {
+            // 直接初始化编辑器
+            window.initVditor(this);
+            this.selectType(this.currentType);
         },
 
         deferNonCriticalInit() {
