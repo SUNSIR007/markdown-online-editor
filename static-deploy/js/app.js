@@ -66,11 +66,7 @@ new Vue({
         this.isMobileView = window.isMobileDevice();
         window.setupMobileDefaults(this);
         window.setupViewportFixes(this);
-
-        // 等待 Vditor 加载完成后初始化编辑器
-        this.initEditorWhenReady();
-
-        // 延迟非关键任务
+        this.initEditorWhenIdle();
         this.deferNonCriticalInit();
 
         // 隐藏加载覆盖层，防止白屏
@@ -352,35 +348,17 @@ new Vue({
             }
         },
 
-        initEditorWhenReady() {
-            // 检查 Vditor 是否已加载
-            if (typeof Vditor !== 'undefined') {
-                // 立即初始化，无延迟
-                this.initEditor();
-            } else {
-                // 如果 Vditor 未加载，快速轮询检查（最多 5 秒）
-                let attempts = 0;
-                const maxAttempts = 100; // 5秒 (50ms * 100)
-                const checkInterval = setInterval(() => {
-                    attempts++;
-                    if (typeof Vditor !== 'undefined') {
-                        clearInterval(checkInterval);
-                        this.initEditor();
-                    } else if (attempts >= maxAttempts) {
-                        clearInterval(checkInterval);
-                        console.error('[Editor] Vditor 加载超时');
-                        if (this.$message) {
-                            this.$message.error('编辑器加载失败，请刷新页面重试');
-                        }
-                    }
-                }, 50);
-            }
-        },
+        initEditorWhenIdle() {
+            const initEditor = () => {
+                window.initVditor(this);
+                this.selectType(this.currentType);
+            };
 
-        initEditor() {
-            // 直接初始化编辑器
-            window.initVditor(this);
-            this.selectType(this.currentType);
+            if ('requestIdleCallback' in window) {
+                requestIdleCallback(() => initEditor(), { timeout: 600 });
+            } else {
+                setTimeout(initEditor, 50);
+            }
         },
 
         deferNonCriticalInit() {
