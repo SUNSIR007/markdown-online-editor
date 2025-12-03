@@ -6,7 +6,7 @@ const imageHandlerDebugLog = (...args) => {
 // 图片处理 - Image Handler
 
 // 处理图片上传
-window.handleImageUpload = async function(vm, files) {
+window.handleImageUpload = async function (vm, files) {
     if (!vm.isImageServiceConfigured) {
         vm.$message.warning('图床配置缺失，请检查部署环境变量');
         return Promise.reject('图床未配置');
@@ -111,13 +111,43 @@ window.handleImageUpload = async function(vm, files) {
 
     } catch (error) {
         console.error('图片上传错误:', error);
+
+        // 根据错误类型提供更具体的提示
+        let errorMessage = '上传失败';
+        let errorDetail = '';
+
+        if (error.message) {
+            const msg = error.message.toLowerCase();
+
+            if (msg.includes('network') || msg.includes('fetch') || msg.includes('timeout')) {
+                errorMessage = '网络连接失败';
+                errorDetail = '请检查网络连接后重试';
+            } else if (msg.includes('token') || msg.includes('unauthorized') || msg.includes('authentication')) {
+                errorMessage = 'GitHub 认证失败';
+                errorDetail = '请检查 GitHub Token 配置是否正确';
+            } else if (msg.includes('size') || msg.includes('large') || msg.includes('exceed')) {
+                errorMessage = '图片文件过大';
+                errorDetail = '请选择小于 10MB 的图片';
+            } else if (msg.includes('rate limit')) {
+                errorMessage = 'GitHub API 限制';
+                errorDetail = '请稍后再试';
+            } else if (msg.includes('not found') || msg.includes('404')) {
+                errorMessage = '仓库不存在';
+                errorDetail = '请检查 GitHub 仓库配置';
+            } else {
+                errorDetail = error.message;
+            }
+        }
+
         vm.uploadProgress.status = 'error';
-        vm.uploadProgress.stage = 'error';
-        vm.uploadProgress.summary = '上传失败';
         vm.uploadProgress.messages = [
             {
                 type: 'error',
-                text: error && error.message ? `原因：${error.message}` : '发生未知错误'
+                text: errorMessage
+            },
+            {
+                type: 'error',
+                text: errorDetail || '发生未知错误'
             }
         ];
         vm.uploadProgress.visible = true;
@@ -129,6 +159,7 @@ window.handleImageUpload = async function(vm, files) {
         if (window.isMobileDevice()) {
             vm.showMobileError(error, '图片上传');
         }
+
         return Promise.reject(error);
     } finally {
         vm.uploadingImages = false;
@@ -136,7 +167,7 @@ window.handleImageUpload = async function(vm, files) {
 };
 
 // 触发移动端图片上传
-window.triggerMobileImageUpload = function(vm) {
+window.triggerMobileImageUpload = function (vm) {
     if (!vm.isImageServiceConfigured) {
         vm.$message.warning('图床配置缺失，请检查部署环境变量');
         return;
@@ -154,7 +185,7 @@ window.triggerMobileImageUpload = function(vm) {
 };
 
 // 处理移动端图片选择
-window.handleMobileImageChange = async function(vm, event) {
+window.handleMobileImageChange = async function (vm, event) {
     const { files } = event.target;
     if (!files || !files.length) {
         return;
@@ -168,7 +199,7 @@ window.handleMobileImageChange = async function(vm, event) {
 };
 
 // 获取阶段文本
-window.getStageText = function(stage) {
+window.getStageText = function (stage) {
     const stageTexts = {
         'preparing': '准备中...',
         'analyzing': '分析图片...',
@@ -183,7 +214,7 @@ window.getStageText = function(stage) {
 };
 
 // 格式化文件大小
-window.formatFileSize = function(bytes) {
+window.formatFileSize = function (bytes) {
     if (bytes === 0) return '0 Bytes';
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
