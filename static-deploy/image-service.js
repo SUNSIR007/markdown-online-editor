@@ -15,7 +15,7 @@ class ImageService {
     this.owner = null
     this.repo = null
     this.branch = 'main' // 默认使用main分支
-    
+
     // CDN链接规则配置
     this.linkRules = {
       github: {
@@ -43,7 +43,7 @@ class ImageService {
         editable: false
       }
     }
-    
+
     this.selectedLinkRule = 'jsdelivr'
     this.imageDir = 'images' // 默认图片目录
   }
@@ -591,7 +591,7 @@ class ImageService {
    * @param {number} targetSize - 目标大小（字节）
    * @param {Function} onProgress - 进度回调
    */
-  async compressToSize(file, targetSize = 10 * 1024 * 1024, onProgress = () => {}) {
+  async compressToSize(file, targetSize = 10 * 1024 * 1024, onProgress = () => { }) {
     // 如果文件已经小于目标大小，直接返回
     if (file.size <= targetSize) {
       return file
@@ -785,7 +785,7 @@ class ImageService {
     if (!this.isConfigured()) {
       // 检测是否为PWA模式
       const isPWA = window.navigator.standalone === true ||
-                    window.matchMedia('(display-mode: standalone)').matches;
+        window.matchMedia('(display-mode: standalone)').matches;
 
       const errorMsg = isPWA
         ? '图床配置缺失，请在部署环境变量中提供图床仓库信息'
@@ -801,7 +801,7 @@ class ImageService {
       compress = true,
       quality = 0.8,
       addHash = true,
-      onProgress = () => {}
+      onProgress = () => { }
     } = options
 
     try {
@@ -943,8 +943,8 @@ class ImageService {
    */
   async uploadImages(files, options = {}) {
     const {
-      onProgress = () => {},
-      onSingleComplete = () => {}
+      onProgress = () => { },
+      onSingleComplete = () => { }
     } = options
 
     const results = []
@@ -952,6 +952,8 @@ class ImageService {
 
     for (let i = 0; i < totalFiles; i++) {
       const file = files[i]
+
+      let result = null
 
       try {
         onProgress({
@@ -961,7 +963,7 @@ class ImageService {
           stage: 'uploading'
         })
 
-        const result = await this.uploadImage(file, {
+        result = await this.uploadImage(file, {
           ...options,
           onProgress: (singleProgress) => {
             onProgress({
@@ -973,18 +975,20 @@ class ImageService {
             })
           }
         })
-
-        results.push(result)
-        onSingleComplete(result, i)
-
       } catch (error) {
-        const errorResult = {
+        result = {
           success: false,
           fileName: file.name,
           error: error.message
         }
-        results.push(errorResult)
-        onSingleComplete(errorResult, i)
+      }
+
+      results.push(result)
+
+      try {
+        onSingleComplete(result, i)
+      } catch (callbackError) {
+        console.warn('onSingleComplete callback error:', callbackError)
       }
     }
 
