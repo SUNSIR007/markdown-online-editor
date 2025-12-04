@@ -63,10 +63,17 @@ window.initVditor = function (vm) {
             fieldName: 'file[]',
             filename: (name) => name.replace(/[^(a-zA-Z0-9\u4e00-\u9fa5\.)]/g, ''),
             handler: async (files) => {
-                await vm.handleImageUpload(files);
-                // 返回 null 告诉 Vditor 我们已经自己处理了插入，不需要它做任何事
-                // 这样可以避免 Vditor 因为无法解析 handleImageUpload 的返回值而显示"上传失败"
-                return null;
+                try {
+                    await vm.handleImageUpload(files);
+                } catch (error) {
+                    // 错误已在 handleImageUpload 中处理并显示
+                    // 这里只需要捕获异常，防止 Vditor 显示其内置的"上传失败"提示
+                    console.debug('[Editor] 图片上传异常已处理:', error?.message || error);
+                }
+                // 返回空字符串告诉 Vditor 上传已完成且没有错误
+                // Vditor 的逻辑：如果返回字符串，会将其作为错误消息显示
+                // 返回空字符串（不是 null）表示没有错误，不会显示任何提示
+                return '';
             }
         },
         cache: { enable: false },

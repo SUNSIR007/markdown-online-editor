@@ -221,3 +221,8 @@
     pointer-events: none;
     box-shadow: var(--shadow-lg);
 }
+
+/* 隐藏 Vditor 内置的上传提示 - 我们使用自己的上传进度对话框 */
+.vditor-tip {
+    display: none !important;
+}
