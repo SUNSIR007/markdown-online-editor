@@ -6,7 +6,7 @@ const imageHandlerDebugLog = (...args) => {
 // 图片处理 - Image Handler
 
 // 处理图片上传
-window.handleImageUpload = async function(vm, files) {
+window.handleImageUpload = async function (vm, files) {
     if (!vm.isImageServiceConfigured) {
         vm.$message.warning('图床配置缺失，请检查部署环境变量');
         return Promise.reject('图床未配置');
@@ -83,24 +83,30 @@ window.handleImageUpload = async function(vm, files) {
             }
         });
 
-        const successCount = results.filter(r => r.success).length;
-        const failCount = results.length - successCount;
+
+        // 安全地统计成功和失败数量
+        const successCount = results.filter(r => r && r.success === true).length;
+        const failCount = results.filter(r => r && r.success === false).length;
 
         vm.uploadProgress.progress = 100;
         vm.uploadProgress.stage = 'completed';
 
-        if (failCount === 0) {
+        // 如果有任何图片上传成功，就显示成功状态
+        // 只有当所有图片都失败时才显示失败状态
+        if (successCount > 0) {
             vm.uploadProgress.status = 'success';
-            vm.uploadProgress.summary = `成功上传 ${successCount || 1} 张图片`;
+            if (failCount > 0) {
+                vm.uploadProgress.summary = `成功上传 ${successCount} 张图片，${failCount} 张失败`;
+            } else {
+                vm.uploadProgress.summary = `成功上传 ${successCount} 张图片`;
+            }
 
             if (typeof vm.scheduleUploadProgressClose === 'function') {
                 vm.scheduleUploadProgressClose();
             }
         } else {
             vm.uploadProgress.status = 'error';
-            vm.uploadProgress.summary = failCount === results.length
-                ? '上传失败，未成功上传任何图片'
-                : `上传完成，但成功 ${successCount} 张，失败 ${failCount} 张`;
+            vm.uploadProgress.summary = '上传失败，未成功上传任何图片';
 
             if (typeof vm.scheduleUploadProgressClose === 'function') {
                 vm.scheduleUploadProgressClose(3200);
@@ -136,7 +142,7 @@ window.handleImageUpload = async function(vm, files) {
 };
 
 // 触发移动端图片上传
-window.triggerMobileImageUpload = function(vm) {
+window.triggerMobileImageUpload = function (vm) {
     if (!vm.isImageServiceConfigured) {
         vm.$message.warning('图床配置缺失，请检查部署环境变量');
         return;
@@ -154,7 +160,7 @@ window.triggerMobileImageUpload = function(vm) {
 };
 
 // 处理移动端图片选择
-window.handleMobileImageChange = async function(vm, event) {
+window.handleMobileImageChange = async function (vm, event) {
     const { files } = event.target;
     if (!files || !files.length) {
         return;
@@ -168,7 +174,7 @@ window.handleMobileImageChange = async function(vm, event) {
 };
 
 // 获取阶段文本
-window.getStageText = function(stage) {
+window.getStageText = function (stage) {
     const stageTexts = {
         'preparing': '准备中...',
         'analyzing': '分析图片...',
@@ -183,7 +189,7 @@ window.getStageText = function(stage) {
 };
 
 // 格式化文件大小
-window.formatFileSize = function(bytes) {
+window.formatFileSize = function (bytes) {
     if (bytes === 0) return '0 Bytes';
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
