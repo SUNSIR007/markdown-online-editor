@@ -356,31 +356,40 @@
     flex-direction: column;
     gap: 24px;
     padding: 32px;
-    background: rgba(30, 41, 59, 0.75);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
+    background: rgba(30, 41, 59, 0.95);
+    /* 增加不透明度：0.75 → 0.95 */
+    backdrop-filter: blur(8px);
+    /* 减少模糊：24px → 8px */
+    -webkit-backdrop-filter: blur(8px);
+    /* 减少模糊：24px → 8px */
     border-radius: 24px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    /* 增强边框可见度 */
     box-shadow:
-        0 20px 40px -10px rgba(0, 0, 0, 0.4),
-        0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+        0 20px 40px -10px rgba(0, 0, 0, 0.6),
+        /* 增强阴影 */
+        0 0 0 1px rgba(255, 255, 255, 0.08) inset;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .upload-progress-card.is-success {
-    background: rgba(30, 41, 59, 0.85);
-    border-color: rgba(16, 185, 129, 0.2);
+    background: rgba(30, 41, 59, 0.95);
+    /* 增加不透明度 */
+    border-color: rgba(16, 185, 129, 0.3);
+    /* 增强边框 */
     box-shadow:
-        0 20px 40px -10px rgba(16, 185, 129, 0.15),
-        0 0 0 1px rgba(16, 185, 129, 0.1) inset;
+        0 20px 40px -10px rgba(16, 185, 129, 0.2),
+        0 0 0 1px rgba(16, 185, 129, 0.15) inset;
 }
 
 .upload-progress-card.is-error {
-    background: rgba(30, 41, 59, 0.85);
-    border-color: rgba(239, 68, 68, 0.2);
+    background: rgba(30, 41, 59, 0.95);
+    /* 增加不透明度 */
+    border-color: rgba(239, 68, 68, 0.3);
+    /* 增强边框 */
     box-shadow:
-        0 20px 40px -10px rgba(239, 68, 68, 0.15),
-        0 0 0 1px rgba(239, 68, 68, 0.1) inset;
+        0 20px 40px -10px rgba(239, 68, 68, 0.2),
+        0 0 0 1px rgba(239, 68, 68, 0.15) inset;
 }
 
 .upload-progress-header {
@@ -637,7 +646,31 @@
 
     .upload-progress-dialog,
     .el-dialog__wrapper .upload-progress-dialog {
-        width: 92vw !important;
+        width: 90vw !important;
+        /* 稍微减少宽度，留出边距 */
+        max-width: 400px !important;
+    }
+
+    .upload-progress-card {
+        padding: 24px 20px !important;
+        /* 减少移动端内边距 */
+        gap: 16px !important;
+    }
+
+    .upload-progress-label {
+        font-size: 16px !important;
+        /* 减小字体 */
+    }
+
+    .upload-progress-percentage {
+        font-size: 20px !important;
+        /* 减小字体 */
+    }
+
+    .upload-progress-badge {
+        width: 48px !important;
+        /* 减小尺寸 */
+        height: 48px !important;
     }
 }
 
