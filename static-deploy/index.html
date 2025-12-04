@@ -204,10 +204,18 @@
     <link rel="preconnect" href="https://api.github.com" crossorigin>
     <link rel="dns-prefetch" href="https://api.github.com">
 
-    <!-- 预加载关键 JavaScript 文件 - 修复：使用 preload 而非 modulepreload -->
+    <!-- 预加载关键 JavaScript 文件 -->
     <link rel="preload" href="https://unpkg.com/vue@2.6.14/dist/vue.min.js" as="script" crossorigin>
     <link rel="preload" href="https://unpkg.com/element-ui@2.15.13/lib/index.js" as="script" crossorigin>
     <link rel="preload" href="https://cdn.jsdelivr.net/npm/vditor@3.9.4/dist/index.min.js" as="script" crossorigin>
+
+    <!-- 预加载关键 CSS 文件 -->
+    <link rel="preload" href="https://unpkg.com/element-ui@2.15.13/lib/theme-chalk/index.css" as="style" crossorigin>
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/vditor@3.9.4/dist/index.css" as="style" crossorigin>
+
+    <!-- 预加载图片资源 -->
+    <link rel="preload" href="./img/icons/write.png" as="image">
+    <link rel="preload" href="./img/icons/upload-icon.png" as="image">
 
     <link rel="icon" type="image/png" href="./img/icons/write.png">
     <link rel="apple-touch-icon" sizes="180x180" href="./img/icons/apple-touch-icon.png">
@@ -271,6 +279,83 @@
 </head>
 
 <body bgcolor="#0f172a" style="background-color: #0f172a; color: #f1f5f9;">
+    <!-- 骨架屏 - 在 Vue 初始化前显示 -->
+    <div id="app-skeleton" style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: #0f172a;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        padding: env(safe-area-inset-top, 0px) 0 env(safe-area-inset-bottom, 0px) 0;
+    ">
+        <!-- 顶部栏骨架 -->
+        <div style="
+            height: 60px;
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.98));
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+        ">
+            <div style="width: 32px; height: 32px; background: rgba(255,255,255,0.1); border-radius: 8px;"></div>
+            <div style="width: 72px; height: 36px; background: rgba(255,255,255,0.1); border-radius: 999px;"></div>
+        </div>
+        <!-- 编辑器区域骨架 -->
+        <div style="
+            flex: 1;
+            margin: 24px auto;
+            width: calc(100% - 48px);
+            max-width: 1200px;
+            background: #1e293b;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        ">
+            <!-- 模拟编辑器内容 -->
+            <div style="padding: 30px; flex: 1;">
+                <div
+                    style="width: 60%; height: 24px; background: rgba(255,255,255,0.08); border-radius: 4px; margin-bottom: 16px;">
+                </div>
+                <div
+                    style="width: 80%; height: 16px; background: rgba(255,255,255,0.05); border-radius: 4px; margin-bottom: 12px;">
+                </div>
+                <div
+                    style="width: 70%; height: 16px; background: rgba(255,255,255,0.05); border-radius: 4px; margin-bottom: 12px;">
+                </div>
+                <div style="width: 40%; height: 16px; background: rgba(255,255,255,0.05); border-radius: 4px;"></div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // 在 Vue 挂载后立即移除骨架屏
+        (function () {
+            var observer = new MutationObserver(function (mutations) {
+                var app = document.getElementById('app');
+                if (app && app.children.length > 0 && !app.hasAttribute('v-cloak')) {
+                    var skeleton = document.getElementById('app-skeleton');
+                    if (skeleton) {
+                        skeleton.style.opacity = '0';
+                        skeleton.style.transition = 'opacity 0.2s ease';
+                        setTimeout(function () { skeleton.remove(); }, 200);
+                    }
+                    observer.disconnect();
+                }
+            });
+            observer.observe(document.body, { childList: true, subtree: true, attributes: true });
+            // 3秒后无论如何都移除骨架屏
+            setTimeout(function () {
+                var skeleton = document.getElementById('app-skeleton');
+                if (skeleton) skeleton.remove();
+            }, 3000);
+        })();
+    </script>
     <div id="app" v-cloak>
         <div class="header">
             <div class="content-type-selector">

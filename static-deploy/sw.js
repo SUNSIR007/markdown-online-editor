@@ -1,5 +1,5 @@
 // 使用时间戳作为版本号，确保每次部署都会更新缓存
-const CACHE_VERSION = '2025-12-04-15:31';
+const CACHE_VERSION = '2025-12-04-21:08';
 const CACHE_NAME = `blog-writer-${CACHE_VERSION}`;
 
 // 需要缓存的静态资源
@@ -7,7 +7,6 @@ const ASSETS_TO_CACHE = [
     './',
     './index.html',
     './site.webmanifest',
-    './css/base.css',
     './css/components.css',
     './css/editor.css',
     './css/mobile.css',
