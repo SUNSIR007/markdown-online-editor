@@ -351,7 +351,7 @@
                             :style="{ width: (uploadProgress.progress || 0) + '%' }"></span>
                     </div>
                 </template>
-                <template v-else>
+                <template v-else-if="uploadProgress.status === 'success' || uploadProgress.status === 'error'">
                     <div class="upload-progress-result">
                         <div :class="['upload-progress-status-icon', 'is-' + uploadProgress.status]">
                             <svg v-if="uploadProgress.status === 'success'" viewBox="0 0 52 52"
