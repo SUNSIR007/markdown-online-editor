@@ -255,6 +255,19 @@
     <script defer src="https://unpkg.com/vue@2.6.14/dist/vue.min.js"></script>
     <script defer src="https://unpkg.com/element-ui@2.15.13/lib/index.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/vditor@3.9.4/dist/index.min.js"></script>
+    <style>
+        /* 强制移除所有模糊效果 - 最终保险 */
+        .v-modal,
+        .el-dialog__wrapper,
+        .el-dialog,
+        .upload-progress-dialog,
+        .upload-feedback-overlay {
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+            filter: none !important;
+            -webkit-filter: none !important;
+        }
+    </style>
 </head>
 
 <body bgcolor="#0f172a" style="background-color: #0f172a; color: #f1f5f9;">

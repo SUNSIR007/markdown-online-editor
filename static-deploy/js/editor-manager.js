@@ -66,14 +66,18 @@ window.initVditor = function (vm) {
                 try {
                     await vm.handleImageUpload(files);
                 } catch (error) {
-                    // 错误已在 handleImageUpload 中处理并显示
-                    // 这里只需要捕获异常，防止 Vditor 显示其内置的"上传失败"提示
                     console.debug('[Editor] 图片上传异常已处理:', error?.message || error);
                 }
-                // 返回空字符串告诉 Vditor 上传已完成且没有错误
-                // Vditor 的逻辑：如果返回字符串，会将其作为错误消息显示
-                // 返回空字符串（不是 null）表示没有错误，不会显示任何提示
-                return '';
+                // 返回一个符合 Vditor 预期的成功对象结构
+                // 这样 Vditor 会认为上传成功，不会显示任何提示
+                return {
+                    msg: '',
+                    code: 0,
+                    data: {
+                        errFiles: [],
+                        succMap: {}
+                    }
+                };
             }
         },
         cache: { enable: false },

@@ -12,7 +12,17 @@ window.handleImageUpload = async function (vm, files) {
         return Promise.reject('图床未配置');
     }
 
+    // 防止重复触发
+    if (vm.uploadingImages) {
+        console.log('[ImageHandler] 上传正在进行中，忽略重复请求');
+        return Promise.resolve([]);
+    }
+
     const fileArray = Array.from(files);
+    if (fileArray.length === 0) {
+        return Promise.resolve([]);
+    }
+
     vm.uploadingImages = true;
 
     if (typeof vm.closeUploadProgress === 'function') {
@@ -117,6 +127,13 @@ window.handleImageUpload = async function (vm, files) {
 
     } catch (error) {
         console.error('图片上传错误:', error);
+
+        // 如果状态已经是 success，说明主要流程已经成功，不要覆盖为 error
+        if (vm.uploadProgress.status === 'success') {
+            console.warn('上传流程已成功，忽略后续错误:', error);
+            return Promise.resolve([]);
+        }
+
         vm.uploadProgress.status = 'error';
         vm.uploadProgress.stage = 'error';
         vm.uploadProgress.summary = '上传失败';
@@ -137,7 +154,10 @@ window.handleImageUpload = async function (vm, files) {
         }
         return Promise.reject(error);
     } finally {
-        vm.uploadingImages = false;
+        // 稍微延迟重置状态，防止立即触发下一次点击
+        setTimeout(() => {
+            vm.uploadingImages = false;
+        }, 500);
     }
 };
 
