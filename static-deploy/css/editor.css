@@ -18,7 +18,7 @@
     max-width: 1200px;
     backdrop-filter: blur(12px);
     /* 只在 hover 相关属性上使用过渡，避免初始化抖动 */
-    transition: box-shadow 0.3s ease, border-color 0.3s ease;
+    transition: box-shadow 0.3s ease;
 }
 
 .editor-container:hover {
