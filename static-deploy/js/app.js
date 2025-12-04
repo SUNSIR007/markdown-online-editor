@@ -68,15 +68,6 @@ new Vue({
         window.setupViewportFixes(this);
         this.initEditorWhenIdle();
         this.deferNonCriticalInit();
-
-        // 隐藏加载覆盖层，防止白屏
-        this.$nextTick(() => {
-            requestAnimationFrame(() => {
-                if (window.hideLoadingOverlay) {
-                    window.hideLoadingOverlay();
-                }
-            });
-        });
     },
 
     methods: {

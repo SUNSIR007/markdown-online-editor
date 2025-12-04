@@ -148,14 +148,7 @@
             box-sizing: border-box !important;
             padding-top: var(--safe-area-top);
             padding-bottom: var(--safe-area-bottom);
-            opacity: 0;
-            transition: opacity 0.4s ease;
-            will-change: opacity;
             contain: layout style paint;
-        }
-
-        #app.loaded {
-            opacity: 1;
         }
 
         /* Scrollbar Styling */
@@ -180,42 +173,6 @@
         /* 防止页面加载时的样式闪烁 */
         [v-cloak] {
             display: none !important;
-        }
-
-        /* 加载覆盖层 - 防止白屏，由JS控制隐藏 */
-        #loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: #0f172a;
-            z-index: 99999;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: opacity 0.3s ease;
-        }
-
-        #loading-overlay.hide {
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        /* Loading Spinner */
-        .loading-spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            border-top-color: #3b82f6;
-            animation: spin 1s ease-in-out infinite;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
         }
 
         /* 移动端初始样式 - 在 Vue 加载前就生效 */
@@ -301,53 +258,6 @@
 </head>
 
 <body bgcolor="#0f172a" style="background-color: #0f172a; color: #f1f5f9;">
-    <!-- 加载覆盖层 - 防止启动图消失后的白屏 -->
-    <!-- 加载覆盖层 - 防止启动图消失后的白屏 -->
-    <div id="loading-overlay">
-        <div class="loading-spinner"></div>
-    </div>
-    <script>
-        // 立即确保覆盖层可见
-        (function () {
-            const overlay = document.getElementById('loading-overlay');
-            if (overlay) {
-                overlay.style.display = 'flex';
-                overlay.style.opacity = '1';
-                console.log('[Loading] Overlay activated at:', new Date().toISOString());
-            }
-
-            // 强制深色主题 - 支持 bfcache
-            const enforceDark = () => {
-                document.documentElement.style.backgroundColor = '#0f172a';
-                document.body.style.backgroundColor = '#0f172a';
-                const themeMeta = document.querySelector('meta[name="theme-color"]');
-                if (themeMeta) themeMeta.content = '#0f172a';
-            };
-            enforceDark();
-            window.addEventListener('pageshow', enforceDark);
-
-            // 定义全局函数用于隐藏覆盖层
-            window.hideLoadingOverlay = function () {
-                const overlay = document.getElementById('loading-overlay');
-                if (overlay) {
-                    console.log('[Loading] Hiding overlay at:', new Date().toISOString());
-                    overlay.classList.add('hide');
-
-                    // 同时显示应用内容
-                    const app = document.getElementById('app');
-                    if (app) {
-                        app.classList.add('loaded');
-                    }
-
-                    setTimeout(() => {
-                        overlay.remove();
-                        console.log('[Loading] Overlay removed');
-                    }, 300);
-                }
-            };
-        })();
-    </script>
-
     <div id="app" v-cloak>
         <div class="header">
             <div class="content-type-selector">
