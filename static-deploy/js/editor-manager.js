@@ -33,7 +33,7 @@ function getCachedMetadataWrapper() {
 }
 
 // 初始化 Vditor 编辑器
-window.initVditor = function(vm) {
+window.initVditor = function (vm) {
     const editorMode = 'ir';
     const vditorTheme = 'dark';
 
@@ -62,12 +62,15 @@ window.initVditor = function(vm) {
             multiple: true,
             fieldName: 'file[]',
             filename: (name) => name.replace(/[^(a-zA-Z0-9\u4e00-\u9fa5\.)]/g, ''),
-            handler: (files) => {
-                return vm.handleImageUpload(files);
+            handler: async (files) => {
+                await vm.handleImageUpload(files);
+                // 返回 null 告诉 Vditor 我们已经自己处理了插入，不需要它做任何事
+                // 这样可以避免 Vditor 因为无法解析 handleImageUpload 的返回值而显示"上传失败"
+                return null;
             }
         },
         cache: { enable: false },
-        after: function() {
+        after: function () {
             // 使用缓存的DOM元素
             const vditorElement = getCachedEditorElement();
             const metadataEditor = getCachedMetadataWrapper();
@@ -103,7 +106,7 @@ window.initVditor = function(vm) {
 };
 
 // 聚焦编辑器
-window.focusEditor = function(vm) {
+window.focusEditor = function (vm) {
     if (!vm.vditor || !vm.vditor.vditor || !vm.vditor.vditor.ir) {
         setTimeout(() => window.focusEditor(vm), 200);
         return;
@@ -179,7 +182,7 @@ window.focusEditor = function(vm) {
 };
 
 // 设置图片拖拽和粘贴支持
-window.setupImageDragAndPaste = function(vm) {
+window.setupImageDragAndPaste = function (vm) {
     const vditorElement = getCachedEditorElement();
     if (!vditorElement) return;
 
