@@ -168,6 +168,9 @@ window.handleMobileImageChange = async function (vm, event) {
 
     try {
         await window.handleImageUpload(vm, files);
+    } catch (error) {
+        // 错误已在 handleImageUpload 中处理
+        console.debug('[ImageHandler] 移动端上传异常已处理:', error?.message || error);
     } finally {
         event.target.value = '';
     }

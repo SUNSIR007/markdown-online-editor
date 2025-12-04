@@ -191,4 +191,25 @@
         font-size: 14px !important;
         height: 36px !important;
     }
+
+    /* 移动端对话框 - 移除所有模糊效果 */
+    .v-modal,
+    .el-dialog__wrapper,
+    .el-dialog,
+    .upload-progress-dialog,
+    .upload-feedback-overlay {
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        filter: none !important;
+        -webkit-filter: none !important;
+    }
+
+    /* 确保上传进度对话框完全清晰 */
+    .upload-progress-dialog .el-dialog {
+        background: rgb(30, 41, 59) !important;
+    }
+
+    .upload-progress-card {
+        background: rgb(30, 41, 59) !important;
+    }
 }
