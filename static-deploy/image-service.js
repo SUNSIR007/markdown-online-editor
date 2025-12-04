@@ -955,8 +955,17 @@ class ImageService {
 
       let result = null
 
+      // 安全的进度回调包装
+      const safeOnProgress = (data) => {
+        try {
+          onProgress(data)
+        } catch (e) {
+          console.warn('onProgress callback error:', e)
+        }
+      }
+
       try {
-        onProgress({
+        safeOnProgress({
           current: i + 1,
           total: totalFiles,
           fileName: file.name,
@@ -966,7 +975,7 @@ class ImageService {
         result = await this.uploadImage(file, {
           ...options,
           onProgress: (singleProgress) => {
-            onProgress({
+            safeOnProgress({
               current: i + 1,
               total: totalFiles,
               fileName: file.name,
