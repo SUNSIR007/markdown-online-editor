@@ -111,6 +111,11 @@ window.initVditor = function (vm) {
                 } else {
                     window.setupDesktopAutoFocus(vm);
                 }
+
+                // 移除骨架屏 - 此时编辑器已准备好
+                if (typeof window.removeAppSkeleton === 'function') {
+                    window.removeAppSkeleton();
+                }
             });
         }
     });
