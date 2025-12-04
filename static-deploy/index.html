@@ -21,6 +21,7 @@
     <style>
         /* 基础样式 - Base Styles (Inlined for performance) */
         :root {
+            /* 立即使用 JS 计算真实值，避免布局抖动 */
             --vh: 1vh;
 
             /* Color Palette - Modern Dark (Slate/Navy) */
@@ -276,6 +277,23 @@
             -webkit-filter: none !important;
         }
     </style>
+    <script>
+        // 立即计算视口高度，避免 CSS 加载后的布局跳动
+        (function () {
+            var vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--vh', vh + 'px');
+
+            // 监听 resize 事件保持更新 (防抖)
+            var timeout;
+            window.addEventListener('resize', function () {
+                clearTimeout(timeout);
+                timeout = setTimeout(function () {
+                    var vh = window.innerHeight * 0.01;
+                    document.documentElement.style.setProperty('--vh', vh + 'px');
+                }, 100);
+            });
+        })();
+    </script>
 </head>
 
 <body bgcolor="#0f172a" style="background-color: #0f172a; color: #f1f5f9;">
