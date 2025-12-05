@@ -405,6 +405,25 @@ body>.v-modal,
     align-items: center;
     justify-content: space-between;
     gap: 20px;
+    border: none;
+    border-bottom: none;
+}
+
+/* 确保 upload-progress-dialog 内的 el-dialog 相关元素没有边框 */
+.upload-progress-dialog .el-dialog__body {
+    padding: 0 !important;
+    border: none !important;
+    background: transparent !important;
+}
+
+.upload-progress-dialog .el-dialog__header {
+    display: none !important;
+}
+
+.upload-progress-dialog .el-dialog {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
 }
 
 .upload-progress-badge {
@@ -472,6 +491,8 @@ body>.v-modal,
     flex-direction: column;
     gap: 12px;
     padding: 4px 0;
+    border: none;
+    border-top: none;
 }
 
 .upload-progress-filename {
