@@ -16,11 +16,11 @@ const ASSETS_TO_CACHE = [
     './js/image-handler.js',
     './js/mobile-utils.js',
     './js/runtime-config.js',
-    './github-service.js',        // 修复：添加缺失的关键文件
-    './image-service.js',          // 修复：添加缺失的关键文件
+    './js/github-service.js',
+    './js/image-service.js',
     './img/icons/write.png',
     './img/icons/upload-icon.png',
-    './img/icons/apple-touch-icon.png'  // 修复：添加 Apple 图标
+    './img/icons/apple-touch-icon.png'
 ];
 
 // CDN 资源 - 核心库，提前缓存以提升加载速度

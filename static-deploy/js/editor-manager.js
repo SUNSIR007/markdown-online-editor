@@ -1,36 +1,27 @@
 // 编辑器管理 - Editor Manager
 
-// 缓存常用的DOM元素
+// 缓存常用的DOM元素（永久缓存，因为这些元素在应用生命周期内不会改变）
 let editorElementCache = {
     vditorElement: null,
-    metadataWrapper: null,
-    lastUpdated: 0
+    metadataWrapper: null
 };
 
 // 获取缓存的编辑器元素
 function getCachedEditorElement() {
-    const now = Date.now();
-    // 缓存1秒内有效
-    if (editorElementCache.vditorElement && (now - editorElementCache.lastUpdated) < 1000) {
-        return editorElementCache.vditorElement;
+    if (!editorElementCache.vditorElement) {
+        editorElementCache.vditorElement = document.getElementById('vditor');
     }
-
-    editorElementCache.vditorElement = document.getElementById('vditor');
-    editorElementCache.lastUpdated = now;
     return editorElementCache.vditorElement;
 }
 
 // 获取缓存的元数据包装器
 function getCachedMetadataWrapper() {
-    const now = Date.now();
-    if (editorElementCache.metadataWrapper && (now - editorElementCache.lastUpdated) < 1000) {
-        return editorElementCache.metadataWrapper;
+    if (!editorElementCache.metadataWrapper) {
+        editorElementCache.metadataWrapper = document.getElementById('metadata-editor-wrapper');
     }
-
-    editorElementCache.metadataWrapper = document.getElementById('metadata-editor-wrapper');
-    editorElementCache.lastUpdated = now;
     return editorElementCache.metadataWrapper;
 }
+
 
 // 初始化 Vditor 编辑器
 window.initVditor = function (vm) {

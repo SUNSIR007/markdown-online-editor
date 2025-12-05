@@ -107,9 +107,13 @@ class GitHubService {
    * @param {string} sha - 文件的SHA（更新时需要）
    */
   async createOrUpdateFile(path, content, message, sha = null) {
+    // 使用 TextEncoder 替代废弃的 unescape() 实现 UTF-8 安全的 Base64 编码
+    const utf8Bytes = new TextEncoder().encode(content);
+    const binaryString = Array.from(utf8Bytes, byte => String.fromCharCode(byte)).join('');
+
     const data = {
       message,
-      content: btoa(unescape(encodeURIComponent(content))), // 处理中文字符 (unescape is deprecated but required for btoa with UTF-8)
+      content: btoa(binaryString),
       ...(sha && { sha }),
     }
 

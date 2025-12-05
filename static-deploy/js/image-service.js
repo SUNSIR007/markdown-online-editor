@@ -8,6 +8,35 @@ const imageServiceDebugLog = (...args) => {
   console.debug('[ImageService]', ...args)
 }
 
+// ============ 常量定义 ============
+const IMAGE_CONSTANTS = {
+  // 文件大小限制
+  MAX_UPLOAD_SIZE: 50 * 1024 * 1024,        // 50MB - 最大允许上传大小
+  COMPRESSION_THRESHOLD: 10 * 1024 * 1024,  // 10MB - 超过此大小触发压缩
+  TARGET_COMPRESSED_SIZE: 10 * 1024 * 1024, // 10MB - 压缩目标大小
+
+  // Canvas 限制
+  MAX_CANVAS_DIMENSION: 4096,               // 最大Canvas单边尺寸
+  MAX_CANVAS_PIXELS: 16 * 1024 * 1024,      // 16MP - 最大Canvas像素数
+  MIN_RESIZE_WIDTH: 800,                    // 最小缩放宽度
+
+  // 压缩参数
+  DEFAULT_QUALITY: 0.8,                     // 默认压缩质量
+  MIN_QUALITY: 0.1,                         // 最低压缩质量
+  QUALITY_STEP: 0.1,                        // 质量递减步长
+  MAX_COMPRESS_ATTEMPTS: 8,                 // 最大压缩尝试次数
+  RESIZE_SCALE: 0.8,                        // 尺寸缩放比例
+
+  // 网络超时
+  MOBILE_TIMEOUT_MS: 45000,                 // 移动端请求超时
+  PROXY_TIMEOUT_MS: 60000,                  // 代理环境请求超时
+  RETRY_DELAY_MS: 1000,                     // 重试延迟
+
+  // 文件名限制
+  MAX_FILENAME_LENGTH: 50                   // 最大文件名长度
+}
+
+
 class ImageService {
   constructor() {
     this.baseURL = 'https://api.github.com'
@@ -591,7 +620,7 @@ class ImageService {
    * @param {number} targetSize - 目标大小（字节）
    * @param {Function} onProgress - 进度回调
    */
-  async compressToSize(file, targetSize = 10 * 1024 * 1024, onProgress = () => { }) {
+  async compressToSize(file, targetSize = IMAGE_CONSTANTS.TARGET_COMPRESSED_SIZE, onProgress = () => { }) {
     // 如果文件已经小于目标大小，直接返回
     if (file.size <= targetSize) {
       return file
@@ -759,7 +788,7 @@ class ImageService {
    */
   validateImageFile(file) {
     const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp']
-    const maxSize = 50 * 1024 * 1024 // 50MB (提高限制，因为我们会自动压缩)
+    const maxSize = IMAGE_CONSTANTS.MAX_UPLOAD_SIZE
 
     if (!allowedTypes.includes(file.type)) {
       throw new Error('不支持的图片格式，请使用 JPEG、PNG、GIF 或 WebP 格式')
@@ -809,10 +838,10 @@ class ImageService {
 
       // 处理图片（压缩等）
       let processedFile = file
-      const targetSize = 10 * 1024 * 1024 // 10MB
+      const targetSize = IMAGE_CONSTANTS.COMPRESSION_THRESHOLD
 
       if (file.size > targetSize) {
-        // 超过10MB，使用智能压缩到10MB以内
+        // 超过阈值使用智能压缩
         onProgress({ stage: 'compressing', progress: 20 })
         processedFile = await this.compressToSize(file, targetSize, onProgress)
       }

@@ -33,3 +33,7 @@ yarn-error.log*
 # Test
 tests/coverage
 .vercel
+
+# Temporary files
+*.tmp
+*.temp
