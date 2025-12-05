@@ -1,5 +1,5 @@
 // 使用时间戳作为版本号，确保每次部署都会更新缓存
-const CACHE_VERSION = '2025-12-05-10:00';
+const CACHE_VERSION = '2025-12-05-10:03';
 const CACHE_NAME = `blog-writer-${CACHE_VERSION}`;
 
 // 需要缓存的静态资源
