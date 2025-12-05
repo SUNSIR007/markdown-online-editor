@@ -210,7 +210,8 @@
     }
 
     .upload-progress-card {
-        background: rgb(30, 41, 59) !important;
+        background: #1e293b !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
     }
 
     /* 确保移动端上传对话框没有边框/白线 */

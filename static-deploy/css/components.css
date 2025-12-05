@@ -364,7 +364,7 @@ body>.v-modal,
 /* Upload Progress Dialog - Modern Minimalist (iOS Style) */
 .el-dialog__wrapper .upload-progress-dialog,
 .upload-progress-dialog {
-    background: transparent !important;
+    background: rgba(0, 0, 0, 0.6) !important;
     box-shadow: none !important;
     border: none !important;
 }
@@ -374,14 +374,14 @@ body>.v-modal,
     flex-direction: column;
     gap: 20px;
     padding: 32px;
-    background: #27272a;
-    /* Zinc 800 - Neutral Dark */
+    background: #1e293b;
+    /* Slate 800 - 更深的背景色 */
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
     border-radius: 24px;
-    border: none;
-    /* 移除边框，消除白线 */
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    /* 添加微妙的边框 */
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.05);
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
@@ -393,11 +393,11 @@ body>.v-modal,
 }
 
 .upload-progress-card.is-success {
-    background: #27272a;
+    background: #1e293b;
 }
 
 .upload-progress-card.is-error {
-    background: #27272a;
+    background: #1e293b;
 }
 
 .upload-progress-header {
