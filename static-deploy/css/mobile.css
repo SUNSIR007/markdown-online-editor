@@ -186,6 +186,46 @@
         line-height: 40px !important;
     }
 
+    /* 移动端上传对话框优化 */
+    .upload-progress-card {
+        padding: 32px 24px !important;
+        background: rgba(30, 41, 59, 0.85) !important;
+        backdrop-filter: blur(16px) !important;
+        -webkit-backdrop-filter: blur(16px) !important;
+    }
+
+    .upload-status-icon-wrapper,
+    .result-icon-wrapper {
+        width: 64px !important;
+        height: 64px !important;
+        margin-bottom: 20px !important;
+    }
+
+    .upload-status-icon-wrapper i,
+    .result-icon-wrapper i {
+        font-size: 28px !important;
+    }
+
+    .upload-title,
+    .result-title {
+        font-size: 18px !important;
+    }
+
+    .upload-details {
+        font-size: 14px !important;
+    }
+
+    /* 确保移动端上传对话框没有边框/白线 */
+    .upload-progress-dialog .el-dialog,
+    .upload-progress-dialog .el-dialog__body,
+    .upload-progress-dialog .el-dialog__header {
+        border: none !important;
+        border-top: none !important;
+        border-bottom: none !important;
+        background: transparent !important;
+        box-shadow: none !important;
+    }
+
     .el-button {
         padding: 8px 16px !important;
         font-size: 14px !important;
@@ -206,10 +246,6 @@
 
     /* 确保上传进度对话框完全清晰 */
     .upload-progress-dialog .el-dialog {
-        background: rgb(30, 41, 59) !important;
-    }
-
-    .upload-progress-card {
         background: rgb(30, 41, 59) !important;
     }
 }
