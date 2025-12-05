@@ -297,152 +297,49 @@
 </head>
 
 <body bgcolor="#0f172a" style="background-color: #0f172a; color: #f1f5f9;">
-    <!-- 骨架屏 - 在 Vue 初始化前显示 -->
-    <style>
-        /* 骨架屏样式 - 默认桌面端 */
-        #app-skeleton {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: #0f172a;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            padding: env(safe-area-inset-top, 0px) 0 env(safe-area-inset-bottom, 0px) 0;
-        }
-
-        #app-skeleton .skeleton-header {
-            height: 73px;
-            /* padding 16px * 2 + content */
-            background: rgba(15, 23, 42, 0.8);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 24px;
-            box-sizing: border-box;
-        }
-
-        #app-skeleton .skeleton-editor {
-            flex: 1;
-            margin: 24px auto;
-            width: calc(100% - 48px);
-            max-width: 1200px;
-            background: #1e293b;
-            border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            box-sizing: border-box;
-        }
-
-        #app-skeleton .skeleton-content {
-            padding: 30px;
-            flex: 1;
-        }
-
-        #app-skeleton .skeleton-line {
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: 4px;
-            margin-bottom: 12px;
-        }
-
-        #app-skeleton .skeleton-btn {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 999px;
-        }
-
-        /* 移动端骨架屏样式 - 匹配 mobile.css */
-        @media (max-width: 768px) {
-            #app-skeleton .skeleton-header {
-                height: 68px;
-                /* padding 12px * 2 + 44px touch target */
-                padding: 0 16px;
-                background: rgba(15, 23, 42, 0.85);
-            }
-
-            #app-skeleton .skeleton-editor {
-                margin: 16px 12px;
-                width: calc(100% - 24px);
-                max-width: none;
-            }
-
-            #app-skeleton .skeleton-content {
-                padding: 20px 16px;
-            }
-
-            #app-skeleton .skeleton-icon {
-                width: 44px !important;
-                height: 44px !important;
-            }
-
-            #app-skeleton .skeleton-publish {
-                width: 100px !important;
-                height: 44px !important;
-            }
-        }
-
-        /* 骨架屏淡出动画 */
-        #app-skeleton.fade-out {
-            opacity: 0;
-            transition: opacity 0.25s ease-out;
-            pointer-events: none;
-        }
-    </style>
-    <div id="app-skeleton">
-        <!-- 顶部栏骨架 -->
-        <div class="skeleton-header">
-            <div class="skeleton-icon skeleton-btn" style="width: 32px; height: 32px; border-radius: 8px;"></div>
-            <div class="skeleton-publish skeleton-btn" style="width: 72px; height: 36px;"></div>
-        </div>
-        <!-- 编辑器区域骨架 -->
-        <div class="skeleton-editor">
-            <div class="skeleton-content">
-                <div class="skeleton-line" style="width: 60%; height: 24px; margin-bottom: 16px;"></div>
-                <div class="skeleton-line" style="width: 85%; height: 16px;"></div>
-                <div class="skeleton-line" style="width: 75%; height: 16px;"></div>
-                <div class="skeleton-line" style="width: 40%; height: 16px; margin-bottom: 0;"></div>
-            </div>
-        </div>
-    </div>
+    <!-- 启动遮罩 - 纯深色背景，避免闪烁 -->
+    <div id="app-loading" style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: #0f172a;
+        z-index: 9999;
+        transition: opacity 0.2s ease-out;
+    "></div>
     <script>
-        // 骨架屏移除逻辑
+        // 启动遮罩移除逻辑
         (function () {
-            var skeleton = document.getElementById('app-skeleton');
+            var loading = document.getElementById('app-loading');
             var removed = false;
 
-            function removeSkeleton() {
-                if (removed || !skeleton) return;
+            function removeLoading() {
+                if (removed || !loading) return;
                 removed = true;
-                skeleton.classList.add('fade-out');
+                loading.style.opacity = '0';
                 setTimeout(function () {
-                    if (skeleton && skeleton.parentNode) {
-                        skeleton.parentNode.removeChild(skeleton);
+                    if (loading && loading.parentNode) {
+                        loading.parentNode.removeChild(loading);
                     }
-                }, 250);
+                }, 200);
             }
 
-            // 暴露全局函数，供编辑器初始化完成后调用
-            window.removeAppSkeleton = removeSkeleton;
+            // 暴露全局函数
+            window.removeAppSkeleton = removeLoading;
 
             // 监听 Vue 挂载完成
             var observer = new MutationObserver(function () {
                 var app = document.getElementById('app');
                 if (app && app.children.length > 0 && !app.hasAttribute('v-cloak')) {
-                    // 延迟一帧确保渲染完成
-                    requestAnimationFrame(function () {
-                        requestAnimationFrame(removeSkeleton);
-                    });
+                    requestAnimationFrame(removeLoading);
                     observer.disconnect();
                 }
             });
             observer.observe(document.body, { childList: true, subtree: true, attributes: true });
 
-            // 3秒后强制移除（兜底）
-            setTimeout(removeSkeleton, 3000);
+            // 2秒后强制移除（兜底）
+            setTimeout(removeLoading, 2000);
         })();
     </script>
     <div id="app" v-cloak>
