@@ -364,7 +364,7 @@ body>.v-modal,
 /* Upload Progress Dialog - Modern Minimalist (iOS Style) */
 .el-dialog__wrapper .upload-progress-dialog,
 .upload-progress-dialog {
-    background: rgba(0, 0, 0, 0.6) !important;
+    background: transparent !important;
     box-shadow: none !important;
     border: none !important;
 }
@@ -414,16 +414,30 @@ body>.v-modal,
     padding: 0 !important;
     border: none !important;
     background: transparent !important;
+    border-radius: 0 !important;
 }
 
 .upload-progress-dialog .el-dialog__header {
     display: none !important;
+    padding: 0 !important;
 }
 
 .upload-progress-dialog .el-dialog {
     background: transparent !important;
     border: none !important;
     box-shadow: none !important;
+    border-radius: 0 !important;
+    overflow: visible !important;
+}
+
+.upload-progress-dialog .el-dialog__wrapper {
+    background: transparent !important;
+}
+
+/* 确保 v-modal 遮罩层覆盖整个屏幕 */
+.upload-progress-dialog+.v-modal,
+body>.v-modal {
+    background: rgba(0, 0, 0, 0.6) !important;
 }
 
 .upload-progress-badge {
