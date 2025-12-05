@@ -361,7 +361,7 @@ body>.v-modal,
     border-left: 4px solid #ef4444 !important;
 }
 
-/* Upload Progress Dialog - Modern Minimalist (iOS Style) */
+/* Upload Progress Dialog - Modern Refined */
 .el-dialog__wrapper .upload-progress-dialog,
 .upload-progress-dialog {
     background: transparent !important;
@@ -372,32 +372,37 @@ body>.v-modal,
 .upload-progress-card {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 24px;
     padding: 32px;
-    background: #1e293b;
-    /* Slate 800 - 更深的背景色 */
+    background: rgb(30, 41, 59);
+    /* 使用完全不透明的纯色背景 */
+    /* 完全移除 backdrop-filter，避免任何模糊 */
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
     border-radius: 24px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    /* 添加微妙的边框 */
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.05);
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-}
-
-/* Remove top accent line */
-.upload-progress-card::after {
-    display: none;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow:
+        0 20px 40px -10px rgba(0, 0, 0, 0.8),
+        0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .upload-progress-card.is-success {
-    background: #1e293b;
+    background: rgb(30, 41, 59);
+    /* 纯色背景 */
+    border-color: rgba(16, 185, 129, 0.4);
+    box-shadow:
+        0 20px 40px -10px rgba(16, 185, 129, 0.3),
+        0 0 0 1px rgba(16, 185, 129, 0.2) inset;
 }
 
 .upload-progress-card.is-error {
-    background: #1e293b;
+    background: rgb(30, 41, 59);
+    /* 纯色背景 */
+    border-color: rgba(239, 68, 68, 0.4);
+    box-shadow:
+        0 20px 40px -10px rgba(239, 68, 68, 0.3),
+        0 0 0 1px rgba(239, 68, 68, 0.2) inset;
 }
 
 .upload-progress-header {
@@ -405,97 +410,59 @@ body>.v-modal,
     align-items: center;
     justify-content: space-between;
     gap: 20px;
-    border: none;
-    border-bottom: none;
-}
-
-/* 确保 upload-progress-dialog 内的 el-dialog 相关元素没有边框 */
-.upload-progress-dialog .el-dialog__body {
-    padding: 0 !important;
-    border: none !important;
-    background: transparent !important;
-    border-radius: 0 !important;
-}
-
-.upload-progress-dialog .el-dialog__header {
-    display: none !important;
-    padding: 0 !important;
-}
-
-.upload-progress-dialog .el-dialog {
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    border-radius: 0 !important;
-    overflow: visible !important;
-}
-
-.upload-progress-dialog .el-dialog__wrapper {
-    background: transparent !important;
-}
-
-/* 确保 v-modal 遮罩层覆盖整个屏幕 */
-.upload-progress-dialog+.v-modal,
-body>.v-modal {
-    background: rgba(0, 0, 0, 0.6) !important;
 }
 
 .upload-progress-badge {
     width: 56px;
     height: 56px;
-    border-radius: 50%;
-    /* Circular */
+    border-radius: 18px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(59, 130, 246, 0.15);
-    /* Subtle Blue Bg */
-    color: #60a5fa;
-    /* Blue Icon */
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    box-shadow: 0 8px 16px -4px rgba(59, 130, 246, 0.4);
     position: relative;
     flex-shrink: 0;
-    box-shadow: none;
 }
 
 .upload-progress-pulse {
-    width: 100%;
-    height: 100%;
+    width: 14px;
+    height: 14px;
     border-radius: 50%;
-    position: absolute;
-    border: 2px solid rgba(59, 130, 246, 0.3);
-    animation: upload-progress-pulse 2s infinite;
-    background: transparent;
-    box-shadow: none;
+    background: #ffffff;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+    animation: upload-progress-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
 .upload-progress-meta {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 6px;
     flex: 1;
     min-width: 0;
+    /* Prevent text overflow */
 }
 
 .upload-progress-label {
-    font-size: 17px;
+    font-size: 18px;
     font-weight: 600;
-    color: #f4f4f5;
-    /* Zinc 100 */
+    color: #f8fafc;
     letter-spacing: -0.01em;
 }
 
 .upload-progress-count {
-    font-size: 13px;
-    color: #a1a1aa;
-    /* Zinc 400 */
+    font-size: 14px;
+    color: #94a3b8;
     font-weight: 500;
 }
 
 .upload-progress-percentage {
-    font-size: 17px;
-    font-weight: 600;
-    color: #60a5fa;
-    /* Blue */
+    font-size: 24px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #60a5fa, #a78bfa);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
     font-feature-settings: "tnum";
     font-variant-numeric: tabular-nums;
 }
@@ -503,28 +470,23 @@ body>.v-modal {
 .upload-progress-body {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 8px;
     padding: 4px 0;
-    border: none;
-    border-top: none;
 }
 
 .upload-progress-filename {
-    font-size: 14px;
-    color: #d4d4d8;
-    /* Zinc 300 */
+    font-size: 15px;
+    color: #e2e8f0;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     margin: 0;
     font-weight: 500;
-    opacity: 1;
 }
 
 .upload-progress-stage {
     font-size: 13px;
-    color: #71717a;
-    /* Zinc 500 */
+    color: #64748b;
     margin: 0;
     display: flex;
     align-items: center;
@@ -543,21 +505,17 @@ body>.v-modal {
 .upload-progress-stats {
     display: flex;
     gap: 16px;
-    font-size: 12px;
-    color: #71717a;
-    /* Zinc 500 */
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background: transparent;
-    padding: 0;
-    border-radius: 0;
-    align-self: flex-start;
+    font-size: 13px;
+    color: #64748b;
+    font-family: 'JetBrains Mono', monospace;
+    /* Monospace for numbers */
 }
 
 .upload-progress-meter {
     width: 100%;
     height: 6px;
     border-radius: 999px;
-    background: rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.08);
     overflow: hidden;
     position: relative;
 }
@@ -565,37 +523,36 @@ body>.v-modal {
 .upload-progress-meter__fill {
     position: absolute;
     inset: 0;
-    background: #3b82f6;
-    /* Solid Blue */
-    transition: width 0.3s ease;
+    background: linear-gradient(90deg, #3b82f6, #8b5cf6, #3b82f6);
+    background-size: 200% 100%;
+    animation: shimmer 2s linear infinite;
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     border-radius: inherit;
+    box-shadow: 0 0 12px rgba(59, 130, 246, 0.5);
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: 100% 0;
+    }
+
+    100% {
+        background-position: -100% 0;
+    }
 }
 
 .upload-progress-result {
     display: flex;
-    align-items: flex-start;
-    gap: 20px;
+    align-items: center;
+    /* Center vertically */
+    gap: 24px;
     padding: 8px 0;
-    animation: slideUpFade 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-@keyframes slideUpFade {
-    from {
-        opacity: 0;
-        transform: translateY(8px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
 }
 
 .upload-progress-status-icon {
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-    /* Circular */
+    width: 64px;
+    height: 64px;
+    border-radius: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -606,21 +563,19 @@ body>.v-modal {
 .upload-progress-status-icon.is-success {
     background: rgba(16, 185, 129, 0.15);
     color: #34d399;
-    box-shadow: none;
-    border: none;
+    box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.2) inset;
 }
 
 .upload-progress-status-icon.is-error {
     background: rgba(239, 68, 68, 0.15);
     color: #f87171;
-    box-shadow: none;
-    border: none;
+    box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.2) inset;
 }
 
 .upload-progress-icon {
-    width: 28px;
-    height: 28px;
-    stroke-width: 2.5;
+    width: 32px;
+    height: 32px;
+    stroke-width: 3;
     stroke-linecap: round;
     stroke-linejoin: round;
     stroke: currentColor;
@@ -632,43 +587,40 @@ body>.v-modal {
     flex-direction: column;
     gap: 6px;
     justify-content: center;
-    padding-top: 4px;
 }
 
 .upload-progress-result-title {
-    font-size: 18px;
-    font-weight: 600;
+    font-size: 20px;
+    font-weight: 700;
     margin: 0;
-    color: #f4f4f5;
+    color: #f8fafc;
     letter-spacing: -0.01em;
 }
 
 .upload-progress-result-summary {
     margin: 0;
-    padding: 0;
-    border-radius: 0;
+    padding: 8px 12px;
+    border-radius: 8px;
     font-size: 14px;
     line-height: 1.5;
-    background: transparent;
-    color: #a1a1aa;
+    background: rgba(255, 255, 255, 0.05);
+    color: #94a3b8;
     display: inline-block;
-    border: none;
+    /* Fit content */
 }
 
 .upload-progress-card.is-success .upload-progress-result-summary {
-    background: transparent;
-    color: #a1a1aa;
-    border: none;
+    background: rgba(16, 185, 129, 0.1);
+    color: #6ee7b7;
 }
 
 .upload-progress-card.is-error .upload-progress-result-summary {
-    background: transparent;
-    color: #a1a1aa;
-    border: none;
+    background: rgba(239, 68, 68, 0.1);
+    color: #fca5a5;
 }
 
 .upload-progress-messages {
-    margin: 12px 0 0 0;
+    margin: 8px 0 0 0;
     padding: 0;
     list-style: none;
     display: flex;
@@ -680,54 +632,26 @@ body>.v-modal {
 
 .upload-progress-messages li {
     margin: 0;
-    padding: 8px 0;
-    border-radius: 0;
+    padding: 10px 14px;
+    border-radius: 10px;
     font-size: 13px;
     line-height: 1.5;
-    background: transparent;
-    color: #d4d4d8;
-    border: none;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.upload-progress-messages li:last-child {
-    border-bottom: none;
-}
-
-.upload-progress-messages li::before {
-    content: '';
-    display: block;
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    flex-shrink: 0;
-}
-
-.upload-progress-messages li.is-success::before {
-    background-color: #34d399;
-}
-
-.upload-progress-messages li.is-error::before {
-    background-color: #f87171;
+    background: rgba(255, 255, 255, 0.03);
+    color: #cbd5e1;
+    border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 @keyframes upload-progress-pulse {
-    0% {
-        transform: scale(1);
-        opacity: 0.8;
+
+    0%,
+    100% {
+        transform: scale(0.9);
+        opacity: 0.7;
     }
 
     50% {
-        transform: scale(1.15);
-        opacity: 0;
-    }
-
-    100% {
-        transform: scale(1);
-        opacity: 0;
+        transform: scale(1.1);
+        opacity: 1;
     }
 }
 

@@ -210,21 +210,6 @@
     }
 
     .upload-progress-card {
-        background: #1e293b !important;
-        border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    }
-
-    /* 确保移动端上传对话框没有边框/白线 */
-    .upload-progress-dialog .el-dialog,
-    .upload-progress-dialog .el-dialog__body,
-    .upload-progress-dialog .el-dialog__header {
-        border: none !important;
-        border-top: none !important;
-        border-bottom: none !important;
-    }
-
-    .upload-progress-header,
-    .upload-progress-body {
-        border: none !important;
+        background: rgb(30, 41, 59) !important;
     }
 }

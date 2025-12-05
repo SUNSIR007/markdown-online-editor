@@ -322,13 +322,23 @@
         transition: opacity 0.2s ease-out;
     "></div>
     <script>
-        // 启动遮罩移除逻辑 - 优化版：更快响应
+        // 启动遮罩移除逻辑 - 确保 CSS 和 UI 都准备好
         (function () {
             var loading = document.getElementById('app-loading');
             var removed = false;
+            var startTime = Date.now();
+            var MIN_DISPLAY_TIME = 100; // 最小显示时间，避免过快闪烁
 
             function removeLoading() {
                 if (removed || !loading) return;
+
+                // 确保至少显示一定时间
+                var elapsed = Date.now() - startTime;
+                if (elapsed < MIN_DISPLAY_TIME) {
+                    setTimeout(removeLoading, MIN_DISPLAY_TIME - elapsed);
+                    return;
+                }
+
                 removed = true;
                 loading.style.opacity = '0';
                 setTimeout(function () {
@@ -341,19 +351,43 @@
             // 暴露全局函数
             window.removeAppSkeleton = removeLoading;
 
-            // 监听 Vue 挂载完成
+            // 检查所有关键 CSS 是否已加载
+            function checkCSSLoaded() {
+                var cssLinks = document.querySelectorAll('link[rel="stylesheet"]');
+                for (var i = 0; i < cssLinks.length; i++) {
+                    var link = cssLinks[i];
+                    // 如果是 print 媒体查询，说明还没加载完
+                    if (link.media === 'print') {
+                        return false;
+                    }
+                }
+                return true;
+            }
+
+            // 监听 Vue 挂载完成，并确保 CSS 已加载
             var observer = new MutationObserver(function () {
                 var app = document.getElementById('app');
                 if (app && app.children.length > 0 && !app.hasAttribute('v-cloak')) {
                     observer.disconnect();
-                    // 单帧延迟即可，PWA 缓存场景下 CSS 已就绪
-                    requestAnimationFrame(removeLoading);
+
+                    // 等待 CSS 加载完成
+                    function tryRemove() {
+                        if (checkCSSLoaded()) {
+                            // 延迟两帧确保渲染完成
+                            requestAnimationFrame(function () {
+                                requestAnimationFrame(removeLoading);
+                            });
+                        } else {
+                            setTimeout(tryRemove, 50);
+                        }
+                    }
+                    tryRemove();
                 }
             });
             observer.observe(document.body, { childList: true, subtree: true, attributes: true });
 
-            // 1.5秒后强制移除（兜底，缩短等待时间）
-            setTimeout(removeLoading, 1500);
+            // 2秒后强制移除（兜底）
+            setTimeout(removeLoading, 2000);
         })();
     </script>
     <div id="app" v-cloak>
@@ -406,7 +440,7 @@
 
         <!-- 上传进度提示 -->
         <el-dialog title="" :visible.sync="uploadProgress.visible" width="420px" :close-on-click-modal="false"
-            :close-on-press-escape="false" :show-close="false" :modal="true" custom-class="upload-progress-dialog">
+            :close-on-press-escape="false" :show-close="false" :modal="false" custom-class="upload-progress-dialog">
             <div v-if="uploadProgress.status !== 'idle'"
                 :class="['upload-progress-card', 'is-' + (uploadProgress.status || 'idle')]">
                 <template v-if="uploadProgress.status === 'progress'">
