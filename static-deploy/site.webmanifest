@@ -2,7 +2,6 @@
   "name": "Markdown Online Editor",
   "short_name": "MarkdownEditor",
   "description": "基于 GitHub 的在线 Markdown 编辑器，支持图片上传和自动发布到静态博客",
-  "id": "markdown-online-editor",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
@@ -11,15 +10,11 @@
   "theme_color": "#0f172a",
   "lang": "zh-CN",
   "dir": "ltr",
-  "prefer_related_applications": false,
   "categories": [
     "productivity",
     "utilities",
     "writing"
   ],
-  "launch_handler": {
-    "client_mode": "focus-existing"
-  },
   "icons": [
     {
       "src": "./img/icons/icon-192.png",

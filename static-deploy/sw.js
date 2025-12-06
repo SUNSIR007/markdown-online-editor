@@ -1,11 +1,8 @@
 // 使用时间戳作为版本号，确保每次部署都会更新缓存
-const CACHE_VERSION = '2025-12-06-16:48';
+const CACHE_VERSION = '2025-12-05-09:51';
 const CACHE_NAME = `blog-writer-${CACHE_VERSION}`;
 
-// Navigation Preload 标识
-const NAVIGATION_PRELOAD_HEADER = 'Blog-Writer-Preload';
-
-// 需要缓存的静态资源 - 按优先级排序
+// 需要缓存的静态资源
 const ASSETS_TO_CACHE = [
     './',
     './index.html',
@@ -73,26 +70,12 @@ self.addEventListener('message', (event) => {
     }
 });
 
-// Activate event - clean up old caches and enable navigation preload
+// Activate event - clean up old caches
 self.addEventListener('activate', (event) => {
     console.log('[Service Worker] Activating...');
     event.waitUntil(
-        (async () => {
-            // 启用 Navigation Preload（如果支持）
-            if ('navigationPreload' in self.registration) {
-                try {
-                    await self.registration.navigationPreload.enable();
-                    // 设置自定义 header 以便服务器识别预加载请求
-                    await self.registration.navigationPreload.setHeaderValue(NAVIGATION_PRELOAD_HEADER);
-                    console.log('[Service Worker] Navigation Preload enabled');
-                } catch (err) {
-                    console.warn('[Service Worker] Navigation Preload failed:', err);
-                }
-            }
-
-            // 清理旧缓存
-            const cacheNames = await caches.keys();
-            await Promise.all(
+        caches.keys().then((cacheNames) => {
+            return Promise.all(
                 cacheNames.map((cacheName) => {
                     if (cacheName !== CACHE_NAME) {
                         console.log('[Service Worker] Deleting old cache:', cacheName);
@@ -100,13 +83,13 @@ self.addEventListener('activate', (event) => {
                     }
                 })
             );
-
+        }).then(() => {
             console.log('[Service Worker] Claiming clients');
-            await self.clients.claim();
-
+            return self.clients.claim();
+        }).then(() => {
             // 清理当前缓存，限制大小
-            await trimCache(CACHE_NAME, 50);
-        })()
+            return trimCache(CACHE_NAME, 50); // 最多保留50个缓存项
+        })
     );
 });
 
@@ -182,60 +165,8 @@ self.addEventListener('fetch', (event) => {
     const isStaticAsset = /\.(js|css|html)$/.test(url);
     const isImage = /\.(png|jpg|jpeg|svg|gif|webp|ico)$/.test(url);
 
-    // 导航请求使用 Navigation Preload 加速
-    if (isNavigationRequest) {
-        event.respondWith(
-            (async () => {
-                // 同时获取缓存和 preload 响应
-                const cachedResponse = await caches.match(event.request);
-
-                // 尝试使用 Navigation Preload（如果可用）
-                try {
-                    const preloadResponse = await event.preloadResponse;
-                    if (preloadResponse) {
-                        console.log('[Service Worker] Using navigation preload response');
-                        // 后台更新缓存
-                        const responseToCache = preloadResponse.clone();
-                        caches.open(CACHE_NAME).then((cache) => {
-                            cache.put(event.request, responseToCache);
-                        });
-                        return preloadResponse;
-                    }
-                } catch (err) {
-                    console.log('[Service Worker] Navigation preload unavailable:', err);
-                }
-
-                // 有缓存时，返回缓存同时后台更新
-                if (cachedResponse) {
-                    // 后台更新
-                    fetch(event.request)
-                        .then((networkResponse) => {
-                            if (networkResponse && networkResponse.status === 200) {
-                                caches.open(CACHE_NAME).then((cache) => {
-                                    cache.put(event.request, networkResponse);
-                                });
-                            }
-                        })
-                        .catch(() => { });
-                    return cachedResponse;
-                }
-
-                // 无缓存时，从网络获取
-                const networkResponse = await fetch(event.request);
-                if (networkResponse && networkResponse.status === 200) {
-                    const responseToCache = networkResponse.clone();
-                    caches.open(CACHE_NAME).then((cache) => {
-                        cache.put(event.request, responseToCache);
-                    });
-                }
-                return networkResponse;
-            })()
-        );
-        return;
-    }
-
-    // 对于 JS、CSS 使用 Stale-While-Revalidate 策略
-    if (isStaticAsset) {
+    // 对于 HTML、JS、CSS 使用 Stale-While-Revalidate 策略
+    if (isNavigationRequest || isStaticAsset) {
         event.respondWith(
             caches.match(event.request).then((cachedResponse) => {
                 // 在后台获取最新版本
