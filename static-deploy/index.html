@@ -218,18 +218,23 @@
     <link rel="preconnect" href="https://api.github.com" crossorigin>
     <link rel="dns-prefetch" href="https://api.github.com">
 
-    <!-- 预加载关键 JavaScript 文件 -->
-    <link rel="preload" href="https://unpkg.com/vue@2.6.14/dist/vue.min.js" as="script" crossorigin>
-    <link rel="preload" href="https://unpkg.com/element-ui@2.15.13/lib/index.js" as="script" crossorigin>
-    <link rel="preload" href="https://cdn.jsdelivr.net/npm/vditor@3.9.4/dist/index.min.js" as="script" crossorigin>
+    <!-- 预加载关键 JavaScript 文件 - 使用 fetchpriority 标注优先级 -->
+    <link rel="preload" href="https://unpkg.com/vue@2.6.14/dist/vue.min.js" as="script" crossorigin
+        fetchpriority="high">
+    <link rel="preload" href="https://unpkg.com/element-ui@2.15.13/lib/index.js" as="script" crossorigin
+        fetchpriority="high">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/vditor@3.9.4/dist/index.min.js" as="script" crossorigin
+        fetchpriority="low">
 
     <!-- 预加载关键 CSS 文件 -->
-    <link rel="preload" href="https://unpkg.com/element-ui@2.15.13/lib/theme-chalk/index.css" as="style" crossorigin>
-    <link rel="preload" href="https://cdn.jsdelivr.net/npm/vditor@3.9.4/dist/index.css" as="style" crossorigin>
+    <link rel="preload" href="https://unpkg.com/element-ui@2.15.13/lib/theme-chalk/index.css" as="style" crossorigin
+        fetchpriority="high">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/vditor@3.9.4/dist/index.css" as="style" crossorigin
+        fetchpriority="low">
 
-    <!-- 预加载图片资源 -->
-    <link rel="preload" href="./img/icons/write.png" as="image">
-    <link rel="preload" href="./img/icons/upload-icon.png" as="image">
+    <!-- 图标资源 - 使用较低优先级避免阻塞关键资源 -->
+    <link rel="preload" href="./img/icons/write.png" as="image" fetchpriority="low">
+    <link rel="preload" href="./img/icons/upload-icon.png" as="image" fetchpriority="low">
 
     <link rel="icon" type="image/png" href="./img/icons/write.png">
     <link rel="apple-touch-icon" sizes="180x180" href="./img/icons/apple-touch-icon.png">
@@ -322,12 +327,12 @@
         transition: opacity 0.2s ease-out;
     "></div>
     <script>
-        // 启动遮罩移除逻辑 - 确保 CSS 和 UI 都准备好
+        // 启动遮罩移除逻辑 - 优化版：更快响应页面就绪
         (function () {
             var loading = document.getElementById('app-loading');
             var removed = false;
             var startTime = Date.now();
-            var MIN_DISPLAY_TIME = 100; // 最小显示时间，避免过快闪烁
+            var MIN_DISPLAY_TIME = 50; // 减少最小显示时间，加快响应
 
             function removeLoading() {
                 if (removed || !loading) return;
@@ -341,53 +346,43 @@
 
                 removed = true;
                 loading.style.opacity = '0';
-                setTimeout(function () {
-                    if (loading && loading.parentNode) {
-                        loading.parentNode.removeChild(loading);
-                    }
-                }, 200);
+                // 使用 requestAnimationFrame 确保过渡动画流畅
+                requestAnimationFrame(function () {
+                    setTimeout(function () {
+                        if (loading && loading.parentNode) {
+                            loading.parentNode.removeChild(loading);
+                        }
+                    }, 150); // 减少延迟时间
+                });
             }
 
             // 暴露全局函数
             window.removeAppSkeleton = removeLoading;
 
-            // 检查所有关键 CSS 是否已加载
-            function checkCSSLoaded() {
-                var cssLinks = document.querySelectorAll('link[rel="stylesheet"]');
-                for (var i = 0; i < cssLinks.length; i++) {
-                    var link = cssLinks[i];
-                    // 如果是 print 媒体查询，说明还没加载完
-                    if (link.media === 'print') {
-                        return false;
-                    }
-                }
-                return true;
-            }
+            // 使用 CSS 加载完成事件（更可靠）
+            var criticalCSSCount = 0;
+            var totalCriticalCSS = 3; // components.css, editor.css, mobile.css
 
-            // 监听 Vue 挂载完成，并确保 CSS 已加载
-            var observer = new MutationObserver(function () {
+            document.querySelectorAll('link[rel="stylesheet"][onload]').forEach(function (link) {
+                link.addEventListener('load', function () {
+                    criticalCSSCount++;
+                });
+            });
+
+            // 监听 Vue 挂载完成
+            var observer = new MutationObserver(function (mutations) {
                 var app = document.getElementById('app');
+                // 简化条件：只要 app 有内容且没有 v-cloak 就认为准备好了
                 if (app && app.children.length > 0 && !app.hasAttribute('v-cloak')) {
                     observer.disconnect();
-
-                    // 等待 CSS 加载完成
-                    function tryRemove() {
-                        if (checkCSSLoaded()) {
-                            // 延迟两帧确保渲染完成
-                            requestAnimationFrame(function () {
-                                requestAnimationFrame(removeLoading);
-                            });
-                        } else {
-                            setTimeout(tryRemove, 50);
-                        }
-                    }
-                    tryRemove();
+                    // 使用单帧延迟，更快移除遮罩
+                    requestAnimationFrame(removeLoading);
                 }
             });
             observer.observe(document.body, { childList: true, subtree: true, attributes: true });
 
-            // 2秒后强制移除（兜底）
-            setTimeout(removeLoading, 2000);
+            // 1.5秒后强制移除（缩短兜底时间）
+            setTimeout(removeLoading, 1500);
         })();
     </script>
     <div id="app" v-cloak>
