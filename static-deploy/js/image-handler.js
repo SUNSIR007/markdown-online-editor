@@ -6,7 +6,7 @@ const imageHandlerDebugLog = (...args) => {
 // 图片处理 - Image Handler
 
 // 处理图片上传
-window.handleImageUpload = async function (vm, files) {
+async function handleImageUpload(vm, files) {
     if (!vm.isImageServiceConfigured) {
         vm.$message.warning('图床配置缺失，请检查部署环境变量');
         return Promise.reject('图床未配置');
@@ -159,10 +159,10 @@ window.handleImageUpload = async function (vm, files) {
             vm.uploadingImages = false;
         }, 500);
     }
-};
+}
 
 // 触发移动端图片上传
-window.triggerMobileImageUpload = function (vm) {
+function triggerMobileImageUpload(vm) {
     if (!vm.isImageServiceConfigured) {
         vm.$message.warning('图床配置缺失，请检查部署环境变量');
         return;
@@ -177,27 +177,27 @@ window.triggerMobileImageUpload = function (vm) {
     if (input) {
         input.click();
     }
-};
+}
 
 // 处理移动端图片选择
-window.handleMobileImageChange = async function (vm, event) {
+async function handleMobileImageChange(vm, event) {
     const { files } = event.target;
     if (!files || !files.length) {
         return;
     }
 
     try {
-        await window.handleImageUpload(vm, files);
+        await handleImageUpload(vm, files);
     } catch (error) {
         // 错误已在 handleImageUpload 中处理
         console.debug('[ImageHandler] 移动端上传异常已处理:', error?.message || error);
     } finally {
         event.target.value = '';
     }
-};
+}
 
 // 获取阶段文本
-window.getStageText = function (stage) {
+function getStageText(stage) {
     const stageTexts = {
         'preparing': '准备中...',
         'analyzing': '分析图片...',
@@ -209,13 +209,31 @@ window.getStageText = function (stage) {
         'completed': '完成'
     };
     return stageTexts[stage] || '处理中...';
-};
+}
 
 // 格式化文件大小
-window.formatFileSize = function (bytes) {
+function formatFileSize(bytes) {
     if (bytes === 0) return '0 Bytes';
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
+
+// 向后兼容 - 保留全局变量
+if (typeof window !== 'undefined') {
+    window.handleImageUpload = handleImageUpload;
+    window.triggerMobileImageUpload = triggerMobileImageUpload;
+    window.handleMobileImageChange = handleMobileImageChange;
+    window.getStageText = getStageText;
+    window.formatFileSize = formatFileSize;
+}
+
+// ES Module 导出
+export {
+    handleImageUpload,
+    triggerMobileImageUpload,
+    handleMobileImageChange,
+    getStageText,
+    formatFileSize
 };

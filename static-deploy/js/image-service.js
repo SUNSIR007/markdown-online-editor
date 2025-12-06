@@ -1281,10 +1281,12 @@ const imageService = new ImageService()
 // 自动加载配置
 imageService.loadConfig()
 
-// 导出服务实例
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = ImageService
-} else {
+// 向后兼容 - 保留全局变量
+if (typeof window !== 'undefined') {
   window.ImageService = ImageService
   window.imageService = imageService
+  window.IMAGE_CONSTANTS = IMAGE_CONSTANTS
 }
+
+// ES Module 导出
+export { ImageService, imageService, IMAGE_CONSTANTS }

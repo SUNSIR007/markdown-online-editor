@@ -10,6 +10,7 @@ const ASSETS_TO_CACHE = [
     './css/components.css',
     './css/editor.css',
     './css/mobile.css',
+    './js/main.js',
     './js/app.js',
     './js/config.js',
     './js/editor-manager.js',

@@ -30,15 +30,8 @@ const metadataFields = {
     ]
 };
 
-// 导出配置到全局
-window.AppConfig = {
-    contentTypes,
-    contentTypeLabels,
-    metadataFields
-};
-
 // 模板生成函数
-window.generateContentWithMetadata = function(contentType, metadata, content) {
+function generateContentWithMetadata(contentType, metadata, content) {
     if (contentType === contentTypes.GENERAL) {
         return content;
     }
@@ -58,4 +51,22 @@ window.generateContentWithMetadata = function(contentType, metadata, content) {
         .join('\n');
 
     return `---\n${frontmatter}\n---\n\n${content}`;
+}
+
+// 向后兼容 - 保留全局变量
+if (typeof window !== 'undefined') {
+    window.AppConfig = {
+        contentTypes,
+        contentTypeLabels,
+        metadataFields
+    };
+    window.generateContentWithMetadata = generateContentWithMetadata;
+}
+
+// ES Module 导出
+export {
+    contentTypes,
+    contentTypeLabels,
+    metadataFields,
+    generateContentWithMetadata
 };

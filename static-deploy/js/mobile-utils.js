@@ -1,26 +1,26 @@
 // 移动端工具函数 - Mobile Utilities
 
 // 检测是否为移动设备
-window.isMobileDevice = function() {
+function isMobileDevice() {
     const userAgent = navigator.userAgent.toLowerCase();
     const mobileKeywords = ['mobile', 'android', 'iphone', 'ipad', 'ipod', 'blackberry', 'windows phone'];
     return mobileKeywords.some(keyword => userAgent.includes(keyword)) ||
-           window.innerWidth <= 768;
-};
+        window.innerWidth <= 768;
+}
 
 // 设置移动端默认值
-window.setupMobileDefaults = function(vm) {
-    if (window.isMobileDevice()) {
+function setupMobileDefaults(vm) {
+    if (isMobileDevice()) {
         vm.currentType = window.AppConfig.contentTypes.ESSAY;
     }
-};
+}
 
 // 设置视口修复
-window.setupViewportFixes = function(vm) {
+function setupViewportFixes(vm) {
     const updateViewportUnit = () => {
         const vh = window.innerHeight * 0.01;
         document.documentElement.style.setProperty('--vh', `${vh}px`);
-        vm.isMobileView = window.isMobileDevice();
+        vm.isMobileView = isMobileDevice();
     };
 
     let lastViewportHeight = window.innerHeight;
@@ -30,7 +30,7 @@ window.setupViewportFixes = function(vm) {
         const currentHeight = window.innerHeight;
         const heightDrop = lastViewportHeight - currentHeight;
 
-        if (window.isMobileDevice() && heightDrop > 150) {
+        if (isMobileDevice() && heightDrop > 150) {
             // 键盘弹出时忽略viewport高度变化，避免布局跳动
             return;
         }
@@ -47,7 +47,7 @@ window.setupViewportFixes = function(vm) {
         }, 300);
     });
 
-    if (!window.isMobileDevice()) {
+    if (!isMobileDevice()) {
         return;
     }
 
@@ -74,11 +74,11 @@ window.setupViewportFixes = function(vm) {
             }
         }, 0);
     });
-};
+}
 
 // 移动端自动聚焦 - 减少聚焦频率，避免干扰用户
-window.setupMobileAutoFocus = function(vm) {
-    if (!window.isMobileDevice()) return;
+function setupMobileAutoFocus(vm) {
+    if (!isMobileDevice()) return;
 
     let focusAttempted = false;
 
@@ -90,7 +90,7 @@ window.setupMobileAutoFocus = function(vm) {
         setTimeout(() => {
             const editorElement = vm.vditor?.vditor?.ir?.element;
             const isEditorFocused = document.activeElement === editorElement ||
-                                  editorElement?.contains(document.activeElement);
+                editorElement?.contains(document.activeElement);
 
             if (!isEditorFocused && attempt < 3 && !focusAttempted) { // 减少重试次数
                 attemptFocus(attempt + 1);
@@ -106,10 +106,10 @@ window.setupMobileAutoFocus = function(vm) {
             attemptFocus();
         }
     }, 500);
-};
+}
 
 // 桌面端自动聚焦 - 减少重试次数
-window.setupDesktopAutoFocus = function(vm) {
+function setupDesktopAutoFocus(vm) {
     let focusAttempted = false;
 
     const attemptFocus = (attempt = 1) => {
@@ -120,7 +120,7 @@ window.setupDesktopAutoFocus = function(vm) {
         setTimeout(() => {
             const editorElement = vm.vditor?.vditor?.ir?.element;
             const isEditorFocused = document.activeElement === editorElement ||
-                                  editorElement?.contains(document.activeElement);
+                editorElement?.contains(document.activeElement);
 
             if (!isEditorFocused && attempt < 3 && !focusAttempted) {
                 attemptFocus(attempt + 1);
@@ -136,4 +136,22 @@ window.setupDesktopAutoFocus = function(vm) {
             attemptFocus();
         }
     }, 200);
+}
+
+// 向后兼容 - 保留全局变量
+if (typeof window !== 'undefined') {
+    window.isMobileDevice = isMobileDevice;
+    window.setupMobileDefaults = setupMobileDefaults;
+    window.setupViewportFixes = setupViewportFixes;
+    window.setupMobileAutoFocus = setupMobileAutoFocus;
+    window.setupDesktopAutoFocus = setupDesktopAutoFocus;
+}
+
+// ES Module 导出
+export {
+    isMobileDevice,
+    setupMobileDefaults,
+    setupViewportFixes,
+    setupMobileAutoFocus,
+    setupDesktopAutoFocus
 };
