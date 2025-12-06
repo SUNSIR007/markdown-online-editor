@@ -1,10 +1,4 @@
 // 主Vue应用 - Main Vue Application
-import { githubService } from './github-service.js';
-import { imageService } from './image-service.js';
-import { contentTypes, contentTypeLabels, metadataFields, generateContentWithMetadata } from './config.js';
-import { initVditor, focusEditor } from './editor-manager.js';
-import { handleImageUpload, triggerMobileImageUpload, handleMobileImageChange, getStageText, formatFileSize } from './image-handler.js';
-import { isMobileDevice, setupMobileDefaults, setupViewportFixes, setupMobileAutoFocus, setupDesktopAutoFocus } from './mobile-utils.js';
 
 new Vue({
     el: '#app',
@@ -14,13 +8,13 @@ new Vue({
 
         return {
             vditor: null,
-            currentType: contentTypes.ESSAY,
+            currentType: window.AppConfig.contentTypes.ESSAY,
             metadata: {},
-            contentTypeLabels: contentTypeLabels,
+            contentTypeLabels: window.AppConfig.contentTypeLabels,
             isGitHubConfigured: false,
             isDarkMode: true,
             isMobileView: isMobile, // 初始化时就设置好
-            metadataFields: metadataFields,
+            metadataFields: window.AppConfig.metadataFields,
             bodyContent: '',
             hasUserInteracted: false,
             isImageServiceConfigured: false,
@@ -69,19 +63,19 @@ new Vue({
     },
 
     mounted() {
-        this.isMobileView = isMobileDevice();
-        setupMobileDefaults(this);
-        setupViewportFixes(this);
+        this.isMobileView = window.isMobileDevice();
+        window.setupMobileDefaults(this);
+        window.setupViewportFixes(this);
         this.initEditorWhenIdle();
         this.deferNonCriticalInit();
     },
 
     methods: {
         checkGitHubConfig() {
-            if (githubService && typeof githubService.loadConfig === 'function') {
-                githubService.loadConfig();
+            if (window.githubService && typeof window.githubService.loadConfig === 'function') {
+                window.githubService.loadConfig();
             }
-            this.isGitHubConfigured = githubService ? githubService.isConfigured() : false;
+            this.isGitHubConfigured = window.githubService ? window.githubService.isConfigured() : false;
             if (!this.isGitHubConfigured) {
                 console.warn('GitHub 配置缺失，请检查环境变量设置');
                 if (this.$message) {
@@ -104,23 +98,20 @@ new Vue({
                 return;
             }
             try {
-                const fileData = await githubService.getFile(filePath);
+                this.$message({ message: '正在加载文件...', type: 'info' });
+                const fileData = await window.githubService.getFile(filePath);
                 if (fileData) {
-                    // 成功获取文件，解析内容
-                    const parsed = this.parseContentWithFrontmatter(fileData.content);
-                    this.bodyContent = parsed.content;
-                    this.metadata = parsed.metadata || {};
+                    const { metadata, content } = this.parseContentWithFrontmatter(fileData.content);
 
-                    // 自动判断类型
-                    const type = this.metadata.type || 'essay'; // 默认为随笔
-                    if (filePath.includes('posts/')) {
-                        this.currentType = contentTypes.BLOG;
-                    } else if (filePath.includes('essays/')) {
-                        this.currentType = contentTypes.ESSAY;
-                    } else if (type) {
-                        this.currentType = type;
+                    if (filePath.includes('/posts/')) {
+                        this.currentType = window.AppConfig.contentTypes.BLOG;
+                    } else if (filePath.includes('/essays/')) {
+                        this.currentType = window.AppConfig.contentTypes.ESSAY;
                     }
 
+                    this.metadata = metadata;
+                    this.bodyContent = content;
+                    this.vditor.setValue(content);
                     this.$message.success('文件加载成功');
                 }
             } catch (error) {
@@ -130,9 +121,9 @@ new Vue({
 
         getTypeIcon(type) {
             const icons = {
-                [contentTypes.BLOG]: 'el-icon-document',
-                [contentTypes.ESSAY]: 'el-icon-edit-outline',
-                [contentTypes.GALLERY]: 'el-icon-picture'
+                [window.AppConfig.contentTypes.BLOG]: 'el-icon-document',
+                [window.AppConfig.contentTypes.ESSAY]: 'el-icon-edit-outline',
+                [window.AppConfig.contentTypes.GALLERY]: 'el-icon-picture'
             };
             return icons[type] || 'el-icon-document';
         },
@@ -143,27 +134,29 @@ new Vue({
             this.bodyContent = '';
             this.vditor.setValue('');
 
-            if (type === contentTypes.GALLERY) {
+            if (type === window.AppConfig.contentTypes.GALLERY) {
                 this.resetGalleryPreview();
             }
         },
 
         resetMetadata(type) {
-            // 根据类型重置元数据字段
             const now = new Date();
             let newMeta = {};
 
-            if (type === contentTypes.BLOG) {
+            if (type === window.AppConfig.contentTypes.BLOG) {
+                const dateStr = now.toISOString().split('T')[0];
                 newMeta = {
                     title: '',
                     categories: 'Daily',
-                    pubDate: now.toISOString().split('T')[0]
+                    pubDate: dateStr
                 };
-            } else if (type === contentTypes.ESSAY) {
+            } else if (type === window.AppConfig.contentTypes.ESSAY) {
                 const dateTimeStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
                 newMeta = {
                     pubDate: dateTimeStr
                 };
+            } else if (type === window.AppConfig.contentTypes.GALLERY) {
+                const dateStr = now.toISOString().split('T')[0];
                 newMeta = {
                     date: dateStr
                 };
@@ -233,12 +226,32 @@ new Vue({
                 this.isPublishing = false;
                 return;
             }
+
+            if (this.currentType === window.AppConfig.contentTypes.GALLERY) {
+                return await this.publishGalleryImage();
+            }
+
+            this.bodyContent = this.vditor.getValue();
+
+            if (!this.bodyContent.trim()) {
+                this.$message.warning('请先编写内容');
+                this.isPublishing = false;
+                return;
+            }
+
+            if (this.currentType === window.AppConfig.contentTypes.BLOG && !this.metadata.title) {
+                this.$message.warning('请先设置标题');
+                this.isPublishing = false;
+                return;
+            }
+
+            const finalContent = window.generateContentWithMetadata(this.currentType, this.metadata, this.bodyContent);
+
             try {
-                const finalContent = generateContentWithMetadata(this.currentType, this.metadata, this.bodyContent);
+                // 显示进度条
+                this.showUploadProgress();
 
-                this.$message({ message: '正在发布...', type: 'info', duration: 0 });
-
-                const result = await githubService.publishContent(
+                const result = await window.githubService.publishContent(
                     this.currentType,
                     this.metadata,
                     finalContent
@@ -327,19 +340,18 @@ new Vue({
         },
 
         initEditorWhenIdle() {
-            if (this.vditor) return;
+            const initEditor = () => {
+                window.initVditor(this);
+                this.selectType(this.currentType);
+            };
 
-            // 使用requestIdleCallback或setTimeout在浏览器空闲时初始化
             if ('requestIdleCallback' in window) {
-                requestIdleCallback(() => {
-                    initVditor(this);
-                });
+                requestIdleCallback(() => initEditor(), { timeout: 600 });
             } else {
-                setTimeout(() => {
-                    initVditor(this);
-                }, 100);
+                setTimeout(initEditor, 50);
             }
         },
+
         deferNonCriticalInit() {
             const runTasks = () => {
                 this.checkGitHubConfig();
@@ -355,14 +367,14 @@ new Vue({
         },
 
         focusEditor() {
-            focusEditor(this);
+            window.focusEditor(this);
         },
 
         checkImageServiceConfig() {
-            if (imageService && typeof imageService.loadConfig === 'function') {
-                imageService.loadConfig();
+            if (window.imageService && typeof window.imageService.loadConfig === 'function') {
+                window.imageService.loadConfig();
             }
-            this.isImageServiceConfigured = imageService ? imageService.isConfigured() : false;
+            this.isImageServiceConfigured = window.imageService ? window.imageService.isConfigured() : false;
             if (!this.isImageServiceConfigured) {
                 console.warn('图床配置缺失，请检查部署环境变量');
                 if (this.$message) {
@@ -372,7 +384,7 @@ new Vue({
         },
 
         handleImageUpload(files) {
-            return handleImageUpload(this, files);
+            return window.handleImageUpload(this, files);
         },
 
         insertTextToEditor(text) {
@@ -384,25 +396,22 @@ new Vue({
         },
 
         showMobileError(error, context = '') {
-            if (isMobileDevice()) {
-                console.error(`[Mobile Error] ${context}:`, error);
-
-                // 收集调试信息
-                const debugInfo = {
-                    timestamp: new Date().toISOString(),
-                    context: context,
-                    errorName: error?.name,
-                    errorMessage: error?.message,
+            if (window.isMobileDevice()) {
+                const errorInfo = {
+                    时间: new Date().toLocaleString(),
+                    错误: error.message || error,
+                    上下文: context,
+                    用户代理: navigator.userAgent,
                     URL: window.location.href,
-                    图床配置: imageService ? {
-                        owner: imageService.owner,
-                        repo: imageService.repo,
-                        branch: imageService.branch,
-                        已配置: imageService.isConfigured()
+                    图床配置: window.imageService ? {
+                        owner: window.imageService.owner,
+                        repo: window.imageService.repo,
+                        branch: window.imageService.branch,
+                        已配置: window.imageService.isConfigured()
                     } : '未初始化'
                 };
 
-                this.mobileErrorDialog.content = JSON.stringify(debugInfo, null, 2);
+                this.mobileErrorDialog.content = JSON.stringify(errorInfo, null, 2);
                 this.mobileErrorDialog.visible = true;
             }
         },
@@ -460,11 +469,11 @@ new Vue({
         },
 
         getStageText(stage) {
-            return getStageText(stage);
+            return window.getStageText(stage);
         },
 
         formatFileSize(bytes) {
-            return formatFileSize(bytes);
+            return window.formatFileSize(bytes);
         },
 
         async publishGalleryImage() {
@@ -493,7 +502,7 @@ new Vue({
                 const filePath = `src/content/photos/${fileName}.json`;
 
                 const jsonContent = JSON.stringify(imageData, null, 2);
-                const result = await githubService.createOrUpdateFile(
+                const result = await window.githubService.createOrUpdateFile(
                     filePath,
                     jsonContent,
                     `Add gallery image: ${fileName}`
@@ -530,11 +539,11 @@ new Vue({
         },
 
         triggerMobileImageUpload() {
-            triggerMobileImageUpload(this);
+            window.triggerMobileImageUpload(this);
         },
 
         handleMobileImageChange(event) {
-            handleMobileImageChange(this, event);
+            window.handleMobileImageChange(this, event);
         }
     }
 });

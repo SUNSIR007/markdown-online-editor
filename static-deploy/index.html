@@ -357,12 +357,12 @@
                 for (var i = 0; i < cssLinks.length; i++) {
                     var link = cssLinks[i];
                     // 如果是 print 媒体查询，说明还没加载完
-        if (link.media === 'print') {
+                    if (link.media === 'print') {
                         return false;
-                     }
+                    }
                 }
                 return true;
-             }
+            }
 
             // 监听 Vue 挂载完成，并确保 CSS 已加载
             var observer = new MutationObserver(function () {
@@ -379,11 +379,12 @@
                             });
                         } else {
                             setTimeout(tryRemove, 50);
-                                          }
+                        }
+                    }
                     tryRemove();
                 }
             });
-            observer.observe(document.body, { rue, subtree: true, attributes: true });
+            observer.observe(document.body, { childList: true, subtree: true, attributes: true });
 
             // 2秒后强制移除（兜底）
             setTimeout(removeLoading, 2000);
@@ -647,7 +648,7 @@
                 window.addEventListener('offline', () => {
                     console.log('[PWA] 网络已断开');
                     if (window.Vue && window.Vue.prototype.$message) {
-                        ow.Vue.prototypage({
+                        window.Vue.prototype.$message({
                             message: '您已离线，部分功能可能不可用',
                             type: 'warning',
                             duration: 3000
@@ -658,8 +659,17 @@
         }
     </script>
 
-    <!-- Application Entry Point (ES Module) -->
-    <script type="module" src="js/main.js"></script>
+    <!-- Service Scripts -->
+    <script defer src="js/runtime-config.js"></script>
+    <script defer src="js/github-service.js"></script>
+    <script defer src="js/image-service.js"></script>
+
+    <!-- Application Scripts -->
+    <script defer src="js/config.js"></script>
+    <script defer src="js/mobile-utils.js"></script>
+    <script defer src="js/editor-manager.js"></script>
+    <script defer src="js/image-handler.js"></script>
+    <script defer src="js/app.js"></script>
 </body>
 
 </html>

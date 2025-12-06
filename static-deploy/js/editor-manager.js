@@ -24,7 +24,7 @@ function getCachedMetadataWrapper() {
 
 
 // 初始化 Vditor 编辑器
-function initVditor(vm) {
+window.initVditor = function (vm) {
     const editorMode = 'ir';
     const vditorTheme = 'dark';
 
@@ -93,7 +93,7 @@ function initVditor(vm) {
             }
 
             // 设置拖拽和粘贴支持
-            setupImageDragAndPaste(vm);
+            window.setupImageDragAndPaste(vm);
 
             // 编辑器初始化完成后，触发自动聚焦
             vm.$nextTick(() => {
@@ -105,12 +105,12 @@ function initVditor(vm) {
             });
         }
     });
-}
+};
 
 // 聚焦编辑器
-function focusEditor(vm) {
+window.focusEditor = function (vm) {
     if (!vm.vditor || !vm.vditor.vditor || !vm.vditor.vditor.ir) {
-        setTimeout(() => focusEditor(vm), 200);
+        setTimeout(() => window.focusEditor(vm), 200);
         return;
     }
 
@@ -181,10 +181,10 @@ function focusEditor(vm) {
             console.log('备用聚焦方案也失败:', e);
         }
     }
-}
+};
 
 // 设置图片拖拽和粘贴支持
-function setupImageDragAndPaste(vm) {
+window.setupImageDragAndPaste = function (vm) {
     const vditorElement = getCachedEditorElement();
     if (!vditorElement) return;
 
@@ -226,18 +226,4 @@ function setupImageDragAndPaste(vm) {
             }
         }
     });
-}
-
-// 向后兼容 - 保留全局变量
-if (typeof window !== 'undefined') {
-    window.initVditor = initVditor;
-    window.focusEditor = focusEditor;
-    window.setupImageDragAndPaste = setupImageDragAndPaste;
-}
-
-// ES Module 导出
-export {
-    initVditor,
-    focusEditor,
-    setupImageDragAndPaste
 };

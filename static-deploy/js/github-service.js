@@ -408,11 +408,10 @@ const githubService = new GitHubService()
 // 自动加载配置
 githubService.loadConfig()
 
-// 向后兼容 - 保留全局变量
-if (typeof window !== 'undefined') {
+// 导出服务实例
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = GitHubService
+} else {
   window.GitHubService = GitHubService
   window.githubService = githubService
 }
-
-// ES Module 导出
-export { GitHubService, githubService }
