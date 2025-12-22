@@ -230,18 +230,17 @@
 }
 
 /* PWA Standalone 模式样式 - 让编辑区更长更接近底边 */
-@media (display-mode: standalone) {
-    .editor-container {
-        height: calc(100vh - 70px) !important;
-        height: calc(var(--vh, 1vh) * 100 - 70px) !important;
-    }
+/* 使用 JavaScript 检测添加的 .pwa-standalone 类，兼容 iOS */
+.pwa-standalone .editor-container {
+    height: calc(100vh - 68px) !important;
+    height: calc(var(--vh, 1vh) * 100 - 68px) !important;
 }
 
-/* iOS PWA 模式 - 考虑安全区域 */
-@media (display-mode: standalone) and (max-width: 768px) {
-    .editor-container {
-        height: calc(100vh - 68px - env(safe-area-inset-bottom, 0px)) !important;
-        height: calc(var(--vh, 1vh) * 100 - 68px - env(safe-area-inset-bottom, 0px)) !important;
+/* iOS PWA 模式 - 移动端特殊处理 */
+@media (max-width: 768px) {
+    .pwa-standalone .editor-container {
+        height: calc(100vh - 56px - env(safe-area-inset-bottom, 0px)) !important;
+        height: calc(var(--vh, 1vh) * 100 - 56px - env(safe-area-inset-bottom, 0px)) !important;
         margin-bottom: env(safe-area-inset-bottom, 16px) !important;
     }
 }
