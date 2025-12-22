@@ -19,14 +19,14 @@
     }
 
     .editor-container {
-        margin: 16px 12px !important;
+        margin: 12px 12px !important;
         border-radius: var(--radius-lg) !important;
         max-width: calc(100% - 24px) !important;
         box-shadow: var(--shadow-lg) !important;
         flex: 1 1 auto !important;
         min-height: 0 !important;
-        height: calc(100vh - 100px) !important;
-        height: calc(var(--vh, 1vh) * 100 - 100px) !important;
+        height: calc(100vh - 70px) !important;
+        height: calc(var(--vh, 1vh) * 100 - 70px) !important;
         border: 1px solid rgba(255, 255, 255, 0.05) !important;
         background: var(--bg-surface) !important;
         display: flex !important;
