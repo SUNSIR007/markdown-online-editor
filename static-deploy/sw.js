@@ -1,5 +1,5 @@
 // 使用时间戳作为版本号，确保每次部署都会更新缓存
-const CACHE_VERSION = '2025-12-22-13:32';
+const CACHE_VERSION = '2025-12-22-22:12';
 const CACHE_NAME = `blog-writer-${CACHE_VERSION}`;
 
 // 需要缓存的静态资源
@@ -100,7 +100,7 @@ self.addEventListener('activate', (event) => {
 });
 
 /**
- * 限制缓存大小，删除最旧的条目
+ * 限制缓存大小，删除非核心资源的缓存条目
  * @param {string} cacheName - 缓存名称
  * @param {number} maxItems - 最大缓存项数
  */
@@ -112,17 +112,31 @@ async function trimCache(cacheName, maxItems) {
         if (keys.length > maxItems) {
             console.log(`[Service Worker] Cache size (${keys.length}) exceeds limit (${maxItems}), trimming...`);
 
-            // 按URL排序（简单策略，实际可以按访问时间）
-            const keysToDelete = keys.slice(0, keys.length - maxItems);
+            // 构建核心资源的完整URL列表（需要保护的资源）
+            const coreUrls = new Set([
+                ...ASSETS_TO_CACHE.map(asset => new URL(asset, self.location.origin).href),
+                ...CDN_ASSETS
+            ]);
 
-            await Promise.all(
-                keysToDelete.map(key => {
-                    console.log('[Service Worker] Removing from cache:', key.url);
-                    return cache.delete(key);
-                })
-            );
+            // 分离核心资源和非核心资源
+            const nonCoreKeys = keys.filter(key => !coreUrls.has(key.url));
+            const coreKeysCount = keys.length - nonCoreKeys.length;
 
-            console.log(`[Service Worker] Trimmed cache to ${maxItems} items`);
+            // 只删除非核心资源，保留核心资源
+            const itemsToRemove = Math.max(0, keys.length - maxItems);
+            const keysToDelete = nonCoreKeys.slice(0, Math.min(itemsToRemove, nonCoreKeys.length));
+
+            if (keysToDelete.length > 0) {
+                await Promise.all(
+                    keysToDelete.map(key => {
+                        console.log('[Service Worker] Removing from cache:', key.url);
+                        return cache.delete(key);
+                    })
+                );
+                console.log(`[Service Worker] Trimmed ${keysToDelete.length} non-core items, preserved ${coreKeysCount} core resources`);
+            } else {
+                console.log('[Service Worker] No non-core items to trim, all cached items are core resources');
+            }
         }
     } catch (error) {
         console.error('[Service Worker] Cache trimming failed:', error);

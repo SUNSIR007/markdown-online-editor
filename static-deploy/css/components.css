@@ -370,8 +370,26 @@ body>.v-modal,
    简约但不简单的设计
    ============================================ */
 
-/* Wrapper 居中 */
-.el-dialog__wrapper:has(.apple-upload-dialog) {
+/* Wrapper 居中 - 兼容性设计 */
+/* 使用 @supports 检测 :has() 支持，并提供类名回退方案 */
+
+/* 使用 @supports 检测 :has() 支持 */
+@supports selector(:has(*)) {
+    .el-dialog__wrapper:has(.apple-upload-dialog) {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        pointer-events: none !important;
+    }
+}
+
+/* 不支持 :has() 的浏览器的回退方案 - 通过 JS 添加的类 */
+.el-dialog__wrapper.apple-upload-wrapper {
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;

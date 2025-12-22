@@ -123,7 +123,7 @@ window.handleImageUpload = async function (vm, files) {
             }
         }
 
-        return Promise.resolve(results);
+        return results;
 
     } catch (error) {
         console.error('图片上传错误:', error);
@@ -131,7 +131,7 @@ window.handleImageUpload = async function (vm, files) {
         // 如果状态已经是 success，说明主要流程已经成功，不要覆盖为 error
         if (vm.uploadProgress.status === 'success') {
             console.warn('上传流程已成功，忽略后续错误:', error);
-            return Promise.resolve([]);
+            return [];
         }
 
         vm.uploadProgress.status = 'error';

@@ -62,6 +62,22 @@ new Vue({
         }
     },
 
+    watch: {
+        // 兼容性处理：为不支持 CSS :has() 的浏览器动态添加类名
+        'uploadProgress.visible'(newVal) {
+            this.$nextTick(() => {
+                const wrapper = document.querySelector('.el-dialog__wrapper:last-of-type');
+                if (wrapper && wrapper.querySelector('.apple-upload-dialog')) {
+                    if (newVal) {
+                        wrapper.classList.add('apple-upload-wrapper');
+                    } else {
+                        wrapper.classList.remove('apple-upload-wrapper');
+                    }
+                }
+            });
+        }
+    },
+
     mounted() {
         this.isMobileView = window.isMobileDevice();
         window.setupMobileDefaults(this);
@@ -228,7 +244,9 @@ new Vue({
             }
 
             if (this.currentType === window.AppConfig.contentTypes.GALLERY) {
-                return await this.publishGalleryImage();
+                // publishGalleryImage 内部会处理 isPublishing 状态
+                await this.publishGalleryImage();
+                return;
             }
 
             this.bodyContent = this.vditor.getValue();
