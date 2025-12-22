@@ -440,7 +440,7 @@ class ImageService {
 
     if (addHash) {
       // 生成简单的哈希值
-      const hash = timestamp.toString(36) + Math.random().toString(36).substr(2, 5)
+      const hash = timestamp.toString(36) + Math.random().toString(36).slice(2, 7)
       return `${safeName}-${hash}${ext}`
     }
 

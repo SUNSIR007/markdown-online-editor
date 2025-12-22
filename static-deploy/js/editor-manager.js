@@ -108,9 +108,15 @@ window.initVditor = function (vm) {
 };
 
 // 聚焦编辑器
-window.focusEditor = function (vm) {
+window.focusEditor = function (vm, retryCount = 0) {
+    const MAX_RETRIES = 10; // 最大重试次数，防止无限递归
+
     if (!vm.vditor || !vm.vditor.vditor || !vm.vditor.vditor.ir) {
-        setTimeout(() => window.focusEditor(vm), 200);
+        if (retryCount >= MAX_RETRIES) {
+            console.warn('[Editor] 聚焦编辑器超时，已达到最大重试次数:', MAX_RETRIES);
+            return;
+        }
+        setTimeout(() => window.focusEditor(vm, retryCount + 1), 200);
         return;
     }
 
@@ -215,6 +221,10 @@ window.setupImageDragAndPaste = function (vm) {
     });
 
     vditorElement.addEventListener('paste', (e) => {
+        // 添加空值检查，防止某些浏览器下 clipboardData 为 null
+        if (!e.clipboardData || !e.clipboardData.items) {
+            return;
+        }
         const items = Array.from(e.clipboardData.items);
         const imageItems = items.filter(item => item.type.startsWith('image/'));
 

@@ -1,11 +1,21 @@
 // 移动端工具函数 - Mobile Utilities
 
-// 检测是否为移动设备
+// 移动端检测缓存
+let _isMobileDeviceCache = null;
+
+// 检测是否为移动设备（带缓存，避免重复计算）
 window.isMobileDevice = function () {
+    // 返回缓存值（如果有）
+    if (_isMobileDeviceCache !== null) {
+        return _isMobileDeviceCache;
+    }
+
     const userAgent = navigator.userAgent.toLowerCase();
     const mobileKeywords = ['mobile', 'android', 'iphone', 'ipad', 'ipod', 'blackberry', 'windows phone'];
-    return mobileKeywords.some(keyword => userAgent.includes(keyword)) ||
+    _isMobileDeviceCache = mobileKeywords.some(keyword => userAgent.includes(keyword)) ||
         window.innerWidth <= 768;
+
+    return _isMobileDeviceCache;
 };
 
 // 设置移动端默认值

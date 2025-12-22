@@ -1,5 +1,5 @@
 // 使用时间戳作为版本号，确保每次部署都会更新缓存
-const CACHE_VERSION = '2025-12-22-12:52';
+const CACHE_VERSION = '2025-12-22-13:02';
 const CACHE_NAME = `blog-writer-${CACHE_VERSION}`;
 
 // 需要缓存的静态资源
@@ -23,7 +23,13 @@ const ASSETS_TO_CACHE = [
     './img/icons/apple-touch-icon.png'
 ];
 
-// CDN 资源 - 核心库，提前缓存以提升加载速度
+/**
+ * CDN 资源版本配置
+ * 注意：如需更新版本，请同时更新 index.html 中对应的引用
+ * - Vue: 2.6.14
+ * - Element UI: 2.15.13
+ * - Vditor: 3.9.4
+ */
 const CDN_ASSETS = [
     'https://unpkg.com/vue@2.6.14/dist/vue.min.js',
     'https://unpkg.com/element-ui@2.15.13/lib/index.js',
