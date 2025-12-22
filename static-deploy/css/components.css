@@ -366,28 +366,26 @@ body>.v-modal,
 }
 
 /* Upload Progress Dialog - iOS 26 Liquid Glass 风格 */
-/* 需要处理 Element UI 对话框的多层嵌套 */
-.el-dialog__wrapper:has(.upload-progress-dialog) {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-}
-
+/* Element UI 对话框样式重置 */
 .el-dialog__wrapper .upload-progress-dialog,
 .upload-progress-dialog {
     background: transparent !important;
     box-shadow: none !important;
     border: none !important;
-    /* 重置 Element UI 默认定位 */
-    position: relative !important;
-    top: auto !important;
-    left: auto !important;
-    transform: none !important;
-    margin: 0 auto !important;
+    position: static !important;
+    margin: 0 !important;
     width: auto !important;
 }
 
+/* 上传卡片 - 圆形玻璃拟态 + 完美居中 */
 .upload-progress-card {
+    /* 固定定位居中 */
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    z-index: 10001 !important;
+    /* 布局 */
     display: flex;
     flex-direction: column;
     align-items: center;
