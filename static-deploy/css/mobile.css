@@ -223,11 +223,11 @@
     }
 
     .upload-progress-card {
-        /* 移动端完美居中 - 必须重新声明 */
-        position: fixed !important;
-        top: 50% !important;
-        left: 50% !important;
-        transform: translate(-50%, -50%) !important;
+        /* 移动端样式 - 移除 fixed，依赖 flex 布局居中 */
+        position: relative !important;
+        top: auto !important;
+        left: auto !important;
+        transform: none !important;
         z-index: 10001 !important;
         /* 圆形玻璃拟态效果 */
         width: 140px !important;
