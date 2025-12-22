@@ -378,19 +378,21 @@ body>.v-modal,
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 20px;
-    padding: 32px 24px;
+    gap: 16px;
+    /* 圆形设计 */
+    width: 160px;
+    height: 160px;
+    padding: 20px;
     /* iOS 26 Liquid Glass 效果 */
-    background: rgba(30, 41, 59, 0.35);
+    background: rgba(30, 41, 59, 0.4);
     backdrop-filter: blur(40px) saturate(180%);
     -webkit-backdrop-filter: blur(40px) saturate(180%);
-    border-radius: 28px;
-    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.2);
     box-shadow:
-        0 8px 32px rgba(0, 0, 0, 0.35),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        0 8px 32px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15),
         inset 0 -1px 0 rgba(0, 0, 0, 0.1);
-    min-height: 140px;
 }
 
 .upload-progress-card.is-success {
@@ -409,8 +411,8 @@ body>.v-modal,
 
 /* 小猫跑步动画容器 */
 .upload-cat-container {
-    width: 100px;
-    height: 60px;
+    width: 80px;
+    height: 50px;
     position: relative;
     display: flex;
     align-items: center;
@@ -420,33 +422,32 @@ body>.v-modal,
 /* 小猫整体 */
 .running-cat {
     position: relative;
-    width: 70px;
-    height: 45px;
-    animation: cat-bounce 0.3s ease-in-out infinite;
+    width: 56px;
+    height: 36px;
+    animation: cat-run 0.25s ease-in-out infinite;
+    transform-origin: center bottom;
 }
 
 /* 小猫身体 - 纯黑色剪影 */
 .cat-body {
     position: absolute;
-    width: 40px;
-    height: 22px;
-    background: #1a1a2e;
+    width: 32px;
+    height: 18px;
+    background: #0a0a0f;
     border-radius: 50% 50% 45% 45%;
-    left: 14px;
-    top: 16px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    left: 10px;
+    top: 12px;
 }
 
 /* 小猫头部 */
 .cat-head {
     position: absolute;
-    width: 26px;
-    height: 22px;
-    background: #1a1a2e;
+    width: 20px;
+    height: 17px;
+    background: #0a0a0f;
     border-radius: 50% 50% 48% 48%;
-    left: 42px;
-    top: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    left: 34px;
+    top: 6px;
 }
 
 /* 小猫耳朵 */
@@ -454,19 +455,19 @@ body>.v-modal,
     position: absolute;
     width: 0;
     height: 0;
-    border-left: 6px solid transparent;
-    border-right: 6px solid transparent;
-    border-bottom: 12px solid #1a1a2e;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 9px solid #0a0a0f;
 }
 
 .cat-ear-left {
-    top: -8px;
+    top: -6px;
     left: 2px;
     transform: rotate(-20deg);
 }
 
 .cat-ear-right {
-    top: -8px;
+    top: -6px;
     right: 2px;
     transform: rotate(20deg);
 }
@@ -483,88 +484,95 @@ body>.v-modal,
 /* 小猫眼睛 - 闪亮的眼睛 */
 .cat-eye {
     position: absolute;
-    width: 6px;
-    height: 6px;
+    width: 4px;
+    height: 4px;
     background: #ffffff;
     border-radius: 50%;
-    top: 8px;
-    animation: eye-blink 2s ease-in-out infinite;
+    top: 6px;
+    animation: eye-blink 2.5s ease-in-out infinite;
 }
 
 .cat-eye::after {
     content: '';
     position: absolute;
-    width: 3px;
-    height: 3px;
-    background: rgba(255, 255, 255, 0.6);
+    width: 2px;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.5);
     border-radius: 50%;
     top: 0;
     right: 0;
 }
 
 .cat-eye-left {
-    left: 6px;
+    left: 5px;
 }
 
 .cat-eye-right {
-    right: 6px;
+    right: 5px;
 }
 
 /* 小猫尾巴 */
 .cat-tail {
     position: absolute;
-    width: 20px;
-    height: 8px;
-    background: #1a1a2e;
-    border-radius: 8px 0 0 8px;
+    width: 16px;
+    height: 6px;
+    background: #0a0a0f;
+    border-radius: 6px 0 0 6px;
     left: 0;
-    top: 20px;
+    top: 16px;
     transform-origin: right center;
-    animation: tail-wag 0.35s ease-in-out infinite;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    animation: tail-wag 0.3s ease-in-out infinite;
 }
 
 /* 小猫腿 */
 .cat-leg {
     position: absolute;
-    width: 6px;
-    height: 14px;
-    background: #1a1a2e;
-    border-radius: 3px 3px 4px 4px;
-    bottom: -8px;
+    width: 5px;
+    height: 11px;
+    background: #0a0a0f;
+    border-radius: 2px 2px 3px 3px;
+    bottom: -6px;
     transform-origin: top center;
 }
 
 .cat-leg-front-left {
-    left: 40px;
-    animation: leg-run-front 0.15s ease-in-out infinite;
+    left: 32px;
+    animation: leg-run-front 0.125s ease-in-out infinite;
 }
 
 .cat-leg-front-right {
-    left: 48px;
-    animation: leg-run-front 0.15s ease-in-out infinite 0.075s;
+    left: 38px;
+    animation: leg-run-front 0.125s ease-in-out infinite 0.0625s;
 }
 
 .cat-leg-back-left {
-    left: 16px;
-    animation: leg-run-back 0.15s ease-in-out infinite;
+    left: 12px;
+    animation: leg-run-back 0.125s ease-in-out infinite;
 }
 
 .cat-leg-back-right {
-    left: 24px;
-    animation: leg-run-back 0.15s ease-in-out infinite 0.075s;
+    left: 18px;
+    animation: leg-run-back 0.125s ease-in-out infinite 0.0625s;
 }
 
-/* 小猫跳跃动画 */
-@keyframes cat-bounce {
+/* 小猫跑步动画 */
+@keyframes cat-run {
 
     0%,
     100% {
-        transform: translateY(0);
+        transform: translateY(0) rotate(0deg);
+    }
+
+    25% {
+        transform: translateY(-2px) rotate(-1deg);
     }
 
     50% {
-        transform: translateY(-4px);
+        transform: translateY(0) rotate(0deg);
+    }
+
+    75% {
+        transform: translateY(-2px) rotate(1deg);
     }
 }
 
@@ -573,11 +581,11 @@ body>.v-modal,
 
     0%,
     100% {
-        transform: rotate(-15deg);
+        transform: rotate(-12deg) translateX(-2px);
     }
 
     50% {
-        transform: rotate(15deg);
+        transform: rotate(12deg) translateX(0);
     }
 }
 
@@ -586,11 +594,11 @@ body>.v-modal,
 
     0%,
     100% {
-        transform: rotate(-40deg);
+        transform: rotate(-45deg);
     }
 
     50% {
-        transform: rotate(40deg);
+        transform: rotate(45deg);
     }
 }
 
@@ -599,11 +607,11 @@ body>.v-modal,
 
     0%,
     100% {
-        transform: rotate(40deg);
+        transform: rotate(45deg);
     }
 
     50% {
-        transform: rotate(-40deg);
+        transform: rotate(-45deg);
     }
 }
 
@@ -611,8 +619,8 @@ body>.v-modal,
 @keyframes eye-blink {
 
     0%,
-    45%,
-    55%,
+    42%,
+    58%,
     100% {
         transform: scaleY(1);
     }
