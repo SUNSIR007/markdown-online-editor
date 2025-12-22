@@ -358,7 +358,7 @@ body>.v-modal,
     border-left: 4px solid #ef4444 !important;
 }
 
-/* Upload Progress Dialog - Modern Refined */
+/* Upload Progress Dialog - Premium Modern Design */
 .el-dialog__wrapper .upload-progress-dialog,
 .upload-progress-dialog {
     background: transparent !important;
@@ -369,110 +369,152 @@ body>.v-modal,
 .upload-progress-card {
     display: flex;
     flex-direction: column;
-    gap: 24px;
-    padding: 32px;
-    background: rgb(30, 41, 59);
-    /* 使用完全不透明的纯色背景 */
-    /* 完全移除 backdrop-filter，避免任何模糊 */
+    gap: 20px;
+    padding: 28px;
+    background: linear-gradient(145deg, rgba(30, 41, 59, 0.98), rgba(15, 23, 42, 0.98));
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
-    border-radius: 24px;
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
     box-shadow:
-        0 20px 40px -10px rgba(0, 0, 0, 0.8),
-        0 0 0 1px rgba(255, 255, 255, 0.1) inset;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        0 24px 48px -12px rgba(0, 0, 0, 0.6),
+        0 0 0 1px rgba(255, 255, 255, 0.05) inset,
+        0 1px 0 rgba(255, 255, 255, 0.1) inset;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+/* 添加微妙的光晕效果 */
+.upload-progress-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at 30% 30%, rgba(59, 130, 246, 0.08), transparent 50%);
+    pointer-events: none;
 }
 
 .upload-progress-card.is-success {
-    background: rgb(30, 41, 59);
-    /* 纯色背景 */
-    border-color: rgba(16, 185, 129, 0.4);
+    border-color: rgba(16, 185, 129, 0.3);
     box-shadow:
-        0 20px 40px -10px rgba(16, 185, 129, 0.3),
-        0 0 0 1px rgba(16, 185, 129, 0.2) inset;
+        0 24px 48px -12px rgba(16, 185, 129, 0.2),
+        0 0 0 1px rgba(16, 185, 129, 0.15) inset,
+        0 0 40px -10px rgba(16, 185, 129, 0.3);
+}
+
+.upload-progress-card.is-success::before {
+    background: radial-gradient(circle at 30% 30%, rgba(16, 185, 129, 0.1), transparent 50%);
 }
 
 .upload-progress-card.is-error {
-    background: rgb(30, 41, 59);
-    /* 纯色背景 */
-    border-color: rgba(239, 68, 68, 0.4);
+    border-color: rgba(239, 68, 68, 0.3);
     box-shadow:
-        0 20px 40px -10px rgba(239, 68, 68, 0.3),
-        0 0 0 1px rgba(239, 68, 68, 0.2) inset;
+        0 24px 48px -12px rgba(239, 68, 68, 0.2),
+        0 0 0 1px rgba(239, 68, 68, 0.15) inset,
+        0 0 40px -10px rgba(239, 68, 68, 0.3);
+}
+
+.upload-progress-card.is-error::before {
+    background: radial-gradient(circle at 30% 30%, rgba(239, 68, 68, 0.1), transparent 50%);
 }
 
 .upload-progress-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 20px;
+    gap: 16px;
+    position: relative;
+    z-index: 1;
 }
 
 .upload-progress-badge {
-    width: 56px;
-    height: 56px;
-    border-radius: 18px;
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-    box-shadow: 0 8px 16px -4px rgba(59, 130, 246, 0.4);
+    background: linear-gradient(135deg, #3b82f6, #6366f1, #8b5cf6);
+    box-shadow:
+        0 8px 24px -4px rgba(99, 102, 241, 0.5),
+        0 0 0 1px rgba(255, 255, 255, 0.1) inset;
     position: relative;
     flex-shrink: 0;
+    animation: badge-glow 2s ease-in-out infinite;
+}
+
+@keyframes badge-glow {
+
+    0%,
+    100% {
+        box-shadow:
+            0 8px 24px -4px rgba(99, 102, 241, 0.4),
+            0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+    }
+
+    50% {
+        box-shadow:
+            0 8px 32px -4px rgba(99, 102, 241, 0.6),
+            0 0 0 1px rgba(255, 255, 255, 0.15) inset;
+    }
 }
 
 .upload-progress-pulse {
-    width: 14px;
-    height: 14px;
+    width: 12px;
+    height: 12px;
     border-radius: 50%;
     background: #ffffff;
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
-    animation: upload-progress-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.9);
+    animation: upload-progress-pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
 .upload-progress-meta {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 4px;
     flex: 1;
     min-width: 0;
-    /* Prevent text overflow */
 }
 
 .upload-progress-label {
-    font-size: 18px;
+    font-size: 17px;
     font-weight: 600;
     color: #f8fafc;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.02em;
 }
 
 .upload-progress-count {
-    font-size: 14px;
-    color: #94a3b8;
+    font-size: 13px;
+    color: #64748b;
     font-weight: 500;
 }
 
 .upload-progress-percentage {
-    font-size: 24px;
+    font-size: 28px;
     font-weight: 700;
-    background: linear-gradient(135deg, #60a5fa, #a78bfa);
+    background: linear-gradient(135deg, #60a5fa, #818cf8, #a78bfa);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
     font-feature-settings: "tnum";
     font-variant-numeric: tabular-nums;
+    text-shadow: 0 0 40px rgba(99, 102, 241, 0.5);
 }
 
 .upload-progress-body {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    padding: 4px 0;
+    gap: 6px;
+    padding: 0;
+    position: relative;
+    z-index: 1;
 }
 
 .upload-progress-filename {
-    font-size: 15px;
+    font-size: 14px;
     color: #e2e8f0;
     white-space: nowrap;
     overflow: hidden;
@@ -482,7 +524,7 @@ body>.v-modal,
 }
 
 .upload-progress-stage {
-    font-size: 13px;
+    font-size: 12px;
     color: #64748b;
     margin: 0;
     display: flex;
@@ -496,39 +538,57 @@ body>.v-modal,
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background-color: #3b82f6;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    box-shadow: 0 0 8px rgba(59, 130, 246, 0.6);
+    animation: stage-dot-pulse 1s ease-in-out infinite;
+}
+
+@keyframes stage-dot-pulse {
+
+    0%,
+    100% {
+        opacity: 0.6;
+        transform: scale(0.9);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.1);
+    }
 }
 
 .upload-progress-stats {
     display: flex;
     gap: 16px;
-    font-size: 13px;
+    font-size: 12px;
     color: #64748b;
-    font-family: 'JetBrains Mono', monospace;
-    /* Monospace for numbers */
+    font-family: 'SF Mono', 'JetBrains Mono', monospace;
 }
 
 .upload-progress-meter {
     width: 100%;
-    height: 6px;
+    height: 4px;
     border-radius: 999px;
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.06);
     overflow: hidden;
     position: relative;
+    margin-top: 4px;
 }
 
 .upload-progress-meter__fill {
     position: absolute;
     inset: 0;
-    background: linear-gradient(90deg, #3b82f6, #8b5cf6, #3b82f6);
-    background-size: 200% 100%;
-    animation: shimmer 2s linear infinite;
-    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    background: linear-gradient(90deg, #3b82f6, #6366f1, #8b5cf6, #6366f1, #3b82f6);
+    background-size: 300% 100%;
+    animation: progress-shimmer 2s linear infinite;
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     border-radius: inherit;
-    box-shadow: 0 0 12px rgba(59, 130, 246, 0.5);
+    box-shadow:
+        0 0 16px rgba(99, 102, 241, 0.6),
+        0 0 4px rgba(99, 102, 241, 0.4);
 }
 
-@keyframes shimmer {
+@keyframes progress-shimmer {
     0% {
         background-position: 100% 0;
     }
@@ -541,38 +601,79 @@ body>.v-modal,
 .upload-progress-result {
     display: flex;
     align-items: center;
-    /* Center vertically */
-    gap: 24px;
-    padding: 8px 0;
+    gap: 20px;
+    padding: 4px 0;
+    position: relative;
+    z-index: 1;
 }
 
 .upload-progress-status-icon {
-    width: 64px;
-    height: 64px;
-    border-radius: 20px;
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .upload-progress-status-icon.is-success {
-    background: rgba(16, 185, 129, 0.15);
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(16, 185, 129, 0.1));
     color: #34d399;
-    box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.2) inset;
+    box-shadow:
+        0 0 0 1px rgba(16, 185, 129, 0.2) inset,
+        0 8px 24px -8px rgba(16, 185, 129, 0.4);
+    animation: success-bounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes success-bounce {
+    0% {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
 }
 
 .upload-progress-status-icon.is-error {
-    background: rgba(239, 68, 68, 0.15);
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(239, 68, 68, 0.1));
     color: #f87171;
-    box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.2) inset;
+    box-shadow:
+        0 0 0 1px rgba(239, 68, 68, 0.2) inset,
+        0 8px 24px -8px rgba(239, 68, 68, 0.4);
+    animation: error-shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+}
+
+@keyframes error-shake {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    20%,
+    60% {
+        transform: translateX(-4px);
+    }
+
+    40%,
+    80% {
+        transform: translateX(4px);
+    }
 }
 
 .upload-progress-icon {
-    width: 32px;
-    height: 32px;
-    stroke-width: 3;
+    width: 28px;
+    height: 28px;
+    stroke-width: 2.5;
     stroke-linecap: round;
     stroke-linejoin: round;
     stroke: currentColor;
@@ -582,72 +683,86 @@ body>.v-modal,
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
     justify-content: center;
 }
 
 .upload-progress-result-title {
-    font-size: 20px;
-    font-weight: 700;
+    font-size: 18px;
+    font-weight: 600;
     margin: 0;
     color: #f8fafc;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.02em;
 }
 
 .upload-progress-result-summary {
     margin: 0;
     padding: 8px 12px;
-    border-radius: 8px;
-    font-size: 14px;
+    border-radius: 10px;
+    font-size: 13px;
     line-height: 1.5;
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.04);
     color: #94a3b8;
     display: inline-block;
-    /* Fit content */
+    border: 1px solid rgba(255, 255, 255, 0.04);
 }
 
 .upload-progress-card.is-success .upload-progress-result-summary {
-    background: rgba(16, 185, 129, 0.1);
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(16, 185, 129, 0.06));
     color: #6ee7b7;
+    border-color: rgba(16, 185, 129, 0.15);
 }
 
 .upload-progress-card.is-error .upload-progress-result-summary {
-    background: rgba(239, 68, 68, 0.1);
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.12), rgba(239, 68, 68, 0.06));
     color: #fca5a5;
+    border-color: rgba(239, 68, 68, 0.15);
 }
 
 .upload-progress-messages {
-    margin: 8px 0 0 0;
+    margin: 4px 0 0 0;
     padding: 0;
     list-style: none;
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    max-height: 120px;
+    gap: 6px;
+    max-height: 100px;
     overflow-y: auto;
 }
 
 .upload-progress-messages li {
     margin: 0;
-    padding: 10px 14px;
-    border-radius: 10px;
-    font-size: 13px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 12px;
     line-height: 1.5;
     background: rgba(255, 255, 255, 0.03);
     color: #cbd5e1;
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.upload-progress-messages li.is-success {
+    background: rgba(16, 185, 129, 0.08);
+    color: #6ee7b7;
+    border-color: rgba(16, 185, 129, 0.1);
+}
+
+.upload-progress-messages li.is-error {
+    background: rgba(239, 68, 68, 0.08);
+    color: #fca5a5;
+    border-color: rgba(239, 68, 68, 0.1);
 }
 
 @keyframes upload-progress-pulse {
 
     0%,
     100% {
-        transform: scale(0.9);
-        opacity: 0.7;
+        transform: scale(0.85);
+        opacity: 0.6;
     }
 
     50% {
-        transform: scale(1.1);
+        transform: scale(1.15);
         opacity: 1;
     }
 }
@@ -691,22 +806,23 @@ body>.v-modal,
     left: 0;
     width: 0%;
     height: 3px;
-    background: linear-gradient(90deg, var(--primary-gradient-start), var(--primary-gradient-end));
-    box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
-    transition: width 0.3s ease;
+    background: linear-gradient(90deg, #3b82f6, #6366f1, #8b5cf6);
+    box-shadow:
+        0 0 20px rgba(99, 102, 241, 0.6),
+        0 0 40px rgba(99, 102, 241, 0.3);
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 9999;
     display: none;
 }
 
-/* Upload Feedback Overlay */
+/* Upload Feedback Overlay - Premium Design */
 .upload-feedback-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(15, 23, 42, 0.95);
-    /* 移除模糊效果，避免整个页面变模糊 */
+    background: linear-gradient(145deg, rgba(15, 23, 42, 0.97), rgba(30, 41, 59, 0.97));
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
     display: flex;
@@ -715,7 +831,7 @@ body>.v-modal,
     z-index: 10000;
     opacity: 0;
     visibility: hidden;
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .upload-feedback-overlay.show {
@@ -724,44 +840,87 @@ body>.v-modal,
 }
 
 .upload-feedback-icon {
-    width: 100px;
-    height: 100px;
+    width: 120px;
+    height: 120px;
+    position: relative;
+}
+
+/* 添加光晕背景效果 */
+.upload-feedback-icon::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(16, 185, 129, 0.15), transparent 70%);
+    animation: feedback-glow 2s ease-in-out infinite;
+    pointer-events: none;
+}
+
+.upload-feedback-icon .error-icon-circle~ ::before,
+.upload-feedback-icon:has(.error-icon-circle)::before {
+    background: radial-gradient(circle, rgba(239, 68, 68, 0.15), transparent 70%);
+}
+
+@keyframes feedback-glow {
+
+    0%,
+    100% {
+        transform: translate(-50%, -50%) scale(0.9);
+        opacity: 0.6;
+    }
+
+    50% {
+        transform: translate(-50%, -50%) scale(1.1);
+        opacity: 1;
+    }
 }
 
 .success-icon-circle {
     stroke: #10b981;
-    stroke-width: 2;
+    stroke-width: 2.5;
     stroke-dasharray: 166;
     stroke-dashoffset: 166;
-    animation: dash-success 0.6s ease forwards;
+    fill: none;
+    animation: dash-success 0.6s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+    filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.5));
 }
 
 .success-icon-check {
     stroke: #10b981;
-    stroke-width: 2;
+    stroke-width: 3;
     stroke-linecap: round;
     stroke-linejoin: round;
     stroke-dasharray: 48;
     stroke-dashoffset: 48;
-    animation: dash-check 0.3s 0.6s ease forwards;
+    fill: none;
+    animation: dash-check 0.4s 0.5s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+    filter: drop-shadow(0 0 6px rgba(16, 185, 129, 0.6));
 }
 
 .error-icon-circle {
     stroke: #ef4444;
-    stroke-width: 2;
+    stroke-width: 2.5;
     stroke-dasharray: 166;
     stroke-dashoffset: 166;
-    animation: dash-error 0.6s ease forwards;
+    fill: none;
+    animation: dash-error 0.6s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+    filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.5));
 }
 
 .error-icon-cross {
     stroke: #ef4444;
-    stroke-width: 2;
+    stroke-width: 3;
     stroke-linecap: round;
     stroke-linejoin: round;
     stroke-dasharray: 48;
     stroke-dashoffset: 48;
-    animation: dash-check 0.3s 0.6s ease forwards;
+    fill: none;
+    animation: dash-cross 0.4s 0.5s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+    filter: drop-shadow(0 0 6px rgba(239, 68, 68, 0.6));
 }
 
 @keyframes dash-success {
@@ -777,7 +936,27 @@ body>.v-modal,
 }
 
 @keyframes dash-check {
-    to {
+    0% {
+        stroke-dashoffset: 48;
+        transform: scale(0.8);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+
+    100% {
+        stroke-dashoffset: 0;
+        transform: scale(1);
+    }
+}
+
+@keyframes dash-cross {
+    0% {
+        stroke-dashoffset: 48;
+    }
+
+    100% {
         stroke-dashoffset: 0;
     }
 }
