@@ -331,6 +331,13 @@ body>.v-modal,
     -webkit-filter: none !important;
 }
 
+/* 隐藏上传对话框的 header 分隔线 */
+.upload-progress-dialog .el-dialog__header {
+    border-bottom: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
 /* Message Styles */
 .el-message {
     background: var(--bg-surface) !important;
