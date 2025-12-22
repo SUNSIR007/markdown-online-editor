@@ -25,14 +25,29 @@
         box-shadow: var(--shadow-lg) !important;
         flex: 1 1 auto !important;
         min-height: 0 !important;
-        height: auto !important;
+        height: calc(100vh - 100px) !important;
+        height: calc(var(--vh, 1vh) * 100 - 100px) !important;
         border: 1px solid rgba(255, 255, 255, 0.05) !important;
         background: var(--bg-surface) !important;
+        display: flex !important;
+        flex-direction: column !important;
     }
 
     .editor-container:hover {
         transform: none !important;
         box-shadow: var(--shadow-lg) !important;
+    }
+
+    #vditor {
+        height: 100% !important;
+        flex: 1 1 auto !important;
+        min-height: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+    }
+
+    .vditor {
+        height: 100% !important;
     }
 
     /* 移动端编辑器内边距调整 */
