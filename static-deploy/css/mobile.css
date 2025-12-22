@@ -209,15 +209,18 @@
 
     /* 移动端对话框 - 只禁用遮罩层的模糊效果 */
     .v-modal,
-    .el-dialog__wrapper,
     .upload-feedback-overlay {
         backdrop-filter: none !important;
         -webkit-backdrop-filter: none !important;
-        filter: none !important;
-        -webkit-filter: none !important;
     }
 
-    /* Apple HUD 移动端样式 */
+    /* Apple HUD 移动端样式 - 保持玻璃效果和居中 */
+    .el-dialog__wrapper:has(.apple-upload-dialog) {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+
     .apple-upload-dialog,
     .apple-upload-dialog.el-dialog {
         width: auto !important;
@@ -225,6 +228,12 @@
         margin: 0 !important;
         top: 0 !important;
         transform: none !important;
+    }
+
+    .apple-upload-hud {
+        /* 移动端保持玻璃效果 */
+        backdrop-filter: blur(20px) saturate(180%) !important;
+        -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
     }
 }
 

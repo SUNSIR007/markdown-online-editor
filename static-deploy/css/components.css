@@ -402,18 +402,23 @@ body>.v-modal,
     padding: 0 !important;
 }
 
-/* HUD 主体 */
+/* HUD 主体 - 透明玻璃风格 */
 .apple-upload-hud {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 12px;
-    width: 100px;
-    height: 100px;
-    background: rgba(0, 0, 0, 0.75);
-    border-radius: 16px;
-    animation: hud-appear 0.2s ease-out;
+    width: 110px;
+    height: 110px;
+    /* 透明玻璃效果 */
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    animation: hud-appear 0.25s ease-out;
 }
 
 @keyframes hud-appear {
