@@ -390,13 +390,21 @@ body>.v-modal,
     box-shadow: none !important;
     border: none !important;
     /* 关键：清除 Element UI 默认的 margin-top: 15vh */
-    margin: 0 !important;
+    margin: auto !important;
+    /* 在 Flex 容器中，margin: auto 能实现完美居中 */
     top: 0 !important;
     left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
     position: relative !important;
-    width: auto !important;
+    width: fit-content !important;
+    /* 确保宽度适应内容 */
+    min-width: 0 !important;
     transform: none !important;
-    display: inline-block !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
 }
 
 /* 上传卡片 - 圆形玻璃拟态 */
