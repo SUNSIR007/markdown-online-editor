@@ -365,7 +365,7 @@ body>.v-modal,
     border-left: 4px solid #ef4444 !important;
 }
 
-/* Upload Progress Dialog - Minimal & Restrained */
+/* Upload Progress Dialog - iOS 26 Liquid Glass 风格 */
 .el-dialog__wrapper .upload-progress-dialog,
 .upload-progress-dialog {
     background: transparent !important;
@@ -376,252 +376,307 @@ body>.v-modal,
 .upload-progress-card {
     display: flex;
     flex-direction: column;
-    gap: 16px;
-    padding: 24px;
-    background: var(--bg-surface);
-    border-radius: 16px;
-    border: 1px solid var(--border-color);
-    box-shadow: 0 16px 32px -8px rgba(0, 0, 0, 0.5);
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    padding: 32px 24px;
+    /* iOS 26 Liquid Glass 效果 */
+    background: rgba(30, 41, 59, 0.35);
+    backdrop-filter: blur(40px) saturate(180%);
+    -webkit-backdrop-filter: blur(40px) saturate(180%);
+    border-radius: 28px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+    min-height: 140px;
 }
 
 .upload-progress-card.is-success {
-    border-color: rgba(16, 185, 129, 0.3);
+    border-color: rgba(16, 185, 129, 0.35);
+    box-shadow:
+        0 8px 32px rgba(16, 185, 129, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .upload-progress-card.is-error {
-    border-color: rgba(239, 68, 68, 0.3);
+    border-color: rgba(239, 68, 68, 0.35);
+    box-shadow:
+        0 8px 32px rgba(239, 68, 68, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
-.upload-progress-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-}
-
-.upload-progress-badge {
-    width: 44px;
-    height: 44px;
-    border-radius: 12px;
+/* 小猫跑步动画容器 */
+.upload-cat-container {
+    width: 80px;
+    height: 56px;
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--primary-color);
-    flex-shrink: 0;
 }
 
-.upload-progress-pulse {
-    width: 8px;
-    height: 8px;
+/* 小猫整体 */
+.running-cat {
+    position: relative;
+    width: 60px;
+    height: 40px;
+    animation: cat-bounce 0.3s ease-in-out infinite;
+}
+
+/* 小猫身体 */
+.cat-body {
+    position: absolute;
+    width: 36px;
+    height: 20px;
+    background: linear-gradient(135deg, #94a3b8 0%, #64748b 100%);
+    border-radius: 50% 50% 40% 40%;
+    left: 12px;
+    top: 14px;
+}
+
+/* 小猫头部 */
+.cat-head {
+    position: absolute;
+    width: 22px;
+    height: 18px;
+    background: linear-gradient(135deg, #94a3b8 0%, #64748b 100%);
+    border-radius: 50% 50% 45% 45%;
+    left: 38px;
+    top: 8px;
+}
+
+/* 小猫耳朵 */
+.cat-ear {
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 10px solid #94a3b8;
+}
+
+.cat-ear-left {
+    top: -6px;
+    left: 2px;
+    transform: rotate(-15deg);
+}
+
+.cat-ear-right {
+    top: -6px;
+    right: 2px;
+    transform: rotate(15deg);
+}
+
+/* 小猫脸部 */
+.cat-face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+}
+
+/* 小猫眼睛 */
+.cat-eye {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: #1e293b;
     border-radius: 50%;
-    background: #ffffff;
-    animation: minimal-pulse 1.2s ease-in-out infinite;
+    top: 6px;
 }
 
-@keyframes minimal-pulse {
+.cat-eye-left {
+    left: 5px;
+}
+
+.cat-eye-right {
+    right: 5px;
+}
+
+/* 小猫尾巴 */
+.cat-tail {
+    position: absolute;
+    width: 16px;
+    height: 6px;
+    background: linear-gradient(90deg, #64748b 0%, #94a3b8 100%);
+    border-radius: 0 50% 50% 0;
+    left: 0;
+    top: 18px;
+    transform-origin: right center;
+    animation: tail-wag 0.4s ease-in-out infinite;
+}
+
+/* 小猫腿 */
+.cat-leg {
+    position: absolute;
+    width: 5px;
+    height: 12px;
+    background: #64748b;
+    border-radius: 2px 2px 3px 3px;
+    bottom: -6px;
+    transform-origin: top center;
+}
+
+.cat-leg-front-left {
+    left: 35px;
+    animation: leg-run-front 0.15s ease-in-out infinite;
+}
+
+.cat-leg-front-right {
+    left: 42px;
+    animation: leg-run-front 0.15s ease-in-out infinite 0.075s;
+}
+
+.cat-leg-back-left {
+    left: 14px;
+    animation: leg-run-back 0.15s ease-in-out infinite;
+}
+
+.cat-leg-back-right {
+    left: 21px;
+    animation: leg-run-back 0.15s ease-in-out infinite 0.075s;
+}
+
+/* 小猫跳跃动画 */
+@keyframes cat-bounce {
 
     0%,
     100% {
-        opacity: 0.4;
+        transform: translateY(0);
     }
 
     50% {
-        opacity: 1;
+        transform: translateY(-3px);
     }
 }
 
-.upload-progress-meta {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    flex: 1;
-    min-width: 0;
+/* 尾巴摇摆动画 */
+@keyframes tail-wag {
+
+    0%,
+    100% {
+        transform: rotate(-10deg);
+    }
+
+    50% {
+        transform: rotate(10deg);
+    }
 }
 
-.upload-progress-label {
+/* 前腿跑步动画 */
+@keyframes leg-run-front {
+
+    0%,
+    100% {
+        transform: rotate(-35deg);
+    }
+
+    50% {
+        transform: rotate(35deg);
+    }
+}
+
+/* 后腿跑步动画 */
+@keyframes leg-run-back {
+
+    0%,
+    100% {
+        transform: rotate(35deg);
+    }
+
+    50% {
+        transform: rotate(-35deg);
+    }
+}
+
+/* 上传状态文字 */
+.upload-status-text {
+    margin: 0;
     font-size: 15px;
-    font-weight: 600;
-    color: var(--text-main);
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.85);
+    letter-spacing: 0.5px;
 }
 
-.upload-progress-count {
-    font-size: 13px;
-    color: var(--text-muted);
-}
-
-.upload-progress-percentage {
-    font-size: 20px;
-    font-weight: 600;
-    color: var(--primary-color);
-    font-feature-settings: "tnum";
-    font-variant-numeric: tabular-nums;
-}
-
-.upload-progress-body {
+/* 成功/失败结果容器 */
+.upload-result-container {
     display: flex;
     flex-direction: column;
-    gap: 6px;
-}
-
-.upload-progress-filename {
-    font-size: 14px;
-    color: var(--text-main);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    margin: 0;
-}
-
-.upload-progress-stage {
-    font-size: 12px;
-    color: var(--text-muted);
-    margin: 0;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.upload-progress-stage::before {
-    content: '';
-    display: block;
-    width: 4px;
-    height: 4px;
-    border-radius: 50%;
-    background: var(--primary-color);
-}
-
-.upload-progress-stats {
-    display: flex;
-    gap: 12px;
-    font-size: 12px;
-    color: var(--text-muted);
-    font-family: 'SF Mono', monospace;
-}
-
-.upload-progress-meter {
-    width: 100%;
-    height: 3px;
-    border-radius: 2px;
-    background: var(--border-color);
-    overflow: hidden;
-}
-
-.upload-progress-meter__fill {
-    height: 100%;
-    background: var(--primary-color);
-    transition: width 0.3s ease;
-    border-radius: inherit;
-}
-
-.upload-progress-result {
-    display: flex;
     align-items: center;
     gap: 16px;
 }
 
-.upload-progress-status-icon {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
+/* 结果图标 */
+.upload-result-icon {
+    width: 52px;
+    height: 52px;
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-shrink: 0;
 }
 
-.upload-progress-status-icon.is-success {
-    background: rgba(16, 185, 129, 0.1);
-    color: #10b981;
+.upload-result-icon svg {
+    width: 52px;
+    height: 52px;
 }
 
-.upload-progress-status-icon.is-error {
-    background: rgba(239, 68, 68, 0.1);
-    color: #ef4444;
+.upload-result-icon.is-success svg {
+    stroke: #10b981;
 }
 
-.upload-progress-icon {
-    width: 24px;
-    height: 24px;
-    stroke-width: 2;
+.upload-result-icon.is-error svg {
+    stroke: #ef4444;
+}
+
+.result-check,
+.result-cross {
+    stroke-width: 3;
     stroke-linecap: round;
     stroke-linejoin: round;
-    stroke: currentColor;
+    stroke-dasharray: 50;
+    stroke-dashoffset: 50;
+    animation: draw-result 0.4s ease forwards;
 }
 
-.upload-progress-result-text {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
+@keyframes draw-result {
+    to {
+        stroke-dashoffset: 0;
+    }
 }
 
-.upload-progress-result-title {
+/* 结果文字 */
+.upload-result-text {
+    margin: 0;
     font-size: 16px;
     font-weight: 600;
-    margin: 0;
-    color: var(--text-main);
+    color: rgba(255, 255, 255, 0.9);
 }
 
-.upload-progress-result-summary {
-    margin: 0;
-    font-size: 13px;
-    line-height: 1.5;
-    color: var(--text-secondary);
-}
-
-.upload-progress-card.is-success .upload-progress-result-summary {
-    color: #10b981;
-}
-
-.upload-progress-card.is-error .upload-progress-result-summary {
-    color: #ef4444;
-}
-
-.upload-progress-messages {
-    margin: 4px 0 0 0;
-    padding: 0;
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    max-height: 80px;
-    overflow-y: auto;
-}
-
-.upload-progress-messages li {
-    margin: 0;
-    padding: 6px 10px;
-    border-radius: 6px;
-    font-size: 12px;
-    line-height: 1.4;
-    background: var(--bg-surface-hover);
-    color: var(--text-secondary);
-}
-
-.upload-progress-messages li.is-success {
-    color: #10b981;
-}
-
-.upload-progress-messages li.is-error {
-    color: #ef4444;
-}
-
+/* 移动端适配 */
 @media (max-width: 768px) {
 
     .upload-progress-dialog,
     .el-dialog__wrapper .upload-progress-dialog {
-        width: 90vw !important;
-        max-width: 360px !important;
+        width: 240px !important;
+        max-width: 80vw !important;
     }
 
     .upload-progress-card {
-        padding: 20px !important;
-        gap: 14px !important;
+        padding: 28px 20px !important;
+        border-radius: 24px !important;
+        min-height: 120px !important;
     }
 
-    .upload-progress-badge {
-        width: 40px !important;
-        height: 40px !important;
+    .upload-cat-container {
+        width: 70px;
+        height: 50px;
+    }
+
+    .running-cat {
+        transform: scale(0.85);
     }
 }
 

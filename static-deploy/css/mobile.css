@@ -207,11 +207,9 @@
         height: 36px !important;
     }
 
-    /* 移动端对话框 - 移除所有模糊效果 */
+    /* 移动端对话框 - 只禁用遮罩层的模糊效果 */
     .v-modal,
     .el-dialog__wrapper,
-    .el-dialog,
-    .upload-progress-dialog,
     .upload-feedback-overlay {
         backdrop-filter: none !important;
         -webkit-backdrop-filter: none !important;
@@ -219,13 +217,16 @@
         -webkit-filter: none !important;
     }
 
-    /* 确保上传进度对话框完全清晰 */
+    /* 上传进度对话框 - iOS 26 玻璃拟态样式 */
     .upload-progress-dialog .el-dialog {
-        background: rgb(30, 41, 59) !important;
+        background: transparent !important;
     }
 
     .upload-progress-card {
-        background: rgb(30, 41, 59) !important;
+        /* 移动端保持玻璃拟态效果 */
+        background: rgba(30, 41, 59, 0.5) !important;
+        backdrop-filter: blur(40px) saturate(180%) !important;
+        -webkit-backdrop-filter: blur(40px) saturate(180%) !important;
     }
 }
 
