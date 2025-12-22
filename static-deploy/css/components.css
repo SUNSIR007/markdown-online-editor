@@ -402,21 +402,26 @@ body>.v-modal,
     padding: 0 !important;
 }
 
-/* HUD 主体 - 深色极简风格 */
+/* HUD 主体 - 与主题匹配的风格 */
 .apple-upload-hud {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 14px;
-    width: 100px;
-    height: 100px;
-    /* 深色半透明背景 */
-    background: rgba(0, 0, 0, 0.75);
-    border-radius: 18px;
-    /* 微妙阴影 */
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
-    animation: hud-appear 0.2s ease-out;
+    gap: 16px;
+    width: 120px;
+    height: 120px;
+    /* 与主题匹配的背景 */
+    background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
+    border-radius: 24px;
+    /* 蓝色辉光边框 */
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    /* 多层阴影增加深度 */
+    box-shadow:
+        0 0 30px rgba(59, 130, 246, 0.15),
+        0 10px 40px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    animation: hud-appear 0.3s ease-out;
 }
 
 @keyframes hud-appear {
@@ -449,7 +454,7 @@ body>.v-modal,
     width: 100%;
     height: 100%;
     border-radius: 50%;
-    border: 3px solid rgba(255, 255, 255, 0.25);
+    border: 3px solid rgba(59, 130, 246, 0.2);
     box-sizing: border-box;
 }
 
@@ -462,7 +467,7 @@ body>.v-modal,
     height: 100%;
     border-radius: 50%;
     border: 3px solid transparent;
-    border-top-color: #fff;
+    border-top-color: #3b82f6;
     box-sizing: border-box;
     animation: apple-spin 0.75s linear infinite;
 }
