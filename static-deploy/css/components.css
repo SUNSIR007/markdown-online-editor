@@ -365,400 +365,166 @@ body>.v-modal,
     border-left: 4px solid #ef4444 !important;
 }
 
-/* Upload Progress Dialog - iOS 26 Liquid Glass 风格 */
-/* Upload Progress Dialog - iOS 26 Liquid Glass 风格 */
+/* ============================================
+   Apple HIG Style Upload HUD
+   简约但不简单的设计
+   ============================================ */
 
-/* 1. 强制 Wrapper 使用 Flex 居中 */
-.el-dialog__wrapper:has(.upload-progress-dialog) {
+/* Wrapper 居中 */
+.el-dialog__wrapper:has(.apple-upload-dialog) {
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    /* 确保 wrapper 覆盖全屏 */
     position: fixed !important;
     top: 0 !important;
     left: 0 !important;
     width: 100% !important;
     height: 100% !important;
-    padding: 0 !important;
-    overflow: hidden !important;
+    pointer-events: none !important;
 }
 
-/* 2. 重置 Dialog 本身的所有默认定位和间距 */
-.el-dialog__wrapper .upload-progress-dialog,
-.upload-progress-dialog {
+/* Dialog 重置 */
+.apple-upload-dialog,
+.apple-upload-dialog.el-dialog {
     background: transparent !important;
     box-shadow: none !important;
     border: none !important;
-    /* 关键：清除 Element UI 默认的 margin-top: 15vh */
-    margin: auto !important;
-    /* 在 Flex 容器中，margin: auto 能实现完美居中 */
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-    position: relative !important;
-    width: fit-content !important;
-    /* 确保宽度适应内容 */
-    min-width: 0 !important;
-    transform: none !important;
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    justify-content: center !important;
+    margin: 0 !important;
+    width: auto !important;
+    pointer-events: auto !important;
 }
 
-/* 上传卡片 - 圆形玻璃拟态 */
-.upload-progress-card {
-    /* 移除 fixed 定位，因为外层已经是 flex 居中 */
-    position: relative !important;
-    top: auto !important;
-    left: auto !important;
-    transform: none !important;
-    z-index: 10001 !important;
-    /* 布局 */
+.apple-upload-dialog .el-dialog__header {
+    display: none !important;
+}
+
+.apple-upload-dialog .el-dialog__body {
+    padding: 0 !important;
+}
+
+/* HUD 主体 */
+.apple-upload-hud {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 16px;
-    /* 圆形设计 */
-    width: 160px;
-    height: 160px;
-    padding: 20px;
-    /* iOS 26 Liquid Glass 效果 */
-    background: rgba(30, 41, 59, 0.4);
-    backdrop-filter: blur(40px) saturate(180%);
-    -webkit-backdrop-filter: blur(40px) saturate(180%);
-    border-radius: 50%;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow:
-        0 8px 32px rgba(0, 0, 0, 0.4),
-        inset 0 1px 0 rgba(255, 255, 255, 0.15),
-        inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+    gap: 12px;
+    width: 100px;
+    height: 100px;
+    background: rgba(0, 0, 0, 0.75);
+    border-radius: 16px;
+    animation: hud-appear 0.2s ease-out;
 }
 
-.upload-progress-card.is-success {
-    border-color: rgba(16, 185, 129, 0.35);
-    box-shadow:
-        0 8px 32px rgba(16, 185, 129, 0.15),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+@keyframes hud-appear {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
-.upload-progress-card.is-error {
-    border-color: rgba(239, 68, 68, 0.35);
-    box-shadow:
-        0 8px 32px rgba(239, 68, 68, 0.15),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1);
-}
-
-/* 小猫跑步动画容器 */
-.upload-cat-container {
-    width: 80px;
-    height: 50px;
+/* Apple 风格 Spinner */
+.apple-spinner {
+    width: 37px;
+    height: 37px;
     position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
-/* 小猫整体 */
-.running-cat {
-    position: relative;
-    width: 56px;
-    height: 36px;
-    animation: cat-run 0.25s ease-in-out infinite;
-    transform-origin: center bottom;
-}
-
-/* 小猫身体 - 纯黑色剪影 */
-.cat-body {
-    position: absolute;
-    width: 32px;
-    height: 18px;
-    background: #0a0a0f;
-    border-radius: 50% 50% 45% 45%;
-    left: 10px;
-    top: 12px;
-}
-
-/* 小猫头部 */
-.cat-head {
-    position: absolute;
-    width: 20px;
-    height: 17px;
-    background: #0a0a0f;
-    border-radius: 50% 50% 48% 48%;
-    left: 34px;
-    top: 6px;
-}
-
-/* 小猫耳朵 */
-.cat-ear {
-    position: absolute;
-    width: 0;
-    height: 0;
-    border-left: 5px solid transparent;
-    border-right: 5px solid transparent;
-    border-bottom: 9px solid #0a0a0f;
-}
-
-.cat-ear-left {
-    top: -6px;
-    left: 2px;
-    transform: rotate(-20deg);
-}
-
-.cat-ear-right {
-    top: -6px;
-    right: 2px;
-    transform: rotate(20deg);
-}
-
-/* 小猫脸部 */
-.cat-face {
+.apple-spinner::before {
+    content: '';
     position: absolute;
     width: 100%;
     height: 100%;
-    top: 0;
-    left: 0;
-}
-
-/* 小猫眼睛 - 闪亮的眼睛 */
-.cat-eye {
-    position: absolute;
-    width: 4px;
-    height: 4px;
-    background: #ffffff;
     border-radius: 50%;
-    top: 6px;
-    animation: eye-blink 2.5s ease-in-out infinite;
+    border: 3px solid rgba(255, 255, 255, 0.2);
 }
 
-.cat-eye::after {
+.apple-spinner::after {
     content: '';
     position: absolute;
-    width: 2px;
-    height: 2px;
-    background: rgba(255, 255, 255, 0.5);
+    width: 100%;
+    height: 100%;
     border-radius: 50%;
-    top: 0;
-    right: 0;
+    border: 3px solid transparent;
+    border-top-color: #fff;
+    animation: apple-spin 0.8s linear infinite;
 }
 
-.cat-eye-left {
-    left: 5px;
-}
-
-.cat-eye-right {
-    right: 5px;
-}
-
-/* 小猫尾巴 */
-.cat-tail {
-    position: absolute;
-    width: 16px;
-    height: 6px;
-    background: #0a0a0f;
-    border-radius: 6px 0 0 6px;
-    left: 0;
-    top: 16px;
-    transform-origin: right center;
-    animation: tail-wag 0.3s ease-in-out infinite;
-}
-
-/* 小猫腿 */
-.cat-leg {
-    position: absolute;
-    width: 5px;
-    height: 11px;
-    background: #0a0a0f;
-    border-radius: 2px 2px 3px 3px;
-    bottom: -6px;
-    transform-origin: top center;
-}
-
-.cat-leg-front-left {
-    left: 32px;
-    animation: leg-run-front 0.125s ease-in-out infinite;
-}
-
-.cat-leg-front-right {
-    left: 38px;
-    animation: leg-run-front 0.125s ease-in-out infinite 0.0625s;
-}
-
-.cat-leg-back-left {
-    left: 12px;
-    animation: leg-run-back 0.125s ease-in-out infinite;
-}
-
-.cat-leg-back-right {
-    left: 18px;
-    animation: leg-run-back 0.125s ease-in-out infinite 0.0625s;
-}
-
-/* 小猫跑步动画 */
-@keyframes cat-run {
-
-    0%,
-    100% {
-        transform: translateY(0) rotate(0deg);
-    }
-
-    25% {
-        transform: translateY(-2px) rotate(-1deg);
-    }
-
-    50% {
-        transform: translateY(0) rotate(0deg);
-    }
-
-    75% {
-        transform: translateY(-2px) rotate(1deg);
+@keyframes apple-spin {
+    to {
+        transform: rotate(360deg);
     }
 }
 
-/* 尾巴摇摆动画 */
-@keyframes tail-wag {
-
-    0%,
-    100% {
-        transform: rotate(-12deg) translateX(-2px);
-    }
-
-    50% {
-        transform: rotate(12deg) translateX(0);
-    }
+/* 成功勾选 */
+.apple-checkmark {
+    width: 37px;
+    height: 37px;
 }
 
-/* 前腿跑步动画 */
-@keyframes leg-run-front {
-
-    0%,
-    100% {
-        transform: rotate(-45deg);
-    }
-
-    50% {
-        transform: rotate(45deg);
-    }
-}
-
-/* 后腿跑步动画 */
-@keyframes leg-run-back {
-
-    0%,
-    100% {
-        transform: rotate(45deg);
-    }
-
-    50% {
-        transform: rotate(-45deg);
-    }
-}
-
-/* 眨眼动画 */
-@keyframes eye-blink {
-
-    0%,
-    42%,
-    58%,
-    100% {
-        transform: scaleY(1);
-    }
-
-    50% {
-        transform: scaleY(0.1);
-    }
-}
-
-/* 上传状态文字 */
-.upload-status-text {
-    margin: 0;
-    font-size: 15px;
-    font-weight: 500;
-    color: rgba(255, 255, 255, 0.85);
-    letter-spacing: 0.5px;
-}
-
-/* 成功/失败结果容器 */
-.upload-result-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 16px;
-}
-
-/* 结果图标 */
-.upload-result-icon {
-    width: 52px;
-    height: 52px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.upload-result-icon svg {
-    width: 52px;
-    height: 52px;
-}
-
-.upload-result-icon.is-success svg {
-    stroke: #10b981;
-}
-
-.upload-result-icon.is-error svg {
-    stroke: #ef4444;
-}
-
-.result-check,
-.result-cross {
-    stroke-width: 3;
+.apple-checkmark svg {
+    width: 100%;
+    height: 100%;
+    fill: none;
+    stroke: #fff;
+    stroke-width: 4;
     stroke-linecap: round;
     stroke-linejoin: round;
-    stroke-dasharray: 50;
-    stroke-dashoffset: 50;
-    animation: draw-result 0.4s ease forwards;
 }
 
-@keyframes draw-result {
+.apple-checkmark svg path {
+    stroke-dasharray: 60;
+    stroke-dashoffset: 60;
+    animation: checkmark-draw 0.4s ease forwards;
+}
+
+@keyframes checkmark-draw {
     to {
         stroke-dashoffset: 0;
     }
 }
 
-/* 结果文字 */
-.upload-result-text {
-    margin: 0;
-    font-size: 16px;
-    font-weight: 600;
-    color: rgba(255, 255, 255, 0.9);
+/* 失败叉号 */
+.apple-crossmark {
+    width: 37px;
+    height: 37px;
 }
 
-/* 移动端适配 */
-@media (max-width: 768px) {
+.apple-crossmark svg {
+    width: 100%;
+    height: 100%;
+    fill: none;
+    stroke: #fff;
+    stroke-width: 4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
 
-    .upload-progress-dialog,
-    .el-dialog__wrapper .upload-progress-dialog {
-        width: 240px !important;
-        max-width: 80vw !important;
-    }
+.apple-crossmark svg path {
+    stroke-dasharray: 60;
+    stroke-dashoffset: 60;
+    animation: crossmark-draw 0.4s ease forwards;
+}
 
-    .upload-progress-card {
-        padding: 28px 20px !important;
-        border-radius: 24px !important;
-        min-height: 120px !important;
-    }
-
-    .upload-cat-container {
-        width: 70px;
-        height: 50px;
-    }
-
-    .running-cat {
-        transform: scale(0.85);
+@keyframes crossmark-draw {
+    to {
+        stroke-dashoffset: 0;
     }
 }
+
+/* HUD 文字 */
+.apple-hud-text {
+    font-size: 13px;
+    font-weight: 500;
+    color: #fff;
+    letter-spacing: 0.3px;
+}
+
 
 /* Upload Progress Bar (Bottom) - Minimal */
 .upload-progress-bar {

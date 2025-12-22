@@ -436,46 +436,32 @@
             <div id="vditor"></div>
         </div>
 
-        <!-- 上传进度提示 - iOS 26 Liquid Glass 风格 -->
-        <el-dialog title="" :visible.sync="uploadProgress.visible" width="280px" :close-on-click-modal="false"
-            :close-on-press-escape="false" :show-close="false" :modal="false" custom-class="upload-progress-dialog">
-            <div v-if="uploadProgress.status !== 'idle'"
-                :class="['upload-progress-card', 'is-' + (uploadProgress.status || 'idle')]">
-                <!-- 上传中状态 - 小猫跑步动画 -->
+        <!-- 上传进度提示 - Apple HIG 简约风格 -->
+        <el-dialog title="" :visible.sync="uploadProgress.visible" width="120px" :close-on-click-modal="false"
+            :close-on-press-escape="false" :show-close="false" :modal="false" custom-class="apple-upload-dialog">
+            <div v-if="uploadProgress.status !== 'idle'" class="apple-upload-hud">
+                <!-- 上传中状态 -->
                 <template v-if="uploadProgress.status === 'progress'">
-                    <div class="upload-cat-container">
-                        <div class="running-cat">
-                            <div class="cat-body"></div>
-                            <div class="cat-head">
-                                <div class="cat-ear cat-ear-left"></div>
-                                <div class="cat-ear cat-ear-right"></div>
-                                <div class="cat-face">
-                                    <div class="cat-eye cat-eye-left"></div>
-                                    <div class="cat-eye cat-eye-right"></div>
-                                </div>
-                            </div>
-                            <div class="cat-tail"></div>
-                            <div class="cat-leg cat-leg-front-left"></div>
-                            <div class="cat-leg cat-leg-front-right"></div>
-                            <div class="cat-leg cat-leg-back-left"></div>
-                            <div class="cat-leg cat-leg-back-right"></div>
-                        </div>
-                    </div>
-                    <p class="upload-status-text">上传中...</p>
+                    <div class="apple-spinner"></div>
+                    <span class="apple-hud-text">上传中</span>
                 </template>
-                <!-- 成功/失败状态 -->
-                <template v-else-if="uploadProgress.status === 'success' || uploadProgress.status === 'error'">
-                    <div class="upload-result-container">
-                        <div :class="['upload-result-icon', 'is-' + uploadProgress.status]">
-                            <svg v-if="uploadProgress.status === 'success'" viewBox="0 0 52 52">
-                                <path class="result-check" d="M16 27l7 7 14-16" fill="none"></path>
-                            </svg>
-                            <svg v-else viewBox="0 0 52 52">
-                                <path class="result-cross" d="M18 18 34 34 M34 18 18 34" fill="none"></path>
-                            </svg>
-                        </div>
-                        <p class="upload-result-text">{{ uploadProgress.status === 'success' ? '上传成功' : '上传失败' }}</p>
+                <!-- 成功状态 -->
+                <template v-else-if="uploadProgress.status === 'success'">
+                    <div class="apple-checkmark">
+                        <svg viewBox="0 0 52 52">
+                            <path d="M14 27l10 10 16-20" />
+                        </svg>
                     </div>
+                    <span class="apple-hud-text">完成</span>
+                </template>
+                <!-- 失败状态 -->
+                <template v-else-if="uploadProgress.status === 'error'">
+                    <div class="apple-crossmark">
+                        <svg viewBox="0 0 52 52">
+                            <path d="M16 16l20 20M36 16l-20 20" />
+                        </svg>
+                    </div>
+                    <span class="apple-hud-text">失败</span>
                 </template>
             </div>
         </el-dialog>

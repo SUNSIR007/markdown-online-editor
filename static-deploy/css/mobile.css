@@ -217,46 +217,14 @@
         -webkit-filter: none !important;
     }
 
-    /* 上传进度对话框 - iOS 26 玻璃拟态圆形样式 */
-    .upload-progress-dialog .el-dialog {
-        background: transparent !important;
-        /* 重置移动端通用 Dialog 样式 */
+    /* Apple HUD 移动端样式 */
+    .apple-upload-dialog,
+    .apple-upload-dialog.el-dialog {
         width: auto !important;
         max-width: none !important;
-        margin: auto !important;
+        margin: 0 !important;
         top: 0 !important;
-        left: 0 !important;
         transform: none !important;
-        position: relative !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-    }
-
-    .upload-progress-card {
-        /* 移动端样式 - 移除 fixed，依赖 flex 布局居中 */
-        position: relative !important;
-        top: auto !important;
-        left: auto !important;
-        transform: none !important;
-        z-index: 10001 !important;
-        /* 圆形玻璃拟态效果 */
-        width: 140px !important;
-        height: 140px !important;
-        padding: 16px !important;
-        background: rgba(30, 41, 59, 0.55) !important;
-        backdrop-filter: blur(40px) saturate(180%) !important;
-        -webkit-backdrop-filter: blur(40px) saturate(180%) !important;
-        border-radius: 50% !important;
-    }
-
-    .upload-cat-container {
-        width: 70px;
-        height: 44px;
-    }
-
-    .running-cat {
-        transform: scale(0.9);
     }
 }
 
