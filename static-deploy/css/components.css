@@ -456,7 +456,7 @@ body>.v-modal,
     }
 }
 
-/* iOS 风格 Spinner - 居中修复 */
+/* iOS 风格 Spinner - GPU 加速优化 */
 .apple-spinner {
     width: 40px;
     height: 40px;
@@ -464,6 +464,8 @@ body>.v-modal,
     display: flex;
     align-items: center;
     justify-content: center;
+    /* 启用 GPU 加速 */
+    transform: translateZ(0);
 }
 
 .apple-spinner::before {
@@ -489,12 +491,20 @@ body>.v-modal,
     border: 3px solid transparent;
     border-top-color: #3b82f6;
     box-sizing: border-box;
-    animation: apple-spin 0.75s linear infinite;
+    /* GPU 加速动画 - 使用 rotate3d 确保硬件加速 */
+    animation: apple-spin 0.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    will-change: transform;
+    transform-origin: center center;
+    backface-visibility: hidden;
 }
 
 @keyframes apple-spin {
+    from {
+        transform: rotate3d(0, 0, 1, 0deg);
+    }
+
     to {
-        transform: rotate(360deg);
+        transform: rotate3d(0, 0, 1, 360deg);
     }
 }
 
