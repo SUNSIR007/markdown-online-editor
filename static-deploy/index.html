@@ -205,6 +205,84 @@
             border: 1px solid rgba(59, 130, 246, 0.4) !important;
             color: #f1f5f9 !important;
         }
+
+        /* ========== 关键布局CSS - 内联以防止闪屏 ========== */
+
+        /* Header 样式 */
+        .header {
+            background: rgba(15, 23, 42, 0.85) !important;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 16px 24px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .content-type-selector {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        /* Editor Container 样式 */
+        .editor-container {
+            display: flex;
+            flex-direction: column;
+            flex: 1 1 auto;
+            min-height: 0;
+            height: calc(var(--vh, 1vh) * 100 - 90px);
+            padding: 0;
+            background: #1e293b !important;
+            margin: 24px auto 8px;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.05) !important;
+            max-width: 1200px;
+        }
+
+        #vditor {
+            height: 100%;
+            flex: 1 1 auto;
+            min-height: 0;
+            background: #1e293b !important;
+        }
+
+        /* 移动端关键布局 */
+        @media (max-width: 768px) {
+            .header {
+                padding: 12px 16px;
+            }
+
+            .editor-container {
+                margin: 16px 12px 8px !important;
+                border-radius: 16px !important;
+                max-width: calc(100% - 24px) !important;
+                height: calc(var(--vh, 1vh) * 100 - 72px) !important;
+            }
+        }
+
+        /* PWA Standalone 模式 - 关键样式 */
+        .pwa-standalone .editor-container {
+            height: calc(var(--vh, 1vh) * 100 - 52px) !important;
+        }
+
+        @media (max-width: 768px) {
+            .pwa-standalone .editor-container {
+                height: calc(var(--vh, 1vh) * 100 - 52px - env(safe-area-inset-bottom, 0px)) !important;
+                margin-bottom: 0 !important;
+            }
+        }
     </style>
 
     <!-- iOS Splash Screen Removed per user request -->
@@ -320,12 +398,12 @@
         transition: opacity 0.2s ease-out;
     "></div>
     <script>
-        // 启动遮罩移除逻辑 - 确保 CSS 和 UI 都准备好
+        // 启动遮罩移除逻辑 - 确保 CSS、UI 和编辑器都准备好
         (function () {
             var loading = document.getElementById('app-loading');
             var removed = false;
             var startTime = Date.now();
-            var MIN_DISPLAY_TIME = 100; // 最小显示时间，避免过快闪烁
+            var MIN_DISPLAY_TIME = 150; // 最小显示时间，避免过快闪烁
 
             function removeLoading() {
                 if (removed || !loading) return;
@@ -362,19 +440,36 @@
                 return true;
             }
 
-            // 监听 Vue 挂载完成，并确保 CSS 已加载
+            // 检查编辑器容器是否已渲染
+            function checkEditorReady() {
+                var vditor = document.getElementById('vditor');
+                var editorContainer = document.querySelector('.editor-container');
+                // 确保编辑器容器存在且有高度
+                return vditor && editorContainer && editorContainer.offsetHeight > 0;
+            }
+
+            // 监听 Vue 挂载完成，并确保 CSS 和编辑器都已加载
             var observer = new MutationObserver(function () {
                 var app = document.getElementById('app');
                 if (app && app.children.length > 0 && !app.hasAttribute('v-cloak')) {
                     observer.disconnect();
 
-                    // 等待 CSS 加载完成
+                    // 等待 CSS 加载完成 + 编辑器渲染
                     function tryRemove() {
-                        if (checkCSSLoaded()) {
-                            // 延迟两帧确保渲染完成
-                            requestAnimationFrame(function () {
-                                requestAnimationFrame(removeLoading);
-                            });
+                        if (checkCSSLoaded() && checkEditorReady()) {
+                            // 使用 requestIdleCallback 确保主线程空闲
+                            var callback = function () {
+                                // 延迟两帧确保渲染完成
+                                requestAnimationFrame(function () {
+                                    requestAnimationFrame(removeLoading);
+                                });
+                            };
+
+                            if (window.requestIdleCallback) {
+                                requestIdleCallback(callback, { timeout: 200 });
+                            } else {
+                                setTimeout(callback, 100);
+                            }
                         } else {
                             setTimeout(tryRemove, 50);
                         }
