@@ -100,6 +100,9 @@ window.initVditor = function (vm) {
                 Vditor.lazyLoadImageRender(document);
             }
 
+            // 标记 Vditor 已完全初始化 - 通知启动遮罩可以安全移除
+            window.vditorReady = true;
+
             // 编辑器初始化完成后，触发自动聚焦
             vm.$nextTick(() => {
                 if (window.isMobileDevice()) {
