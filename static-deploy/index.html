@@ -418,46 +418,6 @@
 </head>
 
 <body bgcolor="#0f172a" style="background-color: #0f172a; color: #f1f5f9;">
-    <!-- 启动遮罩 - 纯深色背景，避免闪烁 -->
-    <div id="app-loading" style="
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: #0f172a;
-        z-index: 9999;
-    "></div>
-    <script>
-        // 启动遮罩移除逻辑 - Vue挂载后立即移除
-        (function () {
-            var loading = document.getElementById('app-loading');
-            var removed = false;
-
-            function removeLoading() {
-                if (removed || !loading) return;
-                removed = true;
-                if (loading.parentNode) {
-                    loading.parentNode.removeChild(loading);
-                }
-            }
-
-            window.removeAppSkeleton = removeLoading;
-
-            // 监听 Vue 挂载完成即移除
-            var observer = new MutationObserver(function () {
-                var app = document.getElementById('app');
-                if (app && app.children.length > 0 && !app.hasAttribute('v-cloak')) {
-                    observer.disconnect();
-                    requestAnimationFrame(removeLoading);
-                }
-            });
-            observer.observe(document.body, { childList: true, subtree: true, attributes: true });
-
-            // 800ms后强制移除（兜底）
-            setTimeout(removeLoading, 800);
-        })();
-    </script>
     <div id="app" v-cloak>
         <div class="header">
             <div class="content-type-selector">
