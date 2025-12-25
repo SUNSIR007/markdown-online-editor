@@ -427,7 +427,6 @@
         bottom: 0;
         background: #0f172a;
         z-index: 9999;
-        transition: opacity 0.2s ease-out;
     "></div>
     <script>
         // 启动遮罩移除逻辑 - 等待 Vditor 完全初始化
@@ -447,12 +446,10 @@
                 }
 
                 removed = true;
-                loading.style.opacity = '0';
-                setTimeout(function () {
-                    if (loading && loading.parentNode) {
-                        loading.parentNode.removeChild(loading);
-                    }
-                }, 150);
+                // 即时移除，不使用过渡效果
+                if (loading && loading.parentNode) {
+                    loading.parentNode.removeChild(loading);
+                }
             }
 
             window.removeAppSkeleton = removeLoading;
