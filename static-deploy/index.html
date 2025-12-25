@@ -429,68 +429,33 @@
         z-index: 9999;
     "></div>
     <script>
-        // 启动遮罩移除逻辑 - 等待 Vditor 完全初始化
+        // 启动遮罩移除逻辑 - Vue挂载后立即移除
         (function () {
             var loading = document.getElementById('app-loading');
             var removed = false;
-            var startTime = Date.now();
-            var MIN_DISPLAY_TIME = 50;
 
             function removeLoading() {
                 if (removed || !loading) return;
-
-                var elapsed = Date.now() - startTime;
-                if (elapsed < MIN_DISPLAY_TIME) {
-                    setTimeout(removeLoading, MIN_DISPLAY_TIME - elapsed);
-                    return;
-                }
-
                 removed = true;
-                // 即时移除，不使用过渡效果
-                if (loading && loading.parentNode) {
+                if (loading.parentNode) {
                     loading.parentNode.removeChild(loading);
                 }
             }
 
             window.removeAppSkeleton = removeLoading;
 
-            // 检查所有关键 CSS 是否已加载
-            function checkCSSLoaded() {
-                var cssLinks = document.querySelectorAll('link[rel="stylesheet"]');
-                for (var i = 0; i < cssLinks.length; i++) {
-                    if (cssLinks[i].media === 'print') {
-                        return false;
-                    }
-                }
-                return true;
-            }
-
-            // 检查 Vditor 是否已完全初始化（由 editor-manager.js 设置）
-            function checkVditorReady() {
-                return window.vditorReady === true;
-            }
-
-            // 监听 Vue 挂载完成
+            // 监听 Vue 挂载完成即移除
             var observer = new MutationObserver(function () {
                 var app = document.getElementById('app');
                 if (app && app.children.length > 0 && !app.hasAttribute('v-cloak')) {
                     observer.disconnect();
-
-                    function tryRemove() {
-                        // 等待 CSS 加载完成 + Vditor 初始化完成
-                        if (checkCSSLoaded() && checkVditorReady()) {
-                            requestAnimationFrame(removeLoading);
-                        } else {
-                            setTimeout(tryRemove, 30);
-                        }
-                    }
-                    tryRemove();
+                    requestAnimationFrame(removeLoading);
                 }
             });
             observer.observe(document.body, { childList: true, subtree: true, attributes: true });
 
-            // 1.5秒后强制移除（兜底）
-            setTimeout(removeLoading, 1500);
+            // 800ms后强制移除（兜底）
+            setTimeout(removeLoading, 800);
         })();
     </script>
     <div id="app" v-cloak>
