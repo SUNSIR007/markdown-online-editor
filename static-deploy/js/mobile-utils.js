@@ -1,5 +1,17 @@
 // 移动端工具函数 - Mobile Utilities
 
+// 节流函数 - 限制函数调用频率
+const throttle = (fn, wait) => {
+    let lastTime = 0;
+    return function (...args) {
+        const now = Date.now();
+        if (now - lastTime >= wait) {
+            lastTime = now;
+            fn.apply(this, args);
+        }
+    };
+};
+
 // 移动端检测缓存
 let _isMobileDeviceCache = null;
 
@@ -62,7 +74,8 @@ window.setupViewportFixes = function (vm) {
         updateViewportUnit();
     };
 
-    window.addEventListener('resize', handleResize);
+    // 使用节流优化 resize 事件处理
+    window.addEventListener('resize', throttle(handleResize, 100));
     window.addEventListener('orientationchange', () => {
         setTimeout(() => {
             lastViewportHeight = window.innerHeight;

@@ -95,6 +95,11 @@ window.initVditor = function (vm) {
             // 设置拖拽和粘贴支持
             window.setupImageDragAndPaste(vm);
 
+            // 启用图片懒加载渲染（来自 Context7 Vditor 文档建议）
+            if (typeof Vditor !== 'undefined' && typeof Vditor.lazyLoadImageRender === 'function') {
+                Vditor.lazyLoadImageRender(document);
+            }
+
             // 编辑器初始化完成后，触发自动聚焦
             vm.$nextTick(() => {
                 if (window.isMobileDevice()) {
