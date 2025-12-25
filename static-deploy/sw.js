@@ -1,5 +1,5 @@
 // 使用时间戳作为版本号，确保每次部署都会更新缓存
-const CACHE_VERSION = '2025-12-25-14:12';
+const CACHE_VERSION = '2025-12-25-14:17';
 const CACHE_NAME = `blog-writer-${CACHE_VERSION}`;
 
 // 需要缓存的静态资源
@@ -225,14 +225,44 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
-    // 对于 HTML、JS、CSS 使用 Stale-While-Revalidate 策略
-    if (isNavigationRequest || isStaticAsset) {
+    // 对于 HTML 导航请求使用 Cache First 策略（实现即时渲染）
+    if (isNavigationRequest) {
         event.respondWith(
             caches.match(event.request).then((cachedResponse) => {
-                // 在后台获取最新版本
+                if (cachedResponse) {
+                    // 立即返回缓存，在后台静默更新
+                    fetch(event.request)
+                        .then((networkResponse) => {
+                            if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
+                                caches.open(CACHE_NAME).then((cache) => {
+                                    cache.put(event.request, networkResponse);
+                                });
+                            }
+                        })
+                        .catch(() => { });
+                    return cachedResponse;
+                }
+                // 没有缓存则从网络获取
+                return fetch(event.request).then((networkResponse) => {
+                    if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
+                        const responseToCache = networkResponse.clone();
+                        caches.open(CACHE_NAME).then((cache) => {
+                            cache.put(event.request, responseToCache);
+                        });
+                    }
+                    return networkResponse;
+                });
+            })
+        );
+        return;
+    }
+
+    // 对于 JS、CSS 使用 Stale-While-Revalidate 策略
+    if (isStaticAsset) {
+        event.respondWith(
+            caches.match(event.request).then((cachedResponse) => {
                 const fetchPromise = fetch(event.request)
                     .then((networkResponse) => {
-                        // 只缓存成功的响应
                         if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
                             const responseToCache = networkResponse.clone();
                             caches.open(CACHE_NAME).then((cache) => {
@@ -246,10 +276,10 @@ self.addEventListener('fetch', (event) => {
                         return cachedResponse;
                     });
 
-                // 立即返回缓存（如果有），同时在后台更新
                 return cachedResponse || fetchPromise;
             })
         );
+        return;
     }
     // 对于图片使用 Cache First 策略（图片不经常变化）
     else if (isImage) {
