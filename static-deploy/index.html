@@ -134,11 +134,30 @@
             color-scheme: dark !important;
         }
 
-        /* 确保 Vditor 编辑器区域也是深色 */
+        /* 全面覆盖 Vditor 编辑器所有内部元素的背景 - 防止闪烁 */
+        .vditor,
+        .vditor *,
         .vditor-ir,
+        .vditor-ir *,
         .vditor-sv,
-        .vditor-wysiwyg {
-            background-color: #0f172a !important;
+        .vditor-sv *,
+        .vditor-wysiwyg,
+        .vditor-wysiwyg *,
+        .vditor-content,
+        .vditor-content *,
+        .vditor-reset,
+        .vditor-reset *,
+        #vditor,
+        #vditor * {
+            background-color: #1e293b !important;
+            background: #1e293b !important;
+        }
+
+        /* Vditor 工具栏特殊处理 */
+        .vditor-toolbar,
+        .vditor-toolbar * {
+            background-color: #1e293b !important;
+            background: #1e293b !important;
         }
 
         #app {
