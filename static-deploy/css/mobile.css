@@ -19,14 +19,14 @@
     }
 
     .editor-container {
-        margin: 16px 12px !important;
+        margin: 16px 12px 8px !important;
         border-radius: var(--radius-lg) !important;
         max-width: calc(100% - 24px) !important;
         box-shadow: var(--shadow-lg) !important;
         flex: 1 1 auto !important;
         min-height: 0 !important;
-        height: calc(100vh - 80px) !important;
-        height: calc(var(--vh, 1vh) * 100 - 80px) !important;
+        height: calc(100vh - 72px) !important;
+        height: calc(var(--vh, 1vh) * 100 - 72px) !important;
         border: 1px solid rgba(255, 255, 255, 0.05) !important;
         background: var(--bg-surface) !important;
         display: flex !important;
@@ -240,15 +240,15 @@
 /* PWA Standalone 模式样式 - 让编辑区更长更接近底边 */
 /* 使用 JavaScript 检测添加的 .pwa-standalone 类，兼容 iOS */
 .pwa-standalone .editor-container {
-    height: calc(100vh - 68px) !important;
-    height: calc(var(--vh, 1vh) * 100 - 68px) !important;
+    height: calc(100vh - 52px) !important;
+    height: calc(var(--vh, 1vh) * 100 - 52px) !important;
 }
 
 /* iOS PWA 模式 - 移动端特殊处理 */
 @media (max-width: 768px) {
     .pwa-standalone .editor-container {
-        height: calc(100vh - 56px - env(safe-area-inset-bottom, 0px)) !important;
-        height: calc(var(--vh, 1vh) * 100 - 56px - env(safe-area-inset-bottom, 0px)) !important;
-        margin-bottom: env(safe-area-inset-bottom, 16px) !important;
+        height: calc(100vh - 48px - env(safe-area-inset-bottom, 0px)) !important;
+        height: calc(var(--vh, 1vh) * 100 - 48px - env(safe-area-inset-bottom, 0px)) !important;
+        margin-bottom: max(4px, env(safe-area-inset-bottom, 4px)) !important;
     }
 }
