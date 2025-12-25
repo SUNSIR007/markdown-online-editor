@@ -1,5 +1,5 @@
 // 使用时间戳作为版本号，确保每次部署都会更新缓存
-const CACHE_VERSION = '2025-12-25-13:50';
+const CACHE_VERSION = '2025-12-25-13:55';
 const CACHE_NAME = `blog-writer-${CACHE_VERSION}`;
 
 // 需要缓存的静态资源
@@ -20,7 +20,13 @@ const ASSETS_TO_CACHE = [
     './js/image-service.js',
     './img/icons/write.png',
     './img/icons/upload-icon.png',
-    './img/icons/apple-touch-icon.png'
+    './img/icons/apple-touch-icon.png',
+    // iOS 启动图像 - 关键资源，防止闪烁
+    './img/apple-splash.png',
+    './img/apple-splash-828x1792.png',
+    './img/apple-splash-1179x2556.png',
+    './img/apple-splash-1206x2622.png',
+    './img/apple-splash-1290x2796.png'
 ];
 
 /**

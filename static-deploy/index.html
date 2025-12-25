@@ -304,8 +304,21 @@
         }
     </style>
 
-    <!-- iOS Splash Screen Removed per user request -->
-
+    <!-- iOS Splash Screens - 防止启动时白屏闪烁 -->
+    <!-- iPhone 16 Pro Max, 16 Plus, 15 Pro Max, 15 Plus, 14 Pro Max -->
+    <link rel="apple-touch-startup-image" href="./img/apple-splash-1290x2796.png"
+        media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)">
+    <!-- iPhone 16 Pro, 15 Pro, 14 Pro -->
+    <link rel="apple-touch-startup-image" href="./img/apple-splash-1179x2556.png"
+        media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)">
+    <!-- iPhone 16, 15, 14, 13, 12 -->
+    <link rel="apple-touch-startup-image" href="./img/apple-splash-1206x2622.png"
+        media="(device-width: 402px) and (device-height: 874px) and (-webkit-device-pixel-ratio: 3)">
+    <!-- iPhone XR, 11 -->
+    <link rel="apple-touch-startup-image" href="./img/apple-splash-828x1792.png"
+        media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)">
+    <!-- 通用fallback -->
+    <link rel="apple-touch-startup-image" href="./img/apple-splash.png">
 
     <!-- 预加载关键资源以加快加载速度 -->
     <link rel="preconnect" href="https://unpkg.com" crossorigin>
