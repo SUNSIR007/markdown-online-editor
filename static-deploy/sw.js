@@ -1,5 +1,5 @@
 // 使用时间戳作为版本号，确保每次部署都会更新缓存
-const CACHE_VERSION = '2025-12-25-14:17';
+const CACHE_VERSION = '2025-12-25-14:20';
 const CACHE_NAME = `blog-writer-${CACHE_VERSION}`;
 
 // 需要缓存的静态资源
@@ -37,11 +37,17 @@ const ASSETS_TO_CACHE = [
  * - Vditor: 3.9.4
  */
 const CDN_ASSETS = [
+    // Vue 和 Element UI
     'https://unpkg.com/vue@2.6.14/dist/vue.min.js',
     'https://unpkg.com/element-ui@2.15.13/lib/index.js',
     'https://unpkg.com/element-ui@2.15.13/lib/theme-chalk/index.css',
+    // Vditor 编辑器核心
     'https://cdn.jsdelivr.net/npm/vditor@3.9.4/dist/index.min.js',
-    'https://cdn.jsdelivr.net/npm/vditor@3.9.4/dist/index.css'
+    'https://cdn.jsdelivr.net/npm/vditor@3.9.4/dist/index.css',
+    // Vditor 编辑器额外资源 - 预缓存以加快渲染
+    'https://cdn.jsdelivr.net/npm/vditor@3.9.4/dist/js/ir/index.min.js',
+    'https://cdn.jsdelivr.net/npm/vditor@3.9.4/dist/css/content-theme/dark.css',
+    'https://cdn.jsdelivr.net/npm/vditor@3.9.4/dist/js/icons/material.js'
 ];
 
 // Install event - cache critical assets
@@ -112,7 +118,7 @@ self.addEventListener('activate', (event) => {
             await self.clients.claim();
 
             // 清理当前缓存，限制大小
-            await trimCache(CACHE_NAME, 50);
+            await trimCache(CACHE_NAME, 200);
         })()
     );
 });
@@ -257,26 +263,33 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
-    // 对于 JS、CSS 使用 Stale-While-Revalidate 策略
+    // 对于 JS、CSS 也使用 Cache First 策略（追求极速加载）
     if (isStaticAsset) {
         event.respondWith(
             caches.match(event.request).then((cachedResponse) => {
-                const fetchPromise = fetch(event.request)
-                    .then((networkResponse) => {
-                        if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
-                            const responseToCache = networkResponse.clone();
-                            caches.open(CACHE_NAME).then((cache) => {
-                                cache.put(event.request, responseToCache);
-                            });
-                        }
-                        return networkResponse;
-                    })
-                    .catch((error) => {
-                        console.log('[Service Worker] Fetch failed, using cache:', error);
-                        return cachedResponse;
-                    });
-
-                return cachedResponse || fetchPromise;
+                if (cachedResponse) {
+                    // 立即返回缓存，后台静默更新
+                    fetch(event.request)
+                        .then((networkResponse) => {
+                            if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
+                                caches.open(CACHE_NAME).then((cache) => {
+                                    cache.put(event.request, networkResponse);
+                                });
+                            }
+                        })
+                        .catch(() => { });
+                    return cachedResponse;
+                }
+                // 没有缓存则从网络获取
+                return fetch(event.request).then((networkResponse) => {
+                    if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
+                        const responseToCache = networkResponse.clone();
+                        caches.open(CACHE_NAME).then((cache) => {
+                            cache.put(event.request, responseToCache);
+                        });
+                    }
+                    return networkResponse;
+                });
             })
         );
         return;
