@@ -1,5 +1,5 @@
 // 使用时间戳作为版本号，确保每次部署都会更新缓存
-const CACHE_VERSION = '2025-12-22-22:12';
+const CACHE_VERSION = '2025-12-25-10:10';
 const CACHE_NAME = `blog-writer-${CACHE_VERSION}`;
 
 // 需要缓存的静态资源
@@ -76,12 +76,24 @@ self.addEventListener('message', (event) => {
     }
 });
 
-// Activate event - clean up old caches
+// Activate event - clean up old caches and enable Navigation Preload
 self.addEventListener('activate', (event) => {
     console.log('[Service Worker] Activating...');
     event.waitUntil(
-        caches.keys().then((cacheNames) => {
-            return Promise.all(
+        (async () => {
+            // 启用 Navigation Preload（减少导航延迟 50-100ms）
+            if (self.registration.navigationPreload) {
+                try {
+                    await self.registration.navigationPreload.enable();
+                    console.log('[Service Worker] Navigation Preload enabled');
+                } catch (err) {
+                    console.warn('[Service Worker] Navigation Preload not supported:', err);
+                }
+            }
+
+            // 清理旧缓存
+            const cacheNames = await caches.keys();
+            await Promise.all(
                 cacheNames.map((cacheName) => {
                     if (cacheName !== CACHE_NAME) {
                         console.log('[Service Worker] Deleting old cache:', cacheName);
@@ -89,13 +101,13 @@ self.addEventListener('activate', (event) => {
                     }
                 })
             );
-        }).then(() => {
+
             console.log('[Service Worker] Claiming clients');
-            return self.clients.claim();
-        }).then(() => {
+            await self.clients.claim();
+
             // 清理当前缓存，限制大小
-            return trimCache(CACHE_NAME, 50); // 最多保留50个缓存项
-        })
+            await trimCache(CACHE_NAME, 50);
+        })()
     );
 });
 
@@ -184,6 +196,28 @@ self.addEventListener('fetch', (event) => {
     const isNavigationRequest = event.request.mode === 'navigate';
     const isStaticAsset = /\.(js|css|html)$/.test(url);
     const isImage = /\.(png|jpg|jpeg|svg|gif|webp|ico)$/.test(url);
+    const isFont = /\.(woff2?|ttf|otf|eot)$/.test(url);
+
+    // 字体资源使用 Cache First 策略（字体很少变化）
+    if (isFont) {
+        event.respondWith(
+            caches.match(event.request).then((cachedResponse) => {
+                if (cachedResponse) {
+                    return cachedResponse;
+                }
+                return fetch(event.request).then((networkResponse) => {
+                    if (networkResponse && networkResponse.status === 200) {
+                        const responseToCache = networkResponse.clone();
+                        caches.open(CACHE_NAME).then((cache) => {
+                            cache.put(event.request, responseToCache);
+                        });
+                    }
+                    return networkResponse;
+                });
+            })
+        );
+        return;
+    }
 
     // 对于 HTML、JS、CSS 使用 Stale-While-Revalidate 策略
     if (isNavigationRequest || isStaticAsset) {

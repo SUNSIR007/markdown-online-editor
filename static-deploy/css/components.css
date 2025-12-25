@@ -646,3 +646,19 @@ body>.v-modal,
         stroke-dashoffset: 0;
     }
 }
+
+/* ============================================
+   性能优化 - Performance Optimizations
+   ============================================ */
+
+/* 对话框内容延迟渲染 - 加速初始渲染 */
+.el-dialog__body {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 200px;
+}
+
+/* 下拉菜单延迟渲染 */
+.el-select-dropdown {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 300px;
+}

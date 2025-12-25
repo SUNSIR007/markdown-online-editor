@@ -648,10 +648,26 @@ class ImageService {
         }
       }
 
-      const originalType = (file.type === 'image/jpg' ? 'image/jpeg' : file.type) || 'image/jpeg'
+      // 检测 WebP 支持（压缩率更高，可减少 20-30% 大小）
+      const supportsWebP = (() => {
+        try {
+          return document.createElement('canvas')
+            .toDataURL('image/webp').startsWith('data:image/webp')
+        } catch (e) {
+          return false
+        }
+      })()
+
+      // 获取原始类型
+      const normalizedType = (file.type === 'image/jpg' ? 'image/jpeg' : file.type) || 'image/jpeg'
       const supportedCanvasTypes = ['image/jpeg', 'image/png', 'image/webp']
 
-      if (!supportedCanvasTypes.includes(originalType)) {
+      // 仅对 JPEG 和 PNG 启用 WebP 转换（GIF 保持原格式以保留动画）
+      const originalType = (supportsWebP && ['image/jpeg', 'image/png'].includes(normalizedType))
+        ? 'image/webp'
+        : normalizedType
+
+      if (!supportedCanvasTypes.includes(normalizedType)) {
         resolve(file)
         return
       }
