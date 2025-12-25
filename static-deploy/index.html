@@ -403,7 +403,7 @@
             var loading = document.getElementById('app-loading');
             var removed = false;
             var startTime = Date.now();
-            var MIN_DISPLAY_TIME = 150; // 最小显示时间，避免过快闪烁
+            var MIN_DISPLAY_TIME = 50; // 最小显示时间
 
             function removeLoading() {
                 if (removed || !loading) return;
@@ -421,7 +421,7 @@
                     if (loading && loading.parentNode) {
                         loading.parentNode.removeChild(loading);
                     }
-                }, 200);
+                }, 150);
             }
 
             // 暴露全局函数
@@ -432,7 +432,6 @@
                 var cssLinks = document.querySelectorAll('link[rel="stylesheet"]');
                 for (var i = 0; i < cssLinks.length; i++) {
                     var link = cssLinks[i];
-                    // 如果是 print 媒体查询，说明还没加载完
                     if (link.media === 'print') {
                         return false;
                     }
@@ -442,36 +441,22 @@
 
             // 检查编辑器容器是否已渲染
             function checkEditorReady() {
-                var vditor = document.getElementById('vditor');
                 var editorContainer = document.querySelector('.editor-container');
-                // 确保编辑器容器存在且有高度
-                return vditor && editorContainer && editorContainer.offsetHeight > 0;
+                return editorContainer && editorContainer.offsetHeight > 0;
             }
 
-            // 监听 Vue 挂载完成，并确保 CSS 和编辑器都已加载
+            // 监听 Vue 挂载完成
             var observer = new MutationObserver(function () {
                 var app = document.getElementById('app');
                 if (app && app.children.length > 0 && !app.hasAttribute('v-cloak')) {
                     observer.disconnect();
 
-                    // 等待 CSS 加载完成 + 编辑器渲染
                     function tryRemove() {
                         if (checkCSSLoaded() && checkEditorReady()) {
-                            // 使用 requestIdleCallback 确保主线程空闲
-                            var callback = function () {
-                                // 延迟两帧确保渲染完成
-                                requestAnimationFrame(function () {
-                                    requestAnimationFrame(removeLoading);
-                                });
-                            };
-
-                            if (window.requestIdleCallback) {
-                                requestIdleCallback(callback, { timeout: 200 });
-                            } else {
-                                setTimeout(callback, 100);
-                            }
+                            // 单帧延迟即可
+                            requestAnimationFrame(removeLoading);
                         } else {
-                            setTimeout(tryRemove, 50);
+                            setTimeout(tryRemove, 30);
                         }
                     }
                     tryRemove();
@@ -479,8 +464,8 @@
             });
             observer.observe(document.body, { childList: true, subtree: true, attributes: true });
 
-            // 2秒后强制移除（兜底）
-            setTimeout(removeLoading, 2000);
+            // 1.5秒后强制移除（兜底）
+            setTimeout(removeLoading, 1500);
         })();
     </script>
     <div id="app" v-cloak>
