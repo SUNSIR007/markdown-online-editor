@@ -247,8 +247,8 @@
 /* iOS PWA 模式 - 移动端特殊处理 */
 @media (max-width: 768px) {
     .pwa-standalone .editor-container {
-        height: calc(100vh - 48px - env(safe-area-inset-bottom, 0px)) !important;
-        height: calc(var(--vh, 1vh) * 100 - 48px - env(safe-area-inset-bottom, 0px)) !important;
-        margin-bottom: max(4px, env(safe-area-inset-bottom, 4px)) !important;
+        height: calc(100vh - 52px - env(safe-area-inset-bottom, 0px)) !important;
+        height: calc(var(--vh, 1vh) * 100 - 52px - env(safe-area-inset-bottom, 0px)) !important;
+        margin-bottom: 0 !important;
     }
 }
