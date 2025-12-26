@@ -54,13 +54,28 @@ struct VditorWebView: UIViewRepresentable {
         Coordinator(self)
     }
     
+    /// 清理 WebView 资源（修复内存泄漏）
+    static func dismantleUIView(_ webView: WKWebView, coordinator: Coordinator) {
+        // 移除消息处理器，防止内存泄漏
+        webView.configuration.userContentController.removeScriptMessageHandler(forName: "editorReady")
+        webView.configuration.userContentController.removeScriptMessageHandler(forName: "contentChanged")
+        webView.stopLoading()
+        webView.navigationDelegate = nil
+        coordinator.webView = nil
+    }
+    
     class Coordinator: NSObject, WKNavigationDelegate, WKScriptMessageHandler {
         var parent: VditorWebView
-        var webView: WKWebView?
+        weak var webView: WKWebView?
         var isReady = false
         
         init(_ parent: VditorWebView) {
             self.parent = parent
+        }
+        
+        deinit {
+            // 确保清理
+            webView?.configuration.userContentController.removeAllScriptMessageHandlers()
         }
         
         // MARK: - WKScriptMessageHandler
@@ -76,8 +91,8 @@ struct VditorWebView: UIViewRepresentable {
                 
             case "contentChanged":
                 if let content = message.body as? String {
-                    DispatchQueue.main.async {
-                        self.parent.content = content
+                    DispatchQueue.main.async { [weak self] in
+                        self?.parent.content = content
                     }
                 }
                 

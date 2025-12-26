@@ -46,6 +46,7 @@ struct HeaderView: View {
     
     private var publishButton: some View {
         Button {
+            HapticManager.impact(.medium)
             Task {
                 await viewModel.publish()
             }

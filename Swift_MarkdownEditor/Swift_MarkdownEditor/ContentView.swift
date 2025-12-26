@@ -12,7 +12,7 @@ import PhotosUI
 struct ContentView: View {
     @StateObject private var viewModel = EditorViewModel()
     @State private var showImagePicker = false
-    @State private var selectedPhotoItem: PhotosPickerItem?
+    @State private var selectedPhotoItems: [PhotosPickerItem] = []
     
     var body: some View {
         ZStack {
@@ -24,6 +24,8 @@ struct ContentView: View {
             VStack(spacing: 0) {
                 // Header
                 HeaderView(viewModel: viewModel) {
+                    // 触觉反馈
+                    HapticManager.impact(.light)
                     showImagePicker = true
                 }
                 
@@ -66,34 +68,43 @@ struct ContentView: View {
         .preferredColorScheme(.dark)
         .photosPicker(
             isPresented: $showImagePicker,
-            selection: $selectedPhotoItem,
+            selection: $selectedPhotoItems,
+            maxSelectionCount: 9,
             matching: .images
         )
-        .onChange(of: selectedPhotoItem) { _, newItem in
+        .onChange(of: selectedPhotoItems) { _, newItems in
             Task {
-                await handleSelectedPhoto(newItem)
+                await handleSelectedPhotos(newItems)
             }
         }
     }
     
-    // MARK: - 图片处理
+    // MARK: - 多图片处理
     
-    private func handleSelectedPhoto(_ item: PhotosPickerItem?) async {
-        guard let item = item else { return }
+    private func handleSelectedPhotos(_ items: [PhotosPickerItem]) async {
+        guard !items.isEmpty else { return }
         
-        do {
-            if let data = try await item.loadTransferable(type: Data.self),
-               let image = UIImage(data: data) {
-                if let url = await viewModel.uploadImage(image) {
-                    // 通过 VditorManager 插入图片
-                    VditorManager.shared.insertImage(url: url)
+        for item in items {
+            do {
+                if let data = try await item.loadTransferable(type: Data.self),
+                   let image = UIImage(data: data) {
+                    if let url = await viewModel.uploadImage(image) {
+                        // 通过 VditorManager 插入图片
+                        VditorManager.shared.insertImage(url: url)
+                        // 成功上传触觉反馈
+                        HapticManager.notification(.success)
+                    } else {
+                        // 上传失败触觉反馈
+                        HapticManager.notification(.error)
+                    }
                 }
+            } catch {
+                print("加载图片失败: \(error)")
+                HapticManager.notification(.error)
             }
-        } catch {
-            print("加载图片失败: \(error)")
         }
         
-        selectedPhotoItem = nil
+        selectedPhotoItems = []
     }
 }
 
