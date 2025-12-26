@@ -107,21 +107,39 @@
                 after: () => {
                     // 通知 Swift 编辑器已准备好
                     window.webkit?.messageHandlers?.editorReady?.postMessage('ready');
-                    // 自动聚焦，弹出键盘（延迟更长以确保视图完全加载）
-                    setTimeout(() => {
-                        vditor.focus();
-                        // 真机上可能需要模拟点击来触发键盘
-                        const editorElement = document.querySelector('.vditor-ir .vditor-reset');
-                        if (editorElement) {
-                            editorElement.click();
-                            editorElement.focus();
-                        }
-                    }, 500);
+
+                    // 自动聚焦（多次尝试确保成功）
+                    autoFocus();
+
+                    // 点击整个容器时聚焦编辑器
+                    document.getElementById('vditor').addEventListener('click', function (e) {
+                        focusEditor();
+                    });
                 },
                 input: (value) => {
                     // 内容变化时通知 Swift
                     window.webkit?.messageHandlers?.contentChanged?.postMessage(value);
                 }
+            });
+        }
+
+        // 聚焦编辑器
+        function focusEditor() {
+            if (vditor) {
+                vditor.focus();
+                // 确保光标在可编辑区域
+                const editorElement = document.querySelector('.vditor-ir .vditor-reset');
+                if (editorElement) {
+                    editorElement.focus();
+                }
+            }
+        }
+
+        // 自动聚焦（多次尝试）
+        function autoFocus() {
+            // 尝试多次聚焦，确保键盘弹出
+            [100, 300, 600, 1000].forEach(delay => {
+                setTimeout(() => focusEditor(), delay);
             });
         }
 
