@@ -45,7 +45,7 @@ struct HeaderView: View {
         .glassEffect()
         .scaleEffect(isUploadPressed ? 1.15 : 1.0)
         .brightness(isUploadPressed ? 0.15 : 0)
-        .animation(.easeInOut(duration: 0.12), value: isUploadPressed)
+        .animation(.easeInOut(duration: 0.06), value: isUploadPressed)
         .simultaneousGesture(
             DragGesture(minimumDistance: 0)
                 .onChanged { _ in isUploadPressed = true }
