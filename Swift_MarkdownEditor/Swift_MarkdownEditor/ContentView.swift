@@ -8,7 +8,7 @@
 import SwiftUI
 import PhotosUI
 
-/// 主视图 - 使用 Vditor WebView 实现编辑器
+/// 主视图 - 匹配 PWA 布局
 struct ContentView: View {
     @StateObject private var viewModel = EditorViewModel()
     @State private var showImagePicker = false
@@ -16,7 +16,7 @@ struct ContentView: View {
     
     var body: some View {
         ZStack {
-            // 深色背景
+            // 深色背景 - 全屏统一颜色
             Color.bgBody
                 .ignoresSafeArea()
             
@@ -32,8 +32,9 @@ struct ContentView: View {
                     .fill(Color.white.opacity(0.05))
                     .frame(height: 1)
                 
-                // Vditor 编辑器
-                VditorEditorView(viewModel: viewModel)
+                // Vditor 编辑器 - 直接全屏，不使用圆角
+                VditorWebView(content: $viewModel.bodyContent)
+                    .ignoresSafeArea(.keyboard)
             }
             
             // 上传 HUD
@@ -84,24 +85,6 @@ struct ContentView: View {
         }
         
         selectedPhotoItem = nil
-    }
-}
-
-/// Vditor 编辑器视图
-struct VditorEditorView: View {
-    @ObservedObject var viewModel: EditorViewModel
-    
-    var body: some View {
-        VditorWebView(content: $viewModel.bodyContent)
-            .background(Color.bgSurface)
-            .clipShape(RoundedRectangle(cornerRadius: 16))
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .stroke(Color.white.opacity(0.05), lineWidth: 1)
-            )
-            .padding(.horizontal, 16)
-            .padding(.top, 16)
-            .padding(.bottom, 8)
     }
 }
 

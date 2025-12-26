@@ -26,27 +26,38 @@
             height: 100%;
         }
 
-        /* 自定义 Vditor 深色主题 */
+        /* 自定义 Vditor 深色主题 - 与 PWA 完全一致 */
         .vditor {
-            --panel-background-color: #1e293b;
-            --textarea-background-color: #1e293b;
+            --panel-background-color: #0f172a !important;
+            --textarea-background-color: #0f172a !important;
             border: none !important;
             border-radius: 0 !important;
+            background: #0f172a !important;
+        }
+
+        .vditor-content {
+            background: #0f172a !important;
+        }
+
+        .vditor-ir {
+            background: #0f172a !important;
         }
 
         .vditor-ir .vditor-reset {
-            background: #1e293b !important;
+            background: #0f172a !important;
+            color: #f1f5f9 !important;
+        }
+
+        .vditor-reset {
+            background: #0f172a !important;
+            font-size: 16px !important;
+            line-height: 1.6 !important;
+            padding: 16px !important;
             color: #f1f5f9 !important;
         }
 
         .vditor-toolbar {
             display: none !important;
-        }
-
-        .vditor-reset {
-            font-size: 16px !important;
-            line-height: 1.6 !important;
-            padding: 16px !important;
         }
 
         /* 图片样式 */
@@ -59,6 +70,11 @@
         /* 隐藏滚动条但保持可滚动 */
         .vditor-reset::-webkit-scrollbar {
             display: none;
+        }
+
+        /* 占位符样式 */
+        .vditor [data-placeholder]::before {
+            color: #64748b !important;
         }
     </style>
 </head>
