@@ -135,8 +135,13 @@
         // 供 Swift 调用：在光标处插入图片
         function insertImage(url, alt) {
             if (vditor) {
-                const markdown = `![${alt || 'image'}](${url})`;
+                const markdown = `\n![${alt || 'image'}](${url})\n`;
                 vditor.insertValue(markdown);
+                // 触发渲染：失焦再聚焦
+                vditor.blur();
+                setTimeout(() => {
+                    vditor.focus();
+                }, 50);
             }
         }
 
