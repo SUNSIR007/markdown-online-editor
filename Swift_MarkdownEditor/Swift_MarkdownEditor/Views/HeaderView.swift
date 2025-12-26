@@ -76,13 +76,13 @@ struct HeaderView: View {
 
 // MARK: - 系统风格高亮按钮样式
 
-/// 类似系统按钮的高亮效果：按下时变暗，松开时恢复
+/// 按下时放大并高亮的按钮效果
 struct HighlightButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .opacity(configuration.isPressed ? 0.5 : 1.0)
-            .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
-            .animation(.easeInOut(duration: 0.1), value: configuration.isPressed)
+            .scaleEffect(configuration.isPressed ? 1.15 : 1.0)
+            .brightness(configuration.isPressed ? 0.2 : 0)
+            .animation(.easeInOut(duration: 0.15), value: configuration.isPressed)
     }
 }
 
