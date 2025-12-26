@@ -8,6 +8,13 @@
 import SwiftUI
 import WebKit
 
+/// 自定义 WKWebView 子类，隐藏键盘辅助工具条
+class NoInputAccessoryWebView: WKWebView {
+    override var inputAccessoryView: UIView? {
+        return nil
+    }
+}
+
 /// Vditor 编辑器 WebView 封装
 struct VditorWebView: UIViewRepresentable {
     @Binding var content: String
@@ -19,8 +26,8 @@ struct VditorWebView: UIViewRepresentable {
         configuration.userContentController.add(context.coordinator, name: "editorReady")
         configuration.userContentController.add(context.coordinator, name: "contentChanged")
         
-        // 配置 WebView
-        let webView = WKWebView(frame: .zero, configuration: configuration)
+        // 使用自定义 WebView（无键盘辅助条）
+        let webView = NoInputAccessoryWebView(frame: .zero, configuration: configuration)
         webView.isOpaque = false
         webView.backgroundColor = UIColor(Color.bgSurface)
         webView.scrollView.backgroundColor = UIColor(Color.bgSurface)
