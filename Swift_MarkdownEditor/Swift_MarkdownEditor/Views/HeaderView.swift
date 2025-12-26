@@ -8,33 +8,41 @@
 import SwiftUI
 
 /// Header 组件 - 匹配 PWA 简洁布局
-/// 仅显示上传按钮和 Post 按钮
+/// 仅显示上传按钮和 Post 按钮，均带液态玻璃效果
 struct HeaderView: View {
     @ObservedObject var viewModel: EditorViewModel
     var onImageUpload: () -> Void
     
     var body: some View {
         HStack {
-            // 左侧：图片上传按钮
-            Button {
-                onImageUpload()
-            } label: {
-                Image(systemName: "photo.badge.plus")
-                    .font(.system(size: 22, weight: .regular))
-                    .foregroundColor(.textSecondary)
-            }
-            .buttonStyle(.plain)
+            // 左侧：图片上传按钮 (带液态玻璃效果)
+            uploadButton
             
             Spacer()
             
-            // 右侧：发布按钮
+            // 右侧：发布按钮 (带液态玻璃效果)
             publishButton
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 16)
     }
     
-    // MARK: - 发布按钮 (匹配 PWA 样式)
+    // MARK: - 上传按钮 (匹配 PWA upload-icon.png 样式)
+    
+    private var uploadButton: some View {
+        Button {
+            onImageUpload()
+        } label: {
+            Image(systemName: "photo.badge.arrow.down")
+                .font(.system(size: 20, weight: .regular))
+                .foregroundColor(.textSecondary)
+                .frame(width: 44, height: 44)
+        }
+        .buttonStyle(.plain)
+        .glassEffect()
+    }
+    
+    // MARK: - 发布按钮 (带液态玻璃效果)
     
     private var publishButton: some View {
         Button {
@@ -52,20 +60,13 @@ struct HeaderView: View {
                         .font(.system(size: 15, weight: .semibold))
                 }
             }
-            .frame(minWidth: 80)
-            .padding(.horizontal, 24)
-            .padding(.vertical, 12)
+            .frame(minWidth: 70)
+            .padding(.horizontal, 20)
+            .padding(.vertical, 10)
             .foregroundColor(.textMain)
-            .background(
-                RoundedRectangle(cornerRadius: 24)
-                    .fill(Color.bgSurface.opacity(0.7))
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 24)
-                    .stroke(Color.primaryBlue.opacity(0.4), lineWidth: 1)
-            )
         }
         .buttonStyle(.plain)
+        .glassEffect()
         .disabled(!viewModel.isGitHubConfigured || viewModel.isPublishing)
         .opacity(viewModel.isGitHubConfigured ? 1 : 0.6)
     }
