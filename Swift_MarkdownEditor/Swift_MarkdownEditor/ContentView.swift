@@ -32,8 +32,17 @@ struct ContentView: View {
                     .fill(Color.white.opacity(0.05))
                     .frame(height: 1)
                 
-                // Vditor 编辑器 - 直接全屏，不使用圆角
+                // Vditor 编辑器 - 保持圆角矩形风格
                 VditorWebView(content: $viewModel.bodyContent)
+                    .background(Color.bgSurface)
+                    .clipShape(RoundedRectangle(cornerRadius: 16))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 16)
+                            .stroke(Color.white.opacity(0.05), lineWidth: 1)
+                    )
+                    .padding(.horizontal, 16)
+                    .padding(.top, 16)
+                    .padding(.bottom, 8)
                     .ignoresSafeArea(.keyboard)
             }
             
