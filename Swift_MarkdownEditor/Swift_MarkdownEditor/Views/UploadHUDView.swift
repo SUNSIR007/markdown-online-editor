@@ -17,13 +17,10 @@ struct UploadHUDView: View {
             statusText
         }
         .frame(width: 120, height: 120)
-        .background(Color.bgSurface)
+        .background(.ultraThinMaterial)
         .clipShape(RoundedRectangle(cornerRadius: 24))
-        .overlay(
-            RoundedRectangle(cornerRadius: 24)
-                .stroke(Color.primaryBlue.opacity(0.3), lineWidth: 1)
-        )
-        .shadow(color: Color.black.opacity(0.4), radius: 20, y: 8)
+        .glassEffect()
+        .shadow(color: Color.black.opacity(0.3), radius: 20, y: 8)
     }
     
     // MARK: - 状态图标
