@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Markdown Editor</title>
-    <!-- 使用本地 Vditor 资源 -->
-    <link rel="stylesheet" href="vditor/index.css" />
+    <!-- 使用 CDN 加载 Vditor -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vditor@3.10.7/dist/index.css" />
     <style>
         * {
             margin: 0;
@@ -27,7 +27,7 @@
             height: 100%;
         }
 
-        /* 自定义 Vditor 深色主题 - 与 PWA 完全一致 */
+        /* 自定义 Vditor 深色主题 */
         .vditor {
             --panel-background-color: #1e293b !important;
             --textarea-background-color: #1e293b !important;
@@ -82,8 +82,8 @@
 
 <body>
     <div id="vditor"></div>
-    <!-- 使用本地 Vditor JS -->
-    <script src="vditor/index.min.js"></script>
+    <!-- 使用 CDN 加载 Vditor JS -->
+    <script src="https://cdn.jsdelivr.net/npm/vditor@3.10.7/dist/index.min.js"></script>
     <script>
         let vditor;
 
