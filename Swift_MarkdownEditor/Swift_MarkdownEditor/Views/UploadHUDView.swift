@@ -7,20 +7,17 @@
 
 import SwiftUI
 
-/// 上传进度 HUD - 简洁样式
+/// 上传进度 HUD - 只显示圆形，使用液态玻璃效果
 struct UploadHUDView: View {
     let status: UploadStatus
     
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: 12) {
             statusIcon
             statusText
         }
-        .frame(width: 120, height: 120)
-        .background(.ultraThinMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: 24))
+        .frame(width: 100, height: 100)
         .glassEffect()
-        .shadow(color: Color.black.opacity(0.3), radius: 20, y: 8)
     }
     
     // MARK: - 状态图标
@@ -33,15 +30,15 @@ struct UploadHUDView: View {
             
         case .progress:
             SpinnerView()
-                .frame(width: 40, height: 40)
+                .frame(width: 44, height: 44)
             
         case .success:
             CheckmarkView()
-                .frame(width: 37, height: 37)
+                .frame(width: 40, height: 40)
             
         case .error:
             CrossmarkView()
-                .frame(width: 37, height: 37)
+                .frame(width: 40, height: 40)
         }
     }
     
@@ -93,12 +90,12 @@ struct CheckmarkView: View {
     var body: some View {
         ZStack {
             Path { path in
-                path.move(to: CGPoint(x: 8, y: 18))
-                path.addLine(to: CGPoint(x: 15, y: 25))
-                path.addLine(to: CGPoint(x: 29, y: 11))
+                path.move(to: CGPoint(x: 8, y: 20))
+                path.addLine(to: CGPoint(x: 16, y: 28))
+                path.addLine(to: CGPoint(x: 32, y: 12))
             }
             .trim(from: 0, to: isAnimating ? 1 : 0)
-            .stroke(Color.white, style: StrokeStyle(lineWidth: 4, lineCap: .round, lineJoin: .round))
+            .stroke(Color.successGreen, style: StrokeStyle(lineWidth: 3, lineCap: .round, lineJoin: .round))
         }
         .onAppear {
             withAnimation(.easeOut(duration: 0.4)) {
@@ -117,17 +114,17 @@ struct CrossmarkView: View {
         ZStack {
             Path { path in
                 path.move(to: CGPoint(x: 10, y: 10))
-                path.addLine(to: CGPoint(x: 27, y: 27))
+                path.addLine(to: CGPoint(x: 30, y: 30))
             }
             .trim(from: 0, to: isAnimating ? 1 : 0)
-            .stroke(Color.white, style: StrokeStyle(lineWidth: 4, lineCap: .round))
+            .stroke(Color.errorRed, style: StrokeStyle(lineWidth: 3, lineCap: .round))
             
             Path { path in
-                path.move(to: CGPoint(x: 27, y: 10))
-                path.addLine(to: CGPoint(x: 10, y: 27))
+                path.move(to: CGPoint(x: 30, y: 10))
+                path.addLine(to: CGPoint(x: 10, y: 30))
             }
             .trim(from: 0, to: isAnimating ? 1 : 0)
-            .stroke(Color.white, style: StrokeStyle(lineWidth: 4, lineCap: .round))
+            .stroke(Color.errorRed, style: StrokeStyle(lineWidth: 3, lineCap: .round))
         }
         .onAppear {
             withAnimation(.easeOut(duration: 0.4)) {

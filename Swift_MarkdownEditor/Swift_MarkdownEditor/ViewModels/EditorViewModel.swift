@@ -82,8 +82,6 @@ class EditorViewModel: ObservableObject {
         }
         
         isPublishing = true
-        showUploadHUD = true
-        uploadStatus = .progress
         
         do {
             // 生成完整内容
@@ -103,13 +101,6 @@ class EditorViewModel: ObservableObject {
             )
             
             if result.success {
-                uploadStatus = .success
-                
-                // 延迟隐藏 HUD
-                try? await Task.sleep(nanoseconds: 1_000_000_000)
-                showUploadHUD = false
-                uploadStatus = .idle
-                
                 // 显示成功反馈
                 showSuccessFeedback = true
                 
@@ -119,12 +110,7 @@ class EditorViewModel: ObservableObject {
                 selectType(currentType)
             }
         } catch {
-            uploadStatus = .error
             errorMessage = error.localizedDescription
-            
-            try? await Task.sleep(nanoseconds: 1_000_000_000)
-            showUploadHUD = false
-            uploadStatus = .idle
             
             showErrorFeedback = true
             try? await Task.sleep(nanoseconds: 2_000_000_000)
