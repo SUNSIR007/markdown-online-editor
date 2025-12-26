@@ -113,6 +113,13 @@ class EditorViewModel: ObservableObject {
                 VditorManager.shared.clearContent()
             }
         } catch {
+            // 打印详细错误信息用于调试
+            print("❌ 发布失败: \(error)")
+            print("❌ 错误描述: \(error.localizedDescription)")
+            if let gitError = error as? GitHubError {
+                print("❌ GitHub 错误详情: \(gitError)")
+            }
+            
             errorMessage = error.localizedDescription
             
             showErrorFeedback = true
