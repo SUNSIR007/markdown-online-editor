@@ -194,13 +194,14 @@
 
                 // 延迟后将光标移到末尾
                 setTimeout(() => {
-                    vditor.focus();
+                    // 使用 focusEditor 确保光标在内容末尾
+                    focusEditor();
                     // 滚动到底部
                     const editorElement = document.querySelector('.vditor-ir .vditor-reset');
                     if (editorElement) {
                         editorElement.scrollTop = editorElement.scrollHeight;
                     }
-                }, 300);
+                }, 350);
             }
         }
 
