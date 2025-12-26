@@ -29,21 +29,9 @@ struct HeaderView: View {
     
     // MARK: - 上传按钮 (匹配 PWA upload-icon.png 样式)
     
-    @State private var uploadButtonPressed = false
-    
     private var uploadButton: some View {
         Button {
-            // 触觉反馈
             HapticManager.impact(.medium)
-            // 缩放动画
-            withAnimation(.easeInOut(duration: 0.1)) {
-                uploadButtonPressed = true
-            }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                withAnimation(.easeInOut(duration: 0.1)) {
-                    uploadButtonPressed = false
-                }
-            }
             onImageUpload()
         } label: {
             Image(systemName: "photo.on.rectangle.angled")
@@ -51,8 +39,7 @@ struct HeaderView: View {
                 .foregroundColor(.textSecondary)
                 .frame(width: 44, height: 44)
         }
-        .scaleEffect(uploadButtonPressed ? 0.85 : 1.0)
-        .buttonStyle(.plain)
+        .buttonStyle(HighlightButtonStyle())
         .glassEffect()
     }
     
@@ -84,6 +71,18 @@ struct HeaderView: View {
         .glassEffect()
         .disabled(!viewModel.isGitHubConfigured || viewModel.isPublishing)
         .opacity(viewModel.isGitHubConfigured ? 1 : 0.6)
+    }
+}
+
+// MARK: - 系统风格高亮按钮样式
+
+/// 类似系统按钮的高亮效果：按下时变暗，松开时恢复
+struct HighlightButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .opacity(configuration.isPressed ? 0.5 : 1.0)
+            .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
+            .animation(.easeInOut(duration: 0.1), value: configuration.isPressed)
     }
 }
 
