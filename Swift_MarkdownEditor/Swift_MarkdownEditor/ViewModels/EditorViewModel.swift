@@ -169,7 +169,14 @@ class EditorViewModel: ObservableObject {
     /// 插入图片到编辑器
     func insertImageMarkdown(_ url: String, altText: String = "image") {
         let markdown = "![\(altText)](\(url))"
-        bodyContent += "\n\(markdown)\n"
+        // 如果内容为空或已经以换行结尾，不添加额外换行
+        if bodyContent.isEmpty {
+            bodyContent = markdown
+        } else if bodyContent.hasSuffix("\n") {
+            bodyContent += markdown
+        } else {
+            bodyContent += "\n\(markdown)"
+        }
     }
     
     // MARK: - 错误处理

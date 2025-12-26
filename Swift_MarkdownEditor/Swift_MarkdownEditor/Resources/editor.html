@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Markdown Editor</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vditor@3.10.7/dist/index.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            background: #0f172a;
+            overflow: hidden;
+        }
+
+        #vditor {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* 自定义 Vditor 深色主题 */
+        .vditor {
+            --panel-background-color: #1e293b;
+            --textarea-background-color: #1e293b;
+            border: none !important;
+            border-radius: 0 !important;
+        }
+
+        .vditor-ir .vditor-reset {
+            background: #1e293b !important;
+            color: #f1f5f9 !important;
+        }
+
+        .vditor-toolbar {
+            display: none !important;
+        }
+
+        .vditor-reset {
+            font-size: 16px !important;
+            line-height: 1.6 !important;
+            padding: 16px !important;
+        }
+
+        /* 图片样式 */
+        .vditor-ir img {
+            max-width: 100% !important;
+            border-radius: 8px !important;
+            margin: 8px 0 !important;
+        }
+
+        /* 隐藏滚动条但保持可滚动 */
+        .vditor-reset::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="vditor"></div>
+    <script src="https://cdn.jsdelivr.net/npm/vditor@3.10.7/dist/index.min.js"></script>
+    <script>
+        let vditor;
+
+        // 初始化 Vditor
+        function initVditor() {
+            vditor = new Vditor('vditor', {
+                theme: 'dark',
+                mode: 'ir',
+                toolbar: [],
+                placeholder: '开始编写 Markdown...',
+                cache: {
+                    enable: false
+                },
+                preview: {
+                    theme: {
+                        current: 'dark'
+                    }
+                },
+                after: () => {
+                    // 通知 Swift 编辑器已准备好
+                    window.webkit?.messageHandlers?.editorReady?.postMessage('ready');
+                },
+                input: (value) => {
+                    // 内容变化时通知 Swift
+                    window.webkit?.messageHandlers?.contentChanged?.postMessage(value);
+                }
+            });
+        }
+
+        // 供 Swift 调用：设置内容
+        function setContent(content) {
+            if (vditor) {
+                vditor.setValue(content);
+            }
+        }
+
+        // 供 Swift 调用：获取内容
+        function getContent() {
+            return vditor ? vditor.getValue() : '';
+        }
+
+        // 供 Swift 调用：插入内容
+        function insertValue(content) {
+            if (vditor) {
+                vditor.insertValue(content);
+            }
+        }
+
+        // 供 Swift 调用：在光标处插入图片
+        function insertImage(url, alt) {
+            if (vditor) {
+                const markdown = `![${alt || 'image'}](${url})`;
+                vditor.insertValue(markdown);
+            }
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', initVditor);
+    </script>
+</body>
+
+</html>

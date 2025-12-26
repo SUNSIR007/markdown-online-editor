@@ -14,14 +14,13 @@ struct AppConfig {
     // MARK: - GitHub 配置（内容仓库）
     
     /// GitHub Personal Access Token
-    /// TODO: 请替换为您的实际 Token
-    static let githubToken = "YOUR_GITHUB_TOKEN_HERE"
+    static let githubToken = "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"
     
     /// GitHub 用户名
-    static let githubOwner = "YOUR_GITHUB_USERNAME"
+    static let githubOwner = "SUNSIR007"
     
     /// 内容仓库名称
-    static let githubRepo = "YOUR_CONTENT_REPO"
+    static let githubRepo = "astro_blog"
     
     /// 分支名称
     static let githubBranch = "main"
@@ -29,10 +28,10 @@ struct AppConfig {
     // MARK: - 图床配置（图片仓库）
     
     /// 图片仓库名称
-    static let imageRepo = "YOUR_IMAGE_REPO"
+    static let imageRepo = "picx-images-hosting"
     
     /// 图片分支
-    static let imageBranch = "main"
+    static let imageBranch = "master"
     
     /// 图片存储路径前缀
     static let imagePath = "images"

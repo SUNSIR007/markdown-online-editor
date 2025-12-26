@@ -8,7 +8,7 @@
 import SwiftUI
 import PhotosUI
 
-/// 主视图 - 匹配 PWA 简洁布局
+/// 主视图 - 使用 Vditor WebView 实现编辑器
 struct ContentView: View {
     @StateObject private var viewModel = EditorViewModel()
     @State private var showImagePicker = false
@@ -22,7 +22,7 @@ struct ContentView: View {
             
             // 主内容
             VStack(spacing: 0) {
-                // Header（上传按钮 + Post 按钮）
+                // Header
                 HeaderView(viewModel: viewModel) {
                     showImagePicker = true
                 }
@@ -32,8 +32,8 @@ struct ContentView: View {
                     .fill(Color.white.opacity(0.05))
                     .frame(height: 1)
                 
-                // 编辑器区域
-                editorArea
+                // Vditor 编辑器
+                VditorEditorView(viewModel: viewModel)
             }
             
             // 上传 HUD
@@ -66,27 +66,6 @@ struct ContentView: View {
         }
     }
     
-    // MARK: - 编辑器区域 (匹配 PWA 样式)
-    
-    private var editorArea: some View {
-        TextEditor(text: $viewModel.bodyContent)
-            .font(.system(size: 16))
-            .foregroundColor(.textMain)
-            .scrollContentBackground(.hidden)
-            .padding(.horizontal, 16)
-            .padding(.vertical, 16)
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(Color.bgSurface)
-            .clipShape(RoundedRectangle(cornerRadius: 16))
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .stroke(Color.white.opacity(0.05), lineWidth: 1)
-            )
-            .padding(.horizontal, 16)
-            .padding(.top, 24)
-            .padding(.bottom, 16)
-    }
-    
     // MARK: - 图片处理
     
     private func handleSelectedPhoto(_ item: PhotosPickerItem?) async {
@@ -96,7 +75,8 @@ struct ContentView: View {
             if let data = try await item.loadTransferable(type: Data.self),
                let image = UIImage(data: data) {
                 if let url = await viewModel.uploadImage(image) {
-                    viewModel.insertImageMarkdown(url)
+                    // 通过 VditorManager 插入图片
+                    VditorManager.shared.insertImage(url: url)
                 }
             }
         } catch {
@@ -104,6 +84,24 @@ struct ContentView: View {
         }
         
         selectedPhotoItem = nil
+    }
+}
+
+/// Vditor 编辑器视图
+struct VditorEditorView: View {
+    @ObservedObject var viewModel: EditorViewModel
+    
+    var body: some View {
+        VditorWebView(content: $viewModel.bodyContent)
+            .background(Color.bgSurface)
+            .clipShape(RoundedRectangle(cornerRadius: 16))
+            .overlay(
+                RoundedRectangle(cornerRadius: 16)
+                    .stroke(Color.white.opacity(0.05), lineWidth: 1)
+            )
+            .padding(.horizontal, 16)
+            .padding(.top, 16)
+            .padding(.bottom, 8)
     }
 }
 

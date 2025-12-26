@@ -8,21 +8,87 @@
 import SwiftUI
 
 /// Markdown 编辑器视图
-/// 实现实时 Markdown 渲染效果
+/// 支持实时图片预览
 struct MarkdownEditorView: View {
     @Binding var text: String
     @FocusState private var isFocused: Bool
     
+    // 提取图片 URL
+    private var imageUrls: [String] {
+        extractImageUrls(from: text)
+    }
+    
     var body: some View {
+        VStack(spacing: 0) {
+            // 图片预览区域（如果有图片）
+            if !imageUrls.isEmpty {
+                imagePreviewSection
+            }
+            
+            // 文本编辑区域
+            textEditorSection
+        }
+        .background(Color.bgSurface)
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(Color.white.opacity(0.05), lineWidth: 1)
+        )
+    }
+    
+    // MARK: - 图片预览区域
+    
+    private var imagePreviewSection: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 12) {
+                ForEach(imageUrls, id: \.self) { url in
+                    AsyncImage(url: URL(string: url)) { phase in
+                        switch phase {
+                        case .empty:
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(Color.bgBody)
+                                .frame(width: 120, height: 80)
+                                .overlay(
+                                    ProgressView()
+                                        .progressViewStyle(CircularProgressViewStyle(tint: .primaryBlue))
+                                )
+                        case .success(let image):
+                            image
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: 120, height: 80)
+                                .clipShape(RoundedRectangle(cornerRadius: 8))
+                        case .failure:
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(Color.bgBody)
+                                .frame(width: 120, height: 80)
+                                .overlay(
+                                    Image(systemName: "exclamationmark.triangle")
+                                        .foregroundColor(.errorRed)
+                                )
+                        @unknown default:
+                            EmptyView()
+                        }
+                    }
+                }
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+        }
+        .background(Color.bgBody.opacity(0.5))
+    }
+    
+    // MARK: - 文本编辑区域
+    
+    private var textEditorSection: some View {
         ZStack(alignment: .topLeading) {
-            // 主编辑区域
             TextEditor(text: $text)
                 .focused($isFocused)
-                .font(.system(size: 16, design: .monospaced))
+                .font(.system(size: 16))
                 .foregroundColor(.textMain)
                 .scrollContentBackground(.hidden)
                 .background(Color.clear)
-                .padding(.horizontal, 16)
+                .padding(.horizontal, 12)
                 .padding(.vertical, 12)
             
             // 占位符
@@ -30,79 +96,41 @@ struct MarkdownEditorView: View {
                 Text("开始编写 Markdown...")
                     .font(.system(size: 16))
                     .foregroundColor(.textMuted)
-                    .padding(.horizontal, 20)
+                    .padding(.horizontal, 16)
                     .padding(.vertical, 20)
                     .allowsHitTesting(false)
             }
         }
-        .background(Color.bgSurface)
-        .clipShape(RoundedRectangle(cornerRadius: ThemeStyle.radiusLg))
-        .overlay(
-            RoundedRectangle(cornerRadius: ThemeStyle.radiusLg)
-                .stroke(Color.white.opacity(0.05), lineWidth: 1)
-        )
-        .shadow(color: .black.opacity(0.2), radius: 20, y: 8)
-        .glassEffect()
+        .frame(maxHeight: .infinity)
         .onTapGesture {
             isFocused = true
         }
     }
-}
-
-/// 元数据编辑器（用于 Blog 类型）
-struct MetadataEditorView: View {
-    @ObservedObject var viewModel: EditorViewModel
     
-    var body: some View {
-        if shouldShowMetadata {
-            VStack(spacing: 12) {
-                // 标题输入
-                if viewModel.currentType == .blog {
-                    MetadataTextField(
-                        text: $viewModel.metadata.title,
-                        placeholder: "标题"
-                    )
-                    
-                    MetadataTextField(
-                        text: $viewModel.metadata.categories,
-                        placeholder: "分类（逗号分隔）"
-                    )
-                }
-            }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 12)
-            .background(Color.bgBody.opacity(0.95))
+    // MARK: - 提取图片 URL
+    
+    private func extractImageUrls(from text: String) -> [String] {
+        let pattern = "!\\[.*?\\]\\((.*?)\\)"
+        guard let regex = try? NSRegularExpression(pattern: pattern) else {
+            return []
         }
-    }
-    
-    private var shouldShowMetadata: Bool {
-        viewModel.currentType == .blog
-    }
-}
-
-/// 元数据文本输入框
-struct MetadataTextField: View {
-    @Binding var text: String
-    let placeholder: String
-    
-    var body: some View {
-        TextField(placeholder, text: $text)
-            .font(.system(size: 15))
-            .foregroundColor(.textMain)
-            .padding(.horizontal, 12)
-            .padding(.vertical, 10)
-            .background(Color.bgSurface)
-            .clipShape(RoundedRectangle(cornerRadius: ThemeStyle.radiusMd))
-            .overlay(
-                RoundedRectangle(cornerRadius: ThemeStyle.radiusMd)
-                    .stroke(Color.clear, lineWidth: 1)
-            )
+        
+        let range = NSRange(text.startIndex..., in: text)
+        let matches = regex.matches(in: text, range: range)
+        
+        return matches.compactMap { match in
+            guard let urlRange = Range(match.range(at: 1), in: text) else {
+                return nil
+            }
+            return String(text[urlRange])
+        }
     }
 }
 
 #Preview {
-    MarkdownEditorView(text: .constant("# Hello\n\nThis is **Markdown**"))
+    MarkdownEditorView(text: .constant("# Hello\n\n![image](https://cdn.jsdelivr.net/gh/SUNSIR007/picx-images-hosting@master/images/2025/12/img-test.jpg)"))
         .preferredColorScheme(.dark)
         .background(Color.bgBody)
         .padding()
+        .frame(height: 400)
 }
