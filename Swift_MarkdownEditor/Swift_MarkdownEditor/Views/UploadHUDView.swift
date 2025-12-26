@@ -7,17 +7,29 @@
 
 import SwiftUI
 
-/// 上传进度 HUD - 只显示圆形，使用液态玻璃效果
+/// 上传进度 HUD - 极简优雅风格
 struct UploadHUDView: View {
     let status: UploadStatus
+    @State private var appear = false
     
     var body: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: 16) {
             statusIcon
-            statusText
+                .frame(width: 48, height: 48)
         }
-        .frame(width: 100, height: 100)
-        .glassEffect()
+        .frame(width: 88, height: 88)
+        .background(
+            RoundedRectangle(cornerRadius: 20)
+                .fill(.ultraThinMaterial)
+                .shadow(color: .black.opacity(0.2), radius: 20, x: 0, y: 10)
+        )
+        .scaleEffect(appear ? 1 : 0.8)
+        .opacity(appear ? 1 : 0)
+        .onAppear {
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                appear = true
+            }
+        }
     }
     
     // MARK: - 状态图标
@@ -29,107 +41,113 @@ struct UploadHUDView: View {
             EmptyView()
             
         case .progress:
-            SpinnerView()
-                .frame(width: 36, height: 36)
+            ModernSpinnerView()
             
         case .success:
-            CheckmarkView()
-                .frame(width: 40, height: 40)
+            ModernCheckmarkView()
             
         case .error:
-            CrossmarkView()
-                .frame(width: 40, height: 40)
-        }
-    }
-    
-    // MARK: - 状态文字
-    
-    private var statusText: some View {
-        Text(statusLabel)
-            .font(.system(size: 13, weight: .medium))
-            .foregroundColor(.white)
-    }
-    
-    private var statusLabel: String {
-        switch status {
-        case .idle: return ""
-        case .progress: return "上传中"
-        case .success: return "完成"
-        case .error: return "失败"
+            ModernCrossmarkView()
         }
     }
 }
 
-// MARK: - Spinner 动画
+// MARK: - 现代风格 Spinner
 
-struct SpinnerView: View {
-    @State private var isAnimating = false
+struct ModernSpinnerView: View {
+    @State private var rotation: Double = 0
     
     var body: some View {
         Circle()
-            .stroke(Color.primaryBlue.opacity(0.2), lineWidth: 3)
+            .stroke(Color.white.opacity(0.2), lineWidth: 3)
             .overlay(
                 Circle()
-                    .trim(from: 0, to: 0.3)
-                    .stroke(Color.primaryBlue, style: StrokeStyle(lineWidth: 3, lineCap: .round))
-                    .rotationEffect(.degrees(isAnimating ? 360 : 0))
+                    .trim(from: 0, to: 0.25)
+                    .stroke(
+                        LinearGradient(
+                            colors: [.white, .white.opacity(0.3)],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        ),
+                        style: StrokeStyle(lineWidth: 3, lineCap: .round)
+                    )
+                    .rotationEffect(.degrees(rotation))
             )
             .onAppear {
                 withAnimation(.linear(duration: 0.8).repeatForever(autoreverses: false)) {
-                    isAnimating = true
+                    rotation = 360
                 }
             }
     }
 }
 
-// MARK: - 成功勾选动画
+// MARK: - 现代风格勾选
 
-struct CheckmarkView: View {
-    @State private var isAnimating = false
+struct ModernCheckmarkView: View {
+    @State private var scale: CGFloat = 0
+    @State private var pathProgress: CGFloat = 0
     
     var body: some View {
         ZStack {
+            // 背景圆圈
+            Circle()
+                .fill(Color.successGreen.opacity(0.15))
+                .scaleEffect(scale)
+            
+            // 勾选
             Path { path in
-                path.move(to: CGPoint(x: 8, y: 20))
-                path.addLine(to: CGPoint(x: 16, y: 28))
-                path.addLine(to: CGPoint(x: 32, y: 12))
+                path.move(to: CGPoint(x: 14, y: 24))
+                path.addLine(to: CGPoint(x: 21, y: 31))
+                path.addLine(to: CGPoint(x: 34, y: 18))
             }
-            .trim(from: 0, to: isAnimating ? 1 : 0)
+            .trim(from: 0, to: pathProgress)
             .stroke(Color.successGreen, style: StrokeStyle(lineWidth: 3, lineCap: .round, lineJoin: .round))
         }
         .onAppear {
-            withAnimation(.easeOut(duration: 0.4)) {
-                isAnimating = true
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
+                scale = 1
             }
+            withAnimation(.easeOut(duration: 0.25).delay(0.1)) {
+                pathProgress = 1
+            }
+            // 触觉反馈
+            HapticManager.notification(.success)
         }
     }
 }
 
-// MARK: - 失败叉号动画
+// MARK: - 现代风格叉号
 
-struct CrossmarkView: View {
-    @State private var isAnimating = false
+struct ModernCrossmarkView: View {
+    @State private var scale: CGFloat = 0
+    @State private var pathProgress: CGFloat = 0
     
     var body: some View {
         ZStack {
-            Path { path in
-                path.move(to: CGPoint(x: 10, y: 10))
-                path.addLine(to: CGPoint(x: 30, y: 30))
-            }
-            .trim(from: 0, to: isAnimating ? 1 : 0)
-            .stroke(Color.errorRed, style: StrokeStyle(lineWidth: 3, lineCap: .round))
+            // 背景圆圈
+            Circle()
+                .fill(Color.errorRed.opacity(0.15))
+                .scaleEffect(scale)
             
+            // 叉号
             Path { path in
-                path.move(to: CGPoint(x: 30, y: 10))
-                path.addLine(to: CGPoint(x: 10, y: 30))
+                path.move(to: CGPoint(x: 16, y: 16))
+                path.addLine(to: CGPoint(x: 32, y: 32))
+                path.move(to: CGPoint(x: 32, y: 16))
+                path.addLine(to: CGPoint(x: 16, y: 32))
             }
-            .trim(from: 0, to: isAnimating ? 1 : 0)
+            .trim(from: 0, to: pathProgress)
             .stroke(Color.errorRed, style: StrokeStyle(lineWidth: 3, lineCap: .round))
         }
         .onAppear {
-            withAnimation(.easeOut(duration: 0.4)) {
-                isAnimating = true
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
+                scale = 1
             }
+            withAnimation(.easeOut(duration: 0.25).delay(0.1)) {
+                pathProgress = 1
+            }
+            // 触觉反馈
+            HapticManager.notification(.error)
         }
     }
 }
@@ -139,88 +157,61 @@ struct CrossmarkView: View {
 struct FeedbackOverlayView: View {
     let isSuccess: Bool
     @Binding var isVisible: Bool
+    @State private var appear = false
     
     var body: some View {
         ZStack {
-            Color.bgBody.opacity(0.95)
+            // 半透明背景
+            Color.black.opacity(0.4)
                 .ignoresSafeArea()
             
-            FeedbackIconView(isSuccess: isSuccess)
-                .frame(width: 80, height: 80)
-        }
-        .opacity(isVisible ? 1 : 0)
-        .animation(.easeInOut(duration: 0.3), value: isVisible)
-    }
-}
-
-struct FeedbackIconView: View {
-    let isSuccess: Bool
-    @State private var circleProgress: CGFloat = 0
-    @State private var pathProgress: CGFloat = 0
-    
-    var body: some View {
-        ZStack {
-            // 外圈
-            Circle()
-                .trim(from: 0, to: circleProgress)
-                .stroke(
-                    isSuccess ? Color.successGreen : Color.errorRed,
-                    style: StrokeStyle(lineWidth: 2, lineCap: .round)
-                )
-            
-            // 图标
-            if isSuccess {
-                Path { path in
-                    path.move(to: CGPoint(x: 22, y: 42))
-                    path.addLine(to: CGPoint(x: 35, y: 55))
-                    path.addLine(to: CGPoint(x: 58, y: 30))
+            // 反馈图标
+            VStack(spacing: 16) {
+                if isSuccess {
+                    ModernCheckmarkView()
+                        .frame(width: 56, height: 56)
+                } else {
+                    ModernCrossmarkView()
+                        .frame(width: 56, height: 56)
                 }
-                .trim(from: 0, to: pathProgress)
-                .stroke(
-                    Color.successGreen,
-                    style: StrokeStyle(lineWidth: 2, lineCap: .round, lineJoin: .round)
-                )
-            } else {
-                Path { path in
-                    path.move(to: CGPoint(x: 25, y: 25))
-                    path.addLine(to: CGPoint(x: 55, y: 55))
-                }
-                .trim(from: 0, to: pathProgress)
-                .stroke(
-                    Color.errorRed,
-                    style: StrokeStyle(lineWidth: 2, lineCap: .round)
-                )
-                
-                Path { path in
-                    path.move(to: CGPoint(x: 55, y: 25))
-                    path.addLine(to: CGPoint(x: 25, y: 55))
-                }
-                .trim(from: 0, to: pathProgress)
-                .stroke(
-                    Color.errorRed,
-                    style: StrokeStyle(lineWidth: 2, lineCap: .round)
-                )
             }
+            .frame(width: 100, height: 100)
+            .background(
+                RoundedRectangle(cornerRadius: 24)
+                    .fill(.ultraThinMaterial)
+                    .shadow(color: .black.opacity(0.3), radius: 30, x: 0, y: 15)
+            )
+            .scaleEffect(appear ? 1 : 0.7)
+            .opacity(appear ? 1 : 0)
         }
         .onAppear {
-            withAnimation(.easeOut(duration: 0.5)) {
-                circleProgress = 1
-            }
-            withAnimation(.easeOut(duration: 0.3).delay(0.4)) {
-                pathProgress = 1
+            withAnimation(.spring(response: 0.35, dampingFraction: 0.7)) {
+                appear = true
             }
         }
     }
 }
 
 #Preview("Progress") {
-    UploadHUDView(status: .progress)
-        .preferredColorScheme(.dark)
-        .background(Color.bgBody)
+    ZStack {
+        Color.bgBody
+        UploadHUDView(status: .progress)
+    }
+    .preferredColorScheme(.dark)
 }
 
 #Preview("Success") {
-    UploadHUDView(status: .success)
-        .preferredColorScheme(.dark)
-        .background(Color.bgBody)
+    ZStack {
+        Color.bgBody
+        UploadHUDView(status: .success)
+    }
+    .preferredColorScheme(.dark)
+}
+
+#Preview("Error") {
+    ZStack {
+        Color.bgBody
+        UploadHUDView(status: .error)
+    }
+    .preferredColorScheme(.dark)
 }
