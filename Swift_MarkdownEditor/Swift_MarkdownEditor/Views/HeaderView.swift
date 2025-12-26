@@ -29,9 +29,21 @@ struct HeaderView: View {
     
     // MARK: - 上传按钮 (匹配 PWA upload-icon.png 样式)
     
+    @State private var uploadButtonPressed = false
+    
     private var uploadButton: some View {
         Button {
+            // 触觉反馈
             HapticManager.impact(.medium)
+            // 缩放动画
+            withAnimation(.easeInOut(duration: 0.1)) {
+                uploadButtonPressed = true
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                withAnimation(.easeInOut(duration: 0.1)) {
+                    uploadButtonPressed = false
+                }
+            }
             onImageUpload()
         } label: {
             Image(systemName: "photo.on.rectangle.angled")
@@ -39,6 +51,7 @@ struct HeaderView: View {
                 .foregroundColor(.textSecondary)
                 .frame(width: 44, height: 44)
         }
+        .scaleEffect(uploadButtonPressed ? 0.85 : 1.0)
         .buttonStyle(.plain)
         .glassEffect()
     }
