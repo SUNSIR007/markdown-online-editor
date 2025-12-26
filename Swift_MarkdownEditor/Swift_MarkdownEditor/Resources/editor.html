@@ -154,19 +154,13 @@
 
                 // 延迟后将光标移到末尾
                 setTimeout(() => {
-                    // 聚焦到编辑器末尾
+                    vditor.focus();
+                    // 滚动到底部
                     const editorElement = document.querySelector('.vditor-ir .vditor-reset');
                     if (editorElement) {
-                        editorElement.focus();
-                        // 将光标移到末尾
-                        const range = document.createRange();
-                        const sel = window.getSelection();
-                        range.selectNodeContents(editorElement);
-                        range.collapse(false);
-                        sel.removeAllRanges();
-                        sel.addRange(range);
+                        editorElement.scrollTop = editorElement.scrollHeight;
                     }
-                }, 100);
+                }, 300);
             }
         }
 
