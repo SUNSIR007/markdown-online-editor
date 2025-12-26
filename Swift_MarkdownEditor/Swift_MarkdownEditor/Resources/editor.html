@@ -142,11 +142,11 @@
                 // 追加图片到内容末尾
                 let newContent;
                 if (currentContent.trim() === '') {
-                    newContent = markdown + '\n';
+                    newContent = markdown + '\n\n';
                 } else if (currentContent.endsWith('\n')) {
-                    newContent = currentContent + markdown + '\n';
+                    newContent = currentContent + markdown + '\n\n';
                 } else {
-                    newContent = currentContent + '\n' + markdown + '\n';
+                    newContent = currentContent + '\n' + markdown + '\n\n';
                 }
 
                 // 设置新内容
