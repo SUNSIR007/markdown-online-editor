@@ -33,7 +33,7 @@ struct HeaderView: View {
         Button {
             onImageUpload()
         } label: {
-            Image(systemName: "photo.badge.arrow.down")
+            Image(systemName: "photo.on.rectangle.angled")
                 .font(.system(size: 20, weight: .regular))
                 .foregroundColor(.textSecondary)
                 .frame(width: 44, height: 44)
