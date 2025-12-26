@@ -89,13 +89,16 @@
     <script>
         let vditor;
 
-        // 点击页面任意位置时聚焦编辑器
-        document.addEventListener('click', function (e) {
-            // 如果点击的不是已经可编辑的元素，则聚焦编辑器
-            if (vditor && !e.target.classList.contains('vditor-reset')) {
+        // 使用 touchend 事件聚焦编辑器（避免干扰正常的点击行为）
+        document.addEventListener('touchend', function(e) {
+            // 延迟聚焦，让正常的点击事件先处理完
+            if (vditor) {
                 setTimeout(() => {
-                    vditor.focus();
-                }, 10);
+                    const editorElement = document.querySelector('.vditor-ir .vditor-reset');
+                    if (editorElement && document.activeElement !== editorElement) {
+                        vditor.focus();
+                    }
+                }, 100);
             }
         });
 
