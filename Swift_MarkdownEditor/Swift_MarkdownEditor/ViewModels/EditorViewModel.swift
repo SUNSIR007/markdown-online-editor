@@ -155,6 +155,49 @@ class EditorViewModel: ObservableObject {
         }
     }
     
+    /// 批量上传图片（聚合显示一个上传窗口）
+    func uploadImages(_ images: [UIImage]) async -> [String] {
+        guard isImageServiceConfigured else {
+            showError("图床配置缺失")
+            return []
+        }
+        
+        guard !images.isEmpty else { return [] }
+        
+        showUploadHUD = true
+        uploadStatus = .progress
+        
+        var uploadedUrls: [String] = []
+        
+        for image in images {
+            do {
+                let result = try await ImageService.shared.uploadImage(image)
+                uploadedUrls.append(result.url)
+            } catch {
+                print("图片上传失败: \(error)")
+            }
+        }
+        
+        // 上传完成后显示结果
+        if uploadedUrls.count == images.count {
+            uploadStatus = .success
+            HapticManager.notification(.success)
+        } else if uploadedUrls.isEmpty {
+            uploadStatus = .error
+            HapticManager.notification(.error)
+        } else {
+            // 部分成功
+            uploadStatus = .success
+            HapticManager.notification(.warning)
+        }
+        
+        try? await Task.sleep(nanoseconds: 800_000_000)
+        showUploadHUD = false
+        uploadStatus = .idle
+        
+        return uploadedUrls
+    }
+    
     /// 插入图片到编辑器
     func insertImageMarkdown(_ url: String, altText: String = "image") {
         let markdown = "![\(altText)](\(url))"

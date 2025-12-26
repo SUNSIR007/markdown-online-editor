@@ -79,29 +79,30 @@ struct ContentView: View {
         }
     }
     
-    // MARK: - 多图片处理
+    // MARK: - 多图片处理（聚合上传）
     
     private func handleSelectedPhotos(_ items: [PhotosPickerItem]) async {
         guard !items.isEmpty else { return }
         
+        // 先加载所有图片
+        var images: [UIImage] = []
         for item in items {
             do {
                 if let data = try await item.loadTransferable(type: Data.self),
                    let image = UIImage(data: data) {
-                    if let url = await viewModel.uploadImage(image) {
-                        // 通过 VditorManager 插入图片
-                        VditorManager.shared.insertImage(url: url)
-                        // 成功上传触觉反馈
-                        HapticManager.notification(.success)
-                    } else {
-                        // 上传失败触觉反馈
-                        HapticManager.notification(.error)
-                    }
+                    images.append(image)
                 }
             } catch {
                 print("加载图片失败: \(error)")
-                HapticManager.notification(.error)
             }
+        }
+        
+        // 批量上传（显示一个聚合的上传窗口）
+        let urls = await viewModel.uploadImages(images)
+        
+        // 依次插入图片
+        for url in urls {
+            VditorManager.shared.insertImage(url: url)
         }
         
         selectedPhotoItems = []
