@@ -7,8 +7,7 @@
 
 import SwiftUI
 
-/// 上传进度 HUD
-/// 对应 PWA 中的 Apple HIG Style Upload HUD
+/// 上传进度 HUD - 简洁样式
 struct UploadHUDView: View {
     let status: UploadStatus
     
@@ -18,22 +17,13 @@ struct UploadHUDView: View {
             statusText
         }
         .frame(width: 120, height: 120)
-        .background(
-            LinearGradient(
-                colors: [Color.bgSurface, Color.bgBody],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-        )
+        .background(Color.bgSurface)
         .clipShape(RoundedRectangle(cornerRadius: 24))
         .overlay(
             RoundedRectangle(cornerRadius: 24)
                 .stroke(Color.primaryBlue.opacity(0.3), lineWidth: 1)
         )
-        .shadow(color: Color.primaryBlue.opacity(0.15), radius: 30)
-        .shadow(color: Color.black.opacity(0.3), radius: 40, y: 10)
-        .glassEffect()
-        .transition(.scale.combined(with: .opacity))
+        .shadow(color: Color.black.opacity(0.4), radius: 20, y: 8)
     }
     
     // MARK: - 状态图标
@@ -237,12 +227,6 @@ struct FeedbackIconView: View {
 
 #Preview("Success") {
     UploadHUDView(status: .success)
-        .preferredColorScheme(.dark)
-        .background(Color.bgBody)
-}
-
-#Preview("Error") {
-    UploadHUDView(status: .error)
         .preferredColorScheme(.dark)
         .background(Color.bgBody)
 }
