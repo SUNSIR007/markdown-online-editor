@@ -107,7 +107,10 @@ class EditorViewModel: ObservableObject {
                 // 延迟重置
                 try? await Task.sleep(nanoseconds: 1_500_000_000)
                 showSuccessFeedback = false
-                selectType(currentType)
+                
+                // 清除编辑器内容
+                bodyContent = ""
+                VditorManager.shared.clearContent()
             }
         } catch {
             errorMessage = error.localizedDescription

@@ -113,4 +113,8 @@ class VditorManager {
     func insertImage(url: String) {
         coordinator?.insertImage(url: url)
     }
+    
+    func clearContent() {
+        coordinator?.setContent("")
+    }
 }
