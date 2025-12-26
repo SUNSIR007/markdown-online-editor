@@ -89,6 +89,13 @@
     <script>
         let vditor;
 
+        // 点击容器时聚焦编辑器
+        document.getElementById('vditor').addEventListener('click', function (e) {
+            if (vditor) {
+                vditor.focus();
+            }
+        });
+
         // 初始化 Vditor
         function initVditor() {
             vditor = new Vditor('vditor', {
