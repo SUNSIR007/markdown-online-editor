@@ -29,6 +29,8 @@ struct HeaderView: View {
     
     // MARK: - 上传按钮 (匹配 PWA upload-icon.png 样式)
     
+    @State private var isUploadPressed = false
+    
     private var uploadButton: some View {
         Button {
             HapticManager.impact(.medium)
@@ -39,8 +41,16 @@ struct HeaderView: View {
                 .foregroundColor(.textSecondary)
                 .frame(width: 44, height: 44)
         }
-        .buttonStyle(HighlightButtonStyle())
+        .buttonStyle(.plain)
         .glassEffect()
+        .scaleEffect(isUploadPressed ? 1.15 : 1.0)
+        .brightness(isUploadPressed ? 0.15 : 0)
+        .animation(.easeInOut(duration: 0.12), value: isUploadPressed)
+        .simultaneousGesture(
+            DragGesture(minimumDistance: 0)
+                .onChanged { _ in isUploadPressed = true }
+                .onEnded { _ in isUploadPressed = false }
+        )
     }
     
     // MARK: - 发布按钮 (带液态玻璃效果)
