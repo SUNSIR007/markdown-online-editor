@@ -31,6 +31,7 @@ struct HeaderView: View {
     
     private var uploadButton: some View {
         Button {
+            HapticManager.impact(.light)
             onImageUpload()
         } label: {
             Image(systemName: "photo.on.rectangle.angled")

@@ -89,10 +89,13 @@
     <script>
         let vditor;
 
-        // 点击容器时聚焦编辑器
-        document.getElementById('vditor').addEventListener('click', function (e) {
-            if (vditor) {
-                vditor.focus();
+        // 点击页面任意位置时聚焦编辑器
+        document.addEventListener('click', function (e) {
+            // 如果点击的不是已经可编辑的元素，则聚焦编辑器
+            if (vditor && !e.target.classList.contains('vditor-reset')) {
+                setTimeout(() => {
+                    vditor.focus();
+                }, 10);
             }
         });
 
