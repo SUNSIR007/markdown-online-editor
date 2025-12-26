@@ -105,10 +105,16 @@
                 after: () => {
                     // 通知 Swift 编辑器已准备好
                     window.webkit?.messageHandlers?.editorReady?.postMessage('ready');
-                    // 自动聚焦，弹出键盘
+                    // 自动聚焦，弹出键盘（延迟更长以确保视图完全加载）
                     setTimeout(() => {
                         vditor.focus();
-                    }, 300);
+                        // 真机上可能需要模拟点击来触发键盘
+                        const editorElement = document.querySelector('.vditor-ir .vditor-reset');
+                        if (editorElement) {
+                            editorElement.click();
+                            editorElement.focus();
+                        }
+                    }, 500);
                 },
                 input: (value) => {
                     // 内容变化时通知 Swift
@@ -155,6 +161,9 @@
 
                 // 设置新内容
                 vditor.setValue(newContent);
+
+                // 手动通知 Swift 内容已更新（setValue 不会触发 input 回调）
+                window.webkit?.messageHandlers?.contentChanged?.postMessage(newContent);
 
                 // 延迟后将光标移到末尾
                 setTimeout(() => {

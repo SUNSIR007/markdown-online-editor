@@ -71,6 +71,10 @@ class EditorViewModel: ObservableObject {
             return
         }
         
+        // 调试：打印当前内容
+        print("📝 当前内容长度: \(bodyContent.count)")
+        print("📝 内容前100字符: \(String(bodyContent.prefix(100)))")
+        
         guard hasBodyContent || currentType == .gallery else {
             showError("请先编写内容")
             return
