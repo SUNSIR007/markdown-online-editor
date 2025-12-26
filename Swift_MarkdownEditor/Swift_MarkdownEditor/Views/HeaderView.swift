@@ -38,7 +38,7 @@ struct HeaderView: View {
         } label: {
             Image(systemName: "photo.on.rectangle.angled")
                 .font(.system(size: 20, weight: .regular))
-                .foregroundColor(.textSecondary)
+                .foregroundColor(.textMain)
                 .frame(width: 44, height: 44)
         }
         .buttonStyle(.plain)
