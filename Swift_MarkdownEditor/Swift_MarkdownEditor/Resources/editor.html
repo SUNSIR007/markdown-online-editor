@@ -172,31 +172,28 @@
         // 供 Swift 调用：在光标处插入图片
         function insertImage(url, alt) {
             if (vditor) {
-                // 获取当前内容
-                const currentContent = vditor.getValue();
                 const markdown = `![${alt || 'image'}](${url})`;
 
-                // 追加图片到内容末尾
-                let newContent;
-                if (currentContent.trim() === '') {
-                    newContent = markdown + '\n\n';
-                } else if (currentContent.endsWith('\n')) {
-                    newContent = currentContent + markdown + '\n\n';
-                } else {
-                    newContent = currentContent + '\n' + markdown + '\n\n';
-                }
+                // 使用 insertValue 在当前位置插入图片，会自动处理光标
+                // 添加换行确保光标在下一行
+                vditor.insertValue('\n' + markdown + '\n\n');
 
-                // 设置新内容
-                vditor.setValue(newContent);
-
-                // 手动通知 Swift 内容已更新（setValue 不会触发 input 回调）
+                // 手动通知 Swift 内容已更新
+                const newContent = vditor.getValue();
                 window.webkit?.messageHandlers?.contentChanged?.postMessage(newContent);
 
-                // 延迟后将光标移到末尾并滚动到可见位置
+                // 延迟后滚动到可见位置
                 setTimeout(() => {
-                    focusEditor();
-                    scrollToCursor();
-                }, 350);
+                    // 滚动编辑器到底部
+                    const editorElement = document.querySelector('.vditor-ir .vditor-reset');
+                    if (editorElement) {
+                        // 使用 smooth 滚动
+                        editorElement.scrollTo({
+                            top: editorElement.scrollHeight,
+                            behavior: 'smooth'
+                        });
+                    }
+                }, 300);
             }
         }
 
