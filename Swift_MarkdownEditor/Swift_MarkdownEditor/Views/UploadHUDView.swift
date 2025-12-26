@@ -13,7 +13,7 @@ struct UploadHUDView: View {
     @State private var appear = false
     
     var body: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: 16) {
             // 图标区域
             ZStack {
                 // 背景光晕
@@ -25,31 +25,34 @@ struct UploadHUDView: View {
                 // 图标容器
                 Circle()
                     .fill(Color.white.opacity(0.1))
-                    .frame(width: 60, height: 60)
+                    .frame(width: 56, height: 56)
                 
                 // 状态图标
                 statusIcon
-                    .frame(width: 32, height: 32)
+                    .frame(width: 28, height: 28)
             }
+            .frame(height: 72)
             
             // 状态文字
             VStack(spacing: 4) {
                 Text(statusTitle)
-                    .font(.system(size: 16, weight: .semibold))
+                    .font(.system(size: 15, weight: .semibold))
                     .foregroundColor(.white)
                 
                 Text(statusSubtitle)
-                    .font(.system(size: 12, weight: .regular))
+                    .font(.system(size: 11, weight: .regular))
                     .foregroundColor(.white.opacity(0.6))
+                    .multilineTextAlignment(.center)
             }
+            .frame(height: 36)
         }
-        .padding(.horizontal, 32)
-        .padding(.vertical, 28)
+        .frame(width: 160)
+        .padding(.vertical, 24)
         .background(
-            RoundedRectangle(cornerRadius: 24)
+            RoundedRectangle(cornerRadius: 20)
                 .fill(Color(red: 0.12, green: 0.14, blue: 0.18).opacity(0.95))
                 .overlay(
-                    RoundedRectangle(cornerRadius: 24)
+                    RoundedRectangle(cornerRadius: 20)
                         .stroke(Color.white.opacity(0.08), lineWidth: 1)
                 )
                 .shadow(color: .black.opacity(0.4), radius: 30, x: 0, y: 15)
