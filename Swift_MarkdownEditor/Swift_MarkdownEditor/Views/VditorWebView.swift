@@ -88,6 +88,12 @@ struct VditorWebView: UIViewRepresentable {
                 if !parent.content.isEmpty {
                     setContent(parent.content)
                 }
+                // 自动聚焦并弹出键盘
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
+                    self?.webView?.becomeFirstResponder()
+                    // 同时从 JavaScript 端聚焦
+                    self?.webView?.evaluateJavaScript("focusEditor();", completionHandler: nil)
+                }
                 
             case "contentChanged":
                 if let content = message.body as? String {
