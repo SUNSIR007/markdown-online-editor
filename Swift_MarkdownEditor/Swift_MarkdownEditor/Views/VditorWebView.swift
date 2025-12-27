@@ -145,4 +145,18 @@ class VditorManager {
     func clearContent() {
         coordinator?.setContent("")
     }
+    
+    /// 主动获取 WebView 中的最新内容
+    @MainActor
+    func getContent() async -> String {
+        guard let webView = webView else { return "" }
+        
+        do {
+            let result = try await webView.evaluateJavaScript("getContent()")
+            return result as? String ?? ""
+        } catch {
+            print("获取内容失败: \(error)")
+            return ""
+        }
+    }
 }

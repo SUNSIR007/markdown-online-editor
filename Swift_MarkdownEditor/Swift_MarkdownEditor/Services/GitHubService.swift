@@ -31,7 +31,12 @@ actor GitHubService {
         method: String = "GET",
         body: Data? = nil
     ) async throws -> T {
+        let token = AppConfig.githubToken
+        print("🔑 Token 前10位: \(String(token.prefix(10)))...")
+        print("📡 请求: \(method) \(endpoint)")
+        
         guard AppConfig.isGitHubConfigured else {
+            print("❌ GitHub 未配置")
             throw GitHubError.notConfigured
         }
         
@@ -41,28 +46,39 @@ actor GitHubService {
         
         var request = URLRequest(url: url)
         request.httpMethod = method
-        request.setValue("token \(AppConfig.githubToken)", forHTTPHeaderField: "Authorization")
+        request.setValue("token \(token)", forHTTPHeaderField: "Authorization")
         request.setValue("application/vnd.github.v3+json", forHTTPHeaderField: "Accept")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         
         if let body = body {
             request.httpBody = body
+            print("📦 请求体大小: \(body.count) bytes")
         }
         
-        let (data, response) = try await URLSession.shared.data(for: request)
-        
-        guard let httpResponse = response as? HTTPURLResponse else {
-            throw GitHubError.invalidResponse
-        }
-        
-        guard (200...299).contains(httpResponse.statusCode) else {
-            if let errorResponse = try? JSONDecoder().decode(GitHubErrorResponse.self, from: data) {
-                throw GitHubError.apiError(code: httpResponse.statusCode, message: errorResponse.message)
+        do {
+            let (data, response) = try await URLSession.shared.data(for: request)
+            
+            guard let httpResponse = response as? HTTPURLResponse else {
+                throw GitHubError.invalidResponse
             }
-            throw GitHubError.apiError(code: httpResponse.statusCode, message: "Unknown error")
+            
+            print("📨 响应状态码: \(httpResponse.statusCode)")
+            
+            guard (200...299).contains(httpResponse.statusCode) else {
+                let responseString = String(data: data, encoding: .utf8) ?? "无法解析"
+                print("❌ 错误响应: \(responseString)")
+                if let errorResponse = try? JSONDecoder().decode(GitHubErrorResponse.self, from: data) {
+                    throw GitHubError.apiError(code: httpResponse.statusCode, message: errorResponse.message)
+                }
+                throw GitHubError.apiError(code: httpResponse.statusCode, message: "Unknown error")
+            }
+            
+            print("✅ 请求成功")
+            return try JSONDecoder().decode(T.self, from: data)
+        } catch let error as URLError {
+            print("🌐 网络错误: \(error.localizedDescription)")
+            throw error
         }
-        
-        return try JSONDecoder().decode(T.self, from: data)
     }
     
     // MARK: - 文件操作

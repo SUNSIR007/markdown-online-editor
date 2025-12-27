@@ -71,6 +71,12 @@ class EditorViewModel: ObservableObject {
             return
         }
         
+        // 从 WebView 获取最新内容（解决内容同步延迟问题）
+        let latestContent = await VditorManager.shared.getContent()
+        if !latestContent.isEmpty {
+            bodyContent = latestContent
+        }
+        
         // 调试：打印当前内容
         print("📝 当前内容长度: \(bodyContent.count)")
         print("📝 内容前100字符: \(String(bodyContent.prefix(100)))")

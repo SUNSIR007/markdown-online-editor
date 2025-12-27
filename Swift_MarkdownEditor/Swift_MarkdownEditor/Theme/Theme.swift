@@ -6,53 +6,171 @@
 //
 
 import SwiftUI
+import Combine
 
-/// 主题配置，复刻 PWA 深色主题色彩系统
-/// 对应 PWA 中 index.html 和 components.css 的 CSS 变量
+// MARK: - 主题类型
+
+enum AppTheme: String, CaseIterable {
+    case slate = "slate"      // 深蓝灰主题（当前）
+    case oled = "oled"        // 纯黑 OLED 主题
+    
+    var displayName: String {
+        switch self {
+        case .slate: return "深蓝"
+        case .oled: return "纯黑"
+        }
+    }
+    
+    var icon: String {
+        switch self {
+        case .slate: return "moon.fill"
+        case .oled: return "circle.fill"
+        }
+    }
+}
+
+// MARK: - 主题管理器
+
+class ThemeManager: ObservableObject {
+    static let shared = ThemeManager()
+    
+    @Published var currentTheme: AppTheme {
+        didSet {
+            UserDefaults.standard.set(currentTheme.rawValue, forKey: "app_theme")
+        }
+    }
+    
+    private init() {
+        let savedTheme = UserDefaults.standard.string(forKey: "app_theme") ?? AppTheme.slate.rawValue
+        self.currentTheme = AppTheme(rawValue: savedTheme) ?? .slate
+    }
+    
+    func toggle() {
+        withAnimation(.easeInOut(duration: 0.3)) {
+            currentTheme = currentTheme == .slate ? .oled : .slate
+        }
+    }
+}
+
+// MARK: - 主题颜色
+
+struct ThemeColors {
+    let bgBody: Color
+    let bgSurface: Color
+    let bgSurfaceHover: Color
+    let textMain: Color
+    let textSecondary: Color
+    let textMuted: Color
+    let borderColor: Color
+    let borderColorLight: Color
+    
+    // 深蓝灰主题
+    static let slate = ThemeColors(
+        bgBody: Color(hex: "#0f172a"),
+        bgSurface: Color(hex: "#1e293b"),
+        bgSurfaceHover: Color(hex: "#334155"),
+        textMain: Color(hex: "#f1f5f9"),
+        textSecondary: Color(hex: "#94a3b8"),
+        textMuted: Color(hex: "#64748b"),
+        borderColor: Color(hex: "#334155"),
+        borderColorLight: Color(hex: "#475569")
+    )
+    
+    // 纯黑 OLED 主题
+    static let oled = ThemeColors(
+        bgBody: Color(hex: "#000000"),
+        bgSurface: Color(hex: "#0a0a0a"),
+        bgSurfaceHover: Color(hex: "#1a1a1a"),
+        textMain: Color(hex: "#ffffff"),
+        textSecondary: Color(hex: "#a0a0a0"),
+        textMuted: Color(hex: "#666666"),
+        borderColor: Color(hex: "#1a1a1a"),
+        borderColorLight: Color(hex: "#2a2a2a")
+    )
+    
+    static func current(_ theme: AppTheme) -> ThemeColors {
+        switch theme {
+        case .slate: return .slate
+        case .oled: return .oled
+        }
+    }
+}
+
+// MARK: - 环境键
+
+private struct ThemeColorsKey: EnvironmentKey {
+    static let defaultValue: ThemeColors = .slate
+}
+
+extension EnvironmentValues {
+    var themeColors: ThemeColors {
+        get { self[ThemeColorsKey.self] }
+        set { self[ThemeColorsKey.self] = newValue }
+    }
+}
+
+// MARK: - 兼容旧代码的静态颜色
+
 extension Color {
     
-    // MARK: - 背景色
+    // MARK: - 背景色（使用动态主题）
     
-    /// 主背景色 --bg-body: #0f172a
-    static let bgBody = Color(hex: "#0f172a")
+    /// 主背景色
+    static var bgBody: Color {
+        ThemeColors.current(ThemeManager.shared.currentTheme).bgBody
+    }
     
-    /// 表面背景色 --bg-surface: #1e293b
-    static let bgSurface = Color(hex: "#1e293b")
+    /// 表面背景色
+    static var bgSurface: Color {
+        ThemeColors.current(ThemeManager.shared.currentTheme).bgSurface
+    }
     
-    /// 悬停表面背景色 --bg-surface-hover: #334155
-    static let bgSurfaceHover = Color(hex: "#334155")
+    /// 悬停表面背景色
+    static var bgSurfaceHover: Color {
+        ThemeColors.current(ThemeManager.shared.currentTheme).bgSurfaceHover
+    }
     
     // MARK: - 文字颜色
     
-    /// 主文字颜色 --text-main: #f1f5f9
-    static let textMain = Color(hex: "#f1f5f9")
+    /// 主文字颜色
+    static var textMain: Color {
+        ThemeColors.current(ThemeManager.shared.currentTheme).textMain
+    }
     
-    /// 次要文字颜色 --text-secondary: #94a3b8
-    static let textSecondary = Color(hex: "#94a3b8")
+    /// 次要文字颜色
+    static var textSecondary: Color {
+        ThemeColors.current(ThemeManager.shared.currentTheme).textSecondary
+    }
     
-    /// 弱化文字颜色 --text-muted: #64748b
-    static let textMuted = Color(hex: "#64748b")
+    /// 弱化文字颜色
+    static var textMuted: Color {
+        ThemeColors.current(ThemeManager.shared.currentTheme).textMuted
+    }
     
-    // MARK: - 主题色
+    // MARK: - 边框颜色
+    
+    /// 边框颜色
+    static var borderColor: Color {
+        ThemeColors.current(ThemeManager.shared.currentTheme).borderColor
+    }
+    
+    /// 浅边框颜色
+    static var borderColorLight: Color {
+        ThemeColors.current(ThemeManager.shared.currentTheme).borderColorLight
+    }
+    
+    // MARK: - 主题色（不变）
     
     /// 主题色 --primary-color: #3b82f6
     static let primaryBlue = Color(hex: "#3b82f6")
     
-    /// 渐变起始色 --primary-gradient-start: #3b82f6
+    /// 渐变起始色
     static let primaryGradientStart = Color(hex: "#3b82f6")
     
-    /// 渐变结束色 --primary-gradient-end: #2563eb
+    /// 渐变结束色
     static let primaryGradientEnd = Color(hex: "#2563eb")
     
-    // MARK: - 边框颜色
-    
-    /// 边框颜色 --border-color: #334155
-    static let borderColor = Color(hex: "#334155")
-    
-    /// 浅边框颜色 --border-color-light: #475569
-    static let borderColorLight = Color(hex: "#475569")
-    
-    // MARK: - 状态颜色
+    // MARK: - 状态颜色（不变）
     
     /// 成功色
     static let successGreen = Color(hex: "#10b981")

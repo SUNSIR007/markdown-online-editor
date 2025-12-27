@@ -11,14 +11,16 @@ import PhotosUI
 /// 主视图 - 匹配 PWA 布局
 struct ContentView: View {
     @StateObject private var viewModel = EditorViewModel()
+    @StateObject private var themeManager = ThemeManager.shared
     @State private var showImagePicker = false
     @State private var selectedPhotoItems: [PhotosPickerItem] = []
     
     var body: some View {
         ZStack {
-            // 深色背景 - 全屏统一颜色
-            Color.bgBody
+            // 深色背景 - 全屏统一颜色（响应主题变化）
+            ThemeColors.current(themeManager.currentTheme).bgBody
                 .ignoresSafeArea()
+                .animation(.easeInOut(duration: 0.3), value: themeManager.currentTheme)
             
             // 主内容
             VStack(spacing: 0) {
@@ -36,7 +38,7 @@ struct ContentView: View {
                 
                 // Vditor 编辑器 - 保持圆角矩形风格
                 VditorWebView(content: $viewModel.bodyContent)
-                    .background(Color.bgSurface)
+                    .background(ThemeColors.current(themeManager.currentTheme).bgSurface)
                     .clipShape(RoundedRectangle(cornerRadius: 16))
                     .overlay(
                         RoundedRectangle(cornerRadius: 16)
@@ -46,6 +48,7 @@ struct ContentView: View {
                     .padding(.top, 16)
                     .padding(.bottom, 8)
                     .ignoresSafeArea(.keyboard)
+                    .animation(.easeInOut(duration: 0.3), value: themeManager.currentTheme)
             }
             
             // 上传 HUD

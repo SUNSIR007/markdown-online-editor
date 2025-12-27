@@ -8,26 +8,30 @@
 import SwiftUI
 
 /// Header 组件 - 匹配 PWA 简洁布局
-/// 仅显示上传按钮和 Post 按钮，均带液态玻璃效果
+/// 显示上传按钮、主题切换按钮和 Post 按钮
 struct HeaderView: View {
     @ObservedObject var viewModel: EditorViewModel
+    @ObservedObject var themeManager = ThemeManager.shared
     var onImageUpload: () -> Void
     
     var body: some View {
-        HStack {
-            // 左侧：图片上传按钮 (带液态玻璃效果)
+        HStack(spacing: 12) {
+            // 左侧：图片上传按钮
             uploadButton
+            
+            // 主题切换按钮
+            themeToggleButton
             
             Spacer()
             
-            // 右侧：发布按钮 (带液态玻璃效果)
+            // 右侧：发布按钮
             publishButton
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 16)
     }
     
-    // MARK: - 上传按钮 (匹配 PWA upload-icon.png 样式)
+    // MARK: - 上传按钮
     
     @State private var isUploadPressed = false
     
@@ -53,7 +57,50 @@ struct HeaderView: View {
         )
     }
     
-    // MARK: - 发布按钮 (带液态玻璃效果)
+    // MARK: - 主题切换按钮
+    
+    @State private var isThemePressed = false
+    @State private var rotationAngle: Double = 0
+    
+    private var themeToggleButton: some View {
+        Button {
+            HapticManager.impact(.light)
+            withAnimation(.easeInOut(duration: 0.3)) {
+                rotationAngle += 180
+            }
+            themeManager.toggle()
+        } label: {
+            ZStack {
+                // 深蓝主题图标
+                Image(systemName: "moon.stars.fill")
+                    .font(.system(size: 18, weight: .regular))
+                    .foregroundColor(.textMain)
+                    .opacity(themeManager.currentTheme == .slate ? 1 : 0)
+                    .scaleEffect(themeManager.currentTheme == .slate ? 1 : 0.5)
+                
+                // 纯黑主题图标
+                Image(systemName: "circle.fill")
+                    .font(.system(size: 16, weight: .regular))
+                    .foregroundColor(.textMain)
+                    .opacity(themeManager.currentTheme == .oled ? 1 : 0)
+                    .scaleEffect(themeManager.currentTheme == .oled ? 1 : 0.5)
+            }
+            .frame(width: 44, height: 44)
+            .rotationEffect(.degrees(rotationAngle))
+        }
+        .buttonStyle(.plain)
+        .glassEffect()
+        .scaleEffect(isThemePressed ? 1.15 : 1.0)
+        .brightness(isThemePressed ? 0.15 : 0)
+        .animation(.easeInOut(duration: 0.06), value: isThemePressed)
+        .simultaneousGesture(
+            DragGesture(minimumDistance: 0)
+                .onChanged { _ in isThemePressed = true }
+                .onEnded { _ in isThemePressed = false }
+        )
+    }
+    
+    // MARK: - 发布按钮
     
     private var publishButton: some View {
         Button {

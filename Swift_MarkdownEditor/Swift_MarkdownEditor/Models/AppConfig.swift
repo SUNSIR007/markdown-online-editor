@@ -15,9 +15,9 @@ struct AppConfig {
     // MARK: - GitHub 配置（内容仓库）
     
     /// GitHub Personal Access Token
-    /// 从 Keychain 读取，如果不存在则使用占位符
     static var githubToken: String {
-        KeychainHelper.get(key: "github_token") ?? "YOUR_GITHUB_TOKEN_HERE"
+        // 请替换为你的真实 Token
+        return "YOUR_GITHUB_TOKEN_HERE"
     }
     
     /// GitHub 用户名
