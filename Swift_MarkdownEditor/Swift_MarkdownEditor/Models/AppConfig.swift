@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Security
 
 /// 应用配置，包含 GitHub Token 和仓库配置
 /// 对应 PWA 中的 runtime-config.js
@@ -14,7 +15,10 @@ struct AppConfig {
     // MARK: - GitHub 配置（内容仓库）
     
     /// GitHub Personal Access Token
-    static let githubToken = "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"
+    /// 从 Keychain 读取，如果不存在则使用占位符
+    static var githubToken: String {
+        KeychainHelper.get(key: "github_token") ?? "YOUR_GITHUB_TOKEN_HERE"
+    }
     
     /// GitHub 用户名
     static let githubOwner = "SUNSIR007"
@@ -62,8 +66,9 @@ struct AppConfig {
     
     /// 检查 GitHub 是否已配置
     static var isGitHubConfigured: Bool {
-        !githubToken.isEmpty &&
-        githubToken != "YOUR_GITHUB_TOKEN_HERE" &&
+        let token = githubToken
+        return !token.isEmpty &&
+        token != "YOUR_GITHUB_TOKEN_HERE" &&
         !githubOwner.isEmpty &&
         githubOwner != "YOUR_GITHUB_USERNAME" &&
         !githubRepo.isEmpty &&
@@ -87,5 +92,76 @@ struct AppConfig {
         default:
             return "https://raw.githubusercontent.com/\(githubOwner)/\(imageRepo)/\(imageBranch)/\(path)"
         }
+    }
+    
+    /// 保存 GitHub Token 到 Keychain
+    static func saveGitHubToken(_ token: String) -> Bool {
+        KeychainHelper.save(key: "github_token", value: token)
+    }
+    
+    /// 删除 GitHub Token
+    static func deleteGitHubToken() -> Bool {
+        KeychainHelper.delete(key: "github_token")
+    }
+}
+
+// MARK: - Keychain Helper
+
+/// Keychain 辅助类，用于安全存储敏感信息
+enum KeychainHelper {
+    
+    /// 保存值到 Keychain
+    @discardableResult
+    static func save(key: String, value: String) -> Bool {
+        guard let data = value.data(using: .utf8) else { return false }
+        
+        // 先删除已存在的项
+        delete(key: key)
+        
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrAccount as String: key,
+            kSecAttrService as String: Bundle.main.bundleIdentifier ?? "com.app.markdowneditor",
+            kSecValueData as String: data,
+            kSecAttrAccessible as String: kSecAttrAccessibleWhenUnlockedThisDeviceOnly
+        ]
+        
+        let status = SecItemAdd(query as CFDictionary, nil)
+        return status == errSecSuccess
+    }
+    
+    /// 从 Keychain 读取值
+    static func get(key: String) -> String? {
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrAccount as String: key,
+            kSecAttrService as String: Bundle.main.bundleIdentifier ?? "com.app.markdowneditor",
+            kSecReturnData as String: true,
+            kSecMatchLimit as String: kSecMatchLimitOne
+        ]
+        
+        var result: AnyObject?
+        let status = SecItemCopyMatching(query as CFDictionary, &result)
+        
+        guard status == errSecSuccess,
+              let data = result as? Data,
+              let value = String(data: data, encoding: .utf8) else {
+            return nil
+        }
+        
+        return value
+    }
+    
+    /// 从 Keychain 删除值
+    @discardableResult
+    static func delete(key: String) -> Bool {
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrAccount as String: key,
+            kSecAttrService as String: Bundle.main.bundleIdentifier ?? "com.app.markdowneditor"
+        ]
+        
+        let status = SecItemDelete(query as CFDictionary)
+        return status == errSecSuccess || status == errSecItemNotFound
     }
 }

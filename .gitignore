@@ -37,3 +37,11 @@ tests/coverage
 # Temporary files
 *.tmp
 *.temp
+
+# Swift/Xcode
+Swift_MarkdownEditor/Swift_MarkdownEditor/Models/LocalConfig.swift
+*.xcuserstate
+*.xcworkspace/xcuserdata/
+*.xcodeproj/xcuserdata/
+DerivedData/
+.build/
