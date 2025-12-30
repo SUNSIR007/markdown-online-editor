@@ -42,31 +42,33 @@ struct ContentView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 16))
                     .overlay(
                         RoundedRectangle(cornerRadius: 16)
-                            .stroke(Color.white.opacity(0.05), lineWidth: 1)
+                            .stroke(
+                                themeManager.currentTheme == .oled
+                                    ? Color.white.opacity(0.25)
+                                    : Color.white.opacity(0.12),
+                                lineWidth: 1
+                            )
                     )
                     .padding(.horizontal, 16)
                     .padding(.top, 16)
                     .padding(.bottom, 8)
                     .ignoresSafeArea(.keyboard)
                     .animation(.easeInOut(duration: 0.3), value: themeManager.currentTheme)
+                    .onChange(of: themeManager.currentTheme) { _, newTheme in
+                        // 立即同步 WebView 主题
+                        VditorManager.shared.setTheme(newTheme)
+                    }
             }
             
-            // 上传 HUD
+            // 上传 HUD（幽灵动画）
             if viewModel.showUploadHUD {
-                Color.black.opacity(0.5)
+                Color.black.opacity(0.6)
                     .ignoresSafeArea()
                 
-                UploadHUDView(status: viewModel.uploadStatus)
+                GhostUploadHUDView(status: viewModel.uploadStatus)
             }
             
-            // 成功/失败反馈
-            if viewModel.showSuccessFeedback {
-                FeedbackOverlayView(isSuccess: true, isVisible: $viewModel.showSuccessFeedback)
-            }
-            
-            if viewModel.showErrorFeedback {
-                FeedbackOverlayView(isSuccess: false, isVisible: $viewModel.showErrorFeedback)
-            }
+            // 发布反馈通过 Post 按钮显示（成功=对勾，失败=叉号）
         }
         .preferredColorScheme(.dark)
         .photosPicker(
@@ -78,6 +80,12 @@ struct ContentView: View {
         .onChange(of: selectedPhotoItems) { _, newItems in
             Task {
                 await handleSelectedPhotos(newItems)
+            }
+        }
+        .onAppear {
+            // 初始化时设置编辑器主题（等待 WebView 加载完成）
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                VditorManager.shared.setTheme(themeManager.currentTheme)
             }
         }
     }

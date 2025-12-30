@@ -26,11 +26,31 @@ struct VditorWebView: UIViewRepresentable {
         configuration.userContentController.add(context.coordinator, name: "editorReady")
         configuration.userContentController.add(context.coordinator, name: "contentChanged")
         
+        // 根据当前主题设置初始 CSS 变量
+        let currentTheme = ThemeManager.shared.currentTheme
+        let bgColor = currentTheme == .oled ? "#000000" : "#1e293b"
+        let textColor = currentTheme == .oled ? "#ffffff" : "#f1f5f9"
+        
+        let initialThemeScript = WKUserScript(
+            source: """
+            (function() {
+                document.documentElement.style.setProperty('--theme-bg', '\(bgColor)');
+                document.documentElement.style.setProperty('--theme-text', '\(textColor)');
+            })();
+            """,
+            injectionTime: .atDocumentEnd,
+            forMainFrameOnly: true
+        )
+        configuration.userContentController.addUserScript(initialThemeScript)
+        
         // 使用自定义 WebView（无键盘辅助条）
         let webView = NoInputAccessoryWebView(frame: .zero, configuration: configuration)
         webView.isOpaque = false
-        webView.backgroundColor = UIColor(Color.bgSurface)
-        webView.scrollView.backgroundColor = UIColor(Color.bgSurface)
+        
+        // 根据当前主题设置 WebView 背景色
+        let themeBgColor = ThemeColors.current(currentTheme).bgSurface
+        webView.backgroundColor = UIColor(themeBgColor)
+        webView.scrollView.backgroundColor = UIColor(themeBgColor)
         webView.navigationDelegate = context.coordinator
         
         // 加载 HTML
@@ -84,6 +104,8 @@ struct VditorWebView: UIViewRepresentable {
             switch message.name {
             case "editorReady":
                 isReady = true
+                // 立即应用当前主题（避免启动时闪烁）
+                VditorManager.shared.setTheme(ThemeManager.shared.currentTheme)
                 // 设置初始内容
                 if !parent.content.isEmpty {
                     setContent(parent.content)
@@ -157,6 +179,35 @@ class VditorManager {
         } catch {
             print("获取内容失败: \(error)")
             return ""
+        }
+    }
+    
+    /// 切换编辑器主题
+    func setTheme(_ theme: AppTheme) {
+        let bgColor: String
+        let textColor: String
+        
+        switch theme {
+        case .slate:
+            bgColor = "#1e293b"
+            textColor = "#f1f5f9"
+        case .oled:
+            bgColor = "#000000"
+            textColor = "#ffffff"
+        }
+        
+        // 使用 CSS 变量更新主题
+        let js = """
+        (function() {
+            document.documentElement.style.setProperty('--theme-bg', '\(bgColor)');
+            document.documentElement.style.setProperty('--theme-text', '\(textColor)');
+        })();
+        """
+        
+        webView?.evaluateJavaScript(js) { _, error in
+            if let error = error {
+                print("设置主题失败: \(error)")
+            }
         }
     }
 }

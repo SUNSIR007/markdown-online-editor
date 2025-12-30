@@ -104,29 +104,42 @@ struct HeaderView: View {
     
     private var publishButton: some View {
         Button {
+            guard !viewModel.isPublishing && !viewModel.showSuccessFeedback && !viewModel.showErrorFeedback else { return }
             HapticManager.impact(.medium)
             Task {
                 await viewModel.publish()
             }
         } label: {
-            Group {
-                if viewModel.isPublishing {
-                    ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle(tint: .textMain))
-                        .scaleEffect(0.8)
-                } else {
-                    Text("Post")
-                        .font(.system(size: 15, weight: .semibold))
+            // 使用 Post 文字作为基准大小
+            Text("Post")
+                .font(.system(size: 15, weight: .semibold))
+                .opacity(viewModel.isPublishing || viewModel.showSuccessFeedback || viewModel.showErrorFeedback ? 0 : 1)
+                .overlay {
+                    if viewModel.showSuccessFeedback {
+                        // 发布成功：显示绿色对勾
+                        Image(systemName: "checkmark")
+                            .font(.system(size: 15, weight: .bold))
+                            .foregroundColor(.successGreen)
+                    } else if viewModel.showErrorFeedback {
+                        // 发布失败：显示红色叉号
+                        Image(systemName: "xmark")
+                            .font(.system(size: 15, weight: .bold))
+                            .foregroundColor(.errorRed)
+                    } else if viewModel.isPublishing {
+                        // 发布中：显示 loading
+                        ProgressView()
+                            .progressViewStyle(CircularProgressViewStyle(tint: .textMain))
+                            .scaleEffect(0.8)
+                    }
                 }
-            }
-            .frame(minWidth: 70)
-            .padding(.horizontal, 20)
-            .padding(.vertical, 10)
-            .foregroundColor(.textMain)
+                .frame(minWidth: 70)
+                .padding(.horizontal, 20)
+                .padding(.vertical, 10)
+                .foregroundColor(.textMain)
         }
         .buttonStyle(.plain)
         .glassEffect()
-        .disabled(!viewModel.isGitHubConfigured || viewModel.isPublishing)
+        .disabled(!viewModel.isGitHubConfigured || viewModel.isPublishing || viewModel.showSuccessFeedback || viewModel.showErrorFeedback)
         .opacity(viewModel.isGitHubConfigured ? 1 : 0.6)
     }
 }
